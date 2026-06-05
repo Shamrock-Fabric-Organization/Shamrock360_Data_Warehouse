@@ -1,9 +1,0 @@
-role 'Mark Vitrone'
-	modelPermission: read
-
-	tablePermission BIDataSet_Opportunity = [Manager] == "MARKV"
-
-	tablePermission Dim_Employee = [Personnel_Number] IN {"1163"}
-
-	annotation PBI_Id = 7b8c91a9b5c54442876abf9fe6544880
-

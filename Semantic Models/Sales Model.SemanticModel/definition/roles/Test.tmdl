@@ -1,9 +1,0 @@
-role Test
-	modelPermission: read
-
-	tablePermission BIDataSet_Opportunity = [Manager] IN {"JVERA","JPADDOCK"}
-
-	tablePermission Dim_Employee = [Personnel_Number] IN {"1167","1162"}
-
-	annotation PBI_Id = 9b020081c71a49c18ddc2aae7d40ced8
-

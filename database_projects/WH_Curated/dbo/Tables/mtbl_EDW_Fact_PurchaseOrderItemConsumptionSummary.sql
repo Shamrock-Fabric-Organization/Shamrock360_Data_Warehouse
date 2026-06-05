@@ -1,0 +1,43 @@
+CREATE TABLE [dbo].[mtbl_EDW_Fact_PurchaseOrderItemConsumptionSummary] (
+    [CMPNY]                VARCHAR (8000)  NULL,
+    [PurchaseOrderNumber]  VARCHAR (8000)  NULL,
+    [linenumber]           BIGINT          NULL,
+    [ProductID]            VARCHAR (8000)  NULL,
+    [inventdimid]          VARCHAR (8000)  NULL,
+    [BatchID]              VARCHAR (8000)  NULL,
+    [SiteID]               VARCHAR (8000)  NULL,
+    [Warehouse]            VARCHAR (8000)  NULL,
+    [licenseplateid]       VARCHAR (8000)  NULL,
+    [pl_purchstatus_label] VARCHAR (8)     NULL,
+    [pt_purchstatus_label] VARCHAR (8)     NULL,
+    [inventtransid]        VARCHAR (8000)  NULL,
+    [lineamount]           DECIMAL (38, 6) NULL,
+    [purchqty]             DECIMAL (38, 6) NULL,
+    [qtyordered]           DECIMAL (38, 6) NULL,
+    [purchunit]            VARCHAR (8000)  NULL,
+    [QtyOrdered_LBs]       DECIMAL (38, 6) NULL,
+    [vendaccount]          VARCHAR (8000)  NULL,
+    [Inventory_UoM]        VARCHAR (8000)  NULL,
+    [NumberFinishedGoods]  INT             NULL,
+    [remaining_qty]        DECIMAL (38, 6) NULL,
+    [consumed_qty]         DECIMAL (38, 6) NULL,
+    [remaining_pct]        DECIMAL (38, 6) NULL,
+    [consumed_pct]         DECIMAL (38, 6) NULL,
+    [costamountphysical]   DECIMAL (38, 6) NULL,
+    [costamountadjustment] DECIMAL (38, 6) NULL,
+    [costamountposted]     DECIMAL (38, 6) NULL,
+    [costamountNet]        DECIMAL (38, 6) NULL,
+    [VendorKey]            BIGINT          NOT NULL,
+    [InvoiceVendorKey]     BIGINT          NOT NULL,
+    [ProductKey]           BIGINT          NOT NULL,
+    [Legal_EntityKey]      BIGINT          NOT NULL,
+    [EmployeeKey]          BIGINT          NOT NULL,
+    [SiteKey]              BIGINT          NOT NULL,
+    [WarehouseKey]         BIGINT          NOT NULL,
+    [PurchaseOrerKey]      BIGINT          NOT NULL,
+    [BatchKey]             BIGINT          NOT NULL
+);
+
+
+GO
+

@@ -1,0 +1,40 @@
+CREATE TABLE [dbo].[tbl_Fact_PlannedPurchaseTransferProd_Orders] (
+    [RecordID]                 BIGINT          NULL,
+    [CMPNY]                    VARCHAR (8000)  NULL,
+    [RefId]                    VARCHAR (8000)  NULL,
+    [reftype]                  BIGINT          NULL,
+    [reftype_$label]           VARCHAR (29)    NULL,
+    [ItemId]                   VARCHAR (8000)  NULL,
+    [reqplanid]                VARCHAR (8000)  NULL,
+    [ReqPlanName]              VARCHAR (8000)  NULL,
+    [RequirementQuantity]      DECIMAL (38, 6) NULL,
+    [Inventory_UoM]            VARCHAR (8000)  NULL,
+    [Purchasing_UoM]           VARCHAR (8000)  NULL,
+    [Sales_UoM]                VARCHAR (8000)  NULL,
+    [OrderDate]                DATETIME2 (6)   NULL,
+    [OrderDateKey]             INT             NULL,
+    [DeliveryDate]             DATETIME2 (6)   NULL,
+    [DeliveryDateKey]          INT             NULL,
+    [RequestedDate]            DATETIME2 (6)   NULL,
+    [RequestedDateKey]         INT             NULL,
+    [Delay_days]               BIGINT          NOT NULL,
+    [actiontype]               BIGINT          NULL,
+    [actiontype_$label]        VARCHAR (18)    NULL,
+    [Vendor]                   VARCHAR (8000)  NULL,
+    [isderiveddirectly]        BIGINT          NULL,
+    [isderiveddirectly_$label] VARCHAR (3)     NULL,
+    [ReqPOStatus]              BIGINT          NULL,
+    [reqpostatus_$label]       VARCHAR (14)    NULL,
+    [leadtime]                 BIGINT          NULL,
+    [Warehouse]                VARCHAR (8000)  NULL,
+    [SiteID]                   VARCHAR (8000)  NULL,
+    [ProductKey]               BIGINT          NOT NULL,
+    [Legal_EntityKey]          BIGINT          NOT NULL,
+    [VendorKey]                BIGINT          NOT NULL,
+    [SiteKey]                  BIGINT          NOT NULL,
+    [WarehouseKey]             BIGINT          NOT NULL
+);
+
+
+GO
+

@@ -1,0 +1,43 @@
+CREATE TABLE [dbo].[tbl_DIM_PurchaseOrder] (
+    [PurchaseOrderKey]         BIGINT         NULL,
+    [CMPNY]                    VARCHAR (8000) NULL,
+    [PurchaseOrderNumber]      VARCHAR (8000) NULL,
+    [PurchaseOrderName]        VARCHAR (8000) NULL,
+    [VendorAccount]            VARCHAR (8000) NULL,
+    [InvoiceVendorAccount]     VARCHAR (8000) NULL,
+    [PaymentTerms]             VARCHAR (8000) NULL,
+    [PaymentTermsDesc]         VARCHAR (8000) NULL,
+    [PaymentTermsNumOfDays]    BIGINT         NULL,
+    [VendorReference]          VARCHAR (8000) NULL,
+    [currencycode]             VARCHAR (8000) NULL,
+    [isencumbrancerequired]    BIGINT         NULL,
+    [EncumberanceRequiredYN]   VARCHAR (7)    NULL,
+    [purchstatus]              BIGINT         NULL,
+    [PurchStatusDesc]          VARCHAR (8)    NULL,
+    [returnreasoncodeid]       VARCHAR (8000) NULL,
+    [ReturnReasonDesc]         VARCHAR (8000) NULL,
+    [ReturnReasonGroupDesc]    VARCHAR (8000) NULL,
+    [createddatetime]          DATETIME2 (6)  NULL,
+    [Warehouse]                VARCHAR (8000) NULL,
+    [SiteID]                   VARCHAR (8000) NULL,
+    [deliveryname]             VARCHAR (8000) NULL,
+    [itembuyergroupid]         VARCHAR (8000) NULL,
+    [purchpoolid]              VARCHAR (8000) NULL,
+    [PurchPoolName]            VARCHAR (8000) NULL,
+    [RequestorPersonnelNumber] VARCHAR (8000) NULL,
+    [RequestorName]            VARCHAR (8000) NULL,
+    [POPlacerPersonnelNumber]  VARCHAR (8000) NULL,
+    [POPlacerName]             VARCHAR (8000) NULL,
+    [dlvterm]                  VARCHAR (8000) NULL,
+    [dlvmode]                  VARCHAR (8000) NULL,
+    [minDeliveryDate]          DATETIME2 (6)  NULL,
+    [maxDeliveryDate]          DATETIME2 (6)  NULL,
+    [Source]                   VARCHAR (6)    NOT NULL,
+    [RecordEffectiveStartDate] DATETIME2 (3)  NULL,
+    [RecordEffectiveEndDate]   DATETIME2 (3)  NULL,
+    [RecordStatus]             INT            NULL
+);
+
+
+GO
+

@@ -1,0 +1,7 @@
+
+      CREATE   VIEW dbo.pcclass AS 
+      SELECT [pcclass].[Id] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [Id],[pcclass].[SinkCreatedOn] AS [SinkCreatedOn],[pcclass].[SinkModifiedOn] AS [SinkModifiedOn],[pcclass].[reuseenabled] AS [reuseenabled],[pcclass].[sysdatastatecode] AS [sysdatastatecode],[pcclass].[modifieddatetime] AS [modifieddatetime],[pcclass].[modifiedby] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [modifiedby],[pcclass].[modifiedtransactionid] AS [modifiedtransactionid],[pcclass].[createddatetime] AS [createddatetime],[pcclass].[createdby] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [createdby],[pcclass].[createdtransactionid] AS [createdtransactionid],[pcclass].[dataareaid] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [dataareaid],[pcclass].[recversion] AS [recversion],[pcclass].[partition] AS [partition],[pcclass].[sysrowversion] AS [sysrowversion],[pcclass].[recid] AS [recid],[pcclass].[tableid] AS [tableid],[pcclass].[versionnumber] AS [versionnumber],[pcclass].[createdon] AS [createdon],[pcclass].[modifiedon] AS [modifiedon],[pcclass].[IsDelete] AS [IsDelete],[pcclass].[PartitionId] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [PartitionId],CASE [pcclass].[reuseenabled] WHEN 1 THEN 'Yes'  WHEN 0 THEN 'No'  END AS reuseenabled_$label
+      FROM dataverse_stiprod_cds2_workspace_unqce8cf9ab47aff01187066045bdff8.dbo.pcclass WHERE pcclass.IsDelete IS NULL
+
+GO
+

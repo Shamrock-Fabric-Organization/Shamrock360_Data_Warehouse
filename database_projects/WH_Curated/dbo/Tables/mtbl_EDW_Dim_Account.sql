@@ -1,0 +1,41 @@
+CREATE TABLE [dbo].[mtbl_EDW_Dim_Account] (
+    [CustomerKey]              BIGINT           NULL,
+    [CMPNY]                    VARCHAR (8000)   NULL,
+    [Customer_ID]              VARCHAR (8000)   NULL,
+    [Invoice_Account]          VARCHAR (8000)   NULL,
+    [Legacy_Customer_ID]       INT              NULL,
+    [GMAccountNo]              INT              NULL,
+    [GMRecID]                  INT              NULL,
+    [CustomerName]             VARCHAR (8000)   NULL,
+    [Harmonized_Name]          VARCHAR (8000)   NULL,
+    [Address]                  VARCHAR (8000)   NULL,
+    [City]                     VARCHAR (8000)   NULL,
+    [State]                    VARCHAR (8000)   NULL,
+    [ZIP]                      VARCHAR (8000)   NULL,
+    [Country]                  VARCHAR (8000)   NULL,
+    [CityState]                VARCHAR (8000)   NULL,
+    [Territory_ID]             VARCHAR (8000)   NULL,
+    [Salesman_ID]              VARCHAR (8000)   NULL,
+    [SalesChannel]             VARCHAR (8000)   NULL,
+    [Industry_Segment]         VARCHAR (8000)   NULL,
+    [Subsegment]               VARCHAR (8000)   NULL,
+    [Status]                   INT              NULL,
+    [EffectiveCountry]         INT              NULL,
+    [Account_Tier]             INT              NULL,
+    [Longitude]                DECIMAL (38, 10) NULL,
+    [Latitude]                 DECIMAL (38, 10) NULL,
+    [PaymentTerms]             VARCHAR (8000)   NULL,
+    [PhoneNumber]              VARCHAR (8000)   NULL,
+    [PurchasingEmail]          VARCHAR (8000)   NULL,
+    [InvoicingEmail]           VARCHAR (8000)   NULL,
+    [customergroup]            VARCHAR (8000)   NULL,
+    [customer_currency]        VARCHAR (8000)   NULL,
+    [Source]                   VARCHAR (6)      NOT NULL,
+    [RecordEffectiveStartDate] DATETIME2 (6)    NULL,
+    [RecordEffectiveEndDate]   DATETIME2 (6)    NULL,
+    [RecordStatus]             INT              NULL
+);
+
+
+GO
+

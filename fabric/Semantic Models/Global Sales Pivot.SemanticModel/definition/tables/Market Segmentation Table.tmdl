@@ -1,0 +1,181 @@
+table 'Market Segmentation Table'
+	lineageTag: da5c5457-0f77-4230-9387-076cd7a1584f
+	sourceLineageTag: [dbo].[mtbl_EDW_DIM_MarketSegmentation]
+
+	column MarketSegmentationKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 1bdc3a1c-a283-4b37-bd45-408c15fdac7f
+		sourceLineageTag: MarketSegmentationKey
+		summarizeBy: none
+		sourceColumn: MarketSegmentationKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		isHidden
+		lineageTag: ccb60446-2ac4-4af9-80dc-d05cee6b5f88
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerID
+		dataType: string
+		isHidden
+		lineageTag: 363ae15e-66c1-410a-a7f5-402490093828
+		sourceLineageTag: CustomerID
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductID
+		dataType: string
+		isHidden
+		lineageTag: 05a745a4-9128-4827-a390-bd63f2eaadf6
+		sourceLineageTag: ProductID
+		summarizeBy: none
+		sourceColumn: ProductID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CPCID
+		dataType: string
+		isHidden
+		lineageTag: 98a55f76-e764-498b-9b00-82c64349dca9
+		sourceLineageTag: CPCID
+		summarizeBy: none
+		sourceColumn: CPCID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column LegacyCPCID
+		dataType: string
+		isHidden
+		lineageTag: 97dfbddd-9c5c-42ad-b86d-5e1f73888c46
+		sourceLineageTag: LegacyCPCID
+		summarizeBy: none
+		sourceColumn: LegacyCPCID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Industry
+		dataType: string
+		lineageTag: 38d55115-536d-4758-9656-c87a6568faba
+		sourceLineageTag: Industry
+		summarizeBy: none
+		sourceColumn: Industry
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sub-Industry
+		dataType: string
+		lineageTag: 49e962cc-a3cc-4f5e-8e5e-4b035431437d
+		sourceLineageTag: SubIndustry
+		summarizeBy: none
+		sourceColumn: SubIndustry
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column AccountTranslatedToD365
+		dataType: string
+		isHidden
+		lineageTag: a7219428-b323-4032-b1b4-f7dd7694c34f
+		sourceLineageTag: AccountTranslatedToD365
+		summarizeBy: none
+		sourceColumn: AccountTranslatedToD365
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductTranslatedToD365
+		dataType: string
+		isHidden
+		lineageTag: 86d81349-5d5e-4e7d-a0bb-bd3cae72b5b5
+		sourceLineageTag: ProductTranslatedToD365
+		summarizeBy: none
+		sourceColumn: ProductTranslatedToD365
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 470a05c5-785d-4cc0-84f3-7af600b8b743
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 6576265b-1e83-40f3-9530-949003bc9692
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 607c6538-c9a2-4784-9ddd-f0a67968c6fe
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		isHidden
+		lineageTag: c77de9e1-9953-40b6-9451-c21a3863551d
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Market Segmentation Table' = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_DIM_MarketSegmentation
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+

@@ -1,0 +1,348 @@
+table vw360_Dim_InvoiceDate
+	lineageTag: 5f8fdcd5-2843-4736-96d8-28389cc36032
+	sourceLineageTag: [dbo].[mtbl_LEG_vw360_Dim_InvoiceDate]
+	dataCategory: Time
+
+	column RECID
+		dataType: double
+		lineageTag: d04e15cb-38a8-4b9b-aad3-08b20df51fca
+		sourceLineageTag: RECID
+		summarizeBy: none
+		sourceColumn: RECID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'FISCAL QTR'
+		dataType: double
+		lineageTag: 72424793-dfb6-42e0-b703-5bacf7153e09
+		sourceLineageTag: Fiscal_Qtr
+		summarizeBy: none
+		sourceColumn: Fiscal_Qtr
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'FISCAL YR'
+		dataType: double
+		lineageTag: a6be387f-3578-4cce-be25-5fb83bcdc833
+		sourceLineageTag: Fiscal_Yr
+		summarizeBy: none
+		sourceColumn: Fiscal_Yr
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'FISCAL PERIOD'
+		dataType: int64
+		formatString: 0
+		lineageTag: 43bbf13f-5d88-4486-8c3b-d1b16731c260
+		sourceLineageTag: Fiscal_Period
+		summarizeBy: none
+		sourceColumn: Fiscal_Period
+
+		changedProperty = Name
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'WEEKS IN PERIOD'
+		dataType: double
+		lineageTag: 16eb18c1-347b-4e6e-97bf-391b6375b0bf
+		sourceLineageTag: Weeks_In_Period
+		summarizeBy: none
+		sourceColumn: Weeks_In_Period
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'FISCAL WEEK #'
+		dataType: double
+		lineageTag: ae407ac3-2a7f-4106-8733-d7cb71e3ce67
+		sourceLineageTag: Fiscal_Week_#
+		summarizeBy: none
+		sourceColumn: Fiscal_Week_#
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column CurrentFiscalDay#
+		dataType: int64
+		formatString: 0
+		lineageTag: 1a3a2a19-4d91-4a4d-b999-062645983c16
+		sourceLineageTag: CurrentFiscalDay#
+		summarizeBy: none
+		sourceColumn: CurrentFiscalDay#
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Current Fiscal Yr'
+		dataType: double
+		lineageTag: 57e9b1a3-57e3-441e-92a3-6f73f1800cc1
+		sourceLineageTag: Current Fiscal Yr
+		summarizeBy: none
+		sourceColumn: Current Fiscal Yr
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: General Date
+		lineageTag: 6273a328-d8fc-46fe-819e-602732d80f20
+		sourceLineageTag: Date
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'DAY #'
+		dataType: int64
+		formatString: 0
+		lineageTag: b705315f-ee1b-4061-9afb-fa6745c1444d
+		sourceLineageTag: Day_#
+		summarizeBy: none
+		sourceColumn: Day_#
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'FISCAL DAY #'
+		dataType: int64
+		formatString: 0
+		lineageTag: 70543e84-9d6a-4504-a574-87b10b6fc820
+		sourceLineageTag: Fiscal_Day_#
+		summarizeBy: none
+		sourceColumn: Fiscal_Day_#
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column US_Working_Day
+		dataType: double
+		lineageTag: fe9c2365-ea3f-47de-a270-e1d0de567f19
+		sourceLineageTag: US_Working_Day
+		summarizeBy: none
+		sourceColumn: US_Working_Day
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column BVBA_Working_Day
+		dataType: double
+		lineageTag: 76269837-7d5c-4839-96cb-dfc0096b6590
+		sourceLineageTag: BVBA_Working_Day
+		summarizeBy: none
+		sourceColumn: BVBA_Working_Day
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column TEDA_Working_Day
+		dataType: double
+		lineageTag: 2492a90a-5011-456c-9f0a-23bc58a15c96
+		sourceLineageTag: TEDA_Working_Day
+		summarizeBy: none
+		sourceColumn: TEDA_Working_Day
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column YEAR
+		dataType: int64
+		lineageTag: 7ba0439f-a08d-4741-b5ed-c049e7284cb9
+		sourceLineageTag: Year
+		summarizeBy: none
+		sourceColumn: Year
+
+		changedProperty = DataType
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Qtr
+		dataType: string
+		lineageTag: 24214cd6-cc47-4f96-b523-9809400b5718
+		sourceLineageTag: Qtr
+		summarizeBy: none
+		sourceColumn: Qtr
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column MONTH
+		dataType: int64
+		formatString: 0
+		lineageTag: c164378b-1f59-456a-9a96-21a7607073c8
+		sourceLineageTag: Month
+		summarizeBy: none
+		sourceColumn: Month
+
+		changedProperty = DataType
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column DAY
+		dataType: double
+		lineageTag: fd3654cf-2edf-4316-9f5c-14b63cf38d5b
+		sourceLineageTag: Day
+		summarizeBy: none
+		sourceColumn: Day
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column WEEKDAY
+		dataType: string
+		lineageTag: 1f4f96da-f4be-4c83-aaa1-8d9192cdad24
+		sourceLineageTag: Weekday
+		summarizeBy: none
+		sourceColumn: Weekday
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'WEEK #'
+		dataType: double
+		lineageTag: 3b72cadd-91fd-4fa2-aee8-37c1bb5720ce
+		sourceLineageTag: Week_#
+		summarizeBy: none
+		sourceColumn: Week_#
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column FYTDIndicator
+		dataType: string
+		lineageTag: 5575464c-b37d-42b8-9eae-e4ff066fefc9
+		sourceLineageTag: FYTDIndicator
+		summarizeBy: none
+		sourceColumn: FYTDIndicator
+
+		annotation SummarizationSetBy = Automatic
+
+	column TodaysDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: de61474e-d944-4f4e-8f50-409c9c3db5f7
+		sourceLineageTag: TodaysDate
+		summarizeBy: none
+		sourceColumn: TodaysDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthStartDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 0ee58165-f5f3-4d8b-9f43-bf32b49a838f
+		sourceLineageTag: MonthStartDate
+		summarizeBy: none
+		sourceColumn: MonthStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Name'
+		dataType: string
+		lineageTag: 6f231728-a5b3-4221-9215-5f793097569f
+		sourceLineageTag: MonthName
+		summarizeBy: none
+		sourceColumn: MonthName
+		sortByColumn: MONTH
+
+		changedProperty = SortByColumn
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column MyMonth
+		dataType: string
+		lineageTag: 8f777945-fd07-45b4-aaa6-2089e2f96fdc
+		sourceLineageTag: MyMonth
+		summarizeBy: none
+		sourceColumn: MyMonth
+
+		annotation SummarizationSetBy = Automatic
+
+	column YYYYMM
+		dataType: string
+		lineageTag: 3516ec5f-44c4-4b4d-8c29-235985055448
+		sourceLineageTag: YYYYMM
+		summarizeBy: none
+		sourceColumn: YYYYMM
+
+		annotation SummarizationSetBy = Automatic
+
+	column YYYYMM_Fiscal
+		dataType: string
+		lineageTag: 17d73ba8-3996-47d8-ab4b-495aa72c797e
+		sourceLineageTag: YYYYMM_Fiscal
+		summarizeBy: none
+		sourceColumn: YYYYMM_Fiscal
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Calendar Hierarchy'
+		lineageTag: b604cdb9-199f-4d07-b101-e2aa5dbddb66
+
+		level YEAR
+			lineageTag: eb59c0af-c657-480f-b0d8-bcc5127c36ee
+			column: YEAR
+
+		level Qtr
+			lineageTag: 8ce8ecbf-83c7-45be-a462-f6ddd5032506
+			column: Qtr
+
+		level 'Month Name'
+			lineageTag: 2c21c85d-fb1c-4fb9-8eb6-8213d7621183
+			column: 'Month Name'
+
+		level 'DAY #'
+			lineageTag: b0fef347-daf4-44bb-8ebf-1516688648b0
+			column: 'DAY #'
+
+		changedProperty = Name
+
+	partition vw360_Dim_InvoiceDate = entity
+		mode: directLake
+		source
+			entityName: mtbl_LEG_vw360_Dim_InvoiceDate
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+

@@ -1,0 +1,126 @@
+table 'Reference Order'
+	lineageTag: 95d72d1f-1203-4820-b161-e656e33d024d
+
+	column qualityorderid
+		dataType: string
+		lineageTag: d795257e-5621-42b7-b857-ef769fd3985e
+		summarizeBy: none
+		sourceColumn: qualityorderid
+
+		annotation SummarizationSetBy = Automatic
+
+	column BatchKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 3ff5d01a-2add-4513-9918-3df96a041d39
+		summarizeBy: none
+		sourceColumn: BatchKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column 'Batch Number'
+		dataType: string
+		lineageTag: 1eed8612-ba2f-4e9a-b3ab-1738e8112aac
+		summarizeBy: none
+		sourceColumn: Batch Number
+
+		annotation SummarizationSetBy = Automatic
+
+	column SerialNumberKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 424ad6af-2419-48ee-924d-b8ac18d1d308
+		summarizeBy: none
+		sourceColumn: SerialNumberKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column 'Serial Number'
+		dataType: string
+		lineageTag: f86f9450-20ba-4be2-95f1-32d366833a31
+		summarizeBy: none
+		sourceColumn: Serial Number
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a57e99b7-81e8-41ca-9156-eb6a1cb64c6e
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column Product_ID
+		dataType: string
+		lineageTag: 40202adf-cbf5-4e48-b4cd-f5c8e853df99
+		summarizeBy: none
+		sourceColumn: Product_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_Name
+		dataType: string
+		lineageTag: 41da60af-aff2-4c6f-89d9-6c756b474116
+		summarizeBy: none
+		sourceColumn: Product_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column QualityOrderStatus
+		dataType: string
+		lineageTag: d8b62d11-5a3c-4b06-9426-e08e419c5459
+		summarizeBy: none
+		sourceColumn: QualityOrderStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column ValidatedDateTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 287b9b19-b3ab-4ee8-866a-32ffa8ce82b9
+		summarizeBy: none
+		sourceColumn: ValidatedDateTime
+
+		variation Variation
+			isDefault
+			relationship: 86d521c4-0562-4677-8ffd-0c022c1f2a40
+			defaultHierarchy: LocalDateTable_921371d7-6e72-4a57-a5c2-f231b18bcb64.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column LineCreatedDateTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 004981fe-ffdb-41cc-a9aa-640d8c7e2062
+		summarizeBy: none
+		sourceColumn: LineCreatedDateTime
+
+		variation Variation
+			isDefault
+			relationship: 4776e8ce-bafc-4db4-8318-28f01e557353
+			defaultHierarchy: LocalDateTable_3c55ca01-feb7-4fb0-b273-d462f4a13e68.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Reference Order' = m
+		mode: import
+		source =
+				let
+				  Source = Sql.Database("efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com", "WH_Curated", [Query = "SELECT#(lf)    f.qualityorderid,#(lf)#(lf)    f.BatchKey,#(lf)    b.[BatchID] AS [Batch Number],#(lf)#(lf)    f.SerialNumberKey,#(lf)    s.[SerialNumber] AS [Serial Number],#(lf)#(lf)    f.ProductKey,#(lf)    p.Product_ID AS [Product_ID],#(lf)    p.Product_Name AS [Product_Name],#(lf)#(lf)    MAX(f.QuaityOrderStatus) AS QuaityOrderStatus,#(lf)    MAX(f.ValidatedDateTime) AS ValidatedDateTime,#(lf)    MIN(f.LineCreatedDateTime) AS LineCreatedDateTime#(lf)#(lf)FROM dbo.mtbl_EDW_Fact_QualityOrderLineResults AS f#(lf)#(lf)LEFT JOIN [dbo].[mtbl_EDW_DIM_Batch] AS b#(lf)    ON f.BatchKey = b.BatchKey#(lf)#(lf)LEFT JOIN [WH_Curated].[dbo].[mtbl_EDW_Dim_SerialNumber] AS s#(lf)    ON f.SerialNumberKey = s.SerialNumberKey#(lf)#(lf)LEFT JOIN [WH_Curated].[dbo].[mtbl_EDW_Dim_Product] AS p#(lf)    ON f.ProductKey = p.ProductKey#(lf)#(lf)WHERE f.qualityorderid IS NOT NULL#(lf)#(lf)GROUP BY#(lf)    f.qualityorderid,#(lf)    f.BatchKey,#(lf)    b.[BatchID],#(lf)    f.SerialNumberKey,#(lf)    s.[SerialNumber],#(lf)    f.ProductKey,#(lf)    p.Product_ID,#(lf)    p.Product_Name;"]),
+				  #"Renamed Columns" = Table.RenameColumns(Source, {{"QuaityOrderStatus", "QualityOrderStatus"}})
+				in
+				  #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+

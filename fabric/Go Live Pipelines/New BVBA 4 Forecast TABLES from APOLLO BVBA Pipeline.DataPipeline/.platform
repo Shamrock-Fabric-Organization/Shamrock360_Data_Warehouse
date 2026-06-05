@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "New BVBA 4 Forecast TABLES from APOLLO BVBA Pipeline"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "37a341c2-4056-a3f4-45bf-02d9886fc943"
+  }
+}

@@ -1,0 +1,93 @@
+[
+  {
+    "name": "TargetMetadata",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "2dd9f17e-c62b-4cd1-9540-e8b2d753d394",
+        "deltaLakeFolder": "https://aeth66ce01ff304d4f99a4cd.dfs.core.windows.net/aeth-11c55193-de52-47ee-b8ac-5f249a62926f/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-uat.crm.dynamics.com/",
+        "tableName": "TargetMetadata_partitioned"
+      }
+    }
+  },
+  {
+    "name": "StatusMetadata",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "2dd9f17e-c62b-4cd1-9540-e8b2d753d394",
+        "deltaLakeFolder": "https://aeth66ce01ff304d4f99a4cd.dfs.core.windows.net/aeth-11c55193-de52-47ee-b8ac-5f249a62926f/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-uat.crm.dynamics.com/",
+        "tableName": "StatusMetadata_partitioned"
+      }
+    }
+  },
+  {
+    "name": "StateMetadata",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "2dd9f17e-c62b-4cd1-9540-e8b2d753d394",
+        "deltaLakeFolder": "https://aeth66ce01ff304d4f99a4cd.dfs.core.windows.net/aeth-11c55193-de52-47ee-b8ac-5f249a62926f/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-uat.crm.dynamics.com/",
+        "tableName": "StateMetadata_partitioned"
+      }
+    }
+  },
+  {
+    "name": "OptionsetMetadata",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "2dd9f17e-c62b-4cd1-9540-e8b2d753d394",
+        "deltaLakeFolder": "https://aeth66ce01ff304d4f99a4cd.dfs.core.windows.net/aeth-11c55193-de52-47ee-b8ac-5f249a62926f/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-uat.crm.dynamics.com/",
+        "tableName": "OptionsetMetadata_partitioned"
+      }
+    }
+  },
+  {
+    "name": "msdyn_leadagentresult",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "2dd9f17e-c62b-4cd1-9540-e8b2d753d394",
+        "deltaLakeFolder": "https://aeth66ce01ff304d4f99a4cd.dfs.core.windows.net/aeth-11c55193-de52-47ee-b8ac-5f249a62926f/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-uat.crm.dynamics.com/",
+        "tableName": "msdyn_leadagentresult_partitioned"
+      }
+    }
+  },
+  {
+    "name": "msdyn_copilotknowledgeinteraction",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "2dd9f17e-c62b-4cd1-9540-e8b2d753d394",
+        "deltaLakeFolder": "https://aeth66ce01ff304d4f99a4cd.dfs.core.windows.net/aeth-11c55193-de52-47ee-b8ac-5f249a62926f/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-uat.crm.dynamics.com/",
+        "tableName": "msdyn_copilotknowledgeinteraction_partitioned"
+      }
+    }
+  },
+  {
+    "name": "GlobalOptionsetMetadata",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "2dd9f17e-c62b-4cd1-9540-e8b2d753d394",
+        "deltaLakeFolder": "https://aeth66ce01ff304d4f99a4cd.dfs.core.windows.net/aeth-11c55193-de52-47ee-b8ac-5f249a62926f/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-uat.crm.dynamics.com/",
+        "tableName": "GlobalOptionsetMetadata_partitioned"
+      }
+    }
+  }
+]

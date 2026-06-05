@@ -1,0 +1,38 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["DirectLake - WH_Curated","Reference Order","Candidate Order","Test Axis","Order Test Index"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_ProTooling = ["DirectLakeOnOneLakeInWeb","WebModelingEdit"]
+
+ref table Fact_QualityOrderLineResults
+ref table Dim_Account
+ref table Dim_Product
+ref table Dim_Warehouse
+ref table Dim_Batch
+ref table Dim_Legal_Entity
+ref table Dim_ProductionBatchOrder
+ref table Dim_Date
+ref table Dim_Route
+ref table Dim_SerialNumber
+ref table Dim_Site
+ref table Dim_WorkCenter
+ref table 'Match Mode'
+ref table 'Reference Order'
+ref table DateTableTemplate_b19413eb-094a-4391-9946-2092e04e7e2f
+ref table LocalDateTable_921371d7-6e72-4a57-a5c2-f231b18bcb64
+ref table LocalDateTable_3c55ca01-feb7-4fb0-b273-d462f4a13e68
+ref table 'Candidate Order'
+ref table LocalDateTable_3f70a1bd-ecf3-4420-af16-3cd33c59bbc4
+ref table LocalDateTable_96fd5bbd-3954-40c4-9e24-6d97c9b40662
+ref table 'Test Axis'
+ref table 'QC Measures'
+ref table 'Order Test Index'
+

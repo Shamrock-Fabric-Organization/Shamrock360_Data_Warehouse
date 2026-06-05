@@ -1,0 +1,72 @@
+table Dim_AgingBuckets
+	lineageTag: 50e48d60-aa57-4dd7-89a0-3bab966fc88b
+
+	column AgingBucketKey
+		isHidden
+		formatString: 0
+		lineageTag: 4067e5e4-a3c3-499d-955a-a625240e5408
+		summarizeBy: count
+		isNameInferred
+		sourceColumn: [AgingBucketKey]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Description
+		lineageTag: dffd9816-61b9-4590-ad4a-72836e6974a1
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Description]
+		sortByColumn: SortOrder
+
+		annotation SummarizationSetBy = Automatic
+
+	column FromDays
+		formatString: 0
+		lineageTag: c0563caf-ff44-491d-ba3e-4d7a5d96d65c
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [FromDays]
+
+		annotation SummarizationSetBy = Automatic
+
+	column ToDays
+		formatString: 0
+		lineageTag: 0544d70d-e3f1-46ef-bb78-0f87c0e5c5e0
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [ToDays]
+
+		annotation SummarizationSetBy = Automatic
+
+	column SortOrder
+		formatString: 0
+		lineageTag: 76ce9be0-675d-4f79-9cb8-2d436a563584
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [SortOrder]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_AgingBuckets = calculated
+		mode: import
+		source = ```
+				
+				DATATABLE(
+				    "AgingBucketKey", INTEGER,
+				    "Description", STRING,
+				    "FromDays", INTEGER,
+				    "ToDays", INTEGER,
+				    "SortOrder", INTEGER,
+				    {
+				        { 1, "Current (with terms)", -999999, 0, 1 },
+				        { 2, "1-30 days beyond terms", 1, 30, 2 },
+				        { 3, "31-60 days beyond terms", 31, 60, 3 },
+				        { 4, "61-90 days beyond terms", 61, 90, 4 },
+				        { 5, "90+ days beyond terms", 91, 999999, 5 }
+				    }
+				)
+				
+				```
+
+	annotation PBI_Id = d84f1dc0774240869efb3a9a75804728
+

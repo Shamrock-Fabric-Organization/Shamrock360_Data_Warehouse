@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "nb_Search_for_string_in_WH_Raw_view_columns"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "d8d0d55b-d998-be7f-44a0-98e31e25ad52"
+  }
+}

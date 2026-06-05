@@ -1,0 +1,426 @@
+table 'Account Table'
+	lineageTag: dba00035-4bba-4518-9491-48c841c6aa3c
+	sourceLineageTag: [dbo].[mtbl_EDW_Dim_Account]
+
+	column CustomerKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 1aef392c-6e8f-4b1d-8abc-709b3b6afe8b
+		sourceLineageTag: CustomerKey
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		isHidden
+		lineageTag: f9e45cfe-03e1-4b1c-8869-d56869e274ee
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Customer ID'
+		dataType: string
+		lineageTag: 374b6fe6-2754-4b21-b554-6be09a7c8e38
+		sourceLineageTag: Customer_ID
+		summarizeBy: none
+		sourceColumn: Customer_ID
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Invoice Account ID'
+		dataType: string
+		lineageTag: ff141259-8648-4377-8ce5-eeb8aef68b1c
+		sourceLineageTag: Invoice_Account
+		summarizeBy: none
+		sourceColumn: Invoice_Account
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legacy_Customer_ID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 7e5e1d92-c9f1-47eb-b778-a11b3909e6a1
+		sourceLineageTag: Legacy_Customer_ID
+		summarizeBy: none
+		sourceColumn: Legacy_Customer_ID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column GMAccountNo
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: ac74f6b7-af33-48a5-94d1-1fd0d8b45526
+		sourceLineageTag: GMAccountNo
+		summarizeBy: none
+		sourceColumn: GMAccountNo
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column GMRecID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 9ccbe7c9-38ec-4986-b6a0-7359c219b219
+		sourceLineageTag: GMRecID
+		summarizeBy: none
+		sourceColumn: GMRecID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Customer Name'
+		dataType: string
+		lineageTag: 0ca10f0c-03e9-4750-ae90-27b287d680c9
+		sourceLineageTag: CustomerName
+		summarizeBy: none
+		sourceColumn: CustomerName
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Customer Chain'
+		dataType: string
+		lineageTag: 190174bd-d15c-40bc-8a2d-8e85f40e4536
+		sourceLineageTag: Harmonized_Name
+		summarizeBy: none
+		sourceColumn: Harmonized_Name
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Address
+		dataType: string
+		lineageTag: 36c24158-368e-4966-a127-2be03a9b6464
+		sourceLineageTag: Address
+		summarizeBy: none
+		sourceColumn: Address
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		lineageTag: 4d3cf2ad-69b3-450a-8a9c-bd867fe720e1
+		sourceLineageTag: City
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column State
+		dataType: string
+		lineageTag: b9e52c87-b760-4572-8363-68ebb930c3e5
+		sourceLineageTag: State
+		summarizeBy: none
+		sourceColumn: State
+
+		annotation SummarizationSetBy = Automatic
+
+	column ZIP
+		dataType: string
+		lineageTag: a1459a3d-e0a6-44e4-bfbb-61ad1a6d7cd8
+		sourceLineageTag: ZIP
+		summarizeBy: none
+		sourceColumn: ZIP
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: 9375280b-b5da-4541-99fd-3df3b6b20099
+		sourceLineageTag: Country
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column Territory_ID
+		dataType: string
+		isHidden
+		lineageTag: b0abb287-c4b5-4e24-9918-8a0a0de347ea
+		sourceLineageTag: Territory_ID
+		summarizeBy: none
+		sourceColumn: Territory_ID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Salesman_ID
+		dataType: string
+		isHidden
+		lineageTag: 69becc09-64c2-4efa-959e-eaf52fb0c9de
+		sourceLineageTag: Salesman_ID
+		summarizeBy: none
+		sourceColumn: Salesman_ID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesChannel
+		dataType: string
+		isHidden
+		lineageTag: 3a590169-dae1-495d-8860-a7104cebcb82
+		sourceLineageTag: SalesChannel
+		summarizeBy: none
+		sourceColumn: SalesChannel
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Industry_Segment
+		dataType: string
+		isHidden
+		lineageTag: e8442c7b-ea0c-45f1-97d4-85cf68460cf0
+		sourceLineageTag: Industry_Segment
+		summarizeBy: none
+		sourceColumn: Industry_Segment
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Subsegment
+		dataType: string
+		isHidden
+		lineageTag: 5ad872c0-5b7d-4f6e-9f43-bd6fbf1e02e9
+		sourceLineageTag: Subsegment
+		summarizeBy: none
+		sourceColumn: Subsegment
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 11f41f28-93eb-4f25-a437-eced82da017a
+		sourceLineageTag: Status
+		summarizeBy: none
+		sourceColumn: Status
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column EffectiveCountry
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 4f4f9bfb-3200-4c33-90cd-21b7eed42466
+		sourceLineageTag: EffectiveCountry
+		summarizeBy: none
+		sourceColumn: EffectiveCountry
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Account_Tier
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a71ff5a6-fd32-42d8-b5a0-b2afd1b60a26
+		sourceLineageTag: Account_Tier
+		summarizeBy: none
+		sourceColumn: Account_Tier
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Longitude
+		dataType: double
+		isHidden
+		lineageTag: c102df8b-f43c-4acf-a044-b28ddc3b7d07
+		sourceLineageTag: Longitude
+		summarizeBy: none
+		sourceColumn: Longitude
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Latitude
+		dataType: double
+		isHidden
+		lineageTag: bf388a8e-9a27-46b1-8e41-abbc089a3bf3
+		sourceLineageTag: Latitude
+		summarizeBy: none
+		sourceColumn: Latitude
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Source
+		dataType: string
+		isHidden
+		lineageTag: 76aa06b0-4a54-4d01-92c9-7b3f0de5ba62
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 79a9a6b1-71cd-4dec-900f-76057ae7fd48
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 2b1df67d-4ea4-4afd-9b52-354a6ac344c6
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: e458e238-53db-4561-adca-cca15503a6a7
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column PaymentTerms
+		dataType: string
+		isHidden
+		lineageTag: 9c204418-45b3-4adb-b256-e56080b170a5
+		sourceLineageTag: PaymentTerms
+		summarizeBy: none
+		sourceColumn: PaymentTerms
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column PhoneNumber
+		dataType: string
+		isHidden
+		lineageTag: ae517f55-88bc-4ca8-9440-3d8364950082
+		sourceLineageTag: PhoneNumber
+		summarizeBy: none
+		sourceColumn: PhoneNumber
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Customer Group'
+		dataType: string
+		lineageTag: acbc6942-77cc-43a6-87bd-cf9dab0140f5
+		sourceLineageTag: customergroup
+		summarizeBy: none
+		sourceColumn: customergroup
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_currency
+		dataType: string
+		isHidden
+		lineageTag: c4987989-48e8-417d-8751-13558cfcaffd
+		sourceLineageTag: customer_currency
+		summarizeBy: none
+		sourceColumn: customer_currency
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'City, State'
+		dataType: string
+		lineageTag: e075ffa0-394c-41f3-9bf4-6edb9a39ecc3
+		sourceLineageTag: CityState
+		summarizeBy: none
+		sourceColumn: CityState
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column PurchasingEmail
+		dataType: string
+		isHidden
+		lineageTag: ae81bab1-ee58-4364-bcef-a50d7c06e732
+		sourceLineageTag: PurchasingEmail
+		summarizeBy: none
+		sourceColumn: PurchasingEmail
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column InvoicingEmail
+		dataType: string
+		isHidden
+		lineageTag: 78c78c9c-8a5e-427b-9eca-57a960b39a0a
+		sourceLineageTag: InvoicingEmail
+		summarizeBy: none
+		sourceColumn: InvoicingEmail
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Account Table' = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Dim_Account
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+

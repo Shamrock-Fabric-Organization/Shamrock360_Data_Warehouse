@@ -1,0 +1,662 @@
+table 'Product Table'
+	lineageTag: 5e98842f-705e-4b0d-b373-ef0153e95b2f
+	sourceLineageTag: [dbo].[mtbl_EDW_Dim_Product]
+
+	column ProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: f2e0044e-6fa3-4148-b8a8-5c9da7c0ddba
+		sourceLineageTag: ProductKey
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		isHidden
+		lineageTag: b5168ec9-adcd-4346-90ea-73ed761b2a8f
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Product ID'
+		dataType: string
+		lineageTag: d67d7ccf-9773-482b-8715-b9a9ab3dd8f7
+		sourceLineageTag: Product_ID
+		summarizeBy: none
+		sourceColumn: Product_ID
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Commercial Product'
+		dataType: string
+		lineageTag: 7b43c78e-6e1e-44df-a3dc-ed2e01290cc1
+		sourceLineageTag: Commercial_Name
+		summarizeBy: none
+		sourceColumn: Commercial_Name
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Technology
+		dataType: string
+		lineageTag: 0187ac1d-62e8-4f35-859d-c3a748d4514f
+		sourceLineageTag: Technology
+		summarizeBy: none
+		sourceColumn: Technology
+
+		annotation SummarizationSetBy = Automatic
+
+	column Material
+		dataType: string
+		lineageTag: 7adf5f7e-6aa5-4e45-947e-ada5b75448fa
+		sourceLineageTag: Material
+		summarizeBy: none
+		sourceColumn: Material
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Business Line'
+		dataType: string
+		lineageTag: 7c9e3d54-7f9c-4de7-9134-237ec6f7ce9e
+		sourceLineageTag: Business_Line
+		summarizeBy: none
+		sourceColumn: Business_Line
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Product Line'
+		dataType: string
+		lineageTag: 706c3367-3048-41a3-a925-76ca0a4b698b
+		sourceLineageTag: Product_Line
+		summarizeBy: none
+		sourceColumn: Product_Line
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Lifecycle
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a0bb213b-47da-4475-a3fb-8a89ca2752a7
+		sourceLineageTag: Lifecycle
+		summarizeBy: none
+		sourceColumn: Lifecycle
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Inventory UoM'
+		dataType: string
+		isHidden
+		lineageTag: fc6655f1-8e61-49d5-aa05-24562dc01e91
+		sourceLineageTag: Inventory_UoM
+		summarizeBy: none
+		sourceColumn: Inventory_UoM
+
+		changedProperty = Name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sales UoM'
+		dataType: string
+		isHidden
+		lineageTag: 399fc16e-caaa-4ac8-88fa-ff3935bd48ba
+		sourceLineageTag: Sales_UoM
+		summarizeBy: none
+		sourceColumn: Sales_UoM
+
+		changedProperty = Name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Item Type'
+		dataType: string
+		isHidden
+		lineageTag: cc97b493-1112-43ce-a8c4-abb5f4691ec7
+		sourceLineageTag: Item_Type
+		summarizeBy: none
+		sourceColumn: Item_Type
+
+		changedProperty = Name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column PTFE_Flag
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 038f6112-b2bc-4d39-934e-dccd46eaa1f4
+		sourceLineageTag: PTFE_Flag
+		summarizeBy: none
+		sourceColumn: PTFE_Flag
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Reorder_Point
+		dataType: double
+		isHidden
+		lineageTag: 08aeaed8-53a0-4943-b764-6799153116fd
+		sourceLineageTag: Reorder_Point
+		summarizeBy: none
+		sourceColumn: Reorder_Point
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Source
+		dataType: string
+		isHidden
+		lineageTag: 90124542-d325-40d9-9c7f-69f50bb0fe6f
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Product Type'
+		dataType: string
+		isHidden
+		lineageTag: a0745935-8200-437a-a825-5f0f33bab250
+		sourceLineageTag: producttype_desc
+		summarizeBy: none
+		sourceColumn: producttype_desc
+
+		changedProperty = Name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column itemgroupid
+		dataType: string
+		isHidden
+		lineageTag: 8f05c09c-1c63-46d8-b08f-2521abce38d7
+		sourceLineageTag: itemgroupid
+		summarizeBy: none
+		sourceColumn: itemgroupid
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Item Group'
+		dataType: string
+		isHidden
+		lineageTag: 84113083-2005-4587-a9ac-55672e1c1beb
+		sourceLineageTag: ItemGroupName
+		summarizeBy: none
+		sourceColumn: ItemGroupName
+
+		changedProperty = Name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ItemGroupType
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 04d032e7-b535-4ee0-b6af-3c8cdd9c09f7
+		sourceLineageTag: ItemGroupType
+		summarizeBy: none
+		sourceColumn: ItemGroupType
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Item Group Type'
+		dataType: string
+		isHidden
+		lineageTag: 7154ccd2-135e-4fb8-9224-ec7e358f1b21
+		sourceLineageTag: ItemGroupTypeName
+		summarizeBy: none
+		sourceColumn: ItemGroupTypeName
+
+		changedProperty = Name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column itemmodelgroupid
+		dataType: string
+		isHidden
+		lineageTag: 8c96509a-5aae-48c1-a503-efb2085d9a31
+		sourceLineageTag: itemmodelgroupid
+		summarizeBy: none
+		sourceColumn: itemmodelgroupid
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column producttype
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: c5a2e0f9-fcdd-4eac-8580-d99141ced2dc
+		sourceLineageTag: producttype
+		summarizeBy: none
+		sourceColumn: producttype
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ItemBuyerGroupID
+		dataType: string
+		isHidden
+		lineageTag: ea0b1e38-0ae8-4358-935e-6f1e72a8d5cc
+		sourceLineageTag: ItemBuyerGroupID
+		summarizeBy: none
+		sourceColumn: ItemBuyerGroupID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Item Buyer Group'
+		dataType: string
+		isHidden
+		lineageTag: 46a3f8b0-1ab1-4476-990e-838370162725
+		sourceLineageTag: ItemBuyerGroupDesc
+		summarizeBy: none
+		sourceColumn: ItemBuyerGroupDesc
+
+		changedProperty = Name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column min_purchase_qty
+		dataType: double
+		isHidden
+		lineageTag: 4b082ef8-c06b-46d9-baed-470df07f4b5b
+		sourceLineageTag: min_purchase_qty
+		summarizeBy: none
+		sourceColumn: min_purchase_qty
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column multiple_purchase_qty
+		dataType: double
+		isHidden
+		lineageTag: f5dd5b20-9397-4b65-a0c3-e6df2b26e025
+		sourceLineageTag: multiple_purchase_qty
+		summarizeBy: none
+		sourceColumn: multiple_purchase_qty
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column std_purchase_order_qty
+		dataType: double
+		isHidden
+		lineageTag: f06c2de6-e1b1-485d-9cca-bd0072276ec9
+		sourceLineageTag: std_purchase_order_qty
+		summarizeBy: none
+		sourceColumn: std_purchase_order_qty
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column max_purchase_order_qty
+		dataType: double
+		isHidden
+		lineageTag: 82f3e4a2-87e8-4daf-8822-6555e045a303
+		sourceLineageTag: max_purchase_order_qty
+		summarizeBy: none
+		sourceColumn: max_purchase_order_qty
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column purchase_leadtime
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 67fc3035-ff77-4da2-ad54-5b4c6dd22581
+		sourceLineageTag: purchase_leadtime
+		summarizeBy: none
+		sourceColumn: purchase_leadtime
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column min_inventory_qty
+		dataType: double
+		isHidden
+		lineageTag: 11176aa2-58b4-4128-96ff-6969981ee27e
+		sourceLineageTag: min_inventory_qty
+		summarizeBy: none
+		sourceColumn: min_inventory_qty
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column multiple_inventory_qty
+		dataType: double
+		isHidden
+		lineageTag: 0d0350de-0812-4af4-b4eb-678be7325155
+		sourceLineageTag: multiple_inventory_qty
+		summarizeBy: none
+		sourceColumn: multiple_inventory_qty
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column std_inventory_order_qty
+		dataType: double
+		isHidden
+		lineageTag: ddd8355b-b52a-4b8a-bea9-99496918afa1
+		sourceLineageTag: std_inventory_order_qty
+		summarizeBy: none
+		sourceColumn: std_inventory_order_qty
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column max_inventory_order_qty
+		dataType: double
+		isHidden
+		lineageTag: 862eacc2-edbc-4e83-ab16-1eacd46b9f7d
+		sourceLineageTag: max_inventory_order_qty
+		summarizeBy: none
+		sourceColumn: max_inventory_order_qty
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Inventory Leadtime'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 352ee65c-5901-4327-a834-d7899d3685b7
+		sourceLineageTag: inventory_leadtime
+		summarizeBy: none
+		sourceColumn: inventory_leadtime
+
+		changedProperty = Name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column min_sales_qty
+		dataType: double
+		isHidden
+		lineageTag: 1b1838bd-50ec-4b52-8aee-d81340e0810b
+		sourceLineageTag: min_sales_qty
+		summarizeBy: none
+		sourceColumn: min_sales_qty
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column multiple_sales_qty
+		dataType: double
+		isHidden
+		lineageTag: 934ab6fc-e3e3-48b3-bd1e-ae28d5149db0
+		sourceLineageTag: multiple_sales_qty
+		summarizeBy: none
+		sourceColumn: multiple_sales_qty
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column std_sales_order_qty
+		dataType: double
+		isHidden
+		lineageTag: c529a5ee-f7e8-43cf-bcb4-df897c57fba3
+		sourceLineageTag: std_sales_order_qty
+		summarizeBy: none
+		sourceColumn: std_sales_order_qty
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column max_sales_order_qty
+		dataType: double
+		isHidden
+		lineageTag: c504505a-1fcb-404b-a486-f27f004ff969
+		sourceLineageTag: max_sales_order_qty
+		summarizeBy: none
+		sourceColumn: max_sales_order_qty
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Sales Leadtime'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 37cdf233-f404-4da6-af6d-85f39edb40d8
+		sourceLineageTag: sales_leadtime
+		summarizeBy: none
+		sourceColumn: sales_leadtime
+
+		changedProperty = Name
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Product Name'
+		dataType: string
+		lineageTag: 20fa8640-ba6a-4657-a8be-ceb981cf6b70
+		sourceLineageTag: Product_Name
+		summarizeBy: none
+		sourceColumn: Product_Name
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Product Search Name'
+		dataType: string
+		lineageTag: 11865658-59e0-4f3c-956b-513634bc399a
+		sourceLineageTag: Search_Name
+		summarizeBy: none
+		sourceColumn: Search_Name
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Start_Date
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: dbc53c26-4264-4f31-9143-862660903fd2
+		sourceLineageTag: Start_Date
+		summarizeBy: none
+		sourceColumn: Start_Date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column End_Date
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: f4c126c3-9200-4963-b48b-b13102450819
+		sourceLineageTag: End_Date
+		summarizeBy: none
+		sourceColumn: End_Date
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Record_Status
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 1a8ba9a6-0f8f-471e-8ae8-bb9ca1eca627
+		sourceLineageTag: Record_Status
+		summarizeBy: none
+		sourceColumn: Record_Status
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Base Sales Price'
+		dataType: double
+		lineageTag: ad1da91a-2f34-4727-b11d-5e5db52d4656
+		sourceLineageTag: BaseSalesPrice
+		summarizeBy: none
+		sourceColumn: BaseSalesPrice
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Base Sales Price Per LB'
+		dataType: double
+		formatString: \$#,0.0;(\$#,0.0);\$#,0.0
+		lineageTag: 490dcc43-7bc5-40be-a329-db5148ce8d02
+		sourceLineageTag: BaseSalesPricePerLB
+		summarizeBy: none
+		sourceColumn: BaseSalesPricePerLB
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column Purchasing_UoM
+		dataType: string
+		isHidden
+		lineageTag: 713ad6ae-66a0-4314-a642-94649c767906
+		sourceLineageTag: Purchasing_UoM
+		summarizeBy: none
+		sourceColumn: Purchasing_UoM
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column MiscRevenue
+		dataType: string
+		isHidden
+		lineageTag: 2198367e-0d63-4a4d-871c-a915759725ef
+		sourceLineageTag: MiscRevenue
+		summarizeBy: none
+		sourceColumn: MiscRevenue
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Phantom
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 14a8ba4a-9519-45b2-a705-3c585546fb35
+		sourceLineageTag: Phantom
+		summarizeBy: none
+		sourceColumn: Phantom
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsPhantom
+		dataType: string
+		isHidden
+		lineageTag: dffdf11b-6650-4c47-a788-810c19f60d27
+		sourceLineageTag: IsPhantom
+		summarizeBy: none
+		sourceColumn: IsPhantom
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Product Table' = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Dim_Product
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+

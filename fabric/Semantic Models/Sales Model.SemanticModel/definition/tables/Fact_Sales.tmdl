@@ -1,0 +1,2275 @@
+table Fact_Sales
+	lineageTag: 18292f5f-02e3-4abd-ae00-a94bbd7a44f3
+	sourceLineageTag: [dbo].[mtbl_EDW_Fact_Sales]
+
+	measure SalesAmount = SUM(Fact_Sales[Amount])
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 9d7c265e-9b1e-4e31-8227-95cc8a50a12f
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure SalesPricePerLB = Divide([SalesAmount] , [Quantity LBs])
+		lineageTag: b63ee997-6415-464a-be4b-149dbc94f3b1
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Quantity LBs' = SUM(Fact_Sales[Quantity_LBs])
+		lineageTag: 7b73a9ab-e381-48f4-9495-a1fa017d7072
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Sales Quantity' = SUM(Fact_Sales[Quantity])
+		lineageTag: c889a734-30a3-4ce3-a312-83364ee7d719
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Returned Amount' = SUM(Fact_Sales[Returned_Amount])
+		lineageTag: 014c7fdd-db0b-424a-8cf0-3f228aba650f
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Returned Quantity' = SUM(Fact_Sales[Returned_Quantity])
+		lineageTag: c18cd627-1b95-4e89-8301-31f6fb4b8623
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Orders' = COUNTROWS(Fact_Sales)
+		formatString: 0
+		lineageTag: 6b0d31d1-e4da-47f4-95df-e830a70f6f20
+
+		changedProperty = Name
+
+	measure MTD_Revenue_Open = ```
+			
+			CALCULATE(
+			    SUM('Fact_Sales'[Amount]),
+			
+			    -- Activate the inactive relationship for this calculation
+			    USERELATIONSHIP(
+			        'Fact_Sales'[SalesLine_RequestedShipDateKey],
+			        'Dim_Date'[DateKey]
+			    ),
+			
+			    -- Current month filter
+			    FILTER(
+			        ALL('Dim_Date'),
+			        YEAR('Dim_Date'[DATE]) = YEAR(TODAY()) &&
+			        MONTH('Dim_Date'[DATE]) = MONTH(TODAY())
+			    ),
+			
+			    -- Only Budget 2025 rows
+			    'Fact_Sales'[SalesLine_Status] = "Open"
+			)
+			
+			```
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 6b25ec26-5580-4945-af93-14e773e1540b
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure MTD_Volume_Open = ```
+			
+			CALCULATE(
+			    SUM('Fact_Sales'[Quantity_LBs]),
+			
+			    -- Activate the inactive relationship for this calculation
+			    USERELATIONSHIP(
+			        'Fact_Sales'[SalesLine_RequestedShipDateKey],
+			        'Dim_Date'[DateKey]
+			    ),
+			
+			    -- Current month filter
+			    FILTER(
+			        ALL('Dim_Date'),
+			        YEAR('Dim_Date'[DATE]) = YEAR(TODAY()) &&
+			        MONTH('Dim_Date'[DATE]) = MONTH(TODAY())
+			    ),
+			
+			    -- Only Budget 2025 rows
+			    'Fact_Sales'[SalesLine_Status] = "Open"
+			)
+			
+			```
+		formatString: #,0
+		lineageTag: ee6f27fe-f6d0-40e0-bc32-579faa57a1bf
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+	measure YTD_Volume_Open = ```
+			
+			CALCULATE(
+			    SUM('Fact_Sales'[Quantity_LBs]),
+			
+			    -- Activate the inactive relationship for this calculation
+			    USERELATIONSHIP(
+			        'Fact_Sales'[SalesLine_RequestedShipDateKey],
+			        'Dim_Date'[DateKey]
+			    ),
+			
+			    -- Current month filter
+			    FILTER(
+			        ALL('Dim_Date'),
+			        YEAR('Dim_Date'[DATE]) = YEAR(TODAY()) &&
+			        MONTH('Dim_Date'[DATE]) < MONTH(TODAY())
+			    ),
+			
+			    -- Only Budget 2025 rows
+			    'Fact_Sales'[SalesLine_Status] = "Open"
+			)
+			
+			```
+		formatString: #,0
+		lineageTag: df1bcedd-173c-46b6-8dd4-e01085ed4ce0
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+	measure YTD_Revenue_Open = ```
+			
+			CALCULATE(
+			    SUM('Fact_Sales'[Amount]),
+			
+			    -- Activate the inactive relationship for this calculation
+			    USERELATIONSHIP(
+			        'Fact_Sales'[SalesLine_RequestedShipDateKey],
+			        'Dim_Date'[DateKey]
+			    ),
+			
+			    -- Current month filter
+			    FILTER(
+			        ALL('Dim_Date'),
+			        YEAR('Dim_Date'[DATE]) = YEAR(TODAY()) &&
+			        MONTH('Dim_Date'[DATE]) < MONTH(TODAY())
+			    ),
+			
+			    -- Only Budget 2025 rows
+			    'Fact_Sales'[SalesLine_Status] = "Open"
+			)
+			
+			```
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 7cf06421-727e-4294-83f4-2b3b69c3ff40
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure MTD_Revenue_Shipped = ```
+			
+			CALCULATE(
+			    SUM('Fact_Sales'[Amount]),
+			
+			    -- Activate the inactive relationship for this calculation
+			    USERELATIONSHIP(
+			        'Fact_Sales'[InvoiceDateKey],
+			        'Dim_Date'[DateKey]
+			    ),
+			
+			    -- Current month filter
+			    FILTER(
+			        ALL('Dim_Date'),
+			        YEAR('Dim_Date'[DATE]) = YEAR(TODAY()) &&
+			        MONTH('Dim_Date'[DATE]) = MONTH(TODAY())
+			    ),
+			
+			    -- Only Budget 2025 rows
+			    'Fact_Sales'[SalesLine_Status] = "Invoiced"
+			)
+			
+			```
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 490a53ac-d47e-4a5f-8089-9e08afb958fd
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure YTD_Revenue_Shipped = ```
+			
+			CALCULATE(
+			    SUM('Fact_Sales'[Amount]),
+			
+			    -- Activate the inactive relationship for this calculation
+			    USERELATIONSHIP(
+			        'Fact_Sales'[InvoiceDateKey],
+			        'Dim_Date'[DateKey]
+			    ),
+			
+			    -- Current month filter
+			    FILTER(
+			        ALL('Dim_Date'),
+			        YEAR('Dim_Date'[DATE]) = YEAR(TODAY()) &&
+			        MONTH('Dim_Date'[DATE]) < MONTH(TODAY())
+			    ),
+			
+			    -- Only Budget 2025 rows
+			    'Fact_Sales'[SalesLine_Status] = "Invoiced"
+			)
+			
+			```
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 89d93dac-5bdd-4383-ac7b-3e43cf229ffc
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure MTD_Volume_Shipped = ```
+			
+			CALCULATE (
+			    SUM ( 'Fact_Sales'[Quantity_LBs] ),
+			
+			    -- Activate inactive relationship using InvoiceDate
+			    USERELATIONSHIP (
+			        'Fact_Sales'[InvoiceDateKey],
+			        'Dim_Date'[DateKey]
+			    ),
+			
+			    -- Current month filter
+			    FILTER (
+			        ALL ( 'Dim_Date' ),
+			        YEAR ( 'Dim_Date'[DATE] ) = YEAR ( TODAY() )
+			            && MONTH ( 'Dim_Date'[DATE] ) = MONTH ( TODAY() )
+			    ),
+			
+			    -- Include only these two statuses
+			    'Fact_Sales'[SalesLine_Status] = "Invoiced"
+			)
+			
+			```
+		formatString: #,0
+		lineageTag: ba631e61-6631-4576-8ef0-e4e0fe4f6060
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+	measure YTD_Volume_Shipped = ```
+			
+			CALCULATE(
+			    SUM('Fact_Sales'[Quantity_LBs]),
+			
+			    -- Activate the inactive relationship for this calculation
+			    USERELATIONSHIP(
+			        'Fact_Sales'[InvoiceDateKey],
+			        'Dim_Date'[DateKey]
+			    ),
+			
+			    -- Current month filter
+			    FILTER(
+			        ALL('Dim_Date'),
+			        YEAR('Dim_Date'[DATE]) = YEAR(TODAY()) &&
+			        MONTH('Dim_Date'[DATE]) < MONTH(TODAY())
+			    ),
+			
+			    -- Only Budget 2025 rows
+			    'Fact_Sales'[SalesLine_Status] = "Invoiced"
+			)
+			
+			```
+		formatString: #,0
+		lineageTag: ae488760-3558-4fae-b382-4b74a58d6337
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+	measure MTD_Revenue_Total =
+			
+			[MTD_Revenue_Open] + [MTD_Revenue_Shipped]
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: f6228d2e-27c9-4e09-83b1-729be7baed86
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure MTD_Volume_Total =
+			
+			[MTD_Volume_Open] + [MTD_Volume_Shipped]
+		formatString: #,0
+		lineageTag: b450123b-51b6-472e-9120-5af0f5fce26f
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+	measure YTD_Revenue_Total =
+			
+			[YTD_Revenue_Open] + [YTD_Revenue_Shipped]
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 0b0c2831-f2bb-4333-993a-6949e8aec012
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure YTD_Volume_Total =
+			
+			[YTD_Volume_Open] + [YTD_Volume_Shipped]
+		formatString: #,0
+		lineageTag: 2dca0b2e-19b2-4322-898f-b5070e318126
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+	measure 'Weekly Average Revenue (Sales Days)' = ```
+			
+			
+			VAR wkStart =
+			    SELECTEDVALUE ( Dim_Date[WeekStartDate] )
+			RETURN
+			IF (
+			    ISBLANK ( wkStart ),
+			    BLANK (),
+			    VAR wkEnd = wkStart + 6
+			
+			    VAR TodayDate = TODAY ()
+			    VAR NowEST =
+			        NOW() - TIME ( 5, 0, 0 )   -- adjust to EST (or 4 for EDT)
+			
+			    VAR AfterCutoffToday =
+			        NowEST >= ( TodayDate + TIME ( 19, 0, 0 ) )
+			
+			    -- Dates in the selected week, excluding future days,
+			    -- and excluding "today" until after 7PM
+			    VAR WeekDatesEligible =
+			        FILTER (
+			            DATESBETWEEN ( Dim_Date[Date], wkStart, wkEnd ),
+			            Dim_Date[Date] <= TodayDate
+			                && ( Dim_Date[Date] < TodayDate || AfterCutoffToday )
+			        )
+			
+			    VAR TrackedSites =
+			        FILTER (
+			            ALL ( DIM_Warehouse ),
+			            CONTAINSSTRING ( DIM_Warehouse[Site_Name], "Kentucky" )
+			                || CONTAINSSTRING ( DIM_Warehouse[Site_Name], "New Jersey" )
+			                || CONTAINSSTRING ( DIM_Warehouse[Site_Name], "South Carolina" )
+			        )
+			
+			    -- Numerator: all eligible dates in the week (Mon-Sun),
+			    -- so weekend catch-up is included in the week's total
+			    VAR RevenueIncluded =
+			        CALCULATE (
+			            [SalesAmount],
+			            WeekDatesEligible,
+			            KEEPFILTERS ( TrackedSites )
+			        )
+			
+			    -- Denominator: only Mon-Fri dates with any records/orders
+			    VAR WeekdayOrderDays =
+			        FILTER (
+			            WeekDatesEligible,
+			            WEEKDAY ( Dim_Date[Date], 2 ) <= 5
+			                && CALCULATE ( [Total Orders], KEEPFILTERS ( TrackedSites ) ) > 0
+			        )
+			
+			    VAR SalesDaysIncluded =
+			        COUNTROWS ( WeekdayOrderDays )
+			
+			    RETURN
+			        DIVIDE ( RevenueIncluded, SalesDaysIncluded )
+			)
+			
+			```
+		lineageTag: 91a57510-efad-4129-8618-3792c5791329
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Monthly Avg Revenue (30-day)' = ```
+			
+			VAR RevenuePerMonth =
+			    CALCULATE (
+			        [SalesAmount],
+			        ALLEXCEPT ( 'Dim_Date', 'Dim_Date'[MonthStartDate] )
+			    )
+			RETURN
+			DIVIDE ( RevenuePerMonth, 30 )
+			
+			```
+		lineageTag: d1c2c76c-3c56-4c62-85a0-4057ad971809
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Moving Avg (3 Months)' = ```
+			
+			VAR ThisWeek =
+			    MAX ( 'Dim_Date'[WeekStartDate] )
+			
+			-- first day of the month 3 months before current month
+			VAR WindowStart =
+			    EOMONTH ( ThisWeek, -3 ) + 1
+			
+			VAR WeeksInRange =
+			    FILTER (
+			        ALL ( 'Dim_Date'[WeekStartDate] ),
+			        'Dim_Date'[WeekStartDate] >= WindowStart
+			            && 'Dim_Date'[WeekStartDate] <= ThisWeek
+			    )
+			RETURN
+			AVERAGEX ( WeeksInRange, [Weekly Average Revenue (Sales Days)] )
+			
+			```
+		lineageTag: 3ec7068d-0292-425e-9eb0-7a2f9c8dbb46
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Moving Avg (4 Weeks)' = ```
+			
+			VAR CurrentWeek =
+			    MAX ( 'Dim_Date'[WeekStartDate] )
+			VAR Last4Weeks =
+			    TOPN (
+			        4,
+			        FILTER (
+			            ALL ( 'Dim_Date'[WeekStartDate] ),
+			            'Dim_Date'[WeekStartDate] <= CurrentWeek
+			        ),
+			        'Dim_Date'[WeekStartDate],
+			        DESC
+			    )
+			RETURN
+			AVERAGEX ( Last4Weeks, [Weekly Average Revenue (Sales Days)] )
+			
+			```
+		lineageTag: 5ebe5c13-87b9-4726-b75b-4e98b27bbc69
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Show Moving Avg (3 mths)' =
+			
+			IF (
+			    SELECTEDVALUE ( TrendLineOptions[TrendLineOption] )
+			        = "Moving Average (3 months)",
+			    [Moving Avg (3 Months)],
+			    BLANK ()
+			)
+		lineageTag: 0c2b7ddb-f9d4-4300-8e31-e212abc32c7f
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Show Moving Avg (4 wks)' =
+			
+			IF (
+			    SELECTEDVALUE ( TrendLineOptions[TrendLineOption] )
+			        = "Moving Average (4 weeks)",
+			    [Moving Avg (4 Weeks)],
+			    BLANK ()
+			)
+		lineageTag: ef3d2e85-0b98-4365-b36a-99e9b087d6af
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'YAxis Max – Weekly Avg Rev' = ```
+			
+			VAR MaxWeekly =
+			    MAXX (
+			        ALLSELECTED ( 'Dim_Date'[WeekStartDate] ),
+			        [Weekly Average Revenue (Sales Days)]
+			    )
+			RETURN
+			IF ( ISBLANK ( MaxWeekly ), BLANK (), MaxWeekly + 10000 )
+			
+			```
+		lineageTag: 7b4d19ca-49b2-419d-8a73-39def585eed6
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'YAxis Min – Weekly Avg Rev' = ```
+			
+			VAR MinWeekly =
+			    MINX (
+			        ALLSELECTED ( 'Dim_Date'[WeekStartDate] ),
+			        [Weekly Average Revenue (Sales Days)]
+			    )
+			VAR RawMin = MinWeekly - 10000
+			RETURN
+			IF ( ISBLANK ( MinWeekly ), BLANK (), MAX ( 0, RawMin ) )
+			
+			```
+		lineageTag: a9209518-aa88-4171-8df1-7a13334d0969
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Invoiced + Open Amount – Next Month' = ```
+			
+			VAR StartDate = [NextMonthStart]
+			VAR EndDate   = [NextMonthEnd]
+			VAR NullDate = DATE(2025,10,1)
+			
+			VAR MonthDates =
+			    FILTER (
+			        ALL ( Dim_Date ),
+			        Dim_Date[Date] >= StartDate &&
+			        Dim_Date[Date] <= EndDate
+			    )
+			
+			VAR ClosedAmtNextMonth =
+			    CALCULATE (
+			        SUM ( Fact_Sales[Amount] ),
+			        Fact_Sales[SalesLine_Status] = "Invoiced",
+			        USERELATIONSHIP (
+			            Fact_Sales[InvoiceDateKey],
+			            Dim_Date[DateKey]
+			        ),
+			        MonthDates
+			    )
+			
+			VAR OpenAmtNextMonth_ReqShip =
+			    CALCULATE (
+			        SUM ( Fact_Sales[Amount] ),
+			        Fact_Sales[SalesLine_Status] = "Open",
+			        USERELATIONSHIP ( Fact_Sales[SalesLine_ShipDateKey], Dim_Date[DateKey] ),
+			        FILTER (
+			            ALL ( Dim_Date ),
+			            Dim_Date[Date] >= StartDate &&
+			            Dim_Date[Date] <= EndDate
+			        )
+			    )
+			
+			RETURN
+			    ClosedAmtNextMonth + OpenAmtNextMonth_ReqShip
+			
+			```
+		lineageTag: 43790719-4309-4e07-9ffa-53d6298e944d
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Invoiced + Open Amount – Selected Period' = ```
+			
+			VAR StartDate =
+			    [BaseMonthStart]
+			VAR EndDate =
+			    [BaseMonthEnd]
+			
+			-- Only this month's invoiced amount (by invoice date)
+			VAR ClosedAmtSelectedPeriod =
+			    CALCULATE (
+			        SUM ( Fact_Sales[Amount] ),
+			        Fact_Sales[SalesLine_Status] = "Invoiced",
+			        USERELATIONSHIP (
+			            Fact_Sales[InvoiceDateKey],
+			            Dim_Date[DateKey]
+			        ),
+			        FILTER (
+			            ALL ( Dim_Date ),
+			            Dim_Date[Date] >= StartDate &&
+			            Dim_Date[Date] <= EndDate
+			        )
+			    )
+			
+			-- Open amount for all orders with requested ship date up to *end* of month
+			VAR OpenAmtUpToPeriod_ReqShip =
+			    CALCULATE (
+			        SUM ( Fact_Sales[Amount] ),
+			        Fact_Sales[SalesLine_Status] = "Open",
+			        USERELATIONSHIP (
+			            Fact_Sales[SalesLine_ShipDateKey],
+			            Dim_Date[DateKey]
+			        ),
+			        FILTER (
+			            ALL ( Dim_Date ),
+			            Dim_Date[Date] <= EndDate        -- cumulative up to the end of the selected month
+			        )
+			    )
+			
+			RETURN
+			    ClosedAmtSelectedPeriod + OpenAmtUpToPeriod_ReqShip
+			
+			```
+		lineageTag: b298a6ed-027f-4f6c-9a4e-a3176d0d30ef
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Invoiced + Open Quantity – Next Month' = ```
+			
+			VAR StartDate = [NextMonthStart]
+			VAR EndDate   = [NextMonthEnd]
+			VAR NullDate = DATE(2025,10,1)
+			
+			VAR MonthDates =
+			    FILTER (
+			        ALL ( Dim_Date ),
+			        Dim_Date[Date] >= StartDate &&
+			        Dim_Date[Date] <= EndDate
+			    )
+			
+			VAR ClosedVolNextMonth =
+			    CALCULATE (
+			        SUM ( Fact_Sales[Quantity_LBs] ),
+			        Fact_Sales[SalesLine_Status] = "Invoiced",
+			        USERELATIONSHIP (
+			            Fact_Sales[InvoiceDateKey],
+			            Dim_Date[DateKey]
+			        ),
+			        MonthDates
+			    )
+			
+			VAR OpenVolNextMonth_ReqShip =
+			    CALCULATE (
+			        SUM ( Fact_Sales[Quantity_LBs] ),
+			        Fact_Sales[SalesLine_Status] = "Open",
+			        USERELATIONSHIP ( Fact_Sales[SalesLine_ShipDateKey], Dim_Date[DateKey] ),
+			        FILTER (
+			            ALL ( Dim_Date ),
+			            Dim_Date[Date] >= StartDate &&
+			            Dim_Date[Date] <= EndDate
+			        )
+			    )
+			
+			RETURN
+			    ClosedVolNextMonth + OpenVolNextMonth_ReqShip
+			
+			```
+		lineageTag: 8e5690d6-92ca-4d96-b4b8-cd62793781a3
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Invoiced + Open Quantity – Selected Period' = ```
+			
+			VAR StartDate =
+			    [BaseMonthStart]
+			VAR EndDate =
+			    [BaseMonthEnd]
+			
+			-- Only this month's invoiced amount (by invoice date)
+			VAR ClosedAmtSelectedPeriod =
+			    CALCULATE (
+			        SUM ( Fact_Sales[Quantity_LBs] ),
+			        Fact_Sales[SalesLine_Status] = "Invoiced",
+			        USERELATIONSHIP (
+			            Fact_Sales[InvoiceDateKey],
+			            Dim_Date[DateKey]
+			        ),
+			        FILTER (
+			            ALL ( Dim_Date ),
+			            Dim_Date[Date] >= StartDate &&
+			            Dim_Date[Date] <= EndDate
+			        )
+			    )
+			
+			-- Open amount for all orders with requested ship date up to *end* of month
+			VAR OpenAmtUpToPeriod_ReqShip =
+			    CALCULATE (
+			        SUM ( Fact_Sales[Quantity_LBs] ),
+			        Fact_Sales[SalesLine_Status] = "Open",
+			        USERELATIONSHIP (
+			            Fact_Sales[SalesLine_ShipDateKey],
+			            Dim_Date[DateKey]
+			        ),
+			        FILTER (
+			            ALL ( Dim_Date ),
+			            Dim_Date[Date] <= EndDate        -- cumulative up to the end of the selected month
+			        )
+			    )
+			
+			RETURN
+			    ClosedAmtSelectedPeriod + OpenAmtUpToPeriod_ReqShip
+			
+			```
+		lineageTag: 81dcf938-0737-4969-963a-168b75a2cd31
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Invoiced Amount – Selected Period' = ```
+			
+			
+			VAR StartDate = [BaseMonthStart]
+			VAR EndDate   = [BaseMonthEnd]
+			VAR MonthDates =
+			    FILTER (
+			        ALL ( Dim_Date ),
+			        Dim_Date[Date] >= StartDate &&
+			        Dim_Date[Date] <= EndDate
+			    )
+			RETURN
+			CALCULATE (
+			    SUM ( Fact_Sales[Amount] ),
+			    Fact_Sales[SalesLine_Status] = "Invoiced",
+			    USERELATIONSHIP (
+			            Fact_Sales[InvoiceDateKey],
+			            Dim_Date[DateKey]
+			        ),
+			    MonthDates
+			)
+			
+			```
+		lineageTag: 6d3878a8-18ef-443e-bd38-2d99aab4604f
+
+		changedProperty = Name
+
+	measure 'Invoiced Quantity – Selected Period' = ```
+			
+			
+			VAR StartDate = [BaseMonthStart]
+			VAR EndDate   = [BaseMonthEnd]
+			VAR MonthDates =
+			    FILTER (
+			        ALL ( Dim_Date ),
+			        Dim_Date[Date] >= StartDate &&
+			        Dim_Date[Date] <= EndDate
+			    )
+			RETURN
+			CALCULATE (
+			    SUM ( Fact_Sales[Quantity_LBs] ),
+			    Fact_Sales[SalesLine_Status] = "Invoiced",
+			    USERELATIONSHIP (
+			            Fact_Sales[InvoiceDateKey],
+			            Dim_Date[DateKey]
+			        ),
+			    MonthDates
+			)
+			
+			```
+		lineageTag: d158f8d3-d732-40b5-b753-dc1378400a72
+
+		changedProperty = Name
+
+	measure SalesAmountCard =
+			
+			COALESCE (
+			    SUM ( Fact_Sales[Amount] ),
+			    0
+			)
+		lineageTag: 66b377d0-1330-4b2f-8801-cb9155803caa
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - Revenue rolling average' = ```
+			
+			
+			VAR LastEOM =
+			    EOMONTH ( MAX ( 'Dim_Date'[Date] ), 0 )          -- last day of current context month
+			
+			VAR StartDate =
+			    EOMONTH ( LastEOM, -12 ) + 1                     -- first day 12 months earlier
+			
+			-- 12‑month window ending at LastEOM, ignoring current row context
+			VAR Period =
+			    CALCULATETABLE (
+			        DATESBETWEEN ( 'Dim_Date'[Date], StartDate, LastEOM ),
+			        ALL ( 'Dim_Date' )
+			    )
+			
+			VAR Total12M =
+			    CALCULATE (
+			        SUM ( 'Fact_Sales'[Amount] ),
+			        USERELATIONSHIP (
+			            'Fact_Sales'[InvoiceDateKey],
+			            'Dim_Date'[DateKey]
+			        ),
+			        Period
+			    )
+			
+			VAR MonthsInWindow =
+			    CALCULATE (
+			        DISTINCTCOUNT ( 'Dim_Date'[MonthStartDate] ),
+			        Period
+			    )
+			
+			RETURN
+			DIVIDE ( Total12M, MonthsInWindow )
+			
+			```
+		lineageTag: bc676fe9-2484-4804-a365-c9822bdeb373
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - Invoiced Amount' =
+			
+			CALCULATE (
+			    SUM ( Fact_Sales[Amount] ),
+			    Fact_Sales[SalesLine_Status] = "Invoiced",
+			    USERELATIONSHIP (
+			            Fact_Sales[InvoiceDateKey],
+			            Dim_Date[DateKey]
+			        ))
+		lineageTag: 80321764-c7a8-499b-bdea-34f076a42c69
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - Revenue running total in FISCAL Day' =
+			
+			VAR AsOfDate =
+			    TODAY()   -- use the same as-of date logic as your cards if different
+			VAR CurrFY =
+			    CALCULATE (
+			        MAX ( Dim_Date[FiscalYear] ),
+			        FILTER ( ALL ( Dim_Date ), Dim_Date[Date] = AsOfDate )
+			    )
+			VAR CurrPeriod =
+			    CALCULATE (
+			        MAX ( Dim_Date[FiscalPeriodNum] ),
+			        FILTER ( ALL ( Dim_Date ), Dim_Date[Date] = AsOfDate )
+			    )
+			VAR CurrDay =
+			    CALCULATE (
+			        MAX ( Dim_Date[FiscalDayNum] ),
+			        FILTER ( ALL ( Dim_Date ), Dim_Date[Date] = AsOfDate )
+			    )
+			VAR AxisFY =
+			    SELECTEDVALUE ( Dim_Date[FiscalYear] )
+			VAR AxisPeriod =
+			    MAX ( Dim_Date[FiscalPeriodNum] )
+			VAR PeriodEndDay =
+			    CALCULATE (
+			        MAX ( Dim_Date[FiscalDayNum] ),
+			        FILTER (
+			            ALL ( Dim_Date ),
+			            Dim_Date[FiscalYear] = AxisFY
+			                && Dim_Date[FiscalPeriodNum] = AxisPeriod
+			        )
+			    )
+			VAR CutoffDay =
+			    SWITCH (
+			        TRUE (),
+			        AxisFY = CurrFY && AxisPeriod >= CurrPeriod, CurrDay,   -- keep current year flat after current point
+			        AxisPeriod = CurrPeriod, CurrDay,                       -- align prior years at current period
+			        PeriodEndDay                                            -- full period otherwise
+			    )
+			RETURN
+			CALCULATE (
+			    [360 - Invoiced Amount],
+			    FILTER (
+			        ALL ( Dim_Date ),
+			        Dim_Date[FiscalYear] = AxisFY
+			            && Dim_Date[FiscalDayNum] <= CutoffDay
+			    )
+			)
+		lineageTag: fc667e2f-4e09-405c-9a8f-afe32774cbdc
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - Volume running total in FISCAL Day' =
+			
+			VAR AsOfDate =
+			    TODAY()   -- use the same as-of date logic as your cards if different
+			VAR CurrFY =
+			    CALCULATE (
+			        MAX ( Dim_Date[FiscalYear] ),
+			        FILTER ( ALL ( Dim_Date ), Dim_Date[Date] = AsOfDate )
+			    )
+			VAR CurrPeriod =
+			    CALCULATE (
+			        MAX ( Dim_Date[FiscalPeriodNum] ),
+			        FILTER ( ALL ( Dim_Date ), Dim_Date[Date] = AsOfDate )
+			    )
+			VAR CurrDay =
+			    CALCULATE (
+			        MAX ( Dim_Date[FiscalDayNum] ),
+			        FILTER ( ALL ( Dim_Date ), Dim_Date[Date] = AsOfDate )
+			    )
+			VAR AxisFY =
+			    SELECTEDVALUE ( Dim_Date[FiscalYear] )
+			VAR AxisPeriod =
+			    MAX ( Dim_Date[FiscalPeriodNum] )
+			VAR PeriodEndDay =
+			    CALCULATE (
+			        MAX ( Dim_Date[FiscalDayNum] ),
+			        FILTER (
+			            ALL ( Dim_Date ),
+			            Dim_Date[FiscalYear] = AxisFY
+			                && Dim_Date[FiscalPeriodNum] = AxisPeriod
+			        )
+			    )
+			VAR CutoffDay =
+			    SWITCH (
+			        TRUE (),
+			        AxisFY = CurrFY && AxisPeriod >= CurrPeriod, CurrDay,   -- keep current year flat after current point
+			        AxisPeriod = CurrPeriod, CurrDay,                       -- align prior years at current period
+			        PeriodEndDay                                            -- full period otherwise
+			    )
+			RETURN
+			CALCULATE (
+			    [360 - Invoiced Quantity],
+			    FILTER (
+			        ALL ( Dim_Date ),
+			        Dim_Date[FiscalYear] = AxisFY
+			            && Dim_Date[FiscalDayNum] <= CutoffDay
+			    )
+			)
+		lineageTag: d5eef4f4-4d92-49e0-b078-0b09c20cd63c
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - RangeVolume' =
+			
+			MAXX(
+			    VALUES (Dim_Date[MonthStartDate]), [360 - Volume running total in FISCAL Period]
+			)
+		lineageTag: 1b289a14-0954-4651-b501-4835b4e39102
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - RangeRevenue' =
+			
+			MAXX(
+			    VALUES (Dim_Date[MonthStartDate]), [360 - Revenue running total in FISCAL Period]
+			)
+		lineageTag: 1e1d4765-3530-4265-a4e6-4b2185cae26f
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - Volume rolling average' = ```
+			
+			
+			VAR LastEOM =
+			    EOMONTH ( MAX ( 'Dim_Date'[Date] ), 0 )          -- last day of current context month
+			
+			VAR StartDate =
+			    EOMONTH ( LastEOM, -12 ) + 1                     -- first day 12 months earlier
+			
+			-- 12‑month window ending at LastEOM, ignoring current row context
+			VAR Period =
+			    CALCULATETABLE (
+			        DATESBETWEEN ( 'Dim_Date'[Date], StartDate, LastEOM ),
+			        ALL ( 'Dim_Date' )
+			    )
+			
+			VAR Total12M =
+			    CALCULATE (
+			        SUM ( 'Fact_Sales'[Quantity_LBs] ),
+			        USERELATIONSHIP (
+			            'Fact_Sales'[InvoiceDateKey],
+			            'Dim_Date'[DateKey]
+			        ),
+			        Period
+			    )
+			
+			VAR MonthsInWindow =
+			    CALCULATE (
+			        DISTINCTCOUNT ( 'Dim_Date'[MonthStartDate] ),
+			        Period
+			    )
+			
+			RETURN
+			DIVIDE ( Total12M, MonthsInWindow )
+			
+			```
+		lineageTag: 91499962-954d-44bb-bda4-453d5dd7457b
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - Invoiced Quantity' =
+			
+			
+			
+			CALCULATE (
+			    SUM ( Fact_Sales[Quantity_LBs] ),
+			    Fact_Sales[SalesLine_Status] = "Invoiced",
+			    USERELATIONSHIP (
+			            Fact_Sales[InvoiceDateKey],
+			            Dim_Date[DateKey]
+			        ))
+		lineageTag: 8a3a7fb2-393a-4d35-b49d-3a6722fd7b82
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - CYTD Revenue' =
+			
+			VAR AsOfDate = TODAY()
+			VAR CurrFY =
+			    CALCULATE (
+			        MAX ( Dim_Date[FiscalYear] ),
+			        FILTER ( ALL ( Dim_Date ), Dim_Date[Date] = AsOfDate )
+			    )
+			VAR CurrDay =
+			    CALCULATE (
+			        MAX ( Dim_Date[FiscalDayNum] ),
+			        FILTER ( ALL ( Dim_Date ), Dim_Date[Date] = AsOfDate )
+			    )
+			RETURN
+			CALCULATE (
+			    SUM ( Fact_Sales[Amount] ),
+			    Fact_Sales[SalesLine_Status] = "Invoiced",
+			    USERELATIONSHIP ( Fact_Sales[InvoiceDateKey], Dim_Date[DateKey] ),
+			    FILTER (
+			        ALL ( Dim_Date ),
+			        Dim_Date[FiscalYear] = CurrFY
+			            && Dim_Date[FiscalDayNum] <= CurrDay
+			    )
+			)
+		lineageTag: 2540abfb-0fd5-41fe-bf59-b33468fd7a90
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - CYTD Volume' = ```
+			
+			VAR AsOfDate = TODAY()
+			VAR CurrFY =
+			    CALCULATE (
+			        MAX ( Dim_Date[FiscalYear] ),
+			        FILTER ( ALL ( Dim_Date ), Dim_Date[Date] = AsOfDate )
+			    )
+			VAR CurrDay =
+			    CALCULATE (
+			        MAX ( Dim_Date[FiscalDayNum] ),
+			        FILTER ( ALL ( Dim_Date ), Dim_Date[Date] = AsOfDate )
+			    )
+			RETURN
+			CALCULATE (
+			    SUM ( Fact_Sales[Quantity_LBs] ),
+			    Fact_Sales[SalesLine_Status] = "Invoiced",
+			    USERELATIONSHIP ( Fact_Sales[InvoiceDateKey], Dim_Date[DateKey] ),
+			    FILTER (
+			        ALL ( Dim_Date ),
+			        Dim_Date[FiscalYear] = CurrFY
+			            && Dim_Date[FiscalDayNum] <= CurrDay
+			    )
+			)
+			
+			```
+		lineageTag: b5cf23af-1b06-4e54-b237-562d1a46c62f
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - LFYTD Revenue' =
+			
+			VAR AsOfDate = TODAY()
+			VAR CurrFY =
+			    CALCULATE (
+			        MAX ( Dim_Date[FiscalYear] ),
+			        FILTER ( ALL ( Dim_Date ), Dim_Date[Date] = AsOfDate )
+			    )
+			VAR CurrDay =
+			    CALCULATE (
+			        MAX ( Dim_Date[FiscalDayNum] ),
+			        FILTER ( ALL ( Dim_Date ), Dim_Date[Date] = AsOfDate )
+			    )
+			RETURN
+			CALCULATE (
+			    SUM ( Fact_Sales[Amount] ),
+			    Fact_Sales[SalesLine_Status] = "Invoiced",
+			    USERELATIONSHIP ( Fact_Sales[InvoiceDateKey], Dim_Date[DateKey] ),
+			    FILTER (
+			        ALL ( Dim_Date ),
+			        Dim_Date[FiscalYear] = CurrFY - 1
+			            && Dim_Date[FiscalDayNum] <= CurrDay
+			    )
+			)
+		lineageTag: a86afe7b-a3ab-464c-bc82-a62a9b6a9d8d
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - LFYTD Volume' = ```
+			
+			VAR AsOfDate = TODAY()
+			VAR CurrFY =
+			    CALCULATE (
+			        MAX ( Dim_Date[FiscalYear] ),
+			        FILTER ( ALL ( Dim_Date ), Dim_Date[Date] = AsOfDate )
+			    )
+			VAR CurrDay =
+			    CALCULATE (
+			        MAX ( Dim_Date[FiscalDayNum] ),
+			        FILTER ( ALL ( Dim_Date ), Dim_Date[Date] = AsOfDate )
+			    )
+			RETURN
+			CALCULATE (
+			    SUM ( Fact_Sales[Quantity_LBs] ),
+			    Fact_Sales[SalesLine_Status] = "Invoiced",
+			    USERELATIONSHIP ( Fact_Sales[InvoiceDateKey], Dim_Date[DateKey] ),
+			    FILTER (
+			        ALL ( Dim_Date ),
+			        Dim_Date[FiscalYear] = CurrFY - 1
+			            && Dim_Date[FiscalDayNum] <= CurrDay
+			    )
+			)
+			
+			```
+		lineageTag: f1d92f48-b5d8-4922-88dd-aabcdf49b1ad
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - YoY Revenue Diff' = ```
+			
+			[360 - CYTD Revenue] - [360 - LFYTD Revenue]
+			
+			```
+		lineageTag: 77688001-ec3b-49be-ad34-6b0cac641a04
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - YoY Revenue %' =
+			
+			DIVIDE ( [360 - YoY Revenue Diff], [360 - LFYTD Revenue] )
+		lineageTag: 57d999f8-2e78-4558-8f71-6879b175393c
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - YoY Volume Diff' = ```
+			
+			[360 - CYTD Volume] - [360 - LFYTD Volume]
+			
+			```
+		lineageTag: 9b6fdcf4-f362-415c-8362-03ae42113d3b
+
+		changedProperty = Name
+
+	measure '360 - YoY Volume %' = ```
+			
+			DIVIDE ( [360 - YoY Volume Diff], [360 - LFYTD Volume] )
+			
+			```
+		lineageTag: 6ddcff34-2ba0-488a-95d3-7d686904cef3
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - Budget Revenue' = ```
+			
+			VAR CurrFY  = MAX ( Dim_Date[CurrentFiscalYear] )
+			VAR CurrDay = MAX ( Dim_Date[CurrentFiscalDayNum] )
+			RETURN
+			CALCULATE (
+			    SUM ( Fact_Sales[Amount] ),
+			    Fact_Sales[SalesLine_Status] = "Budget 2025",
+			    USERELATIONSHIP ( Fact_Sales[InvoiceDateKey], Dim_Date[DateKey] ),
+			    FILTER (
+			        ALL ( Dim_Date ),
+			        Dim_Date[FiscalYear]   = CurrFY &&
+			        Dim_Date[FiscalDayNum] <= CurrDay
+			    )
+			)
+			
+			```
+		lineageTag: 2462fdf0-239b-4489-bb9f-1d44f6fa38e0
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - Budget Volume' = ```
+			
+			VAR CurrFY  = MAX ( Dim_Date[CurrentFiscalYear] )
+			VAR CurrDay = MAX ( Dim_Date[CurrentFiscalDayNum] )
+			RETURN
+			CALCULATE (
+			    SUM ( Fact_Sales[Quantity_LBs] ),
+			    Fact_Sales[SalesLine_Status] = "Budget 2025",
+			    USERELATIONSHIP ( Fact_Sales[InvoiceDateKey], Dim_Date[DateKey] ),
+			    FILTER (
+			        ALL ( Dim_Date ),
+			        Dim_Date[FiscalYear]   = CurrFY &&
+			        Dim_Date[FiscalDayNum] <= CurrDay
+			    )
+			)
+			
+			```
+		lineageTag: f2615a7d-2e09-4b9a-9e0e-da481822f626
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - Budget Revenue Diff' = ```
+			
+			[360 - CYTD Revenue] - [360 - Budget Revenue]
+			
+			```
+		lineageTag: 60764b50-2f9d-4aa5-9c1a-d99c3257f8a8
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - Budget Volume Diff' = ```
+			
+			[360 - CYTD Volume] - [360 - Budget Volume]
+			
+			```
+		lineageTag: 5e1a4580-7c2e-4d5e-9625-530b0b074c94
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - Budget Revenue %' = ```
+			
+			DIVIDE ( [360 - CYTD Revenue] - [360 - Budget Revenue], [360 - Budget Revenue] )
+			
+			```
+		lineageTag: 16a1ac3a-fc88-461b-93c0-744305365634
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - Budget Volume %' = ```
+			
+			DIVIDE ( [360 - CYTD Volume] - [360 - Budget Volume], [360 - Budget Volume] )
+			
+			```
+		lineageTag: 87300d31-6908-42aa-8ae3-decb7f736994
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - Revenue running total in Month' =
+			
+			
+			CALCULATE(
+				SUM('Fact_Sales'[Amount]),
+			    USERELATIONSHIP (
+			            Fact_Sales[InvoiceDateKey],
+			            Dim_Date[DateKey]
+			        ),
+				FILTER(
+					ALLSELECTED('Dim_Date'[MonthNum]),
+					ISONORAFTER('Dim_Date'[MonthNum], MAX('Dim_Date'[MonthNum]), DESC)
+				)
+			)
+		lineageTag: d893d09f-ff3c-4192-82dd-7c71b0354994
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - Budgeted Amount' = ```
+			
+			
+			
+			CALCULATE (
+			    SUM ( Fact_Sales[Amount] ),
+			
+			    -- use InvoiceDateKey -> Dim_Date[DateKey]
+			    USERELATIONSHIP (
+			        Fact_Sales[InvoiceDateKey],
+			        Dim_Date[DateKey]
+			    ),
+			
+			    -- only rows where SalesLine_Status contains "Budget"
+			    FILTER (
+			        ALL ( Fact_Sales[SalesLine_Status] ),
+			        CONTAINSSTRING ( Fact_Sales[SalesLine_Status], "Budget" )
+			    )
+			)
+			
+			```
+		lineageTag: ebdb11bf-cd53-4778-a2a9-6d12c391b586
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - Budgeted Volume' = ```
+			
+			
+			
+			CALCULATE (
+			    SUM ( Fact_Sales[Quantity_LBs] ),
+			
+			    -- use InvoiceDateKey -> Dim_Date[DateKey]
+			    USERELATIONSHIP (
+			        Fact_Sales[InvoiceDateKey],
+			        Dim_Date[DateKey]
+			    ),
+			
+			    -- only rows where SalesLine_Status contains "Budget"
+			    FILTER (
+			        ALL ( Fact_Sales[SalesLine_Status] ),
+			        CONTAINSSTRING ( Fact_Sales[SalesLine_Status], "Budget" )
+			    )
+			)
+			
+			```
+		lineageTag: 8c2e881b-2168-4db7-9ef0-5aee076dc8b4
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Is Confirmed Open Order' = ```
+			
+			VAR EndDate  = [BaseMonthEnd]
+			VAR NullDate = DATE ( 2025, 10, 1 )
+			
+			VAR ConfirmedRows =
+			    CALCULATE (
+			        COUNTROWS ( Fact_Sales ),
+			        Fact_Sales[SalesLine_Status] = "Open",
+			        USERELATIONSHIP ( Fact_Sales[SalesLine_ShipDateKey], Dim_Date[DateKey] ),
+			        FILTER (
+			            ALL ( Dim_Date ),
+			            Dim_Date[Date] >= NullDate
+			                && Dim_Date[Date] <= EndDate
+			        )
+			    )
+			RETURN
+			IF ( ConfirmedRows > 0, 1, BLANK () )
+			
+			```
+		formatString: 0
+		lineageTag: 1ef1eea1-8878-4890-ac43-5805c5ad6883
+
+		changedProperty = Name
+
+	measure 'Total Orders (distinct)' = ```
+			
+			DISTINCTCOUNT ( Fact_Sales[Customer_Order_Number] )
+			
+			```
+		formatString: 0
+		lineageTag: 46849181-e554-48fa-8db0-9331c6c4faae
+
+		changedProperty = Name
+
+	measure 'Is Duplicate PO Different Rep' =
+			
+			IF([Duplicate Rep Count by Customer PO] > 1, 1, 0)
+		formatString: 0
+		lineageTag: 4ea6225d-aed6-4537-a4f0-baf333cc5634
+
+		changedProperty = Name
+
+	measure '360 - Revenue running total in FISCAL Period' = ```
+			
+			CALCULATE( 
+			    SUM('Fact_Sales'[Amount]), 
+			    USERELATIONSHIP ( 
+			        Fact_Sales[InvoiceDateKey], 
+			        Dim_Date[DateKey] 
+			    ), 
+			FILTER( 
+			    ALLSELECTED('Dim_Date'[FiscalPeriodNum]), 
+			    ISONORAFTER('Dim_Date'[FiscalPeriodNum], 
+			MAX('Dim_Date'[FiscalPeriodNum]), DESC) 
+			   ) 
+			)
+			```
+		lineageTag: 1c77ca74-dfb6-4a56-9ae7-9a2343f96484
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '360 - Volume running total in FISCAL Period' = ```
+			
+			CALCULATE( 
+			    SUM('Fact_Sales'[Quantity_LBs]), 
+			    USERELATIONSHIP ( 
+			        Fact_Sales[InvoiceDateKey], 
+			        Dim_Date[DateKey] 
+			    ), 
+			FILTER( 
+			    ALLSELECTED('Dim_Date'[FiscalPeriodNum]), 
+			    ISONORAFTER('Dim_Date'[FiscalPeriodNum], 
+			MAX('Dim_Date'[FiscalPeriodNum]), DESC) 
+			   ) 
+			)
+			```
+		lineageTag: 69cf8193-8531-4748-a56d-a0499a7524dd
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Last Order Date' =
+			
+			LASTNONBLANK (
+			    Dim_Date[Date],
+			    [SalesAmount]
+			)
+		formatString: General Date
+		lineageTag: a674a812-a3cd-44d0-80db-6e2b831207b3
+
+		changedProperty = Name
+
+	measure 'Last Purchase DateKey' =
+			
+			VAR _Grain =
+			    [Customer Selection Grain]
+			RETURN
+			    IF (
+			        _Grain = "None",
+			        BLANK (),
+			        CALCULATE (
+			            MAX ( 'Fact_Sales'[OrderDateKey] ),
+			            KEEPFILTERS ( 'Fact_Sales'[Quantity_LBs] <> 0 )
+			        )
+			    )
+		formatString: 0
+		lineageTag: fe0065f7-688c-4119-a720-e2ddf0b0d555
+
+		changedProperty = Name
+
+	column RecordID
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: c3eec498-3250-4ced-a740-8db822059354
+		sourceLineageTag: RecordID
+		summarizeBy: none
+		sourceColumn: RecordID
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column CMPNY
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 69fb2a9a-3790-47c4-a80d-07dc909a581a
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesLine_Status
+		dataType: string
+		sourceProviderType: varchar(9)
+		lineageTag: adeb4c3d-09c2-494f-ab96-d61e45681f61
+		sourceLineageTag: SalesLine_Status
+		summarizeBy: none
+		sourceColumn: SalesLine_Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column DATE
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: bc2aa373-dd1a-4cbd-904f-a8f5e79a6088
+		sourceLineageTag: DATE
+		summarizeBy: none
+		sourceColumn: DATE
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column DATEKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: aa995f7f-c4f0-43e1-9e9b-ac3d38b09f7f
+		sourceLineageTag: DATEKey
+		summarizeBy: none
+		sourceColumn: DATEKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column OrderDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 6ce9699e-4a8b-4896-9e80-ae8d0f2a03c2
+		sourceLineageTag: OrderDate
+		summarizeBy: none
+		sourceColumn: OrderDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column OrderDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 1e92daf2-3186-4cce-99b3-0c0c2f20e186
+		sourceLineageTag: OrderDateKey
+		summarizeBy: none
+		sourceColumn: OrderDateKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesLine_RequestedShipDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 53edfbdd-ba85-493c-93eb-240d9400a9d6
+		sourceLineageTag: SalesLine_RequestedShipDate
+		summarizeBy: none
+		sourceColumn: SalesLine_RequestedShipDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesLine_RequestedShipDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 0e3afb23-9e4a-4e32-bc78-f7059460fcec
+		sourceLineageTag: SalesLine_RequestedShipDateKey
+		summarizeBy: none
+		sourceColumn: SalesLine_RequestedShipDateKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column SalesLine_ShipDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: e1d66170-b469-4cc5-a8ec-843ecf53a063
+		sourceLineageTag: SalesLine_ShipDate
+		summarizeBy: none
+		sourceColumn: SalesLine_ShipDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesLine_ShipDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 9ee8916e-3e8b-4b63-a461-047457fefef3
+		sourceLineageTag: SalesLine_ShipDateKey
+		summarizeBy: none
+		sourceColumn: SalesLine_ShipDateKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column InvoiceDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 310ed588-82a1-4d48-97b3-d0f942499292
+		sourceLineageTag: InvoiceDate
+		summarizeBy: none
+		sourceColumn: InvoiceDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column InvoiceDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: da7987c4-4eff-4e63-9116-b799ce671c51
+		sourceLineageTag: InvoiceDateKey
+		summarizeBy: none
+		sourceColumn: InvoiceDateKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column Legal_Entity_ID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 861d1d33-8ee6-423b-bba1-9d72eca580af
+		sourceLineageTag: Legal_Entity_ID
+		summarizeBy: none
+		sourceColumn: Legal_Entity_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: a8a61a2b-59a0-4bbb-a8cf-6abddbb45252
+		sourceLineageTag: CustomerID
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column InvoiceAccount
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 1387c879-1611-4f70-80f9-6dd8548d0ad9
+		sourceLineageTag: InvoiceAccount
+		summarizeBy: none
+		sourceColumn: InvoiceAccount
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 9f26a99e-ce86-47fa-9f15-b1693ce32bc2
+		sourceLineageTag: ProductID
+		summarizeBy: none
+		sourceColumn: ProductID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CPCID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: b76f3b14-4455-47b3-9205-04839162ab02
+		sourceLineageTag: CPCID
+		summarizeBy: none
+		sourceColumn: CPCID
+
+		annotation SummarizationSetBy = Automatic
+
+	column InvoiceNo
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: ea0dc741-917e-472c-808c-fbd193347642
+		sourceLineageTag: InvoiceNo
+		summarizeBy: none
+		sourceColumn: InvoiceNo
+
+		annotation SummarizationSetBy = Automatic
+
+	column Customer_Order_Number
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 2aa5cd54-1ebe-417d-8603-75be98644906
+		sourceLineageTag: Customer_Order_Number
+		summarizeBy: none
+		sourceColumn: Customer_Order_Number
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantity
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 8c432fca-c17a-4ebb-a5b8-e5c3178f4909
+		sourceLineageTag: Quantity
+		summarizeBy: none
+		sourceColumn: Quantity
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column Quantity_UoM
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 6e979bd2-df9e-49d1-8543-d0c41abf4646
+		sourceLineageTag: Quantity_UoM
+		summarizeBy: none
+		sourceColumn: Quantity_UoM
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantity_LBs
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 14780553-63cf-4388-9f77-d5dd72990d55
+		sourceLineageTag: Quantity_LBs
+		summarizeBy: none
+		sourceColumn: Quantity_LBs
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column Volume
+		dataType: double
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 875b91db-4b82-4ac8-a42e-90fc69602878
+		sourceLineageTag: Volume
+		summarizeBy: none
+		sourceColumn: Volume
+
+		changedProperty = FormatString
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column Volume_UoM
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: fffb162c-cc8d-4299-93d1-96ac2189feed
+		sourceLineageTag: Volume_UoM
+		summarizeBy: none
+		sourceColumn: Volume_UoM
+
+		annotation SummarizationSetBy = Automatic
+
+	column Price
+		dataType: double
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 8d50a658-8cb5-414b-910b-b895d7103ea1
+		sourceLineageTag: Price
+		summarizeBy: none
+		sourceColumn: Price
+
+		changedProperty = FormatString
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column Currency
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: eadeaaad-9804-4659-91f2-d46eaa391f42
+		sourceLineageTag: Currency
+		summarizeBy: none
+		sourceColumn: Currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column Amount
+		dataType: double
+		isHidden
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 9bbc992a-10c7-4444-90d8-2dc5170f5443
+		sourceLineageTag: Amount
+		summarizeBy: none
+		sourceColumn: Amount
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column Amount_Currency
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 654803e8-4a23-48a5-88e1-39451e905a30
+		sourceLineageTag: Amount_Currency
+		summarizeBy: none
+		sourceColumn: Amount_Currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column Returned_Quantity
+		dataType: double
+		isHidden
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 08370bbe-0b01-403f-9a9a-c07bbb998c47
+		sourceLineageTag: Returned_Quantity
+		summarizeBy: none
+		sourceColumn: Returned_Quantity
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column Returned_Amount
+		dataType: double
+		isHidden
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		sourceProviderType: decimal(38, 6)
+		lineageTag: f45514c5-e167-45f3-9e72-750a15d7af2f
+		sourceLineageTag: Returned_Amount
+		summarizeBy: none
+		sourceColumn: Returned_Amount
+
+		changedProperty = FormatString
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column Source
+		dataType: string
+		sourceProviderType: varchar(6)
+		lineageTag: 74a61682-600c-4396-8d12-206884d8364b
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column HistoricCustomerKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: e254c887-deab-4006-a1ed-5983382ae2ee
+		sourceLineageTag: HistoricCustomerKey
+		summarizeBy: none
+		sourceColumn: HistoricCustomerKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column CustomerKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 8c230e7e-83b2-42ea-9078-da856928ae38
+		sourceLineageTag: CustomerKey
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column HistoricProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 1a9b9b87-ddba-4143-9c09-18b18657e2d5
+		sourceLineageTag: HistoricProductKey
+		summarizeBy: none
+		sourceColumn: HistoricProductKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column ProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 99b0b610-0675-4283-ad91-2fc7d97e747b
+		sourceLineageTag: ProductKey
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column StandardCostKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: dae21300-7f2e-4417-ba55-9d6b18117e57
+		sourceLineageTag: StandardCostKey
+		summarizeBy: none
+		sourceColumn: StandardCostKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 8d465b6d-cd57-49e8-b788-b5bd1b955711
+		sourceLineageTag: Legal_EntityKey
+		summarizeBy: none
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SiteKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: a97483a8-6c54-439c-be87-28575aed0a8b
+		sourceLineageTag: SiteKey
+		summarizeBy: none
+		sourceColumn: SiteKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesLine_EmployeeKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 733c849b-df12-4a18-a4de-fe7432ebb9c6
+		sourceLineageTag: SalesLine_EmployeeKey
+		summarizeBy: none
+		sourceColumn: SalesLine_EmployeeKey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column CustAcct_EmployeeKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: b7ae1a81-93ee-4285-9d13-6ba341d886bf
+		sourceLineageTag: CustAcct_EmployeeKey
+		summarizeBy: none
+		sourceColumn: CustAcct_EmployeeKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Customer_Salesman_ID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 99178955-e915-4df3-a81a-c196ecd31ee6
+		sourceLineageTag: Customer_Salesman_ID
+		summarizeBy: none
+		sourceColumn: Customer_Salesman_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesLine_Salesman_ID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 006ffc36-630e-4edf-bf8a-f3ee568bc204
+		sourceLineageTag: SalesLine_Salesman_ID
+		summarizeBy: none
+		sourceColumn: SalesLine_Salesman_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column WarehouseKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: a95bc421-b3c3-4b1c-a7e3-5b6579ba843d
+		sourceLineageTag: WarehouseKey
+		summarizeBy: none
+		sourceColumn: WarehouseKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesLine_DeliveryDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 39891bf7-cc10-4e62-b08e-218d4fb3fd2a
+		sourceLineageTag: SalesLine_DeliveryDate
+		summarizeBy: none
+		sourceColumn: SalesLine_DeliveryDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesLine_DeliveryDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 2160a5fc-d2a4-45e4-bd10-c457880ab5e0
+		sourceLineageTag: SalesLine_DeliveryDateKey
+		summarizeBy: none
+		sourceColumn: SalesLine_DeliveryDateKey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column OnHold
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 758a6446-cc8c-43fe-8c0f-a34249eaa959
+		sourceLineageTag: OnHold
+		summarizeBy: sum
+		sourceColumn: OnHold
+
+		annotation SummarizationSetBy = Automatic
+
+	column OrderOnHold
+		dataType: string
+		sourceProviderType: varchar(10)
+		lineageTag: 75bf91e7-1eaa-4e38-b514-e271045ad80a
+		sourceLineageTag: OrderOnHold
+		summarizeBy: none
+		sourceColumn: OrderOnHold
+
+		annotation SummarizationSetBy = Automatic
+
+	column HoldCode
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 0770e8f9-9431-433a-a804-1187b24da3bf
+		sourceLineageTag: HoldCode
+		summarizeBy: none
+		sourceColumn: HoldCode
+
+		annotation SummarizationSetBy = Automatic
+
+	column HoldReasonCode
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 07a88a54-c713-442d-a826-b91a9a0b0ec8
+		sourceLineageTag: HoldReasonCode
+		summarizeBy: none
+		sourceColumn: HoldReasonCode
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesOrderLineNumber
+		dataType: double
+		sourceProviderType: decimal(38, 16)
+		lineageTag: 0ade0ec1-2431-431d-b34c-d786a887f7c6
+		sourceLineageTag: SalesOrderLineNumber
+		summarizeBy: none
+		sourceColumn: SalesOrderLineNumber
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SalesLineCreatedDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 7812f24e-64c1-401d-966a-85d95ed60a16
+		sourceLineageTag: SalesLineCreatedDate
+		summarizeBy: none
+		sourceColumn: SalesLineCreatedDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesLineCreatedDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 2b0dc7f5-d8b1-437e-97ef-cf260f26d523
+		sourceLineageTag: SalesLineCreatedDateKey
+		summarizeBy: none
+		sourceColumn: SalesLineCreatedDateKey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column MarketSegmentationKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: f3f3970c-68e1-4671-a97f-36a1e7138181
+		sourceLineageTag: MarketSegmentationKey
+		summarizeBy: none
+		sourceColumn: MarketSegmentationKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column SalesTaker_EmployeeKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 65035fd3-da8d-41df-bc52-f370a4e00c93
+		sourceLineageTag: SalesTaker_EmployeeKey
+		summarizeBy: none
+		sourceColumn: SalesTaker_EmployeeKey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column PurchaseOrderFormNumber
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: f7e53064-d59c-4f70-9558-686344a356d6
+		sourceLineageTag: PurchaseOrderFormNumber
+		summarizeBy: none
+		sourceColumn: PurchaseOrderFormNumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesOrderKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: e30432c1-6c16-42db-b004-b17522030845
+		sourceLineageTag: SalesOrderKey
+		summarizeBy: count
+		sourceColumn: SalesOrderKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column DeliveryAddressKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: dbf47d35-3e40-48c9-a854-533d09d56167
+		sourceLineageTag: DeliveryAddressKey
+		summarizeBy: none
+		sourceColumn: DeliveryAddressKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_Sales = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Fact_Sales
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

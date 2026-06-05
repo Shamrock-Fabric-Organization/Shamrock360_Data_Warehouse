@@ -1,0 +1,2437 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "Copy",
+        "typeProperties": {
+          "source": {
+            "type": "AzureSqlSource",
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00",
+            "datasetSettings": {
+              "type": "AzureSqlTable",
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_DIM_Accounts",
+                "database": "Apollo_Cloud360"
+              },
+              "schema": [],
+              "externalReferences": {
+                "connection": "8a10d7b0-9383-4d94-95ef-53baeb12d6ad"
+              },
+              "annotations": []
+            }
+          },
+          "sink": {
+            "type": "DataWarehouseSink",
+            "tableOption": "autoCreate",
+            "preCopyScript": "Truncate table dbo.tbl_DIM_Accounts",
+            "allowCopyCommand": true,
+            "copyCommandSettings": {},
+            "disableMetricsCollection": false,
+            "datasetSettings": {
+              "type": "DataWarehouseTable",
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_DIM_Accounts"
+              },
+              "schema": [],
+              "linkedService": {
+                "name": "WH_Curated",
+                "properties": {
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "artifactId": "e80cf5d2-f264-ac00-472b-838f66bd9948",
+                    "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000"
+                  },
+                  "annotations": []
+                }
+              },
+              "annotations": []
+            }
+          },
+          "translator": {
+            "type": "TabularTranslator",
+            "mappings": [
+              {
+                "source": {
+                  "name": "RECID",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "RECID",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "CustomerID",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "CustomerID",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "GMAccountno",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "20"
+                },
+                "sink": {
+                  "name": "GMAccountno",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "GMRecid",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "GMRecid",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "CustomerNo",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "CustomerNo",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "ShipToNo",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "ShipToNo",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "NationalOrgID",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "NationalOrgID",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "RegionalOrgID",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "RegionalOrgID",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "GlobalOrgID",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "GlobalOrgID",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Source",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Source",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "CustomerName",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "CustomerName",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Address1",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Address1",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Address2",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Address2",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Address3",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Address3",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Address4",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Address4",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "City",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "City",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "State",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "State",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "ZIP",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "ZIP",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Country",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Country",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Contact",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Contact",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Phone",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Phone",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Fax",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Fax",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Salesman",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Salesman",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Salesman No",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Salesman No",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Sales Channel",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Sales Channel",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Bus Unit",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Bus Unit",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Industry",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Industry",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Industry Mgr",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Industry Mgr",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Mkt Mgr",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Mkt Mgr",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Application",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Application",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "CMPNY",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "CMPNY",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Obsoleted",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Obsoleted",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "ShipToType",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "ShipToType",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "LocationName",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "LocationName",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Location Type",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Location Type",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "NationalName",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "NationalName",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "RegionalName",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "RegionalName",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "GlobalName",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "GlobalName",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "EffectiveSalesman",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "EffectiveSalesman",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "EffectiveCountry",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "EffectiveCountry",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Tier",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Tier",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Contact Type",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Contact Type",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Longitude",
+                  "type": "Double",
+                  "physicalType": "float"
+                },
+                "sink": {
+                  "name": "Longitude",
+                  "physicalType": "float"
+                }
+              },
+              {
+                "source": {
+                  "name": "Latitude",
+                  "type": "Double",
+                  "physicalType": "float"
+                },
+                "sink": {
+                  "name": "Latitude",
+                  "physicalType": "float"
+                }
+              },
+              {
+                "source": {
+                  "name": "GMOwnership",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "GMOwnership",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "RecordCurtainingLevel",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "RecordCurtainingLevel",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "RowStatus",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "RowStatus",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "RowChangeReason",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "RowChangeReason",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "InitialLoadSystem",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "InitialLoadSystem",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "LastChangeSystem",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "LastChangeSystem",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "RecordEffectiveStartDate",
+                  "type": "DateTime",
+                  "physicalType": "datetime"
+                },
+                "sink": {
+                  "name": "RecordEffectiveStartDate",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "RecordEffectiveEndDate",
+                  "type": "DateTime",
+                  "physicalType": "datetime"
+                },
+                "sink": {
+                  "name": "RecordEffectiveEndDate",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "RecordStatus",
+                  "type": "String",
+                  "physicalType": "nchar",
+                  "length": "20"
+                },
+                "sink": {
+                  "name": "RecordStatus",
+                  "physicalType": "char",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "ACC_SID",
+                  "type": "Int32",
+                  "physicalType": "int"
+                },
+                "sink": {
+                  "name": "ACC_SID",
+                  "physicalType": "int"
+                }
+              }
+            ],
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          },
+          "enableStaging": true
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "tbl_DIM_ACCOUNTS",
+        "description": "Copy GMSM DIM_Accounts to D365",
+        "dependsOn": [
+          {
+            "activity": "tbl_DIM_Opportunity_Header",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Office365Outlook",
+        "typeProperties": {
+          "inputs": {
+            "body": {
+              "To": "drausch@shamrocktechnologies.com; jcorby@shamrocktechnologies.com; kyoung@shamrocktechnologies.com",
+              "Subject": "Fabric GMSM daily pipeline has completed successfully.",
+              "Body": "<p>Fabric daily loads for  GMSM tables has completed successfully.</p>\n<p>-Tech Support</p>\n<p><br></p>",
+              "Sensitivity": "",
+              "Importance": "Normal"
+            },
+            "method": "post",
+            "path": "/v2/Mail"
+          }
+        },
+        "name": "Office 365 Outlook1",
+        "dependsOn": [
+          {
+            "activity": "tbl_DIM_ACCOUNTS",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Copy",
+        "typeProperties": {
+          "source": {
+            "type": "SqlServerSource",
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00",
+            "datasetSettings": {
+              "type": "SqlServerTable",
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_Opportunity_Header",
+                "database": "Apollo_Cloud360"
+              },
+              "schema": [],
+              "externalReferences": {
+                "connection": "8a10d7b0-9383-4d94-95ef-53baeb12d6ad"
+              },
+              "annotations": []
+            }
+          },
+          "sink": {
+            "type": "DataWarehouseSink",
+            "tableOption": "autoCreate",
+            "preCopyScript": "Truncate table dbo.tbl_DIM_Opportunity_Header",
+            "allowCopyCommand": true,
+            "copyCommandSettings": {},
+            "disableMetricsCollection": false,
+            "datasetSettings": {
+              "type": "DataWarehouseTable",
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_DIM_Opportunity_Header"
+              },
+              "schema": [],
+              "linkedService": {
+                "name": "WH_Curated",
+                "properties": {
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "artifactId": "e80cf5d2-f264-ac00-472b-838f66bd9948",
+                    "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000"
+                  },
+                  "annotations": []
+                }
+              },
+              "annotations": []
+            }
+          },
+          "translator": {
+            "type": "TabularTranslator",
+            "mappings": [
+              {
+                "source": {
+                  "name": "Salesman",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "255"
+                },
+                "sink": {
+                  "name": "Salesman",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Customer",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "255"
+                },
+                "sink": {
+                  "name": "Customer",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "StartDate",
+                  "type": "DateTime",
+                  "physicalType": "datetime"
+                },
+                "sink": {
+                  "name": "StartDate",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "CloseByDate",
+                  "type": "DateTime",
+                  "physicalType": "datetime"
+                },
+                "sink": {
+                  "name": "CloseByDate",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "ActualCloseDate",
+                  "type": "DateTime",
+                  "physicalType": "datetime"
+                },
+                "sink": {
+                  "name": "ActualCloseDate",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "OpportunityName",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "255"
+                },
+                "sink": {
+                  "name": "OpportunityName",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Status",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "255"
+                },
+                "sink": {
+                  "name": "Status",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "CYCLE",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "255"
+                },
+                "sink": {
+                  "name": "CYCLE",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Stage",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "255"
+                },
+                "sink": {
+                  "name": "Stage",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Source",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "255"
+                },
+                "sink": {
+                  "name": "Source",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Probability",
+                  "type": "Double",
+                  "physicalType": "float"
+                },
+                "sink": {
+                  "name": "Probability",
+                  "physicalType": "float"
+                }
+              },
+              {
+                "source": {
+                  "name": "EstAnnualVolume",
+                  "type": "Double",
+                  "physicalType": "float"
+                },
+                "sink": {
+                  "name": "EstAnnualVolume",
+                  "physicalType": "float"
+                }
+              },
+              {
+                "source": {
+                  "name": "EstAnnualRevenue",
+                  "type": "Double",
+                  "physicalType": "float"
+                },
+                "sink": {
+                  "name": "EstAnnualRevenue",
+                  "physicalType": "float"
+                }
+              },
+              {
+                "source": {
+                  "name": "Product",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "255"
+                },
+                "sink": {
+                  "name": "Product",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "DesiredCharacteristics",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "255"
+                },
+                "sink": {
+                  "name": "DesiredCharacteristics",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "UEAV",
+                  "type": "Double",
+                  "physicalType": "float"
+                },
+                "sink": {
+                  "name": "UEAV",
+                  "physicalType": "float"
+                }
+              },
+              {
+                "source": {
+                  "name": "SpecificApplication",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "255"
+                },
+                "sink": {
+                  "name": "SpecificApplication",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "TargetPrice",
+                  "type": "Double",
+                  "physicalType": "float"
+                },
+                "sink": {
+                  "name": "TargetPrice",
+                  "physicalType": "float"
+                }
+              },
+              {
+                "source": {
+                  "name": "UTSPROJID",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "255"
+                },
+                "sink": {
+                  "name": "UTSPROJID",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "OPID",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "255"
+                },
+                "sink": {
+                  "name": "OPID",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "ACCOUNTNO",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "255"
+                },
+                "sink": {
+                  "name": "ACCOUNTNO",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "RECID",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "255"
+                },
+                "sink": {
+                  "name": "RECID",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              }
+            ],
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          },
+          "enableStaging": true
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "tbl_DIM_Opportunity_Header",
+        "description": "Copy GMSM DIM_Opportunity_Header to D365",
+        "dependsOn": [
+          {
+            "activity": "tbl_crm_activity_cy_copy1",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Copy",
+        "typeProperties": {
+          "source": {
+            "type": "SqlServerSource",
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00",
+            "datasetSettings": {
+              "type": "SqlServerTable",
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_crm_Sample",
+                "database": "Apollo_Cloud360"
+              },
+              "schema": [],
+              "externalReferences": {
+                "connection": "8a10d7b0-9383-4d94-95ef-53baeb12d6ad"
+              },
+              "annotations": []
+            }
+          },
+          "sink": {
+            "type": "DataWarehouseSink",
+            "tableOption": "autoCreate",
+            "preCopyScript": "Truncate table tbl_CRM_Sample;",
+            "allowCopyCommand": true,
+            "copyCommandSettings": {},
+            "disableMetricsCollection": false,
+            "datasetSettings": {
+              "type": "DataWarehouseTable",
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_CRM_Sample"
+              },
+              "schema": [],
+              "linkedService": {
+                "name": "WH_Curated",
+                "properties": {
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "artifactId": "e80cf5d2-f264-ac00-472b-838f66bd9948",
+                    "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000"
+                  },
+                  "annotations": []
+                }
+              },
+              "annotations": []
+            }
+          },
+          "translator": {
+            "type": "TabularTranslator",
+            "mappings": [
+              {
+                "source": {
+                  "name": "RequestDate",
+                  "type": "Date",
+                  "physicalType": "date"
+                },
+                "sink": {
+                  "name": "RequestDate",
+                  "physicalType": "date"
+                }
+              },
+              {
+                "source": {
+                  "name": "Company",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "40"
+                },
+                "sink": {
+                  "name": "Company",
+                  "physicalType": "varchar",
+                  "length": "40"
+                }
+              },
+              {
+                "source": {
+                  "name": "City",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "30"
+                },
+                "sink": {
+                  "name": "City",
+                  "physicalType": "varchar",
+                  "length": "30"
+                }
+              },
+              {
+                "source": {
+                  "name": "State",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "20"
+                },
+                "sink": {
+                  "name": "State",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "Country",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "20"
+                },
+                "sink": {
+                  "name": "Country",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "Region",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "20"
+                },
+                "sink": {
+                  "name": "Region",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "Customer #",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "20"
+                },
+                "sink": {
+                  "name": "Customer #",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "Salesman",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "20"
+                },
+                "sink": {
+                  "name": "Salesman",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "Industry",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "20"
+                },
+                "sink": {
+                  "name": "Industry",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "LocationApplication",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "20"
+                },
+                "sink": {
+                  "name": "LocationApplication",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "Sample Request",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "35"
+                },
+                "sink": {
+                  "name": "Sample Request",
+                  "physicalType": "varchar",
+                  "length": "35"
+                }
+              },
+              {
+                "source": {
+                  "name": "ProductLine",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "20"
+                },
+                "sink": {
+                  "name": "ProductLine",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "Opportunity",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Opportunity",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "OpportunityType",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "80"
+                },
+                "sink": {
+                  "name": "OpportunityType",
+                  "physicalType": "varchar",
+                  "length": "80"
+                }
+              },
+              {
+                "source": {
+                  "name": "Stage",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "40"
+                },
+                "sink": {
+                  "name": "Stage",
+                  "physicalType": "varchar",
+                  "length": "40"
+                }
+              },
+              {
+                "source": {
+                  "name": "EstimatedAnnualVolume",
+                  "type": "Int32",
+                  "physicalType": "int"
+                },
+                "sink": {
+                  "name": "EstimatedAnnualVolume",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "TargetPrice",
+                  "type": "Decimal",
+                  "physicalType": "money",
+                  "scale": 4,
+                  "precision": 19
+                },
+                "sink": {
+                  "name": "TargetPrice",
+                  "physicalType": "decimal",
+                  "scale": 4,
+                  "precision": 19
+                }
+              },
+              {
+                "source": {
+                  "name": "SampleRequestApplication",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "40"
+                },
+                "sink": {
+                  "name": "SampleRequestApplication",
+                  "physicalType": "varchar",
+                  "length": "40"
+                }
+              },
+              {
+                "source": {
+                  "name": "SnapShotDate",
+                  "type": "DateTime",
+                  "physicalType": "datetime"
+                },
+                "sink": {
+                  "name": "SnapShotDate",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "DataUpdateDate",
+                  "type": "DateTime",
+                  "physicalType": "datetime"
+                },
+                "sink": {
+                  "name": "DataUpdateDate",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "Source",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "10"
+                },
+                "sink": {
+                  "name": "Source",
+                  "physicalType": "varchar",
+                  "length": "10"
+                }
+              },
+              {
+                "source": {
+                  "name": "SAM_SID",
+                  "type": "Int32",
+                  "physicalType": "int"
+                },
+                "sink": {
+                  "name": "SAM_SID",
+                  "physicalType": "int"
+                }
+              }
+            ],
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          },
+          "enableStaging": true
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "tbl_CRM_Sample",
+        "description": "Copy GMSM crm_Sample to D365 to Fact Saample Requests",
+        "dependsOn": [
+          {
+            "activity": "tbl_DIM_Opportunity_List",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Copy",
+        "typeProperties": {
+          "source": {
+            "type": "SqlServerSource",
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00",
+            "datasetSettings": {
+              "type": "SqlServerTable",
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_crm_Activity_CY",
+                "database": "Apollo_Cloud360"
+              },
+              "schema": [],
+              "externalReferences": {
+                "connection": "8a10d7b0-9383-4d94-95ef-53baeb12d6ad"
+              },
+              "annotations": []
+            }
+          },
+          "sink": {
+            "type": "DataWarehouseSink",
+            "tableOption": "autoCreate",
+            "allowCopyCommand": true,
+            "copyCommandSettings": {},
+            "disableMetricsCollection": false,
+            "datasetSettings": {
+              "type": "DataWarehouseTable",
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_crm_Activity_CY"
+              },
+              "schema": [],
+              "linkedService": {
+                "name": "WH_Curated",
+                "properties": {
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "artifactId": "e80cf5d2-f264-ac00-472b-838f66bd9948",
+                    "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000"
+                  },
+                  "annotations": []
+                }
+              },
+              "annotations": []
+            }
+          },
+          "translator": {
+            "type": "TabularTranslator",
+            "mappings": [
+              {
+                "source": {
+                  "name": "USERID",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "8"
+                },
+                "sink": {
+                  "name": "USERID",
+                  "physicalType": "varchar",
+                  "length": "8"
+                }
+              },
+              {
+                "source": {
+                  "name": "ACCOUNTNO",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "20"
+                },
+                "sink": {
+                  "name": "ACCOUNTNO",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "SRECTYPE",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "1"
+                },
+                "sink": {
+                  "name": "SRECTYPE",
+                  "physicalType": "varchar",
+                  "length": "1"
+                }
+              },
+              {
+                "source": {
+                  "name": "RECTYPE",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "10"
+                },
+                "sink": {
+                  "name": "RECTYPE",
+                  "physicalType": "varchar",
+                  "length": "10"
+                }
+              },
+              {
+                "source": {
+                  "name": "ONDATE",
+                  "type": "DateTime",
+                  "physicalType": "datetime"
+                },
+                "sink": {
+                  "name": "ONDATE",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "ONTIME",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "5"
+                },
+                "sink": {
+                  "name": "ONTIME",
+                  "physicalType": "varchar",
+                  "length": "5"
+                }
+              },
+              {
+                "source": {
+                  "name": "ACTVCODE",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "3"
+                },
+                "sink": {
+                  "name": "ACTVCODE",
+                  "physicalType": "varchar",
+                  "length": "3"
+                }
+              },
+              {
+                "source": {
+                  "name": "RESULTCODE",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "3"
+                },
+                "sink": {
+                  "name": "RESULTCODE",
+                  "physicalType": "varchar",
+                  "length": "3"
+                }
+              },
+              {
+                "source": {
+                  "name": "STATUS",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "2"
+                },
+                "sink": {
+                  "name": "STATUS",
+                  "physicalType": "varchar",
+                  "length": "2"
+                }
+              },
+              {
+                "source": {
+                  "name": "DURATION",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "14"
+                },
+                "sink": {
+                  "name": "DURATION",
+                  "physicalType": "varchar",
+                  "length": "14"
+                }
+              },
+              {
+                "source": {
+                  "name": "UNITS",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "20"
+                },
+                "sink": {
+                  "name": "UNITS",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "REF",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "80"
+                },
+                "sink": {
+                  "name": "REF",
+                  "physicalType": "varchar",
+                  "length": "80"
+                }
+              },
+              {
+                "source": {
+                  "name": "LINKRECID",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "15"
+                },
+                "sink": {
+                  "name": "LINKRECID",
+                  "physicalType": "varchar",
+                  "length": "15"
+                }
+              },
+              {
+                "source": {
+                  "name": "LOPRECID",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "15"
+                },
+                "sink": {
+                  "name": "LOPRECID",
+                  "physicalType": "varchar",
+                  "length": "15"
+                }
+              },
+              {
+                "source": {
+                  "name": "CREATEBY",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "8"
+                },
+                "sink": {
+                  "name": "CREATEBY",
+                  "physicalType": "varchar",
+                  "length": "8"
+                }
+              },
+              {
+                "source": {
+                  "name": "CREATEON",
+                  "type": "DateTime",
+                  "physicalType": "datetime"
+                },
+                "sink": {
+                  "name": "CREATEON",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "CREATEAT",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "5"
+                },
+                "sink": {
+                  "name": "CREATEAT",
+                  "physicalType": "varchar",
+                  "length": "5"
+                }
+              },
+              {
+                "source": {
+                  "name": "LASTUSER",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "8"
+                },
+                "sink": {
+                  "name": "LASTUSER",
+                  "physicalType": "varchar",
+                  "length": "8"
+                }
+              },
+              {
+                "source": {
+                  "name": "LASTDATE",
+                  "type": "DateTime",
+                  "physicalType": "datetime"
+                },
+                "sink": {
+                  "name": "LASTDATE",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "LASTTIME",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "5"
+                },
+                "sink": {
+                  "name": "LASTTIME",
+                  "physicalType": "varchar",
+                  "length": "5"
+                }
+              },
+              {
+                "source": {
+                  "name": "recid",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "15"
+                },
+                "sink": {
+                  "name": "recid",
+                  "physicalType": "varchar",
+                  "length": "15"
+                }
+              },
+              {
+                "source": {
+                  "name": "EXT",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "5"
+                },
+                "sink": {
+                  "name": "EXT",
+                  "physicalType": "varchar",
+                  "length": "5"
+                }
+              },
+              {
+                "source": {
+                  "name": "COMPLETEDID",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "15"
+                },
+                "sink": {
+                  "name": "COMPLETEDID",
+                  "physicalType": "varchar",
+                  "length": "15"
+                }
+              },
+              {
+                "source": {
+                  "name": "NUMBER1",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "20"
+                },
+                "sink": {
+                  "name": "NUMBER1",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "NUMBER2",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "20"
+                },
+                "sink": {
+                  "name": "NUMBER2",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "SnapShotDate",
+                  "type": "DateTime",
+                  "physicalType": "datetime"
+                },
+                "sink": {
+                  "name": "SnapShotDate",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "DataUpdateDate",
+                  "type": "DateTime",
+                  "physicalType": "datetime"
+                },
+                "sink": {
+                  "name": "DataUpdateDate",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "Source",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "10"
+                },
+                "sink": {
+                  "name": "Source",
+                  "physicalType": "varchar",
+                  "length": "10"
+                }
+              },
+              {
+                "source": {
+                  "name": "ACT_SID",
+                  "type": "Int32",
+                  "physicalType": "int"
+                },
+                "sink": {
+                  "name": "ACT_SID",
+                  "physicalType": "int"
+                }
+              }
+            ],
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          },
+          "enableStaging": true
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "tbl_crm_activity_cy_copy1",
+        "description": "Copy GMSM crm_activity_cy",
+        "dependsOn": [
+          {
+            "activity": "tbl_CRM_Sample",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Copy",
+        "typeProperties": {
+          "source": {
+            "type": "SqlServerSource",
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00",
+            "datasetSettings": {
+              "type": "SqlServerTable",
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_OpportunityList",
+                "database": "Apollo_Cloud360"
+              },
+              "schema": [],
+              "externalReferences": {
+                "connection": "8a10d7b0-9383-4d94-95ef-53baeb12d6ad"
+              },
+              "annotations": []
+            }
+          },
+          "sink": {
+            "type": "DataWarehouseSink",
+            "tableOption": "autoCreate",
+            "preCopyScript": "truncate table tbl_OpportunityList",
+            "allowCopyCommand": true,
+            "copyCommandSettings": {},
+            "disableMetricsCollection": false,
+            "datasetSettings": {
+              "type": "DataWarehouseTable",
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_OpportunityList"
+              },
+              "schema": [],
+              "linkedService": {
+                "name": "WH_Curated",
+                "properties": {
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "artifactId": "e80cf5d2-f264-ac00-472b-838f66bd9948",
+                    "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000"
+                  },
+                  "annotations": []
+                }
+              },
+              "annotations": []
+            }
+          },
+          "translator": {
+            "type": "TabularTranslator",
+            "mappings": [
+              {
+                "source": {
+                  "name": "OpportunityID",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "OpportunityID",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "RecordType",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "RecordType",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "GMAccountno",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "GMAccountno",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "Manager",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Manager",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "Company",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Company",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "Contact",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Contact",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "Opportunity",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "150"
+                },
+                "sink": {
+                  "name": "Opportunity",
+                  "physicalType": "varchar",
+                  "length": "150"
+                }
+              },
+              {
+                "source": {
+                  "name": "OpportunityStatus",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "OpportunityStatus",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "OpportunityStage",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "OpportunityStage",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "OpportunityIndustry",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "OpportunityIndustry",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "StartDate",
+                  "type": "DateTime",
+                  "physicalType": "datetime"
+                },
+                "sink": {
+                  "name": "StartDate",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "ClosedDate",
+                  "type": "DateTime",
+                  "physicalType": "datetime"
+                },
+                "sink": {
+                  "name": "ClosedDate",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "CloseByDate",
+                  "type": "DateTime",
+                  "physicalType": "datetime"
+                },
+                "sink": {
+                  "name": "CloseByDate",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "Probability",
+                  "type": "Int16",
+                  "physicalType": "smallint"
+                },
+                "sink": {
+                  "name": "Probability",
+                  "physicalType": "smallint"
+                }
+              },
+              {
+                "source": {
+                  "name": "Notes",
+                  "type": "String",
+                  "physicalType": "text"
+                },
+                "sink": {
+                  "name": "Notes",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "ProductName",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "ProductName",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "DesiredCharacteristics",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "80"
+                },
+                "sink": {
+                  "name": "DesiredCharacteristics",
+                  "physicalType": "varchar",
+                  "length": "80"
+                }
+              },
+              {
+                "source": {
+                  "name": "EstimatedAnnualVolume",
+                  "type": "Int32",
+                  "physicalType": "int"
+                },
+                "sink": {
+                  "name": "EstimatedAnnualVolume",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "SpecificApplication",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "80"
+                },
+                "sink": {
+                  "name": "SpecificApplication",
+                  "physicalType": "varchar",
+                  "length": "80"
+                }
+              },
+              {
+                "source": {
+                  "name": "TargetPrice",
+                  "type": "Double",
+                  "physicalType": "float"
+                },
+                "sink": {
+                  "name": "TargetPrice",
+                  "physicalType": "float"
+                }
+              },
+              {
+                "source": {
+                  "name": "OpportunityPriority",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "20"
+                },
+                "sink": {
+                  "name": "OpportunityPriority",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "RecordID",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "15"
+                },
+                "sink": {
+                  "name": "RecordID",
+                  "physicalType": "varchar",
+                  "length": "15"
+                }
+              },
+              {
+                "source": {
+                  "name": "RecordEffectiveStartDate",
+                  "type": "DateTime",
+                  "physicalType": "datetime"
+                },
+                "sink": {
+                  "name": "RecordEffectiveStartDate",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "RecordEffectiveEndDate",
+                  "type": "DateTime",
+                  "physicalType": "datetime"
+                },
+                "sink": {
+                  "name": "RecordEffectiveEndDate",
+                  "physicalType": "datetime2",
+                  "precision": 6
+                }
+              },
+              {
+                "source": {
+                  "name": "RecordStatus",
+                  "type": "Int32",
+                  "physicalType": "int"
+                },
+                "sink": {
+                  "name": "RecordStatus",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "Source",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "10"
+                },
+                "sink": {
+                  "name": "Source",
+                  "physicalType": "varchar",
+                  "length": "10"
+                }
+              },
+              {
+                "source": {
+                  "name": "OPP_SID",
+                  "type": "Int32",
+                  "physicalType": "int"
+                },
+                "sink": {
+                  "name": "OPP_SID",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "cloudCRMLink",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "cloudCRMLink",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              }
+            ],
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          },
+          "enableStaging": true
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "tbl_DIM_Opportunity_List",
+        "description": "Copy GMSM DIM_Opportunity_Header to D365",
+        "dependsOn": []
+      },
+      {
+        "type": "Office365Outlook",
+        "typeProperties": {
+          "inputs": {
+            "body": {
+              "To": "drausch@shamrocktechnologies.com; jcorby@shamrocktechnologies.com; kyoung@shamrocktechnologies.com",
+              "Subject": "Failed Load - Fabric GMSM daily pipeline has failed.",
+              "Body": "<p>Daily GMSM load pipeline has failed.</p>\n<p>-Tech Support</p>\n<p><br></p>",
+              "Sensitivity": "",
+              "Importance": "Normal"
+            },
+            "method": "post",
+            "path": "/v2/Mail"
+          }
+        },
+        "name": "Office 365 Outlook1_copy1",
+        "dependsOn": [
+          {
+            "activity": "tbl_DIM_Opportunity_List",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          },
+          {
+            "activity": "tbl_CRM_Sample",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          },
+          {
+            "activity": "tbl_crm_activity_cy_copy1",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          },
+          {
+            "activity": "tbl_DIM_Opportunity_Header",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          },
+          {
+            "activity": "tbl_DIM_ACCOUNTS",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

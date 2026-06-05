@@ -1,0 +1,764 @@
+table Fact_Inventory_Snapshot
+	lineageTag: f7865c66-baf5-4893-9d06-8971a5360ad4
+	sourceLineageTag: [dbo].[mtbl_EDW_Fact_Inventory_Snapshot]
+
+	measure 'Physical Inventory' = SUM('Fact_Inventory_Snapshot'[physicalinvent])
+		lineageTag: ea0a6966-fa89-46f3-9313-a515e4b67ccb
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Physical Reserved' = SUM(Fact_Inventory_Snapshot[reservphysical])
+		lineageTag: 0ada558c-8f87-46f0-a34f-8a77d9553cfd
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Available Physical' = SUM(Fact_Inventory_Snapshot[availphysical])
+		lineageTag: e384a0bd-adb1-4273-ab47-c4ab19af30ba
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Posted Quantity' = SUM(Fact_Inventory_Snapshot[postedqty])
+		lineageTag: 6822bc44-1d35-4815-9817-6f6fa65461db
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Received Qty' = SUM(Fact_Inventory_Snapshot[received])
+		lineageTag: dd769c30-000a-48ea-b99d-c8499aecadea
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Deducted Qty' = SUM(Fact_Inventory_Snapshot[deducted])
+		lineageTag: 7a8330a0-b1ee-4d35-9114-d93c54a9b2ad
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Registered Qty' = SUM(Fact_Inventory_Snapshot[registered])
+		lineageTag: 9c757866-b80e-47d1-af80-8d2d1dff1dcf
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Picked Qty' = SUM(Fact_Inventory_Snapshot[picked])
+		lineageTag: b784d3c2-42d9-4149-958c-9cee0ec7c73e
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Ordered Qty' = SUM(Fact_Inventory_Snapshot[ordered])
+		lineageTag: ca3c6a34-2dd1-425e-b1d8-38f19b8d1906
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'On Order' = SUM(Fact_Inventory_Snapshot[onorder])
+		lineageTag: ffc40d19-e104-4c5f-a5de-1b2be5396f75
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Ordered Reserved' = SUM(Fact_Inventory_Snapshot[reservordered])
+		lineageTag: 377148f0-eae1-46be-9744-4cb1ca377bbf
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Available for Reservation' = (([Posted Quantity] + [Received Qty] - [Deducted Qty] + [Registered Qty] - [Picked Qty]) - [Physical Reserved])
+		lineageTag: 63e9e49b-83f5-4d47-ae73-8373619094a8
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Available' = ([Available for Reservation] + [Ordered Qty] - [On Order] - [Ordered Reserved])
+		lineageTag: a87577eb-9266-4108-b6ef-55697a3f08a2
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Physical Inventory LBs' = SUM(Fact_Inventory_Snapshot[physicalinvent_LBs])
+		lineageTag: 4aa217bd-08d9-4795-9330-f8750e7a5570
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Physical Reserved LBs' = SUM(Fact_Inventory_Snapshot[reservphysical_LBs])
+		lineageTag: cb1a55b2-0ac6-4354-998b-dba09ca41b27
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Available Physical LBs' = SUM(Fact_Inventory_Snapshot[availphysical_LBs])
+		lineageTag: f0206937-69be-4007-81e4-a9a04ffd9b5d
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Posted Quantity LBs' = SUM(Fact_Inventory_Snapshot[postedqty_LBs])
+		lineageTag: 56bf1ec9-f9e7-4f0a-a551-42542a9f9e63
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Received Qty LBs' = SUM(Fact_Inventory_Snapshot[received_LBs])
+		lineageTag: 0b159168-2d41-4cd1-a98c-9c6170280d05
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Deducted Qty LBs' = SUM(Fact_Inventory_Snapshot[deducted_LBs])
+		lineageTag: 43369ba8-e6bb-40ce-99ce-5c7a3a12ed4f
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Registered Qty LBs' = SUM(Fact_Inventory_Snapshot[registered_LBs])
+		lineageTag: 2ec57847-4ba2-4850-87c0-23f948660f43
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Picked Qty LBs' = SUM(Fact_Inventory_Snapshot[picked_LBs])
+		lineageTag: 2378a68e-e9c7-43d9-be38-acc820df0738
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Ordered Qty LBs' = SUM(Fact_Inventory_Snapshot[ordered_LBs])
+		lineageTag: f9b0c242-90eb-4fa8-87e8-6e5c6424dc16
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'On Order LBs' = SUM(Fact_Inventory_Snapshot[onorder_LBs])
+		lineageTag: d5f9876a-7638-4a8f-a30c-d037c2afbb0d
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Ordered Reserved LBs' = SUM(Fact_Inventory_Snapshot[reservordered_LBs])
+		lineageTag: 71832b4a-bc1d-42f3-9702-3d92989b1878
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Available for Reservation LBs' = (([Posted Quantity LBs] + [Received Qty LBs] - [Deducted Qty LBs] + [Registered Qty LBs] - [Picked Qty LBs]) - [Physical Reserved LBs])
+		lineageTag: 59a5638b-6657-460a-a802-788f29061994
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Available LBs' = ([Available for Reservation LBs] + [Ordered Qty LBs] - [On Order LBs] - [Ordered Reserved LBs])
+		lineageTag: 46ee2ffc-1ea6-4de4-a359-f595bd81245d
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column InventorySnapshotKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 5e2dd17e-f740-4840-9b9a-2e42208ac847
+		sourceLineageTag: InventorySnapshotKey
+		summarizeBy: count
+		sourceColumn: InventorySnapshotKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		lineageTag: 76ea8139-ef08-4f1a-b0e9-0c4ef8036849
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column Site_ID
+		dataType: string
+		isHidden
+		lineageTag: d5fbca4b-547b-4cc5-af2d-250b6a491da4
+		sourceLineageTag: Site_ID
+		summarizeBy: none
+		sourceColumn: Site_ID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Warehouse_ID
+		dataType: string
+		isHidden
+		lineageTag: fc93cdb1-0691-4272-bb9c-943e53f95d46
+		sourceLineageTag: Warehouse_ID
+		summarizeBy: none
+		sourceColumn: Warehouse_ID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Snapshot_Date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 9793ad28-462f-42e2-b778-7c5ed731261a
+		sourceLineageTag: Snapshot_Date
+		summarizeBy: none
+		sourceColumn: Snapshot_Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Snapshot_Date_Key
+		dataType: int64
+		formatString: 0
+		lineageTag: c8ec9949-301f-4356-8647-03f54e07b2bc
+		sourceLineageTag: Snapshot_Date_Key
+		summarizeBy: none
+		sourceColumn: Snapshot_Date_Key
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column Product_ID
+		dataType: string
+		isHidden
+		lineageTag: 84700024-8770-4e8d-8c0d-f762fef498ba
+		sourceLineageTag: Product_ID
+		summarizeBy: none
+		sourceColumn: Product_ID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductName
+		dataType: string
+		isHidden
+		lineageTag: 5f484c77-aeb6-4731-90e2-8f16188db68e
+		sourceLineageTag: ProductName
+		summarizeBy: none
+		sourceColumn: ProductName
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductSearchName
+		dataType: string
+		isHidden
+		lineageTag: e1d91d75-933c-4350-96f6-651ce0921d71
+		sourceLineageTag: ProductSearchName
+		summarizeBy: none
+		sourceColumn: ProductSearchName
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Phantom_Product
+		dataType: string
+		lineageTag: 1824f803-61c0-4750-99c0-b02fc1d3df1a
+		sourceLineageTag: Phantom_Product
+		summarizeBy: none
+		sourceColumn: Phantom_Product
+
+		annotation SummarizationSetBy = Automatic
+
+	column Inventory_UoM
+		dataType: string
+		lineageTag: b0713c9a-a049-47fe-a4ec-2127e73181d6
+		sourceLineageTag: Inventory_UoM
+		summarizeBy: none
+		sourceColumn: Inventory_UoM
+
+		annotation SummarizationSetBy = Automatic
+
+	column arrived
+		dataType: double
+		isHidden
+		lineageTag: bc736387-489c-450c-95ea-7afba3d88073
+		sourceLineageTag: arrived
+		summarizeBy: sum
+		sourceColumn: arrived
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column availordered
+		dataType: double
+		isHidden
+		lineageTag: ca9a73b0-a9c5-4998-9f03-89f1c2bb9457
+		sourceLineageTag: availordered
+		summarizeBy: sum
+		sourceColumn: availordered
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column availphysical
+		dataType: double
+		isHidden
+		lineageTag: 113b1090-c6e2-4140-955f-a3c6a3c21cb8
+		sourceLineageTag: availphysical
+		summarizeBy: sum
+		sourceColumn: availphysical
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column deducted
+		dataType: double
+		isHidden
+		lineageTag: 634b9d33-f6ad-435b-960a-888d324360dd
+		sourceLineageTag: deducted
+		summarizeBy: sum
+		sourceColumn: deducted
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column onorder
+		dataType: double
+		isHidden
+		lineageTag: 8913bf7f-ccf9-4af6-a885-10b3fc4c7bb1
+		sourceLineageTag: onorder
+		summarizeBy: sum
+		sourceColumn: onorder
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ordered
+		dataType: double
+		isHidden
+		lineageTag: cfd4c368-765e-4b16-bb08-7f2ef72b91c2
+		sourceLineageTag: ordered
+		summarizeBy: sum
+		sourceColumn: ordered
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column physicalinvent
+		dataType: double
+		isHidden
+		lineageTag: 7b3bb6dd-878d-4375-a119-19ae6c03cab3
+		sourceLineageTag: physicalinvent
+		summarizeBy: sum
+		sourceColumn: physicalinvent
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column picked
+		dataType: double
+		isHidden
+		lineageTag: e1b91df0-e19d-4642-baca-eb67018e1c39
+		sourceLineageTag: picked
+		summarizeBy: sum
+		sourceColumn: picked
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column postedqty
+		dataType: double
+		isHidden
+		lineageTag: fae139f9-ed2c-4363-b436-0c0aeb9fb86c
+		sourceLineageTag: postedqty
+		summarizeBy: sum
+		sourceColumn: postedqty
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column received
+		dataType: double
+		isHidden
+		lineageTag: 60c03505-2616-49cd-a30a-891bc2a2708d
+		sourceLineageTag: received
+		summarizeBy: sum
+		sourceColumn: received
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column registered
+		dataType: double
+		isHidden
+		lineageTag: a0e6b3ef-0593-47ed-a899-4af169d1b3a8
+		sourceLineageTag: registered
+		summarizeBy: sum
+		sourceColumn: registered
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column reservordered
+		dataType: double
+		isHidden
+		lineageTag: b1d22f43-2e51-46f2-b30a-0e4ccb89941f
+		sourceLineageTag: reservordered
+		summarizeBy: sum
+		sourceColumn: reservordered
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column reservphysical
+		dataType: double
+		isHidden
+		lineageTag: 4e695150-a2b6-4554-b511-c46db7a3b1c4
+		sourceLineageTag: reservphysical
+		summarizeBy: sum
+		sourceColumn: reservphysical
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column arrived_LBs
+		dataType: double
+		isHidden
+		lineageTag: 94497c2c-80af-4cb1-908a-08a0d4935194
+		sourceLineageTag: arrived_LBs
+		summarizeBy: sum
+		sourceColumn: arrived_LBs
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column availordered_LBs
+		dataType: double
+		isHidden
+		lineageTag: b6e254ea-b789-415f-9e1e-f5ca067376cd
+		sourceLineageTag: availordered_LBs
+		summarizeBy: sum
+		sourceColumn: availordered_LBs
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column availphysical_LBs
+		dataType: double
+		isHidden
+		lineageTag: 3f5bb8fd-b57c-443f-9b6c-9bb6e5a1b30a
+		sourceLineageTag: availphysical_LBs
+		summarizeBy: sum
+		sourceColumn: availphysical_LBs
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column deducted_LBs
+		dataType: double
+		isHidden
+		lineageTag: c03d43bb-4e9f-4622-beb3-46386abeb0cd
+		sourceLineageTag: deducted_LBs
+		summarizeBy: sum
+		sourceColumn: deducted_LBs
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column onorder_LBs
+		dataType: double
+		isHidden
+		lineageTag: f0332bdf-e9ef-4027-ac69-2da55250b4eb
+		sourceLineageTag: onorder_LBs
+		summarizeBy: sum
+		sourceColumn: onorder_LBs
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ordered_LBs
+		dataType: double
+		isHidden
+		lineageTag: 67585ce4-bf7a-4041-b2cb-474967d544f8
+		sourceLineageTag: ordered_LBs
+		summarizeBy: sum
+		sourceColumn: ordered_LBs
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column physicalinvent_LBs
+		dataType: double
+		isHidden
+		lineageTag: a834aff3-0845-4c97-9a44-17766156bada
+		sourceLineageTag: physicalinvent_LBs
+		summarizeBy: sum
+		sourceColumn: physicalinvent_LBs
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column picked_LBs
+		dataType: double
+		isHidden
+		lineageTag: 8fe1915a-9076-40d8-ad84-f6dd5ed5893e
+		sourceLineageTag: picked_LBs
+		summarizeBy: sum
+		sourceColumn: picked_LBs
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column postedqty_LBs
+		dataType: double
+		isHidden
+		lineageTag: e3972bae-10af-457a-8bda-48682d008011
+		sourceLineageTag: postedqty_LBs
+		summarizeBy: sum
+		sourceColumn: postedqty_LBs
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column received_LBs
+		dataType: double
+		isHidden
+		lineageTag: ce10b859-66fe-4682-8487-6ab3475157f9
+		sourceLineageTag: received_LBs
+		summarizeBy: sum
+		sourceColumn: received_LBs
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column registered_LBs
+		dataType: double
+		isHidden
+		lineageTag: 0a43836c-f191-478a-b8ee-64f3db8517d8
+		sourceLineageTag: registered_LBs
+		summarizeBy: sum
+		sourceColumn: registered_LBs
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column reservordered_LBs
+		dataType: double
+		isHidden
+		lineageTag: e52412ba-a0b0-4b87-aff1-083c7b414cae
+		sourceLineageTag: reservordered_LBs
+		summarizeBy: sum
+		sourceColumn: reservordered_LBs
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column reservphysical_LBs
+		dataType: double
+		isHidden
+		lineageTag: 5d52dbed-cb18-4de8-83f0-722901885104
+		sourceLineageTag: reservphysical_LBs
+		summarizeBy: sum
+		sourceColumn: reservphysical_LBs
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Source
+		dataType: string
+		lineageTag: 09e52e9c-8312-49df-9f71-f55a8ba22267
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 34865e4e-efc3-4a64-a356-ddb25a0d0a73
+		sourceLineageTag: ProductKey
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SiteKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: ea71bf45-b417-47bb-971f-f8bec5a5e0a6
+		sourceLineageTag: SiteKey
+		summarizeBy: none
+		sourceColumn: SiteKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: d617cf6e-ae4a-4f91-ad8d-b0d26b9b6d93
+		sourceLineageTag: Legal_EntityKey
+		summarizeBy: none
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column wmslocationid
+		dataType: string
+		isHidden
+		lineageTag: fbc833f7-fbc4-4ed6-afea-f48c3eb951e1
+		sourceLineageTag: wmslocationid
+		summarizeBy: none
+		sourceColumn: wmslocationid
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventstatusid
+		dataType: string
+		lineageTag: 7ffed13b-43b0-4b98-8e61-6554fba926a2
+		sourceLineageTag: inventstatusid
+		summarizeBy: none
+		sourceColumn: inventstatusid
+
+		annotation SummarizationSetBy = Automatic
+
+	column postedcostamount
+		dataType: double
+		isHidden
+		lineageTag: 93b93776-3a24-47e7-8308-275038211997
+		sourceLineageTag: postedcostamount
+		summarizeBy: sum
+		sourceColumn: postedcostamount
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Fact_Inventory_Snapshot = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Fact_Inventory_Snapshot
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+

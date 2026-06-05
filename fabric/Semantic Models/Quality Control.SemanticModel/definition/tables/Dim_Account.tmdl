@@ -1,0 +1,347 @@
+table Dim_Account
+	lineageTag: 20a7681e-30ea-4b6a-8044-ad1bf0e2defe
+	sourceLineageTag: [dbo].[mtbl_EDW_Dim_Account]
+
+	column CustomerKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 5efeb440-9cbb-46d0-9f22-2744fce4e766
+		sourceLineageTag: CustomerKey
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column CMPNY
+		dataType: string
+		lineageTag: e0bd583c-114c-44b6-968b-a4748030d6db
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column Customer_ID
+		dataType: string
+		lineageTag: 4e16b1fb-80b3-482c-9ecf-281dd8308e48
+		sourceLineageTag: Customer_ID
+		summarizeBy: none
+		sourceColumn: Customer_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Invoice_Account
+		dataType: string
+		lineageTag: 4361d8c8-6d7d-4e5e-abf7-6dbf4719c421
+		sourceLineageTag: Invoice_Account
+		summarizeBy: none
+		sourceColumn: Invoice_Account
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legacy_Customer_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: 189e89f0-3142-489b-904c-eb276adfbcd3
+		sourceLineageTag: Legacy_Customer_ID
+		summarizeBy: none
+		sourceColumn: Legacy_Customer_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column GMAccountNo
+		dataType: int64
+		formatString: 0
+		lineageTag: 64dddeb5-57b4-420a-85f8-1e54d44fd933
+		sourceLineageTag: GMAccountNo
+		summarizeBy: none
+		sourceColumn: GMAccountNo
+
+		annotation SummarizationSetBy = Automatic
+
+	column GMRecID
+		dataType: int64
+		formatString: 0
+		lineageTag: 445cfa39-fc18-4f15-bb91-40dd91437cc8
+		sourceLineageTag: GMRecID
+		summarizeBy: none
+		sourceColumn: GMRecID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerName
+		dataType: string
+		lineageTag: d162bd36-196f-44eb-86b1-64aa8f1f376d
+		sourceLineageTag: CustomerName
+		summarizeBy: none
+		sourceColumn: CustomerName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Harmonized_Name
+		dataType: string
+		lineageTag: bc0825b5-190d-4a92-977c-1a9708c3a74c
+		sourceLineageTag: Harmonized_Name
+		summarizeBy: none
+		sourceColumn: Harmonized_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Address
+		dataType: string
+		lineageTag: 9b6bba48-aba6-40eb-920c-081aeccd29a6
+		sourceLineageTag: Address
+		summarizeBy: none
+		sourceColumn: Address
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		lineageTag: 0656e1ac-636e-4523-9525-b911b86868b5
+		sourceLineageTag: City
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column State
+		dataType: string
+		lineageTag: 8af5989b-6c36-4ace-b83c-077b0f09fc97
+		sourceLineageTag: State
+		summarizeBy: none
+		sourceColumn: State
+
+		annotation SummarizationSetBy = Automatic
+
+	column ZIP
+		dataType: string
+		lineageTag: 370f0c59-1717-4dc6-ac68-954cd692e201
+		sourceLineageTag: ZIP
+		summarizeBy: none
+		sourceColumn: ZIP
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: 56857910-169b-4e8b-bc27-de6bfa87a9fc
+		sourceLineageTag: Country
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column Territory_ID
+		dataType: string
+		lineageTag: 40f6606e-ac06-4955-a926-1346bd2f51bc
+		sourceLineageTag: Territory_ID
+		summarizeBy: none
+		sourceColumn: Territory_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Salesman_ID
+		dataType: string
+		lineageTag: d4033e6f-ab37-4494-adc6-a4dd896cebf5
+		sourceLineageTag: Salesman_ID
+		summarizeBy: none
+		sourceColumn: Salesman_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesChannel
+		dataType: string
+		lineageTag: f38af4b0-52e6-41cd-9c86-cad3fc3e4081
+		sourceLineageTag: SalesChannel
+		summarizeBy: none
+		sourceColumn: SalesChannel
+
+		annotation SummarizationSetBy = Automatic
+
+	column Industry_Segment
+		dataType: string
+		lineageTag: 88dd0ad5-f175-45b4-82d0-14aee5ac47fb
+		sourceLineageTag: Industry_Segment
+		summarizeBy: none
+		sourceColumn: Industry_Segment
+
+		annotation SummarizationSetBy = Automatic
+
+	column Subsegment
+		dataType: string
+		lineageTag: ebb1e2ab-69eb-4398-b00c-59f0088b2f17
+		sourceLineageTag: Subsegment
+		summarizeBy: none
+		sourceColumn: Subsegment
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: int64
+		formatString: 0
+		lineageTag: 29d165af-ee7a-4d03-afbc-980ffd2e987d
+		sourceLineageTag: Status
+		summarizeBy: none
+		sourceColumn: Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column EffectiveCountry
+		dataType: int64
+		formatString: 0
+		lineageTag: e4f51dc4-1370-4732-952d-82107aa4bf18
+		sourceLineageTag: EffectiveCountry
+		summarizeBy: none
+		sourceColumn: EffectiveCountry
+
+		annotation SummarizationSetBy = Automatic
+
+	column Account_Tier
+		dataType: int64
+		formatString: 0
+		lineageTag: 42e2b680-b721-468f-b000-9112be397bf5
+		sourceLineageTag: Account_Tier
+		summarizeBy: none
+		sourceColumn: Account_Tier
+
+		annotation SummarizationSetBy = Automatic
+
+	column Longitude
+		dataType: double
+		lineageTag: efe9cf1f-ee94-4800-a258-e0e57db2e408
+		sourceLineageTag: Longitude
+		summarizeBy: none
+		sourceColumn: Longitude
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Latitude
+		dataType: double
+		lineageTag: a2b450b7-19f8-4d32-af19-f1f5c91c99e8
+		sourceLineageTag: Latitude
+		summarizeBy: none
+		sourceColumn: Latitude
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Source
+		dataType: string
+		lineageTag: c434a693-a376-494a-9738-26161a87ae85
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 260bc9cc-14be-41b4-aeb4-3e63fd1e8de8
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: d32a74fe-eed1-479d-9bca-8b19cc676f28
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		lineageTag: d1a641dc-92a9-4422-81a0-300c925df821
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column PaymentTerms
+		dataType: string
+		lineageTag: b72fa936-6494-4b02-95a5-c1d686aa0fff
+		sourceLineageTag: PaymentTerms
+		summarizeBy: none
+		sourceColumn: PaymentTerms
+
+		annotation SummarizationSetBy = Automatic
+
+	column PhoneNumber
+		dataType: string
+		lineageTag: d5639c9c-d1de-46c8-b1a4-90a476cf829b
+		sourceLineageTag: PhoneNumber
+		summarizeBy: none
+		sourceColumn: PhoneNumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column customergroup
+		dataType: string
+		lineageTag: 16f6fd66-0482-469d-b683-5ea48b2bc8ee
+		sourceLineageTag: customergroup
+		summarizeBy: none
+		sourceColumn: customergroup
+
+		annotation SummarizationSetBy = Automatic
+
+	column customer_currency
+		dataType: string
+		lineageTag: dc36769a-2d18-465e-a13b-74891f2100fc
+		sourceLineageTag: customer_currency
+		summarizeBy: none
+		sourceColumn: customer_currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column CityState
+		dataType: string
+		lineageTag: fd862a8c-9944-4f57-8002-5523c2c7ea5d
+		sourceLineageTag: CityState
+		summarizeBy: none
+		sourceColumn: CityState
+
+		annotation SummarizationSetBy = Automatic
+
+	column PurchasingEmail
+		dataType: string
+		lineageTag: dad8c391-d1ad-4cf7-9cb2-c338d62b9358
+		sourceLineageTag: PurchasingEmail
+		summarizeBy: none
+		sourceColumn: PurchasingEmail
+
+		annotation SummarizationSetBy = Automatic
+
+	column InvoicingEmail
+		dataType: string
+		lineageTag: aab00b74-f450-4cf1-83ad-1706b90dee27
+		sourceLineageTag: InvoicingEmail
+		summarizeBy: none
+		sourceColumn: InvoicingEmail
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Account = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Dim_Account
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Dataflow",
+    "displayName": "Route Types"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "7c4cb570-0d15-9d30-488b-56ab3f0b437b"
+  }
+}

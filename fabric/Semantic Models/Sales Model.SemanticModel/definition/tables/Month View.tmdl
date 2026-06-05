@@ -1,0 +1,40 @@
+table 'Month View'
+	isHidden
+	lineageTag: 92c83fb9-a43f-48e9-92b6-5e359ea20630
+
+	column Label
+		isHidden
+		lineageTag: 79905157-34f3-4a41-94e3-453d581d19d5
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Label]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Offset
+		isHidden
+		formatString: 0
+		lineageTag: 47357ee4-d398-4ea4-aceb-9572469754d0
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Offset]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Month View' = calculated
+		mode: import
+		source = ```
+				
+				DATATABLE (
+				    "Label",  STRING,
+				    "Offset", INTEGER,
+				    {
+				        { "This Month",     0 },
+				        { "Previous Month", -1 }
+				    }
+				)
+				
+				```
+
+	annotation PBI_Id = dd6d340b854746db8a9fd2dcb449d934
+

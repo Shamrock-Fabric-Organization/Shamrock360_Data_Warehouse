@@ -1,0 +1,25 @@
+CREATE TABLE [dbo].[mtbl_EDW_Fact_FinishedGoodsRawMaterials] (
+
+	[ExplodedFormulaKey] bigint NULL, 
+	[DataAreaId] varchar(8000) NULL, 
+	[FgItemId] varchar(8000) NULL, 
+	[FgSiteId] varchar(8000) NULL, 
+	[FgBomId] varchar(8000) NULL, 
+	[RawMaterialProductID] varchar(8000) NULL, 
+	[RmSiteId] varchar(8000) NULL, 
+	[RawMaterialAmtPerLbFG] decimal(28,8) NULL, 
+	[BomPath] varchar(8000) NULL, 
+	[BomLevel] int NULL, 
+	[PeriodFromDate] datetime2(3) NULL, 
+	[PeriodToDate] datetime2(3) NULL, 
+	[PercentControlled] int NULL, 
+	[Percent] decimal(28,8) NULL, 
+	[IsCurrent] int NULL, 
+	[Legal_EntityKey] bigint NOT NULL, 
+	[FinishedGoodProductKey] bigint NOT NULL, 
+	[SiteKey] bigint NOT NULL, 
+	[FromDateKey] int NULL, 
+	[ToDateKey] int NULL, 
+	[RawMaterialProductKey] bigint NOT NULL, 
+	[RawMaterialSiteKey] bigint NOT NULL
+);

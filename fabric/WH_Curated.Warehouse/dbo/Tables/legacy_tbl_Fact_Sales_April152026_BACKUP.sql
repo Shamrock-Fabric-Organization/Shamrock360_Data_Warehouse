@@ -1,0 +1,27 @@
+CREATE TABLE [dbo].[legacy_tbl_Fact_Sales_April152026_BACKUP] (
+
+	[Cmpny] varchar(8000) NULL, 
+	[Order No] varchar(8000) NULL, 
+	[Customer PO] varchar(50) NULL, 
+	[Invoice No] varchar(8000) NULL, 
+	[IncoTerms] varchar(50) NULL, 
+	[Warehouse] varchar(50) NULL, 
+	[RecordType] varchar(12) NULL, 
+	[OrderDate] date NULL, 
+	[InvoiceDate] date NULL, 
+	[ShipDate] date NULL, 
+	[Customer No] varchar(8000) NULL, 
+	[Ship To No] varchar(8000) NULL, 
+	[CustomerID] varchar(8000) NULL, 
+	[CPCID] varchar(8000) NULL, 
+	[CPAID] varchar(8000) NULL, 
+	[CostingLinkID] varchar(310) NULL, 
+	[Product] varchar(8000) NULL, 
+	[Revenue] float NULL, 
+	[Volume] float NULL, 
+	[MaterialCostPerPound] float NULL, 
+	[DirectCostPerPound] float NULL, 
+	[OSProcessingCostPerPound] float NULL, 
+	[OverheadCostPerPound] float NULL, 
+	[Source] varchar(22) NULL
+);

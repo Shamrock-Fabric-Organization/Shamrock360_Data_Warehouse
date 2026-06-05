@@ -1,0 +1,1398 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "name": "Copy DIM_Date mo new",
+        "description": "",
+        "type": "Copy",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "SqlServerSource",
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None",
+            "datasetSettings": {
+              "annotations": [],
+              "type": "SqlServerTable",
+              "schema": [],
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_MO_DIM_Date",
+                "database": "Apollo_Staging"
+              },
+              "externalReferences": {
+                "connection": "8a10d7b0-9383-4d94-95ef-53baeb12d6ad"
+              }
+            }
+          },
+          "sink": {
+            "type": "DataWarehouseSink",
+            "preCopyScript": "truncate table tbl_MO_DIM_Date",
+            "allowCopyCommand": true,
+            "copyCommandSettings": {},
+            "tableOption": "autoCreate",
+            "disableMetricsCollection": false,
+            "datasetSettings": {
+              "annotations": [],
+              "linkedService": {
+                "name": "WH_Curated",
+                "properties": {
+                  "annotations": [],
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com",
+                    "artifactId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+                    "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+                  }
+                }
+              },
+              "type": "DataWarehouseTable",
+              "schema": [],
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_MO_DIM_Date"
+              }
+            }
+          },
+          "enableStaging": true,
+          "translator": {
+            "type": "TabularTranslator",
+            "mappings": [
+              {
+                "source": {
+                  "name": "RECID",
+                  "type": "Int64",
+                  "physicalType": "bigint"
+                },
+                "sink": {
+                  "name": "RECID",
+                  "physicalType": "bigint"
+                }
+              },
+              {
+                "source": {
+                  "name": "FISCAL QTR",
+                  "type": "Int64",
+                  "physicalType": "bigint"
+                },
+                "sink": {
+                  "name": "FISCAL QTR",
+                  "physicalType": "bigint"
+                }
+              },
+              {
+                "source": {
+                  "name": "FISCAL YR",
+                  "type": "Int64",
+                  "physicalType": "bigint"
+                },
+                "sink": {
+                  "name": "FISCAL YR",
+                  "physicalType": "bigint"
+                }
+              },
+              {
+                "source": {
+                  "name": "FISCAL PERIOD",
+                  "type": "Int64",
+                  "physicalType": "bigint"
+                },
+                "sink": {
+                  "name": "FISCAL PERIOD",
+                  "physicalType": "bigint"
+                }
+              },
+              {
+                "source": {
+                  "name": "WEEKS IN PERIOD",
+                  "type": "Double",
+                  "physicalType": "float"
+                },
+                "sink": {
+                  "name": "WEEKS IN PERIOD",
+                  "physicalType": "float"
+                }
+              },
+              {
+                "source": {
+                  "name": "FISCAL WEEK #",
+                  "type": "Int64",
+                  "physicalType": "bigint"
+                },
+                "sink": {
+                  "name": "FISCAL WEEK #",
+                  "physicalType": "bigint"
+                }
+              },
+              {
+                "source": {
+                  "name": "YEAR",
+                  "type": "Int64",
+                  "physicalType": "bigint"
+                },
+                "sink": {
+                  "name": "YEAR",
+                  "physicalType": "bigint"
+                }
+              },
+              {
+                "source": {
+                  "name": "QTR",
+                  "type": "Int64",
+                  "physicalType": "bigint"
+                },
+                "sink": {
+                  "name": "QTR",
+                  "physicalType": "bigint"
+                }
+              },
+              {
+                "source": {
+                  "name": "MONTH",
+                  "type": "Int64",
+                  "physicalType": "bigint"
+                },
+                "sink": {
+                  "name": "MONTH",
+                  "physicalType": "bigint"
+                }
+              },
+              {
+                "source": {
+                  "name": "DAY",
+                  "type": "Int64",
+                  "physicalType": "bigint"
+                },
+                "sink": {
+                  "name": "DAY",
+                  "physicalType": "bigint"
+                }
+              },
+              {
+                "source": {
+                  "name": "WEEKDAY",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "MAX"
+                },
+                "sink": {
+                  "name": "WEEKDAY",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "WEEK #",
+                  "type": "Int64",
+                  "physicalType": "bigint"
+                },
+                "sink": {
+                  "name": "WEEK #",
+                  "physicalType": "bigint"
+                }
+              },
+              {
+                "source": {
+                  "name": "DATE",
+                  "type": "Date",
+                  "physicalType": "date"
+                },
+                "sink": {
+                  "name": "DATE",
+                  "physicalType": "date"
+                }
+              },
+              {
+                "source": {
+                  "name": "DAY #",
+                  "type": "Int64",
+                  "physicalType": "bigint"
+                },
+                "sink": {
+                  "name": "DAY #",
+                  "physicalType": "bigint"
+                }
+              },
+              {
+                "source": {
+                  "name": "FISCAL DAY #",
+                  "type": "Int64",
+                  "physicalType": "bigint"
+                },
+                "sink": {
+                  "name": "FISCAL DAY #",
+                  "physicalType": "bigint"
+                }
+              },
+              {
+                "source": {
+                  "name": "Reconciliation Year",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "MAX"
+                },
+                "sink": {
+                  "name": "Reconciliation Year",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              }
+            ],
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          }
+        }
+      },
+      {
+        "name": "Copy vw_tbl_FACT_Sales",
+        "description": "",
+        "type": "Copy",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [
+          {
+            "activity": "Copy DIM_Date mo new",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "AzureSqlSource",
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None",
+            "datasetSettings": {
+              "annotations": [],
+              "type": "AzureSqlTable",
+              "schema": [],
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "vw360_fact_Sales",
+                "database": "Apollo_Cloud360"
+              },
+              "externalReferences": {
+                "connection": "6d9c85d5-49d7-4c9d-ae45-dc86a812463f"
+              }
+            }
+          },
+          "sink": {
+            "type": "DataWarehouseSink",
+            "preCopyScript": "Truncate table dbo.legacy_tbl_Fact_Sales",
+            "allowCopyCommand": true,
+            "copyCommandSettings": {},
+            "disableMetricsCollection": false,
+            "datasetSettings": {
+              "annotations": [],
+              "linkedService": {
+                "name": "WH_Curated",
+                "properties": {
+                  "annotations": [],
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com",
+                    "artifactId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+                    "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+                  }
+                }
+              },
+              "type": "DataWarehouseTable",
+              "schema": [],
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "legacy_tbl_Fact_Sales"
+              }
+            }
+          },
+          "enableStaging": true,
+          "translator": {
+            "type": "TabularTranslator",
+            "mappings": [
+              {
+                "source": {
+                  "name": "Cmpny",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Cmpny",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Order No",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Order No",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Customer PO",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Customer PO",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "Invoice No",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "MAX"
+                },
+                "sink": {
+                  "name": "Invoice No",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "IncoTerms",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "IncoTerms",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "Warehouse",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Warehouse",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "RecordType",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "12"
+                },
+                "sink": {
+                  "name": "RecordType",
+                  "physicalType": "varchar",
+                  "length": "12"
+                }
+              },
+              {
+                "source": {
+                  "name": "OrderDate",
+                  "type": "DateTime",
+                  "physicalType": "date"
+                },
+                "sink": {
+                  "name": "OrderDate",
+                  "physicalType": "date"
+                }
+              },
+              {
+                "source": {
+                  "name": "InvoiceDate",
+                  "type": "DateTime",
+                  "physicalType": "date"
+                },
+                "sink": {
+                  "name": "InvoiceDate",
+                  "physicalType": "date"
+                }
+              },
+              {
+                "source": {
+                  "name": "ShipDate",
+                  "type": "DateTime",
+                  "physicalType": "date"
+                },
+                "sink": {
+                  "name": "ShipDate",
+                  "physicalType": "date"
+                }
+              },
+              {
+                "source": {
+                  "name": "Customer No",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "255"
+                },
+                "sink": {
+                  "name": "Customer No",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Ship To No",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "14"
+                },
+                "sink": {
+                  "name": "Ship To No",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "CustomerID",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "356"
+                },
+                "sink": {
+                  "name": "CustomerID",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "CPCID",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "614"
+                },
+                "sink": {
+                  "name": "CPCID",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "CPAID",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "310"
+                },
+                "sink": {
+                  "name": "CPAID",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "CostingLinkID",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "310"
+                },
+                "sink": {
+                  "name": "CostingLinkID",
+                  "physicalType": "varchar",
+                  "length": "310"
+                }
+              },
+              {
+                "source": {
+                  "name": "Product",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "255"
+                },
+                "sink": {
+                  "name": "Product",
+                  "physicalType": "varchar",
+                  "length": "8000"
+                }
+              },
+              {
+                "source": {
+                  "name": "Revenue",
+                  "type": "Double",
+                  "physicalType": "float"
+                },
+                "sink": {
+                  "name": "Revenue",
+                  "physicalType": "float"
+                }
+              },
+              {
+                "source": {
+                  "name": "Volume",
+                  "type": "Double",
+                  "physicalType": "float"
+                },
+                "sink": {
+                  "name": "Volume",
+                  "physicalType": "float"
+                }
+              },
+              {
+                "source": {
+                  "name": "MaterialCostPerPound",
+                  "type": "Double",
+                  "physicalType": "float"
+                },
+                "sink": {
+                  "name": "MaterialCostPerPound",
+                  "physicalType": "float"
+                }
+              },
+              {
+                "source": {
+                  "name": "DirectCostPerPound",
+                  "type": "Double",
+                  "physicalType": "float"
+                },
+                "sink": {
+                  "name": "DirectCostPerPound",
+                  "physicalType": "float"
+                }
+              },
+              {
+                "source": {
+                  "name": "OSProcessingCostPerPound",
+                  "type": "Double",
+                  "physicalType": "float"
+                },
+                "sink": {
+                  "name": "OSProcessingCostPerPound",
+                  "physicalType": "float"
+                }
+              },
+              {
+                "source": {
+                  "name": "OverheadCostPerPound",
+                  "type": "Double",
+                  "physicalType": "float"
+                },
+                "sink": {
+                  "name": "OverheadCostPerPound",
+                  "physicalType": "float"
+                }
+              },
+              {
+                "source": {
+                  "name": "Source",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "22"
+                },
+                "sink": {
+                  "name": "Source",
+                  "physicalType": "varchar",
+                  "length": "22"
+                }
+              }
+            ],
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          }
+        }
+      },
+      {
+        "name": "XREF Table CustomerID",
+        "description": "",
+        "type": "Copy",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "AzureSqlSource",
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None",
+            "datasetSettings": {
+              "annotations": [],
+              "type": "AzureSqlTable",
+              "schema": [],
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "XREF_Customer_ID",
+                "database": "Apollo_Cloud360"
+              },
+              "externalReferences": {
+                "connection": "6d9c85d5-49d7-4c9d-ae45-dc86a812463f"
+              }
+            }
+          },
+          "sink": {
+            "type": "DataWarehouseSink",
+            "preCopyScript": "\n",
+            "allowCopyCommand": true,
+            "copyCommandSettings": {},
+            "tableOption": "autoCreate",
+            "disableMetricsCollection": false,
+            "datasetSettings": {
+              "annotations": [],
+              "linkedService": {
+                "name": "WH_Curated",
+                "properties": {
+                  "annotations": [],
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com",
+                    "artifactId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+                    "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+                  }
+                }
+              },
+              "type": "DataWarehouseTable",
+              "schema": [],
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "XREF_Customer_ID"
+              }
+            }
+          },
+          "enableStaging": true,
+          "translator": {
+            "type": "TabularTranslator",
+            "mappings": [
+              {
+                "source": {
+                  "name": "Company",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Company",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "Apollo_CustomerID",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Apollo_CustomerID",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "D365_CustomerID",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "D365_CustomerID",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              }
+            ],
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          }
+        }
+      },
+      {
+        "name": "XREF Table ProductID",
+        "description": "",
+        "type": "Copy",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [
+          {
+            "activity": "XREF Table CustomerID",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "AzureSqlSource",
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None",
+            "datasetSettings": {
+              "annotations": [],
+              "type": "AzureSqlTable",
+              "schema": [],
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "XREF_Product_ID",
+                "database": "Apollo_Cloud360"
+              },
+              "externalReferences": {
+                "connection": "6d9c85d5-49d7-4c9d-ae45-dc86a812463f"
+              }
+            }
+          },
+          "sink": {
+            "type": "DataWarehouseSink",
+            "preCopyScript": "\n",
+            "allowCopyCommand": true,
+            "copyCommandSettings": {},
+            "tableOption": "autoCreate",
+            "disableMetricsCollection": false,
+            "datasetSettings": {
+              "annotations": [],
+              "linkedService": {
+                "name": "WH_Curated",
+                "properties": {
+                  "annotations": [],
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com",
+                    "artifactId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+                    "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+                  }
+                }
+              },
+              "type": "DataWarehouseTable",
+              "schema": [],
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "XREF_Product_ID"
+              }
+            }
+          },
+          "enableStaging": true,
+          "translator": {
+            "type": "TabularTranslator",
+            "mappings": [
+              {
+                "source": {
+                  "name": "Company",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Company",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "Apollo_ProductID",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Apollo_ProductID",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "D365_ProductID",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "D365_ProductID",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              }
+            ],
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          }
+        }
+      },
+      {
+        "name": "Copy DIM_Date orig",
+        "description": "",
+        "type": "Copy",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "AzureSqlSource",
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None",
+            "datasetSettings": {
+              "annotations": [],
+              "type": "AzureSqlTable",
+              "schema": [],
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_DIM_Date_KY",
+                "database": "Apollo_Cloud360"
+              },
+              "externalReferences": {
+                "connection": "6d9c85d5-49d7-4c9d-ae45-dc86a812463f"
+              }
+            }
+          },
+          "sink": {
+            "type": "DataWarehouseSink",
+            "preCopyScript": "Truncate tbl_DIM_Date",
+            "allowCopyCommand": true,
+            "copyCommandSettings": {},
+            "tableOption": "autoCreate",
+            "disableMetricsCollection": false,
+            "datasetSettings": {
+              "annotations": [],
+              "linkedService": {
+                "name": "WH_Curated",
+                "properties": {
+                  "annotations": [],
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com",
+                    "artifactId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+                    "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+                  }
+                }
+              },
+              "type": "DataWarehouseTable",
+              "schema": [],
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_DIM_Date"
+              }
+            }
+          },
+          "enableStaging": true,
+          "translator": {
+            "type": "TabularTranslator",
+            "mappings": [
+              {
+                "source": {
+                  "name": "RecId",
+                  "type": "Int64",
+                  "physicalType": "bigint"
+                },
+                "sink": {
+                  "name": "RecId",
+                  "physicalType": "bigint"
+                }
+              },
+              {
+                "source": {
+                  "name": "FiscalQuarterNum",
+                  "type": "Byte",
+                  "physicalType": "tinyint"
+                },
+                "sink": {
+                  "name": "FiscalQuarterNum",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "FiscalYear",
+                  "type": "Int16",
+                  "physicalType": "smallint"
+                },
+                "sink": {
+                  "name": "FiscalYear",
+                  "physicalType": "smallint"
+                }
+              },
+              {
+                "source": {
+                  "name": "FiscalPeriodNum",
+                  "type": "Byte",
+                  "physicalType": "tinyint"
+                },
+                "sink": {
+                  "name": "FiscalPeriodNum",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "WeeksInPeriod",
+                  "type": "Byte",
+                  "physicalType": "tinyint"
+                },
+                "sink": {
+                  "name": "WeeksInPeriod",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "FiscalWeekNum",
+                  "type": "Int16",
+                  "physicalType": "smallint"
+                },
+                "sink": {
+                  "name": "FiscalWeekNum",
+                  "physicalType": "smallint"
+                }
+              },
+              {
+                "source": {
+                  "name": "CalendarYear",
+                  "type": "Int16",
+                  "physicalType": "smallint"
+                },
+                "sink": {
+                  "name": "CalendarYear",
+                  "physicalType": "smallint"
+                }
+              },
+              {
+                "source": {
+                  "name": "CalendarQuarterNum",
+                  "type": "Double",
+                  "physicalType": "float"
+                },
+                "sink": {
+                  "name": "CalendarQuarterNum",
+                  "physicalType": "float"
+                }
+              },
+              {
+                "source": {
+                  "name": "MonthNameShort",
+                  "type": "Byte",
+                  "physicalType": "tinyint"
+                },
+                "sink": {
+                  "name": "MonthNameShort",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "DAY",
+                  "type": "Double",
+                  "physicalType": "float"
+                },
+                "sink": {
+                  "name": "DAY",
+                  "physicalType": "float"
+                }
+              },
+              {
+                "source": {
+                  "name": "WeekdayNameLong",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "9"
+                },
+                "sink": {
+                  "name": "WeekdayNameLong",
+                  "physicalType": "varchar",
+                  "length": "9"
+                }
+              },
+              {
+                "source": {
+                  "name": "WeekOfYearNum",
+                  "type": "Byte",
+                  "physicalType": "tinyint"
+                },
+                "sink": {
+                  "name": "WeekOfYearNum",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "Date",
+                  "type": "Date",
+                  "physicalType": "date"
+                },
+                "sink": {
+                  "name": "Date",
+                  "physicalType": "date"
+                }
+              },
+              {
+                "source": {
+                  "name": "DayOfMonthNum",
+                  "type": "Byte",
+                  "physicalType": "tinyint"
+                },
+                "sink": {
+                  "name": "DayOfMonthNum",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "FiscalDayNum",
+                  "type": "Int16",
+                  "physicalType": "smallint"
+                },
+                "sink": {
+                  "name": "FiscalDayNum",
+                  "physicalType": "smallint"
+                }
+              },
+              {
+                "source": {
+                  "name": "IsWorkingDayUs",
+                  "type": "Boolean",
+                  "physicalType": "bit"
+                },
+                "sink": {
+                  "name": "IsWorkingDayUs",
+                  "physicalType": "bit"
+                }
+              },
+              {
+                "source": {
+                  "name": "IsWorkingDayBvba",
+                  "type": "Boolean",
+                  "physicalType": "bit"
+                },
+                "sink": {
+                  "name": "IsWorkingDayBvba",
+                  "physicalType": "bit"
+                }
+              },
+              {
+                "source": {
+                  "name": "IsWorkingDayTeda",
+                  "type": "Boolean",
+                  "physicalType": "bit"
+                },
+                "sink": {
+                  "name": "IsWorkingDayTeda",
+                  "physicalType": "bit"
+                }
+              },
+              {
+                "source": {
+                  "name": "WeekStartDate",
+                  "type": "Date",
+                  "physicalType": "date"
+                },
+                "sink": {
+                  "name": "WeekStartDate",
+                  "physicalType": "date"
+                }
+              },
+              {
+                "source": {
+                  "name": "MonthStartDate",
+                  "type": "Date",
+                  "physicalType": "date"
+                },
+                "sink": {
+                  "name": "MonthStartDate",
+                  "physicalType": "date"
+                }
+              },
+              {
+                "source": {
+                  "name": "CurrentFiscalDayNum",
+                  "type": "Int16",
+                  "physicalType": "smallint"
+                },
+                "sink": {
+                  "name": "CurrentFiscalDayNum",
+                  "physicalType": "smallint"
+                }
+              },
+              {
+                "source": {
+                  "name": "CurrentFiscalYear",
+                  "type": "Int16",
+                  "physicalType": "smallint"
+                },
+                "sink": {
+                  "name": "CurrentFiscalYear",
+                  "physicalType": "smallint"
+                }
+              },
+              {
+                "source": {
+                  "name": "MonthNum",
+                  "type": "Byte",
+                  "physicalType": "tinyint"
+                },
+                "sink": {
+                  "name": "MonthNum",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "MonthNameLong",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "9"
+                },
+                "sink": {
+                  "name": "MonthNameLong",
+                  "physicalType": "varchar",
+                  "length": "9"
+                }
+              },
+              {
+                "source": {
+                  "name": "YearMonthNum",
+                  "type": "Int32",
+                  "physicalType": "int"
+                },
+                "sink": {
+                  "name": "YearMonthNum",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "YearMonthLabel",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "8"
+                },
+                "sink": {
+                  "name": "YearMonthLabel",
+                  "physicalType": "varchar",
+                  "length": "8"
+                }
+              },
+              {
+                "source": {
+                  "name": "CalendarQuarterLabel",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "2"
+                },
+                "sink": {
+                  "name": "CalendarQuarterLabel",
+                  "physicalType": "varchar",
+                  "length": "2"
+                }
+              },
+              {
+                "source": {
+                  "name": "CalendarYearQuarterNum",
+                  "type": "Int32",
+                  "physicalType": "int"
+                },
+                "sink": {
+                  "name": "CalendarYearQuarterNum",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "FiscalQuarterLabel",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "8"
+                },
+                "sink": {
+                  "name": "FiscalQuarterLabel",
+                  "physicalType": "varchar",
+                  "length": "8"
+                }
+              },
+              {
+                "source": {
+                  "name": "FiscalYearQuarterNum",
+                  "type": "Int32",
+                  "physicalType": "int"
+                },
+                "sink": {
+                  "name": "FiscalYearQuarterNum",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "WeekdayNum",
+                  "type": "Byte",
+                  "physicalType": "tinyint"
+                },
+                "sink": {
+                  "name": "WeekdayNum",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "WeekdayNameShort",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "3"
+                },
+                "sink": {
+                  "name": "WeekdayNameShort",
+                  "physicalType": "varchar",
+                  "length": "3"
+                }
+              },
+              {
+                "source": {
+                  "name": "YearWeekNum",
+                  "type": "Int32",
+                  "physicalType": "int"
+                },
+                "sink": {
+                  "name": "YearWeekNum",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "FiscalYearWeekNum",
+                  "type": "Int32",
+                  "physicalType": "int"
+                },
+                "sink": {
+                  "name": "FiscalYearWeekNum",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "DayOfYearNum",
+                  "type": "Int16",
+                  "physicalType": "smallint"
+                },
+                "sink": {
+                  "name": "DayOfYearNum",
+                  "physicalType": "smallint"
+                }
+              },
+              {
+                "source": {
+                  "name": "IsWeekend",
+                  "type": "Boolean",
+                  "physicalType": "bit"
+                },
+                "sink": {
+                  "name": "IsWeekend",
+                  "physicalType": "bit"
+                }
+              },
+              {
+                "source": {
+                  "name": "IsToday",
+                  "type": "Boolean",
+                  "physicalType": "bit"
+                },
+                "sink": {
+                  "name": "IsToday",
+                  "physicalType": "bit"
+                }
+              },
+              {
+                "source": {
+                  "name": "IsCurrentMonth",
+                  "type": "Boolean",
+                  "physicalType": "bit"
+                },
+                "sink": {
+                  "name": "IsCurrentMonth",
+                  "physicalType": "bit"
+                }
+              },
+              {
+                "source": {
+                  "name": "IsCurrentFiscalYear",
+                  "type": "Boolean",
+                  "physicalType": "bit"
+                },
+                "sink": {
+                  "name": "IsCurrentFiscalYear",
+                  "physicalType": "bit"
+                }
+              },
+              {
+                "source": {
+                  "name": "FiscalPeriodLabel",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "3"
+                },
+                "sink": {
+                  "name": "FiscalPeriodLabel",
+                  "physicalType": "varchar",
+                  "length": "3"
+                }
+              }
+            ],
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          }
+        }
+      }
+    ]
+  }
+}

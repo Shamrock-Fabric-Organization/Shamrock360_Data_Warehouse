@@ -1,0 +1,37 @@
+table 'Test Axis'
+	lineageTag: 82358b77-dcab-4e2d-b51b-b84500e7f39c
+
+	column testid
+		dataType: string
+		lineageTag: 814c81ca-213f-4a63-a455-35381fb55078
+		summarizeBy: none
+		sourceColumn: testid
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Default Variable'
+		dataType: string
+		lineageTag: 840bb660-9f42-43e1-bfd9-e3ae3b6d761a
+		summarizeBy: none
+		sourceColumn: Default Variable
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Default Unit'
+		dataType: string
+		lineageTag: d1562dfe-17a2-42c4-9e85-ef67506a8cf0
+		summarizeBy: none
+		sourceColumn: Default Unit
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Test Axis' = m
+		mode: import
+		source =
+				let
+				  Source = Sql.Database("efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com", "WH_Curated", [Query = "SELECT#(lf)    f.testid,#(lf)    MAX(f.variableid) AS [Default Variable],#(lf)    MAX(f.testunitid) AS [Default Unit]#(lf)FROM dbo.mtbl_EDW_Fact_QualityOrderLineResults AS f#(lf)WHERE f.testid IS NOT NULL#(lf)GROUP BY#(lf)    f.testid;"])
+				in
+				  Source
+
+	annotation PBI_ResultType = Table
+

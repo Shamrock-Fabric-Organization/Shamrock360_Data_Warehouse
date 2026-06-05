@@ -1,0 +1,30 @@
+table TrendLineOptions
+	isHidden
+	lineageTag: f82f64cf-fc54-4851-96f9-ab08d2761b30
+
+	column TrendLineOption
+		isHidden
+		lineageTag: 8501f697-be54-4575-b698-9a36561c066a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [TrendLineOption]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition TrendLineOptions = calculated
+		mode: import
+		source = ```
+				
+				DATATABLE (
+				    "TrendLineOption", STRING,
+				    {
+				        { "Trend Line" },
+				        { "Moving Average (4 weeks)" },
+				        { "Moving Average (3 months)" }
+				    }
+				)
+				
+				```
+
+	annotation PBI_Id = 638344d1f14740858f3c561e86f143a7
+

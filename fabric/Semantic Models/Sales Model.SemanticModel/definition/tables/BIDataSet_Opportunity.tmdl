@@ -1,0 +1,565 @@
+table BIDataSet_Opportunity
+	lineageTag: c2aa93eb-0551-4ed5-9557-6e0ae2450a6e
+	sourceLineageTag: [dbo].[mtbl_EDW_BIDataSet_Opportunity]
+
+	measure AvgPrice = DIVIDE(SUM(BIDataSet_Opportunity[EstimatedAnnualrevenue]),SUM(BIDataSet_Opportunity[EstimatedAnnualVolume]),0)
+		lineageTag: 2627b902-065a-49f3-9a12-2074d1b72bf6
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'EstimatedAnnualrevenue running total in CloseByDate' =
+			
+			CALCULATE(
+				SUM('BIDataSet_Opportunity'[EstimatedAnnualrevenue]),
+				FILTER(
+					ALLSELECTED('BIDataSet_Opportunity'[CloseByDate]),
+					ISONORAFTER('BIDataSet_Opportunity'[CloseByDate], MAX('BIDataSet_Opportunity'[CloseByDate]), DESC)
+				)
+			)
+		lineageTag: a742e6ec-d2d2-435c-8c44-f70fe409ebb3
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'EstimatedAnnualVolume running total in CloseByDate' =
+			
+			CALCULATE(
+				SUM('BIDataSet_Opportunity'[EstimatedAnnualVolume]),
+				FILTER(
+					ALLSELECTED('BIDataSet_Opportunity'[CloseByDate]),
+					ISONORAFTER('BIDataSet_Opportunity'[CloseByDate], MAX('BIDataSet_Opportunity'[CloseByDate]), DESC)
+				)
+			)
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: b2c88a73-afa5-4b0a-a63f-9b37b031e2d0
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Days Open' = ```
+			
+			VAR StartDate =
+			    SELECTEDVALUE ( 'BIDataSet_Opportunity'[StartDate] )
+			RETURN
+			IF (
+			    ISBLANK ( StartDate ),
+			    BLANK(),
+			    DATEDIFF ( StartDate, TODAY(), DAY )
+			)
+			
+			```
+		formatString: 0
+		lineageTag: d61c841a-8233-42d3-8382-fb923e277c9e
+
+		changedProperty = Name
+
+	measure 'Opportunity Count (Bucketed)' = ```
+			
+			VAR MinD = MIN ( 'Opportunity Age Buckets'[MinDays] )
+			VAR MaxD = MAX ( 'Opportunity Age Buckets'[MaxDays] )
+			RETURN
+			CALCULATE (
+			    COUNTROWS ( 'BIDataSet_Opportunity' ),
+			    FILTER (
+			        'BIDataSet_Opportunity',
+			        NOT ISBLANK ( 'BIDataSet_Opportunity'[StartDate] )
+			            && DATEDIFF ( 'BIDataSet_Opportunity'[StartDate], TODAY(), DAY ) >= MinD
+			            && DATEDIFF ( 'BIDataSet_Opportunity'[StartDate], TODAY(), DAY ) <= MaxD
+			    )
+			)
+			
+			```
+		formatString: 0
+		lineageTag: e47c0e0e-8d3c-43eb-aadc-3a75a6964c43
+
+		changedProperty = Name
+
+	measure 'Opportunity Amount (Bucketed)' = ```
+			
+			VAR MinD = MIN ( 'Opportunity Age Buckets'[MinDays] )
+			VAR MaxD = MAX ( 'Opportunity Age Buckets'[MaxDays] )
+			RETURN
+			CALCULATE (
+			    SUM ( 'BIDataSet_Opportunity'[EstimatedAnnualrevenue] ),
+			    FILTER (
+			        'BIDataSet_Opportunity',
+			        NOT ISBLANK ( 'BIDataSet_Opportunity'[StartDate] )
+			            && DATEDIFF ( 'BIDataSet_Opportunity'[StartDate], TODAY(), DAY ) >= MinD
+			            && DATEDIFF ( 'BIDataSet_Opportunity'[StartDate], TODAY(), DAY ) <= MaxD
+			    )
+			)
+			
+			```
+		lineageTag: 7e332929-c6dc-4cfb-9cab-57a98c13c9e5
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Opportunity Volume (Bucketed)' = ```
+			
+			VAR MinD = MIN ( 'Opportunity Age Buckets'[MinDays] )
+			VAR MaxD = MAX ( 'Opportunity Age Buckets'[MaxDays] )
+			RETURN
+			CALCULATE (
+			    SUM ( 'BIDataSet_Opportunity'[EstimatedAnnualVolume] ),
+			    FILTER (
+			        'BIDataSet_Opportunity',
+			        NOT ISBLANK ( 'BIDataSet_Opportunity'[StartDate] )
+			            && DATEDIFF ( 'BIDataSet_Opportunity'[StartDate], TODAY(), DAY ) >= MinD
+			            && DATEDIFF ( 'BIDataSet_Opportunity'[StartDate], TODAY(), DAY ) <= MaxD
+			    )
+			)
+			
+			```
+		lineageTag: 0e15cd3a-f148-445e-acff-d4f33b61b72e
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Opportunities' = COUNTROWS(BIDataSet_Opportunity)
+		formatString: 0
+		lineageTag: 114d82d0-bfbc-425a-ba5b-8c937fc91255
+
+		changedProperty = Name
+
+	measure 'Days Open (Max)' = ```
+			
+			VAR _isRow =
+			    HASONEVALUE ( 'BIDataSet_Opportunity'[StartDate] )
+			
+			RETURN
+			IF (
+			    _isRow,
+			    DATEDIFF (
+			        SELECTEDVALUE ( 'BIDataSet_Opportunity'[StartDate] ),
+			        TODAY(),
+			        DAY
+			    ),
+			    MAXX (
+			        VALUES ( 'BIDataSet_Opportunity'[StartDate] ),
+			        DATEDIFF (
+			            'BIDataSet_Opportunity'[StartDate],
+			            TODAY(),
+			            DAY
+			        )
+			    )
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 596ba813-3e7c-4c4f-8341-30bfe6616488
+
+		changedProperty = Name
+
+	measure 'Days Open (Row)' = ```
+			
+			VAR sd = SELECTEDVALUE ( 'BIDataSet_Opportunity'[StartDate] )
+			RETURN
+			IF ( ISBLANK(sd), BLANK(), DATEDIFF ( sd, TODAY(), DAY ) )
+			
+			```
+		formatString: 0
+		lineageTag: 1aebe93a-1edf-4292-81d0-90925a173f9c
+
+		changedProperty = Name
+
+	measure 'Show Opportunity Row (Selected Buckets)' = ```
+			
+			VAR d = [Days Open (Row)]
+			VAR hasBucketFilter =
+			    ISFILTERED ( 'Opportunity Age Buckets'[Bucket] )
+			RETURN
+			IF (
+			    NOT hasBucketFilter,
+			    1,
+			    IF (
+			        ISBLANK ( d ),
+			        0,
+			        IF (
+			            SUMX (
+			                VALUES ( 'Opportunity Age Buckets'[Bucket] ),
+			                VAR minD = CALCULATE ( MIN ( 'Opportunity Age Buckets'[MinDays] ) )
+			                VAR maxD = CALCULATE ( MAX ( 'Opportunity Age Buckets'[MaxDays] ) )
+			                RETURN IF ( d >= minD && d <= maxD, 1, 0 )
+			            ) > 0,
+			            1,
+			            0
+			        )
+			    )
+			)
+			
+			```
+		formatString: 0
+		lineageTag: b77d38a9-ccb2-49d7-a41f-aba4e86f3dc4
+
+		changedProperty = Name
+
+	column OpportunityID
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: 7dee92d2-a544-40b4-858a-d04c98aac7db
+		sourceLineageTag: OpportunityID
+		summarizeBy: none
+		sourceColumn: OpportunityID
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordType
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: 6a7b578c-ea8d-4bbe-a309-7501745ca5c1
+		sourceLineageTag: RecordType
+		summarizeBy: none
+		sourceColumn: RecordType
+
+		annotation SummarizationSetBy = Automatic
+
+	column GMAccountno
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: f83a1309-bcbd-41e4-b6ad-d55048c9cb73
+		sourceLineageTag: GMAccountno
+		summarizeBy: none
+		sourceColumn: GMAccountno
+
+		annotation SummarizationSetBy = Automatic
+
+	column Manager
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: a5e0e41b-bef2-416c-864c-2b510ad70e05
+		sourceLineageTag: Manager
+		summarizeBy: none
+		sourceColumn: Manager
+
+		annotation SummarizationSetBy = Automatic
+
+	column Company
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: 4fbb1eec-6cbb-4300-a53f-296ca2b37ba3
+		sourceLineageTag: Company
+		summarizeBy: none
+		sourceColumn: Company
+
+		annotation SummarizationSetBy = Automatic
+
+	column Contact
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: 66b594de-d83d-477a-a057-c3badc024af3
+		sourceLineageTag: Contact
+		summarizeBy: none
+		sourceColumn: Contact
+
+		annotation SummarizationSetBy = Automatic
+
+	column Opportunity
+		dataType: string
+		sourceProviderType: varchar(150)
+		lineageTag: 7bd9e81e-df2d-42f4-9941-62fd00b650c1
+		sourceLineageTag: Opportunity
+		summarizeBy: none
+		sourceColumn: Opportunity
+
+		annotation SummarizationSetBy = Automatic
+
+	column OpportunityStatus
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: 2b883d21-a222-460d-bf84-9bd111ce6d98
+		sourceLineageTag: OpportunityStatus
+		summarizeBy: none
+		sourceColumn: OpportunityStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column OpportunityStage
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: 14121e1e-637c-44d7-a77f-de1cef0009cc
+		sourceLineageTag: OpportunityStage
+		summarizeBy: none
+		sourceColumn: OpportunityStage
+
+		annotation SummarizationSetBy = Automatic
+
+	column OpportunityIndustry
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: 3bdc4d75-a8a6-427b-8ae7-4a12cf5378c8
+		sourceLineageTag: OpportunityIndustry
+		summarizeBy: none
+		sourceColumn: OpportunityIndustry
+
+		annotation SummarizationSetBy = Automatic
+
+	column StartDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 5b9ee866-2b1b-4d8f-a0b1-464a6004024f
+		sourceLineageTag: StartDate
+		summarizeBy: none
+		sourceColumn: StartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column ClosedDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: bd9538df-bdc4-4419-a4f5-26f87ebb5d96
+		sourceLineageTag: ClosedDate
+		summarizeBy: none
+		sourceColumn: ClosedDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column CloseByDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: ef3939b9-ff30-41b6-b759-9c4f347901e7
+		sourceLineageTag: CloseByDate
+		summarizeBy: none
+		sourceColumn: CloseByDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column Probability
+		dataType: int64
+		formatString: 0
+		sourceProviderType: smallint
+		lineageTag: c1acad49-1898-4fef-9273-129594a799ba
+		sourceLineageTag: Probability
+		summarizeBy: sum
+		sourceColumn: Probability
+
+		annotation SummarizationSetBy = Automatic
+
+	column Notes
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 76d37571-c439-4b29-a3d5-9fdd27b6ee70
+		sourceLineageTag: Notes
+		summarizeBy: none
+		sourceColumn: Notes
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductName
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: 3ccd755f-1a97-4888-989f-b1eca6be01a4
+		sourceLineageTag: ProductName
+		summarizeBy: none
+		sourceColumn: ProductName
+
+		annotation SummarizationSetBy = Automatic
+
+	column DesiredCharacteristics
+		dataType: string
+		sourceProviderType: varchar(80)
+		lineageTag: ceebd8c7-b010-46fc-9339-8e14b42b8f6d
+		sourceLineageTag: DesiredCharacteristics
+		summarizeBy: none
+		sourceColumn: DesiredCharacteristics
+
+		annotation SummarizationSetBy = Automatic
+
+	column EstimatedAnnualVolume
+		dataType: double
+		formatString: #,0.00
+		sourceProviderType: numeric(16, 4)
+		lineageTag: df217bc6-d091-441f-a010-2ec8df8f54f2
+		sourceLineageTag: EstimatedAnnualVolume
+		summarizeBy: sum
+		sourceColumn: EstimatedAnnualVolume
+
+		changedProperty = DataType
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+	column SpecificApplication
+		dataType: string
+		sourceProviderType: varchar(80)
+		lineageTag: 29012308-9f82-43be-aa60-cb16c44b405f
+		sourceLineageTag: SpecificApplication
+		summarizeBy: none
+		sourceColumn: SpecificApplication
+
+		annotation SummarizationSetBy = Automatic
+
+	column TargetPrice
+		dataType: double
+		sourceProviderType: float
+		lineageTag: f8b0f7cc-bde3-4476-99fd-f0b168eb1b65
+		sourceLineageTag: TargetPrice
+		summarizeBy: sum
+		sourceColumn: TargetPrice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column OpportunityPriority
+		dataType: string
+		sourceProviderType: varchar(20)
+		lineageTag: 6521e92e-a271-4266-a8d7-6ed30ff0324c
+		sourceLineageTag: OpportunityPriority
+		summarizeBy: none
+		sourceColumn: OpportunityPriority
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordID
+		dataType: string
+		sourceProviderType: varchar(15)
+		lineageTag: 809c22c5-dfac-4cd8-a4c7-199d7066412a
+		sourceLineageTag: RecordID
+		summarizeBy: none
+		sourceColumn: RecordID
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: e8e55271-3c78-446c-902b-d32c6cd7c54b
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 6f00689b-8e4d-4e3b-8b70-edec62cfc5b6
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 9030e48b-4873-4b4f-87f0-619d9e8c22e3
+		sourceLineageTag: RecordStatus
+		summarizeBy: sum
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		sourceProviderType: varchar(10)
+		lineageTag: e773b965-0dcc-45bd-b31a-9d5a6bfdfbd0
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column OPP_SID
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: f13d8109-ff0f-4e4e-b545-460ee680f6ec
+		sourceLineageTag: OPP_SID
+		summarizeBy: count
+		sourceColumn: OPP_SID
+
+		annotation SummarizationSetBy = Automatic
+
+	column cloudCRMLink
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: c79ce18d-84cb-4da2-9304-09af39b56365
+		sourceLineageTag: cloudCRMLink
+		summarizeBy: none
+		sourceColumn: cloudCRMLink
+
+		annotation SummarizationSetBy = Automatic
+
+	column LOPID
+		dataType: string
+		sourceProviderType: varchar(15)
+		lineageTag: 09451c14-cb13-453e-8809-a0df9b32f86e
+		sourceLineageTag: LOPID
+		summarizeBy: none
+		sourceColumn: LOPID
+
+		annotation SummarizationSetBy = Automatic
+
+	column OpportunityType
+		dataType: string
+		sourceProviderType: varchar(200)
+		lineageTag: 390a9886-a4ea-4b50-818a-b2b1385b1264
+		sourceLineageTag: OpportunityType
+		summarizeBy: none
+		sourceColumn: OpportunityType
+
+		annotation SummarizationSetBy = Automatic
+
+	column EstimatedAnnualrevenue
+		dataType: double
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		sourceProviderType: decimal(37, 12)
+		lineageTag: 0f9b7403-bb99-4dfd-9752-9334c96ee0ec
+		sourceLineageTag: EstimatedAnnualrevenue
+		summarizeBy: sum
+		sourceColumn: EstimatedAnnualrevenue
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column Office
+		dataType: string
+		sourceProviderType: varchar(4)
+		lineageTag: 7125b941-2055-4b8b-a3b8-400bbfc70ab1
+		sourceLineageTag: Office
+		summarizeBy: none
+		sourceColumn: Office
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Probable Value'
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: 75c0b63f-f677-4ae9-b8b5-e8c448ea5408
+		sourceLineageTag: Probable Value
+		summarizeBy: sum
+		sourceColumn: Probable Value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition BIDataSet_Opportunity = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_BIDataSet_Opportunity
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

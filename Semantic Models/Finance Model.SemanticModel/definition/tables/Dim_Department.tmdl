@@ -1,0 +1,92 @@
+table Dim_Department
+	lineageTag: ae495dd1-6ae1-481e-952f-318fefd3d622
+	sourceLineageTag: [dbo].[mtbl_EDW_DIM_Department]
+
+	column DepartmentKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 754323fd-09ab-4057-9239-c73a208ca80f
+		sourceLineageTag: DepartmentKey
+		summarizeBy: none
+		sourceColumn: DepartmentKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Department
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: fd2ae63e-46cb-4cdd-be42-6087b19ae958
+		sourceLineageTag: Department
+		summarizeBy: none
+		sourceColumn: Department
+
+		annotation SummarizationSetBy = Automatic
+
+	column Department_Name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: d1f91200-b03c-4a99-b859-b2c8caf575ba
+		sourceLineageTag: Department_Name
+		summarizeBy: none
+		sourceColumn: Department_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		sourceProviderType: varchar(6)
+		lineageTag: b058e01b-d2d2-4a9b-be35-65b22bdca041
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: d8e454c3-d61e-4cc3-ad2f-d06afc58054f
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: ad847787-3273-4e68-9201-7e671fe73872
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 00769e49-6a71-4408-a1a4-db014b194f50
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Department = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_DIM_Department
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

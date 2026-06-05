@@ -1,0 +1,204 @@
+table DIM_MarketSegmentation
+	isHidden
+	lineageTag: 83455976-1b60-4fce-ac37-cb28a7d1ce78
+	sourceLineageTag: [dbo].[mtbl_EDW_DIM_MarketSegmentation]
+
+	column MarketSegmentationKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 863b0d1b-dd85-4528-950f-558240bec36e
+		sourceLineageTag: MarketSegmentationKey
+		summarizeBy: count
+		sourceColumn: MarketSegmentationKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(8000)
+		lineageTag: 09ac559b-86b7-4240-a87e-2c8e6ca2f14d
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerID
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(8000)
+		lineageTag: dfea8183-2852-4d7f-a014-a4222e29432c
+		sourceLineageTag: CustomerID
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductID
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(8000)
+		lineageTag: 83c5af41-cb8c-416d-9d54-5e11d3cf82e7
+		sourceLineageTag: ProductID
+		summarizeBy: none
+		sourceColumn: ProductID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CPCID
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(8000)
+		lineageTag: 639ab974-b794-4772-a449-350ef7cedd44
+		sourceLineageTag: CPCID
+		summarizeBy: none
+		sourceColumn: CPCID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column LegacyCPCID
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(8000)
+		lineageTag: 31eda861-8f6a-4e4e-b54e-3caf00687b18
+		sourceLineageTag: LegacyCPCID
+		summarizeBy: none
+		sourceColumn: LegacyCPCID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Industry
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(8000)
+		lineageTag: 786b733f-be5a-44d0-9573-1496111a082f
+		sourceLineageTag: Industry
+		summarizeBy: none
+		sourceColumn: Industry
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SubIndustry
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(8000)
+		lineageTag: 16b2d4ed-4175-40c3-962d-6ce1d1ac9cf4
+		sourceLineageTag: SubIndustry
+		summarizeBy: none
+		sourceColumn: SubIndustry
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column AccountTranslatedToD365
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(3)
+		lineageTag: 070f2d64-3ac0-4749-8bc1-409101a711ce
+		sourceLineageTag: AccountTranslatedToD365
+		summarizeBy: none
+		sourceColumn: AccountTranslatedToD365
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductTranslatedToD365
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(3)
+		lineageTag: 2332a7a2-564e-40ee-b867-277ff67d9145
+		sourceLineageTag: ProductTranslatedToD365
+		summarizeBy: none
+		sourceColumn: ProductTranslatedToD365
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 6f4e3812-aa22-4afb-9a34-3b124dfeb2cc
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: c79fa8ff-db4d-4f56-bbf9-66e83e7256a3
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 6dd907a9-b52e-42ad-b994-a05926044081
+		sourceLineageTag: RecordStatus
+		summarizeBy: sum
+		sourceColumn: RecordStatus
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(25)
+		lineageTag: b92ac1d8-ed1d-4d6a-b6b8-747a15c4d00f
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DIM_MarketSegmentation = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_DIM_MarketSegmentation
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	changedProperty = IsHidden
+
+	annotation PBI_ResultType = Table
+

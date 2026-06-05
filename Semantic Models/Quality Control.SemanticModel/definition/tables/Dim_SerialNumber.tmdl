@@ -1,0 +1,140 @@
+table Dim_SerialNumber
+	lineageTag: 400df431-56b7-4f93-b445-7c63fb8f8b02
+	sourceLineageTag: [dbo].[mtbl_EDW_Dim_SerialNumber]
+
+	column SerialNumberKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: c403c246-d5e5-4841-9702-da1ba45243a6
+		sourceLineageTag: SerialNumberKey
+		summarizeBy: none
+		sourceColumn: SerialNumberKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column CMPNY
+		dataType: string
+		lineageTag: d8163bcd-1a11-4081-bdd3-0ce231c865e4
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column SerialNumber
+		dataType: string
+		lineageTag: 33024dde-dd11-43f9-87f4-9e3cd34da0f9
+		sourceLineageTag: SerialNumber
+		summarizeBy: none
+		sourceColumn: SerialNumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProdDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 0bb0617e-94bc-405d-a61c-490f7c89c191
+		sourceLineageTag: ProdDate
+		summarizeBy: none
+		sourceColumn: ProdDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column Description
+		dataType: string
+		lineageTag: 4006caca-7265-4a61-95d2-27868f70501b
+		sourceLineageTag: Description
+		summarizeBy: none
+		sourceColumn: Description
+
+		annotation SummarizationSetBy = Automatic
+
+	column RFIDTagID
+		dataType: string
+		lineageTag: 5932e6ac-afe0-4548-bd61-9b73ef08c4ae
+		sourceLineageTag: RFIDTagID
+		summarizeBy: none
+		sourceColumn: RFIDTagID
+
+		annotation SummarizationSetBy = Automatic
+
+	column SerialNumberNoteName
+		dataType: string
+		lineageTag: 9eeab7c9-a1fe-4b6d-9fcf-6120690e5a36
+		sourceLineageTag: SerialNumberNoteName
+		summarizeBy: none
+		sourceColumn: SerialNumberNoteName
+
+		annotation SummarizationSetBy = Automatic
+
+	column SerialNumberNote
+		dataType: string
+		lineageTag: 8b630eaa-e1e8-455e-b6ae-2da59209597d
+		sourceLineageTag: SerialNumberNote
+		summarizeBy: none
+		sourceColumn: SerialNumberNote
+
+		annotation SummarizationSetBy = Automatic
+
+	column SeralNumberNoteCreatedBy
+		dataType: string
+		lineageTag: b67731f0-b6eb-40ae-977e-1cdc19600491
+		sourceLineageTag: SeralNumberNoteCreatedBy
+		summarizeBy: none
+		sourceColumn: SeralNumberNoteCreatedBy
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		lineageTag: e7c99f3e-b27d-4a54-993e-daa1f97ffe1c
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 1030918c-f32f-40b1-b98b-770caec620d3
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 60d6948b-e2d8-43d7-9c9d-fe9a72f373c7
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		lineageTag: 3bc9de77-c3aa-4aaa-b580-d5c881f1e986
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_SerialNumber = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Dim_SerialNumber
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+

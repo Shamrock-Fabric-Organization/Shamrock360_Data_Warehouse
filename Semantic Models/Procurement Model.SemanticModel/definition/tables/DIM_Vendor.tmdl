@@ -1,0 +1,216 @@
+table DIM_Vendor
+	lineageTag: 9baa53c0-88dc-4d14-9e23-79d6543f2fd5
+	sourceLineageTag: [dbo].[mtbl_EDW_DIM_Vendor]
+
+	column VendorKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: fccb0c2c-4988-4dc1-8931-de92dfcd966a
+		sourceLineageTag: VendorKey
+		summarizeBy: none
+		sourceColumn: VendorKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(8000)
+		lineageTag: 7fde1ab1-7844-406b-859a-4f2c5d521275
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Vendor_ID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 7b585976-7c80-4a15-9f54-9672b8fef502
+		sourceLineageTag: Vendor_ID
+		summarizeBy: none
+		sourceColumn: Vendor_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Vendor_Name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: e88e94de-94d1-41d9-b72d-431ce2c3b2da
+		sourceLineageTag: Vendor_Name
+		summarizeBy: none
+		sourceColumn: Vendor_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Vendor_Type
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: f92310cd-7dc3-46cb-8fb8-acbbccc05aa8
+		sourceLineageTag: Vendor_Type
+		summarizeBy: none
+		sourceColumn: Vendor_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Address
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 0085115f-4da4-4821-b93a-1ffdd861975e
+		sourceLineageTag: Address
+		summarizeBy: none
+		sourceColumn: Address
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: dfa78a07-6213-4cac-948c-77cb26969178
+		sourceLineageTag: City
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column State
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: b3c666fa-1657-4886-b5f8-7b86d5f4fa83
+		sourceLineageTag: State
+		summarizeBy: none
+		sourceColumn: State
+
+		annotation SummarizationSetBy = Automatic
+
+	column ZIP
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: d9c90576-fcd3-455a-a209-7b4921d3e689
+		sourceLineageTag: ZIP
+		summarizeBy: none
+		sourceColumn: ZIP
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 7d1b4eea-6efa-4504-88c2-4a5616e10aa4
+		sourceLineageTag: Country
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column Currency
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 9556e140-1e70-4c9a-8900-9f4677c0cc0b
+		sourceLineageTag: Currency
+		summarizeBy: none
+		sourceColumn: Currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column vendgroup
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 044924a7-28f9-48a4-85cc-c499f4ad11f0
+		sourceLineageTag: vendgroup
+		summarizeBy: none
+		sourceColumn: vendgroup
+
+		annotation SummarizationSetBy = Automatic
+
+	column VendGroupName
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 8c573246-40bf-41ee-9217-24474b9f7597
+		sourceLineageTag: VendGroupName
+		summarizeBy: none
+		sourceColumn: VendGroupName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		sourceProviderType: varchar(6)
+		lineageTag: f2fc1864-49ac-47dc-87cb-1ea6bcc2c381
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 42075d65-c966-4daf-a6e6-71a3acac5619
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 5ba4d4f9-9d9f-4630-aff7-b2d7aa960563
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 1c2d1d80-12b2-4b87-a189-a3896a742673
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column SegmentID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 347f3b5b-93eb-4392-babd-10459c4c24e3
+		sourceLineageTag: SegmentID
+		summarizeBy: none
+		sourceColumn: SegmentID
+
+		annotation SummarizationSetBy = Automatic
+
+	column SubsegmentID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 11486bc7-e72b-4caf-9ae8-eaf4a3917062
+		sourceLineageTag: SubsegmentID
+		summarizeBy: none
+		sourceColumn: SubsegmentID
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DIM_Vendor = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_DIM_Vendor
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

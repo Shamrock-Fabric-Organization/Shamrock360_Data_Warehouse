@@ -1,0 +1,136 @@
+table 'Employee Table'
+	lineageTag: ecc46a64-9688-4bca-9b13-6f13d49cc5fc
+	sourceLineageTag: [dbo].[mtbl_EDW_DIM_Employee]
+
+	column EmployeeKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: cead4a15-aea0-4d7d-9d24-b71d6051bdeb
+		sourceLineageTag: EmployeeKey
+		summarizeBy: none
+		sourceColumn: EmployeeKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Salesperson ID'
+		dataType: string
+		lineageTag: 8657e640-ba8e-4005-9125-9641af77f50d
+		sourceLineageTag: Personnel_Number
+		summarizeBy: none
+		sourceColumn: Personnel_Number
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Salesperson
+		dataType: string
+		lineageTag: fde66c35-703f-46a1-a901-26798d094107
+		sourceLineageTag: Employee_Name
+		summarizeBy: none
+		sourceColumn: Employee_Name
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		isHidden
+		lineageTag: 4ca175dc-ea40-4f8e-bb6b-51b52773e4aa
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: a7f07b4b-6a9f-48f8-96e9-4ff87ef38cf0
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: d701ae10-81b8-4e33-91a6-dae6cd75ea17
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: c9a0e88f-9588-4c30-a950-94b85f7b0493
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Employment_Type
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: fad600f9-9ad9-40d1-ba96-d23b039e841a
+		sourceLineageTag: Employment_Type
+		summarizeBy: none
+		sourceColumn: Employment_Type
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Employment_Type_Desc
+		dataType: string
+		isHidden
+		lineageTag: fedeb319-a80e-40f3-ae44-026e4013179a
+		sourceLineageTag: Employment_Type_Desc
+		summarizeBy: none
+		sourceColumn: Employment_Type_Desc
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsPerson
+		dataType: string
+		isHidden
+		lineageTag: bcd3202c-fc62-46ff-82d4-a2fe13eb58e5
+		sourceLineageTag: IsPerson
+		summarizeBy: none
+		sourceColumn: IsPerson
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Employee Table' = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Dim_Employee
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+

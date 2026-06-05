@@ -1,0 +1,112 @@
+table vw360_Dim_CPC_BusinessUnit_Indicator
+	lineageTag: 1a7b20f7-48a8-412f-90c7-bd1eacec65f3
+	sourceLineageTag: [dbo].[mtbl_LEG_vw360_Dim_CPC_BusinessUnit_Indicator]
+
+	column CPCID
+		dataType: string
+		lineageTag: b1a3b90e-7f5e-4675-b12f-999bb56d1e15
+		sourceLineageTag: CPCID
+		summarizeBy: none
+		sourceColumn: CPCID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Office
+		dataType: string
+		lineageTag: 20a76dde-ec9b-4ab0-9ca8-ea2785ba8726
+		sourceLineageTag: Office
+		summarizeBy: none
+		sourceColumn: Office
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerID
+		dataType: string
+		lineageTag: 472f4a04-6aab-4069-980c-b398ad0fb5f5
+		sourceLineageTag: CustomerID
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductSearchName
+		dataType: string
+		lineageTag: 0b9ea2c3-e98a-4880-b42d-e12d2f37d24b
+		sourceLineageTag: ProductSearchName
+		summarizeBy: none
+		sourceColumn: ProductSearchName
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsPartOf_PLASTICS
+		dataType: string
+		lineageTag: f6efab02-a2df-4031-a90c-6c77e03da399
+		sourceLineageTag: IsPartOf_PLASTICS
+		summarizeBy: none
+		sourceColumn: IsPartOf_PLASTICS
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsPartOf_TXTURES
+		dataType: string
+		lineageTag: 7a76f0b3-6235-4c0a-86b8-912820ae4548
+		sourceLineageTag: IsPartOf_TXTURES
+		summarizeBy: none
+		sourceColumn: IsPartOf_TXTURES
+
+		annotation SummarizationSetBy = Automatic
+
+	column isPartOf_PTFE
+		dataType: string
+		lineageTag: 03499b5e-6ed5-4136-a137-0d27a9f1f0ac
+		sourceLineageTag: isPartOf_PTFE
+		summarizeBy: none
+		sourceColumn: isPartOf_PTFE
+
+		annotation SummarizationSetBy = Automatic
+
+	column isPartOf_Waxallurgy
+		dataType: string
+		lineageTag: 95464d79-3814-46f9-853d-69b2cc289eeb
+		sourceLineageTag: isPartOf_Waxallurgy
+		summarizeBy: none
+		sourceColumn: isPartOf_Waxallurgy
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsPartOf_Emulsions
+		dataType: string
+		lineageTag: 8b0b3540-4196-4457-8132-6d65453581a9
+		sourceLineageTag: IsPartOf_Emulsions
+		summarizeBy: none
+		sourceColumn: IsPartOf_Emulsions
+
+		annotation SummarizationSetBy = Automatic
+
+	column isPartOf_Lubricants
+		dataType: string
+		lineageTag: d4753a62-a69c-4623-836b-fc6b5435935a
+		sourceLineageTag: isPartOf_Lubricants
+		summarizeBy: none
+		sourceColumn: isPartOf_Lubricants
+
+		annotation SummarizationSetBy = Automatic
+
+	column isPartOf_InksAndCoatings
+		dataType: string
+		lineageTag: a3ea5548-2c34-4a4b-b085-1ff57aab7f5e
+		sourceLineageTag: isPartOf_InksAndCoatings
+		summarizeBy: none
+		sourceColumn: isPartOf_InksAndCoatings
+
+		annotation SummarizationSetBy = Automatic
+
+	partition vw360_Dim_CPC_BusinessUnit_Indicator = entity
+		mode: directLake
+		source
+			entityName: mtbl_LEG_vw360_Dim_CPC_BusinessUnit_Indicator
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+

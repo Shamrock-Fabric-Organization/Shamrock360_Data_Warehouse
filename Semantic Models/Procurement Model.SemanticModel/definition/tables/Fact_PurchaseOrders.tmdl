@@ -1,0 +1,857 @@
+table Fact_PurchaseOrders
+	lineageTag: 0ddce1ba-09b1-4725-8145-bfd80ab3a6f5
+	sourceLineageTag: [dbo].[mtbl_EDW_Fact_PurchaseOrders]
+
+	measure 'Remaining Purchase Financial' = SUM(Fact_PurchaseOrders[remainpurchfinancial])
+		lineageTag: 8d03d95a-7be5-44c2-92fe-9c70ee0abb5f
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Remaining Purchase Physical' = SUM(Fact_PurchaseOrders[remainpurchphysical])
+		lineageTag: 7447e408-b7e2-4cad-a2fb-5730a141110c
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'QTY Ordered LBs' = SUM(Fact_PurchaseOrders[QtyOrdered_LBs])
+		lineageTag: 8b9e1dbf-9187-4b7e-8266-69662924bdad
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'QTY Ordered' = SUM(Fact_PurchaseOrders[qtyordered])
+		lineageTag: ad597d9c-0c0f-4ec1-a1c3-c6018dc8c4d9
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Outstanding QTY' = SUM(Fact_PurchaseOrders[OutstandingQTY])
+		lineageTag: adfd32c6-e270-48c9-b07e-6eac31c3d7a6
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Outstanding Line Amount' = SUM(Fact_PurchaseOrders[OutstandingLineAmount])
+		lineageTag: 3ea50663-6aa9-4867-9f97-f814e80f701f
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Line Amount' = SUM(Fact_PurchaseOrders[lineamount])
+		lineageTag: 6ab8bb29-3dbd-43bf-b795-c975050e4c3b
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Confirmed Delivery Date' = ```
+			
+			VAR dk = VALUES ( 'Fact_PurchaseOrders'[ConfirmedDeliveryDateKey] )
+			RETURN
+			CALCULATE (
+			    SELECTEDVALUE ( 'Dim_Date'[Date] ),
+			    -- neutralize any existing Dim_Date filter coming from the active relationship
+			    REMOVEFILTERS ( 'Dim_Date' ),
+			    -- apply the requested-ship keys as a filter on the date dimension
+			    TREATAS ( dk, 'Dim_Date'[DateKey] )
+			)
+			
+			```
+		formatString: General Date
+		lineageTag: d60ddf68-7ca4-469a-b2ec-6993d3de2c1f
+
+		changedProperty = Name
+
+	measure 'Confirmed / Requested Receipt Date' = ```
+			
+			VAR dk = VALUES ( 'Fact_PurchaseOrders'[ConfirmedOrRequestedReceiptDateKey] )
+			RETURN
+			CALCULATE (
+			    SELECTEDVALUE ( 'Dim_Date'[Date] ),
+			    -- neutralize any existing Dim_Date filter coming from the active relationship
+			    REMOVEFILTERS ( 'Dim_Date' ),
+			    -- apply the requested-ship keys as a filter on the date dimension
+			    TREATAS ( dk, 'Dim_Date'[DateKey] )
+			)
+			
+			```
+		formatString: General Date
+		lineageTag: aaeff9bd-ad74-4add-a6ca-9cf944632666
+
+		changedProperty = Name
+
+	measure 'Delivery Date' = ```
+			
+			VAR dk = VALUES ( 'Fact_PurchaseOrders'[DeliveryDateKey] )
+			RETURN
+			CALCULATE (
+			    SELECTEDVALUE ( 'Dim_Date'[Date] ),
+			    -- neutralize any existing Dim_Date filter coming from the active relationship
+			    REMOVEFILTERS ( 'Dim_Date' ),
+			    -- apply the requested-ship keys as a filter on the date dimension
+			    TREATAS ( dk, 'Dim_Date'[DateKey] )
+			)
+			
+			```
+		formatString: General Date
+		lineageTag: eb6ee7fd-9332-4aba-a1bd-2cd86fcd498e
+
+		changedProperty = Name
+
+	measure 'Created Date' = ```
+			
+			VAR dk = VALUES ( 'Fact_PurchaseOrders'[CreatedDateKey] )
+			RETURN
+			CALCULATE (
+			    SELECTEDVALUE ( 'Dim_Date'[Date] ),
+			    -- neutralize any existing Dim_Date filter coming from the active relationship
+			    REMOVEFILTERS ( 'Dim_Date' ),
+			    -- apply the requested-ship keys as a filter on the date dimension
+			    TREATAS ( dk, 'Dim_Date'[DateKey] )
+			)
+			
+			```
+		formatString: General Date
+		lineageTag: af6a4fe2-34e2-43e5-8735-3149095d2972
+
+		changedProperty = Name
+
+	measure 'PO Creation Date' = ```
+			
+			VAR dk = VALUES ( 'Fact_PurchaseOrders'[PurchOrder_CreatedDateKey] )
+			RETURN
+			CALCULATE (
+			    SELECTEDVALUE ( 'Dim_Date'[Date] ),
+			    -- neutralize any existing Dim_Date filter coming from the active relationship
+			    REMOVEFILTERS ( 'Dim_Date' ),
+			    -- apply the requested-ship keys as a filter on the date dimension
+			    TREATAS ( dk, 'Dim_Date'[DateKey] )
+			)
+			
+			```
+		formatString: General Date
+		lineageTag: a94d2272-a94f-4497-9855-764203cbda78
+
+		changedProperty = Name
+
+	measure 'Total Transactions (PO)' = COUNTROWS(Fact_PurchaseOrders)
+		formatString: 0
+		lineageTag: 4ab41167-c48d-4ef3-8506-c357544ed49c
+
+		changedProperty = Name
+
+	column CMPNY
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(8000)
+		lineageTag: 6e7fdd7a-488c-4035-9f24-017012dd484f
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column PurchaseOrderNumber
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 28f0b33e-d31e-42b2-8b97-611ffc4c53c8
+		sourceLineageTag: PurchaseOrderNumber
+		summarizeBy: none
+		sourceColumn: PurchaseOrderNumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventtransid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: b161f5c7-3d8a-4d23-9670-24eef4380c12
+		sourceLineageTag: inventtransid
+		summarizeBy: none
+		sourceColumn: inventtransid
+
+		annotation SummarizationSetBy = Automatic
+
+	column itemid
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(8000)
+		lineageTag: 29d1355c-4fcc-40ee-bcfb-2cdecb020608
+		sourceLineageTag: itemid
+		summarizeBy: none
+		sourceColumn: itemid
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column vendaccount
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 877662c2-0aa5-4d94-b64a-cd45a25a0638
+		sourceLineageTag: vendaccount
+		summarizeBy: none
+		sourceColumn: vendaccount
+
+		annotation SummarizationSetBy = Automatic
+
+	column invoiceaccount
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 896ee154-389b-4474-ad17-2b35a378ac16
+		sourceLineageTag: invoiceaccount
+		summarizeBy: none
+		sourceColumn: invoiceaccount
+
+		annotation SummarizationSetBy = Automatic
+
+	column procurementcategory
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: a805f92d-ea86-4be5-baf9-b4d9067f3614
+		sourceLineageTag: procurementcategory
+		summarizeBy: none
+		sourceColumn: procurementcategory
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column procurementcategoryname
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: ddcae282-d11c-44cc-b4c4-103de0ef52f9
+		sourceLineageTag: procurementcategoryname
+		summarizeBy: none
+		sourceColumn: procurementcategoryname
+
+		annotation SummarizationSetBy = Automatic
+
+	column name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 3a341848-78b3-4090-a81a-b9b66e8e4d11
+		sourceLineageTag: name
+		summarizeBy: none
+		sourceColumn: name
+
+		annotation SummarizationSetBy = Automatic
+
+	column purchunit
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 1ce15e62-54b7-45f3-9c9a-918d18cee3ea
+		sourceLineageTag: purchunit
+		summarizeBy: none
+		sourceColumn: purchunit
+
+		annotation SummarizationSetBy = Automatic
+
+	column qtyordered
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 0bb464ec-5f70-43ef-ab33-30e8dd338934
+		sourceLineageTag: qtyordered
+		summarizeBy: sum
+		sourceColumn: qtyordered
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column QtyOrdered_LBs
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 4ff266d0-1832-42a8-bbad-18564d320b19
+		sourceLineageTag: QtyOrdered_LBs
+		summarizeBy: sum
+		sourceColumn: QtyOrdered_LBs
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column remainpurchphysical
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 566d50e4-67df-4dc5-a623-8d006d1bacd8
+		sourceLineageTag: remainpurchphysical
+		summarizeBy: sum
+		sourceColumn: remainpurchphysical
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column remainpurchfinancial
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(38, 6)
+		lineageTag: a0809c34-7713-44c0-a023-02b1f411c61a
+		sourceLineageTag: remainpurchfinancial
+		summarizeBy: sum
+		sourceColumn: remainpurchfinancial
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column OutstandingQTY
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 527eba9a-9664-4688-9b46-d0eb2abcc41f
+		sourceLineageTag: OutstandingQTY
+		summarizeBy: sum
+		sourceColumn: OutstandingQTY
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column purchstatus
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 38195c73-541b-4b38-86e1-2d9d89631c8c
+		sourceLineageTag: purchstatus
+		summarizeBy: none
+		sourceColumn: purchstatus
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column purchstatus_$label
+		dataType: string
+		sourceProviderType: varchar(8)
+		lineageTag: 38f3d693-f738-495d-9849-55442b5d9e0f
+		sourceLineageTag: purchstatus_$label
+		summarizeBy: none
+		sourceColumn: purchstatus_$label
+
+		annotation SummarizationSetBy = Automatic
+
+	column returnstatus
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: c8307dec-4a66-440a-bfec-eed0274dab4a
+		sourceLineageTag: returnstatus
+		summarizeBy: none
+		sourceColumn: returnstatus
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column returnstatus_$label
+		dataType: string
+		sourceProviderType: varchar(10)
+		lineageTag: c21090a7-0bd3-426d-aaf4-8573b7f6a96d
+		sourceLineageTag: returnstatus_$label
+		summarizeBy: none
+		sourceColumn: returnstatus_$label
+
+		annotation SummarizationSetBy = Automatic
+
+	column lineamount
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 9f758009-c080-45ea-aa3d-6adb0c88e1af
+		sourceLineageTag: lineamount
+		summarizeBy: sum
+		sourceColumn: lineamount
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column OutstandingLineAmount
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(38, 6)
+		lineageTag: af36cd92-81d1-49ee-a104-f8b79b35fc7b
+		sourceLineageTag: OutstandingLineAmount
+		summarizeBy: sum
+		sourceColumn: OutstandingLineAmount
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column inventdimid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 6c7dbce3-9ce4-430b-a1b5-a09329e05171
+		sourceLineageTag: inventdimid
+		summarizeBy: none
+		sourceColumn: inventdimid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventbatchid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 49588ed7-842f-4928-b6dd-4e657f0130d6
+		sourceLineageTag: inventbatchid
+		summarizeBy: none
+		sourceColumn: inventbatchid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventlocationid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: a7a8fa88-aed4-4e3d-89ed-df0862c2fb1f
+		sourceLineageTag: inventlocationid
+		summarizeBy: none
+		sourceColumn: inventlocationid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventsiteid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: cd1ce84e-0eaf-412d-a188-31729ca54525
+		sourceLineageTag: inventsiteid
+		summarizeBy: none
+		sourceColumn: inventsiteid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventstatusid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: e17f0ea9-a6d2-475f-987e-57eb3a2488f0
+		sourceLineageTag: inventstatusid
+		summarizeBy: none
+		sourceColumn: inventstatusid
+
+		annotation SummarizationSetBy = Automatic
+
+	column purchasetype
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: fbe3c7b3-2d93-488a-a617-60020611da43
+		sourceLineageTag: purchasetype
+		summarizeBy: none
+		sourceColumn: purchasetype
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column purchasetype_$label
+		dataType: string
+		sourceProviderType: varchar(16)
+		lineageTag: 52c246b4-8bf9-4aa8-ac2c-674b1af86607
+		sourceLineageTag: purchasetype_$label
+		summarizeBy: none
+		sourceColumn: purchasetype_$label
+
+		annotation SummarizationSetBy = Automatic
+
+	column currencycode
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 49160735-d527-410d-8fce-583a4c5a22e7
+		sourceLineageTag: currencycode
+		summarizeBy: none
+		sourceColumn: currencycode
+
+		annotation SummarizationSetBy = Automatic
+
+	column deliverydate
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 2105f33d-78d6-4123-b9ec-9f81dd5ea537
+		sourceLineageTag: deliverydate
+		summarizeBy: none
+		sourceColumn: deliverydate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column DeliveryDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 1decb8e8-d088-4601-82d4-0893fd6166bf
+		sourceLineageTag: DeliveryDateKey
+		summarizeBy: none
+		sourceColumn: DeliveryDateKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column purchprice
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 8606a52b-541c-4a96-a500-f6d2ad0b59a3
+		sourceLineageTag: purchprice
+		summarizeBy: none
+		sourceColumn: purchprice
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column linenumber
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: b5166a23-198d-4ffe-b631-0972ad9b13e8
+		sourceLineageTag: linenumber
+		summarizeBy: none
+		sourceColumn: linenumber
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column priceunit
+		dataType: double
+		sourceProviderType: decimal(38, 12)
+		lineageTag: 5b35091f-e573-477d-85c0-38a156215804
+		sourceLineageTag: priceunit
+		summarizeBy: none
+		sourceColumn: priceunit
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column confirmeddlv
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 688fc2fc-aeea-4282-b3b2-3a4d51652635
+		sourceLineageTag: confirmeddlv
+		summarizeBy: none
+		sourceColumn: confirmeddlv
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ConfirmedDeliveryDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: a6dc5c6d-4fab-40ba-b6d1-59a21d7d2357
+		sourceLineageTag: ConfirmedDeliveryDateKey
+		summarizeBy: none
+		sourceColumn: ConfirmedDeliveryDateKey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column ConfirmedOrRequestedReceiptDate
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 830c5e31-dbd7-49e5-aa62-667c359e268a
+		sourceLineageTag: ConfirmedOrRequestedReceiptDate
+		summarizeBy: none
+		sourceColumn: ConfirmedOrRequestedReceiptDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ConfirmedOrRequestedReceiptDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: a3e1ad5a-89e3-460a-8610-da261f55a7d6
+		sourceLineageTag: ConfirmedOrRequestedReceiptDateKey
+		summarizeBy: none
+		sourceColumn: ConfirmedOrRequestedReceiptDateKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column createddatetime
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: fd8ba82c-1ceb-4ff2-a423-a2da946d8b64
+		sourceLineageTag: createddatetime
+		summarizeBy: none
+		sourceColumn: createddatetime
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CreatedDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 7dc32892-18b6-47c7-9c72-cf77eb34c89a
+		sourceLineageTag: CreatedDateKey
+		summarizeBy: count
+		sourceColumn: CreatedDateKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column PurchOrder_CreatedDateTime
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 0b97262a-1492-4eca-b538-73d955a57d73
+		sourceLineageTag: PurchOrder_CreatedDateTime
+		summarizeBy: none
+		sourceColumn: PurchOrder_CreatedDateTime
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column PurchOrder_CreatedDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 1b3b3f2e-8afd-414e-983e-77a99c912b77
+		sourceLineageTag: PurchOrder_CreatedDateKey
+		summarizeBy: none
+		sourceColumn: PurchOrder_CreatedDateKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column personnelnumber
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: f6f6ac5f-17a8-4282-aa52-0832bc702e3f
+		sourceLineageTag: personnelnumber
+		summarizeBy: none
+		sourceColumn: personnelnumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiscountPrice
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 693c10dc-20ef-448d-965a-820caab57792
+		sourceLineageTag: DiscountPrice
+		summarizeBy: none
+		sourceColumn: DiscountPrice
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DiscountPriceUnit
+		dataType: double
+		sourceProviderType: decimal(38, 12)
+		lineageTag: 423e056c-c8ca-40eb-bca7-8d3295c49e9b
+		sourceLineageTag: DiscountPriceUnit
+		summarizeBy: none
+		sourceColumn: DiscountPriceUnit
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column VendorKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: e29449a2-16e5-495c-a112-fc8a38b608f8
+		sourceLineageTag: VendorKey
+		summarizeBy: none
+		sourceColumn: VendorKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column InvoiceVendorKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 9b363410-2d44-41ef-874c-3a12471c5612
+		sourceLineageTag: InvoiceVendorKey
+		summarizeBy: none
+		sourceColumn: InvoiceVendorKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column ProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 12e71c92-eb6e-4c56-a456-efe58927e834
+		sourceLineageTag: ProductKey
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 6149ef64-3a6a-421f-83dd-2d64bb3191f6
+		sourceLineageTag: Legal_EntityKey
+		summarizeBy: none
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmployeeKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 668ab113-423a-4f73-8a81-525e884b192f
+		sourceLineageTag: EmployeeKey
+		summarizeBy: none
+		sourceColumn: EmployeeKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column SiteKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: a9993289-9d17-47f4-b455-ca1cea61abb5
+		sourceLineageTag: SiteKey
+		summarizeBy: none
+		sourceColumn: SiteKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column WarehouseKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: d81afae1-6ad4-4a50-8aae-5967374e24a0
+		sourceLineageTag: WarehouseKey
+		summarizeBy: none
+		sourceColumn: WarehouseKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column PurchaseOrerKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: be95c51f-d55e-4be0-8152-182641ae9113
+		sourceLineageTag: PurchaseOrerKey
+		summarizeBy: none
+		sourceColumn: PurchaseOrerKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column BatchKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: d96df4f9-0396-4591-8d75-a583b85a18a1
+		sourceLineageTag: BatchKey
+		summarizeBy: count
+		sourceColumn: BatchKey
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_PurchaseOrders = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Fact_PurchaseOrders
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

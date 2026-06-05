@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "R1 Daily GMSM"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "2eb4fb50-9491-a5e8-4e76-2f4363afa316"
+  }
+}

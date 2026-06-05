@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "R1 Daily LOAD Inventory (until D1)"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "b9a56782-d7fb-a65f-42ee-c83c6553507e"
+  }
+}

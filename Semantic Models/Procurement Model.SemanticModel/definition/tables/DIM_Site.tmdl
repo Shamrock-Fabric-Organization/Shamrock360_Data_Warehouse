@@ -1,0 +1,102 @@
+table DIM_Site
+	lineageTag: 4cde246a-4225-44f0-a8ca-02898c13a1f8
+	sourceLineageTag: [dbo].[mtbl_EDW_DIM_Site]
+
+	column SiteKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 0834a3b8-a42b-4cbb-aba4-81ebd881ff06
+		sourceLineageTag: SiteKey
+		summarizeBy: none
+		sourceColumn: SiteKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: c1d31ac2-4694-4972-b9bf-c254f6ea62f7
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column Site_ID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 6b57a32a-2c7f-42c9-bb9c-e1e14ed09b18
+		sourceLineageTag: Site_ID
+		summarizeBy: none
+		sourceColumn: Site_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Site_Name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 53be53ec-5296-4d03-bd2e-d6cdecb455d9
+		sourceLineageTag: Site_Name
+		summarizeBy: none
+		sourceColumn: Site_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		sourceProviderType: varchar(6)
+		lineageTag: b87740e3-ed44-41b4-994f-d878a99b6a95
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: f6b42694-a4ce-4f3a-90a7-0ed797f49109
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 8c2bfc69-9dbb-45fa-b554-78b9b8c5f2b6
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 069f8778-ce50-414e-b37d-102825614a56
+		sourceLineageTag: RecordStatus
+		summarizeBy: sum
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DIM_Site = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_DIM_Site
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

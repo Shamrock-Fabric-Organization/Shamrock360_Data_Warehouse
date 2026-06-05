@@ -1,0 +1,617 @@
+table Fact_QualityOrderLineResults
+	lineageTag: 5fe2bfe3-df43-4501-9909-3dd0fe3a9a08
+	sourceLineageTag: [dbo].[mtbl_EDW_Fact_QualityOrderLineResults]
+
+	column CMPNY
+		dataType: string
+		lineageTag: 285a7885-63a2-4d87-b7f8-e4cac0de3c2e
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column qualityorderid
+		dataType: string
+		lineageTag: 344b1f9a-8be2-4646-ad63-aaecce8fb10a
+		sourceLineageTag: qualityorderid
+		summarizeBy: none
+		sourceColumn: qualityorderid
+
+		annotation SummarizationSetBy = Automatic
+
+	column testsequence
+		dataType: int64
+		formatString: 0
+		lineageTag: 5459862e-2e41-4dc8-98a0-48c68b97145b
+		sourceLineageTag: testsequence
+		summarizeBy: sum
+		sourceColumn: testsequence
+
+		annotation SummarizationSetBy = Automatic
+
+	column linenum
+		dataType: double
+		lineageTag: a7feda19-c847-4ccd-a054-662787c8f8ff
+		sourceLineageTag: linenum
+		summarizeBy: sum
+		sourceColumn: linenum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column testid
+		dataType: string
+		lineageTag: 791643f1-cc52-4731-a786-5a781696ca31
+		sourceLineageTag: testid
+		summarizeBy: none
+		sourceColumn: testid
+
+		annotation SummarizationSetBy = Automatic
+
+	column testresult
+		dataType: int64
+		formatString: 0
+		lineageTag: 98ee62fa-feb2-4287-8075-8a600da00412
+		sourceLineageTag: testresult
+		summarizeBy: sum
+		sourceColumn: testresult
+
+		annotation SummarizationSetBy = Automatic
+
+	column testresult_$label
+		dataType: string
+		lineageTag: b134345b-95b1-4c16-ba6d-75bbaa181ff8
+		sourceLineageTag: testresult_$label
+		summarizeBy: none
+		sourceColumn: testresult_$label
+
+		annotation SummarizationSetBy = Automatic
+
+	column testresultquantity
+		dataType: double
+		lineageTag: 0b0061ac-6b70-4091-8ec2-61cf92f6c860
+		sourceLineageTag: testresultquantity
+		summarizeBy: sum
+		sourceColumn: testresultquantity
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column testresultvalueoutcome
+		dataType: string
+		lineageTag: a4091788-f9aa-4452-9360-8897498799cc
+		sourceLineageTag: testresultvalueoutcome
+		summarizeBy: none
+		sourceColumn: testresultvalueoutcome
+
+		annotation SummarizationSetBy = Automatic
+
+	column testresultvaluereal
+		dataType: double
+		lineageTag: 19ae01bb-c007-4855-a204-f44ebdb3fd36
+		sourceLineageTag: testresultvaluereal
+		summarizeBy: sum
+		sourceColumn: testresultvaluereal
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column lowerlimit
+		dataType: double
+		lineageTag: de2c925f-73f7-4236-be0e-92853dfb1377
+		sourceLineageTag: lowerlimit
+		summarizeBy: sum
+		sourceColumn: lowerlimit
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column lowertolerance
+		dataType: double
+		lineageTag: 67a5be2e-ca0b-46dd-a4f7-3e143de5c0cf
+		sourceLineageTag: lowertolerance
+		summarizeBy: sum
+		sourceColumn: lowertolerance
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column pdsattribvalue
+		dataType: string
+		lineageTag: 2137142d-a7f4-4748-bf71-48ff8d28f75a
+		sourceLineageTag: pdsattribvalue
+		summarizeBy: none
+		sourceColumn: pdsattribvalue
+
+		annotation SummarizationSetBy = Automatic
+
+	column pdsbatchattribid
+		dataType: string
+		lineageTag: 49692d06-84c7-47d7-8284-fe81c84f374e
+		sourceLineageTag: pdsbatchattribid
+		summarizeBy: none
+		sourceColumn: pdsbatchattribid
+
+		annotation SummarizationSetBy = Automatic
+
+	column pdsorderlineresult
+		dataType: double
+		lineageTag: 328f66c0-55e4-45ce-8a28-09bde0db7eca
+		sourceLineageTag: pdsorderlineresult
+		summarizeBy: sum
+		sourceColumn: pdsorderlineresult
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column standardvalue
+		dataType: double
+		lineageTag: a92f99e4-30e1-4ab8-a573-865a72f21afc
+		sourceLineageTag: standardvalue
+		summarizeBy: sum
+		sourceColumn: standardvalue
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column testinstrumentid
+		dataType: string
+		lineageTag: 3c7c8feb-3e43-4308-9765-64ed60d9d9bf
+		sourceLineageTag: testinstrumentid
+		summarizeBy: none
+		sourceColumn: testinstrumentid
+
+		annotation SummarizationSetBy = Automatic
+
+	column testunitid
+		dataType: string
+		lineageTag: 6d4aeb37-6611-4b38-8dfa-738e2f590fff
+		sourceLineageTag: testunitid
+		summarizeBy: none
+		sourceColumn: testunitid
+
+		annotation SummarizationSetBy = Automatic
+
+	column upperlimit
+		dataType: double
+		lineageTag: 0f6ecdfa-f2ab-4e3a-970e-a1f3439847b8
+		sourceLineageTag: upperlimit
+		summarizeBy: sum
+		sourceColumn: upperlimit
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column uppertolerance
+		dataType: double
+		lineageTag: 18d6b736-e60d-4385-9c1c-a883377d8587
+		sourceLineageTag: uppertolerance
+		summarizeBy: sum
+		sourceColumn: uppertolerance
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column variableid
+		dataType: string
+		lineageTag: e44a0218-a42b-4dbd-ada1-f63f7d2f7961
+		sourceLineageTag: variableid
+		summarizeBy: none
+		sourceColumn: variableid
+
+		annotation SummarizationSetBy = Automatic
+
+	column variableoutcomeidstandard
+		dataType: string
+		lineageTag: e53ba0fc-0432-42ec-888d-1603bfb96156
+		sourceLineageTag: variableoutcomeidstandard
+		summarizeBy: none
+		sourceColumn: variableoutcomeidstandard
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventrefid
+		dataType: string
+		lineageTag: 186342d4-1524-4a62-908b-93c3482ef5fc
+		sourceLineageTag: inventrefid
+		summarizeBy: none
+		sourceColumn: inventrefid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventsiteid
+		dataType: string
+		lineageTag: eeceba28-1219-4104-b501-2ade36d42277
+		sourceLineageTag: inventsiteid
+		summarizeBy: none
+		sourceColumn: inventsiteid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventlocationid
+		dataType: string
+		lineageTag: 3bb5e280-17ec-4bb7-8963-55852bd67102
+		sourceLineageTag: inventlocationid
+		summarizeBy: none
+		sourceColumn: inventlocationid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventbatchid
+		dataType: string
+		lineageTag: c2f0cb53-d194-454b-b1a5-0d9b439ddc32
+		sourceLineageTag: inventbatchid
+		summarizeBy: none
+		sourceColumn: inventbatchid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventserialid
+		dataType: string
+		lineageTag: 3315b70d-98ca-4150-9838-7a40038b331e
+		sourceLineageTag: inventserialid
+		summarizeBy: none
+		sourceColumn: inventserialid
+
+		annotation SummarizationSetBy = Automatic
+
+	column licenseplateid
+		dataType: string
+		lineageTag: 40b09889-50da-45c1-8c95-1ba17eb89df7
+		sourceLineageTag: licenseplateid
+		summarizeBy: none
+		sourceColumn: licenseplateid
+
+		annotation SummarizationSetBy = Automatic
+
+	column wmslocationid
+		dataType: string
+		lineageTag: 33a48b12-81b8-4085-b32a-dee1bffaa062
+		sourceLineageTag: wmslocationid
+		summarizeBy: none
+		sourceColumn: wmslocationid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventstatusid
+		dataType: string
+		lineageTag: 57094760-92cb-4c49-bfa9-b958413c0b33
+		sourceLineageTag: inventstatusid
+		summarizeBy: none
+		sourceColumn: inventstatusid
+
+		annotation SummarizationSetBy = Automatic
+
+	column LineCreatedDateTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 3ee9b629-0d77-4e40-8ca4-6ec4a1f769ac
+		sourceLineageTag: LineCreatedDateTime
+		summarizeBy: none
+		sourceColumn: LineCreatedDateTime
+
+		annotation SummarizationSetBy = Automatic
+
+	column LineCreatedDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: b793671b-d20b-4c04-b63b-7437b307a70b
+		sourceLineageTag: LineCreatedDateKey
+		summarizeBy: none
+		sourceColumn: LineCreatedDateKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column validatedbyworker
+		dataType: int64
+		formatString: 0
+		lineageTag: 0343291e-cf5c-42f3-84ee-115602d4179d
+		sourceLineageTag: validatedbyworker
+		summarizeBy: sum
+		sourceColumn: validatedbyworker
+
+		annotation SummarizationSetBy = Automatic
+
+	column ValidatedDateTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 6b6d6bcd-d620-47b9-a4db-9060b9fe67c2
+		sourceLineageTag: ValidatedDateTime
+		summarizeBy: none
+		sourceColumn: ValidatedDateTime
+
+		annotation SummarizationSetBy = Automatic
+
+	column ValidatedDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 9c3f7697-c46c-477e-a694-2050c75c84a7
+		sourceLineageTag: ValidatedDateKey
+		summarizeBy: none
+		sourceColumn: ValidatedDateKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column accountrelation
+		dataType: string
+		lineageTag: 6f12669b-60c1-4c29-bd8c-189b896a2c41
+		sourceLineageTag: accountrelation
+		summarizeBy: none
+		sourceColumn: accountrelation
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 6c14e228-6590-41ae-8afb-e4250468ae3f
+		sourceLineageTag: Legal_EntityKey
+		summarizeBy: none
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column ProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 6ce35f9a-a1bf-4f9f-82d4-52cffac35eda
+		sourceLineageTag: ProductKey
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column ProductionBatchOrderKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 0eacbad5-b53d-409a-9d39-9874b6eed512
+		sourceLineageTag: ProductionBatchOrderKey
+		summarizeBy: none
+		sourceColumn: ProductionBatchOrderKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column PurchaseOrderKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a73736ad-7374-4f48-a6f4-3a4a1cbf01f4
+		sourceLineageTag: PurchaseOrderKey
+		summarizeBy: none
+		sourceColumn: PurchaseOrderKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column SalesOrderKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 8971dd76-97cf-443b-a465-7789a2c879fb
+		sourceLineageTag: SalesOrderKey
+		summarizeBy: none
+		sourceColumn: SalesOrderKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column SiteKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: ca414147-2a11-459e-9700-e3b64fd3854d
+		sourceLineageTag: SiteKey
+		summarizeBy: none
+		sourceColumn: SiteKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column WarehouseKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 1c648581-b8d8-4470-960d-e07936e90dd0
+		sourceLineageTag: WarehouseKey
+		summarizeBy: none
+		sourceColumn: WarehouseKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column BatchKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 90a49bc5-8bc2-4ed8-b62f-055bf1253bfe
+		sourceLineageTag: BatchKey
+		summarizeBy: none
+		sourceColumn: BatchKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column SerialNumberKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 1263fa6f-95e7-4a63-b65a-c5786629a4a1
+		sourceLineageTag: SerialNumberKey
+		summarizeBy: none
+		sourceColumn: SerialNumberKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column VendorKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 117a800d-4ad4-4386-a1e8-fb9fd06f30d2
+		sourceLineageTag: VendorKey
+		summarizeBy: none
+		sourceColumn: VendorKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column CustomerKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 0f6d9abb-724f-45f4-95d1-fbc1f7edadb2
+		sourceLineageTag: CustomerKey
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column RouteKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 15422d02-783a-4f03-9446-0de2d4681628
+		sourceLineageTag: RouteKey
+		summarizeBy: none
+		sourceColumn: RouteKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column qmsskiptest
+		dataType: int64
+		formatString: 0
+		lineageTag: f26cc02c-f890-48d0-97ae-659909f72ffe
+		sourceLineageTag: qmsskiptest
+		summarizeBy: none
+		sourceColumn: qmsskiptest
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column qmsskiptest_$label
+		dataType: string
+		lineageTag: bac87a71-679a-42cc-bb32-7ac0a9e7def5
+		sourceLineageTag: qmsskiptest_$label
+		summarizeBy: none
+		sourceColumn: qmsskiptest_$label
+
+		annotation SummarizationSetBy = Automatic
+
+	column wrkctrid
+		dataType: string
+		lineageTag: ec1cf952-0d84-48b7-a340-b00e894736a9
+		sourceLineageTag: wrkctrid
+		summarizeBy: none
+		sourceColumn: wrkctrid
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkCenterKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 010c1de3-114d-4c24-8e62-178517000fbf
+		sourceLineageTag: WorkCenterKey
+		summarizeBy: none
+		sourceColumn: WorkCenterKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column QuaityOrderStatus
+		dataType: string
+		lineageTag: e567cb02-ddd0-4e2e-816a-674f39ee6f3c
+		sourceLineageTag: QuaityOrderStatus
+		summarizeBy: none
+		sourceColumn: QuaityOrderStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column testgroupid
+		dataType: string
+		lineageTag: ae534723-3a2a-4373-8893-b845d785141c
+		sourceLineageTag: testgroupid
+		summarizeBy: none
+		sourceColumn: testgroupid
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_QualityOrderLineResults = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Fact_QualityOrderLineResults
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+

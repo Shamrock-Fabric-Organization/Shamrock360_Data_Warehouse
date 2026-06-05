@@ -1,0 +1,49 @@
+table 'Date Grain'
+	lineageTag: 7100b605-e8b4-4cc7-85ec-2c812d93ea70
+
+	column 'Date Grain'
+		lineageTag: f7fad67c-9388-434f-a06e-e8d8cd6a7a16
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Date Grain Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Date Grain Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Date Grain Fields'
+		isHidden
+		lineageTag: 067edd73-6158-4cb4-a501-95d012c2db6f
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Date Grain Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Date Grain Order'
+		isHidden
+		formatString: 0
+		lineageTag: 88a5914b-3f56-433a-b232-23dafa1210d3
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Date Grain' = calculated
+		mode: import
+		source =
+				{
+				    ("Month", NAMEOF('Dim_Date'[YearMonthLabel]), 0),
+				    ("Week", NAMEOF('Dim_Date'[WeekStartDateSunday]), 1),
+				    ("Day", NAMEOF('Dim_Date'[Date]), 2)
+				}
+
+	annotation PBI_Id = 4faf3c0695764b16b296dfea6b9dcc81
+

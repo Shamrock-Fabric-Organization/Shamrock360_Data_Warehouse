@@ -1,0 +1,49 @@
+table 'Time Grain'
+	lineageTag: 6e75248b-db88-4c1c-83bd-189674aee650
+
+	column 'Time Grain'
+		lineageTag: 973249b2-577c-486c-b769-2efd500077f8
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Time Grain Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Time Grain Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Time Grain Fields'
+		isHidden
+		lineageTag: 92ef8435-ac3b-4827-bed5-258229069c0b
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Time Grain Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Time Grain Order'
+		isHidden
+		formatString: 0
+		lineageTag: 0f6c1038-3993-4f3f-8727-8edfc893d2bb
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Time Grain' = calculated
+		mode: import
+		source =
+				{
+				    ("Day", NAMEOF('Dim_Date'[Date]), 0),
+				    ("Week", NAMEOF('Dim_Date'[WeekStartDate]), 1),
+				    ("Month", NAMEOF('Dim_Date'[MonthStartDate]), 2)
+				}
+
+	annotation PBI_Id = 70fbc31bc74843a58554a82bf57fb84e
+

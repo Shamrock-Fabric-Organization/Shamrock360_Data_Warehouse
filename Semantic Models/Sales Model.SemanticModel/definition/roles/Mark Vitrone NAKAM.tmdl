@@ -1,0 +1,10 @@
+role 'Mark Vitrone NAKAM'
+	modelPermission: read
+
+	tablePermission Fact_Sales =
+			RELATED(Dim_Account[Harmonized_Name]) IN {
+			  "Mocom","Siegwerk","Syensqo"
+			}
+
+	annotation PBI_Id = 3cdfea3c830749bbba830d33c9389102
+

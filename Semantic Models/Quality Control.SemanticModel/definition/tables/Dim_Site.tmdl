@@ -1,0 +1,94 @@
+table Dim_Site
+	lineageTag: aea8e48c-c57a-42de-873f-60f5f883794e
+	sourceLineageTag: [dbo].[mtbl_EDW_DIM_Site]
+
+	column SiteKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: c6071813-a8e6-4c7b-b7e8-83afe752a74f
+		sourceLineageTag: SiteKey
+		summarizeBy: none
+		sourceColumn: SiteKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column CMPNY
+		dataType: string
+		lineageTag: d2b3307e-7b97-4bcb-a6e7-2c7c681b7c74
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column Site_ID
+		dataType: string
+		lineageTag: 34bb3b1e-dfff-4cd5-9a46-2a7fc481a8a2
+		sourceLineageTag: Site_ID
+		summarizeBy: none
+		sourceColumn: Site_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Site_Name
+		dataType: string
+		lineageTag: 2b4ba93d-00cb-4b0c-9112-5108c5d2f76f
+		sourceLineageTag: Site_Name
+		summarizeBy: none
+		sourceColumn: Site_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		lineageTag: 82e69a21-479c-4490-8f8a-6eb17de6590d
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 29406174-515e-46ef-951b-45fc797adb3c
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: b1c81c55-4d15-4b01-9d40-03374b5e6647
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		lineageTag: 7021845a-f2c3-41e0-950f-614a1f4cc67f
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Site = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_DIM_Site
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+

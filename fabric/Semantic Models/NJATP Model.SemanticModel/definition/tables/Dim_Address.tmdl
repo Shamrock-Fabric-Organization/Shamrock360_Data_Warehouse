@@ -1,0 +1,173 @@
+table Dim_Address
+	lineageTag: 43c35747-ba6c-407f-b45d-e800b716241e
+	sourceLineageTag: [dbo].[mtbl_EDW_DIM_Address]
+
+	column AddressKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 3145a6c4-7ca7-4712-a7d4-6c90ef97ef00
+		sourceLineageTag: AddressKey
+		summarizeBy: none
+		sourceColumn: AddressKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column AddressRecId
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: c5fe8a0e-e9be-4bed-a482-0858646f58b6
+		sourceLineageTag: AddressRecId
+		summarizeBy: none
+		sourceColumn: AddressRecId
+
+		annotation SummarizationSetBy = Automatic
+
+	column Location
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 2ba986a1-e6e6-4ef2-9921-4d34b6b606e4
+		sourceLineageTag: Location
+		summarizeBy: none
+		sourceColumn: Location
+
+		annotation SummarizationSetBy = Automatic
+
+	column Street
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 8724d753-b94f-44e6-abb1-e8544c0cffb7
+		sourceLineageTag: Street
+		summarizeBy: none
+		sourceColumn: Street
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: d97af29e-30f0-4e4d-845b-719e4adbee46
+		sourceLineageTag: City
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column State
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 050632f4-5611-40cc-b99e-69ace6fb7ebe
+		sourceLineageTag: State
+		summarizeBy: none
+		sourceColumn: State
+
+		annotation SummarizationSetBy = Automatic
+
+	column ZipCode
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: c5914241-fc39-45fb-9823-1d5785794f0a
+		sourceLineageTag: ZipCode
+		summarizeBy: none
+		sourceColumn: ZipCode
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 353c2d34-2cdf-49f9-8740-358fa2365e2a
+		sourceLineageTag: Country
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column ValidFrom
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 8fcec1ad-cbcf-45cd-86b2-0c3b37fbd0a4
+		sourceLineageTag: ValidFrom
+		summarizeBy: none
+		sourceColumn: ValidFrom
+
+		annotation SummarizationSetBy = Automatic
+
+	column ValidTo
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: be1d7100-7c57-41ac-8177-18b4e4f104f6
+		sourceLineageTag: ValidTo
+		summarizeBy: none
+		sourceColumn: ValidTo
+
+		annotation SummarizationSetBy = Automatic
+
+	column LocationName
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: d273b106-e997-4955-bb9b-97e63d26f707
+		sourceLineageTag: LocationName
+		summarizeBy: none
+		sourceColumn: LocationName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		sourceProviderType: varchar(6)
+		lineageTag: 981de3d4-d746-4b9e-b5e9-4007459e03c9
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 261117e1-822b-4c50-b231-b4ef6df51adc
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: de396bc3-50c3-425b-a534-8723f70aa62c
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 283664f0-6637-4d4b-be57-4cb9967539f9
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Address = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_DIM_Address
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

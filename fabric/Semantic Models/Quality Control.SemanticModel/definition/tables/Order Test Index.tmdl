@@ -1,0 +1,38 @@
+table 'Order Test Index'
+	lineageTag: 8fac3e95-cf3a-421e-b81f-52f6032f5acd
+
+	column qualityorderid
+		dataType: string
+		lineageTag: 75e89384-db9b-4e07-8c59-7c5b0dc2cf81
+		summarizeBy: none
+		sourceColumn: qualityorderid
+
+		annotation SummarizationSetBy = Automatic
+
+	column testid
+		dataType: string
+		lineageTag: aba7c90b-48b6-4a50-81a1-0b1eb0831a30
+		summarizeBy: none
+		sourceColumn: testid
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsSkipped
+		dataType: int64
+		formatString: 0
+		lineageTag: 9e7fc81e-0884-4a55-a20b-4f9b56d79b92
+		summarizeBy: sum
+		sourceColumn: IsSkipped
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Order Test Index' = m
+		mode: import
+		source =
+				let
+				  Source = Sql.Database("efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com", "WH_Curated", [Query = "SELECT#(lf)    f.qualityorderid,#(lf)    f.testid,#(lf)    MAX(#(lf)        CASE#(lf)            WHEN f.qmsskiptest = 1 THEN 1#(lf)            ELSE 0#(lf)        END#(lf)    ) AS IsSkipped#(lf)FROM dbo.mtbl_EDW_Fact_QualityOrderLineResults AS f#(lf)WHERE#(lf)    f.qualityorderid IS NOT NULL#(lf)    AND f.testid IS NOT NULL#(lf)GROUP BY#(lf)    f.qualityorderid,#(lf)    f.testid;"])
+				in
+				  Source
+
+	annotation PBI_ResultType = Table
+

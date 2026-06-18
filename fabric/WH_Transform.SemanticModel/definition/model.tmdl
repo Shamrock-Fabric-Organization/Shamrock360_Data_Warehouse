@@ -1,0 +1,11 @@
+model fa439e7b-51aa-41c9-ab0d-ef9a8301f85a
+	culture: en-US
+	collation: Latin1_General_100_CI_AS_KS_WS_SC_UTF8
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+

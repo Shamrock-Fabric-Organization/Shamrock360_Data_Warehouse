@@ -1,0 +1,120 @@
+table DIM_Legal_Entity
+	lineageTag: 91c79a3e-fdae-4625-996a-9a489659ede2
+	sourceLineageTag: [dbo].[mtbl_EDW_DIM_Legal_Entity]
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 76db4875-8438-478a-ac99-9d493f94fa15
+		sourceLineageTag: Legal_EntityKey
+		summarizeBy: none
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: ad5e0e1b-9a7e-4db2-bffa-a2722aa33825
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_Entity_Name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: be985486-8a34-4686-ac56-f3ce5657c0c3
+		sourceLineageTag: Legal_Entity_Name
+		summarizeBy: none
+		sourceColumn: Legal_Entity_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column accountingcurrency
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 1c60f6bc-e0bf-4882-8ea5-94162303ef6a
+		sourceLineageTag: accountingcurrency
+		summarizeBy: none
+		sourceColumn: accountingcurrency
+
+		annotation SummarizationSetBy = Automatic
+
+	column reportingcurrency
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 1d055f54-ee61-4e98-ab27-cc636aaebed1
+		sourceLineageTag: reportingcurrency
+		summarizeBy: none
+		sourceColumn: reportingcurrency
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		sourceProviderType: varchar(6)
+		lineageTag: 9b2f0586-1c88-44ea-85b5-ef41222d98f3
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 96c74154-93fd-4391-b48f-f7c6cc728ba0
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 26986c18-2b9c-42f9-ae65-1ce19d566b34
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 23bd342f-e6bf-49c0-8587-acbed65ca4e0
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	partition DIM_Legal_Entity = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_DIM_Legal_Entity
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

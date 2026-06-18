@@ -1,0 +1,25 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["DirectLake - WH_Curated"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_ProTooling = ["DirectLakeOnOneLakeInWeb","WebModelingEdit"]
+
+ref table 'Product Table'
+ref table 'Employee Table'
+ref table 'Account Table'
+ref table 'Warehouse Table'
+ref table 'Legal Entity Table'
+ref table 'Sales Table'
+ref table 'Date Table'
+ref table 'Market Segmentation Table'
+
+ref role Everyone
+

@@ -1,0 +1,27 @@
+CREATE TABLE [dbo].[tbl_Fact_TestGroupDetails] (
+
+	[CompanyId] varchar(8000) NULL, 
+	[TestGroupId] varchar(8000) NULL, 
+	[TestId] varchar(8000) NULL, 
+	[TestSequence] bigint NULL, 
+	[TestDescription] varchar(8000) NULL, 
+	[TestType] varchar(8) NULL, 
+	[TestUnitId] varchar(8000) NULL, 
+	[TestMember_AcceptableQualityLevel] decimal(38,6) NULL, 
+	[StandardValue] decimal(38,6) NULL, 
+	[LowerLimit] decimal(38,6) NULL, 
+	[UpperLimit] decimal(38,6) NULL, 
+	[LowerTolerance] decimal(38,6) NULL, 
+	[UpperTolerance] decimal(38,6) NULL, 
+	[ActionOnFailure] varchar(6) NULL, 
+	[MemberValidFrom] datetime2(6) NULL, 
+	[MemberValidTo] datetime2(6) NULL, 
+	[CertificateOfAnalysis] varchar(3) NULL, 
+	[testinstrumentid] varchar(8000) NULL, 
+	[VariableDescription] varchar(8000) NULL, 
+	[PossibleOutcomeId] varchar(8000) NULL, 
+	[PossibleOutcomeDescription] varchar(8000) NULL, 
+	[OutcomeStatus] varchar(4) NULL, 
+	[Legal_EntityKey] bigint NOT NULL, 
+	[TestGroupKey] bigint NOT NULL
+);

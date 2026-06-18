@@ -1,0 +1,351 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "Copy",
+        "typeProperties": {
+          "source": {
+            "type": "SqlServerSource",
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00",
+            "datasetSettings": {
+              "type": "SqlServerTable",
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "vw_crm_Sample",
+                "database": "Apollo"
+              },
+              "schema": [],
+              "externalReferences": {
+                "connection": "b3a48e77-ee9a-435d-ac22-60bbc6654b7e"
+              },
+              "annotations": []
+            }
+          },
+          "sink": {
+            "type": "DataWarehouseSink",
+            "preCopyScript": "truncate table tbl_CRM_SAMPLE;",
+            "allowCopyCommand": true,
+            "copyCommandSettings": {},
+            "writeBehavior": "Insert",
+            "disableMetricsCollection": false,
+            "datasetSettings": {
+              "type": "DataWarehouseTable",
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_CRM_Sample"
+              },
+              "schema": [],
+              "connectionSettings": {
+                "name": "WH_Curated",
+                "properties": {
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "artifactId": "e80cf5d2-f264-ac00-472b-838f66bd9948",
+                    "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000"
+                  },
+                  "externalReferences": {
+                    "connection": "f4bd464f-4b45-4667-9f87-32b462bafd93"
+                  },
+                  "annotations": []
+                }
+              },
+              "annotations": []
+            }
+          },
+          "translator": {
+            "type": "TabularTranslator",
+            "mappings": [
+              {
+                "source": {
+                  "name": "RequestDate",
+                  "type": "Date",
+                  "physicalType": "date"
+                },
+                "sink": {
+                  "name": "RequestDate",
+                  "physicalType": "date"
+                }
+              },
+              {
+                "source": {
+                  "name": "Company",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Company",
+                  "physicalType": "varchar",
+                  "length": "40"
+                }
+              },
+              {
+                "source": {
+                  "name": "City",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "City",
+                  "physicalType": "varchar",
+                  "length": "30"
+                }
+              },
+              {
+                "source": {
+                  "name": "State",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "State",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "Country",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Country",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "Region",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "1"
+                },
+                "sink": {
+                  "name": "Region",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "Customer #",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Customer #",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "Salesman",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Salesman",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "Industry",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Industry",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "LocationApplication",
+                  "type": "String",
+                  "physicalType": "nvarchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "LocationApplication",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "Sample Request",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "35"
+                },
+                "sink": {
+                  "name": "Sample Request",
+                  "physicalType": "varchar",
+                  "length": "35"
+                }
+              },
+              {
+                "source": {
+                  "name": "ProductLine",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "20"
+                },
+                "sink": {
+                  "name": "ProductLine",
+                  "physicalType": "varchar",
+                  "length": "20"
+                }
+              },
+              {
+                "source": {
+                  "name": "Opportunity",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "50"
+                },
+                "sink": {
+                  "name": "Opportunity",
+                  "physicalType": "varchar",
+                  "length": "50"
+                }
+              },
+              {
+                "source": {
+                  "name": "OpportunityType",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "80"
+                },
+                "sink": {
+                  "name": "OpportunityType",
+                  "physicalType": "varchar",
+                  "length": "80"
+                }
+              },
+              {
+                "source": {
+                  "name": "Stage",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "30"
+                },
+                "sink": {
+                  "name": "Stage",
+                  "physicalType": "varchar",
+                  "length": "40"
+                }
+              },
+              {
+                "source": {
+                  "name": "EstimatedAnnualVolume",
+                  "type": "Int32",
+                  "physicalType": "int"
+                },
+                "sink": {
+                  "name": "EstimatedAnnualVolume",
+                  "physicalType": "int"
+                }
+              },
+              {
+                "source": {
+                  "name": "TargetPrice",
+                  "type": "Decimal",
+                  "physicalType": "money",
+                  "scale": 4,
+                  "precision": 19
+                },
+                "sink": {
+                  "name": "TargetPrice",
+                  "physicalType": "decimal",
+                  "scale": 4,
+                  "precision": 19
+                }
+              },
+              {
+                "source": {
+                  "name": "SampleRequestApplication",
+                  "type": "String",
+                  "physicalType": "varchar",
+                  "length": "40"
+                },
+                "sink": {
+                  "name": "SampleRequestApplication",
+                  "physicalType": "varchar",
+                  "length": "40"
+                }
+              }
+            ],
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          },
+          "enableStaging": true
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "DW Sample View via IR",
+        "dependsOn": []
+      },
+      {
+        "type": "SqlServerStoredProcedure",
+        "typeProperties": {
+          "database": "Apollo_Staging",
+          "storedProcedureName": "[dbo].[sp_Sample_HKPG]"
+        },
+        "connectionSettings": {
+          "name": "WH_Curated",
+          "properties": {
+            "type": "DataWarehouse",
+            "typeProperties": {
+              "artifactId": "e80cf5d2-f264-ac00-472b-838f66bd9948",
+              "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com",
+              "workspaceId": "00000000-0000-0000-0000-000000000000"
+            },
+            "externalReferences": {
+              "connection": "f4bd464f-4b45-4667-9f87-32b462bafd93"
+            },
+            "annotations": []
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "sp_Sample_HKPG",
+        "dependsOn": [
+          {
+            "activity": "DW Sample View via IR",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+table 'PBO Scope'
+	lineageTag: 51b79d2c-6176-45cb-b786-e7c23b6ad312
+
+	column Scope
+		lineageTag: 79f15506-60a5-4d67-811f-882dbaa5de92
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Scope]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'PBO Scope' = calculated
+		mode: import
+		source = ```
+				
+				DATATABLE (
+				    "Scope", STRING,
+				    {
+				        { "All Open" },
+				        { "Due ≤ 30 Days" },
+				        { "Overdue Only" }
+				    }
+				)
+				
+				```
+
+	annotation PBI_Id = eba8360791c740978b938eeca9afe3cd
+

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Monster Pivot"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "bcee7256-7ce5-b91f-46b5-13ed64608063"
+  }
+}

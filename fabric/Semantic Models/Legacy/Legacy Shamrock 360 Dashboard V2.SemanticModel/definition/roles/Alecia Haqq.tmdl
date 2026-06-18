@@ -1,0 +1,5 @@
+role 'Alecia Haqq'
+	modelPermission: read
+
+	annotation PBI_Id = f57b565dc8ab46809ce1d110ed06076c
+

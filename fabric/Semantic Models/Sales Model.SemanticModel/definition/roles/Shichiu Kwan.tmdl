@@ -1,0 +1,9 @@
+role 'Shichiu Kwan'
+	modelPermission: read
+
+	tablePermission BIDataSet_Opportunity = [Manager] == "SKWAN"
+
+	tablePermission Dim_Employee = [Personnel_Number] IN {"1070"}
+
+	annotation PBI_Id = 5761d1ef976845b28296b74ca115c712
+

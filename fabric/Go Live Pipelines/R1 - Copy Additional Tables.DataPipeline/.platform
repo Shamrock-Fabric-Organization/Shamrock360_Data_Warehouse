@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "R1 - Copy Additional Tables"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "915b95b0-195a-b777-4976-a82249ffe3f6"
+  }
+}

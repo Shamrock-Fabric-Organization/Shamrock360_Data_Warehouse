@@ -1,0 +1,651 @@
+table Fact_SupplyChain_RAF
+	lineageTag: 881bad3f-e861-4480-9f72-b29d31348aa5
+	sourceLineageTag: [dbo].[mtbl_EDW_Fact_SupplyChain_RAF]
+
+	measure 'QTY Good' = SUM(Fact_SupplyChain_RAF[qtygood])
+		lineageTag: b0abfea1-54b7-4e35-8d40-4108e9119271
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'QTY Error' = sum(Fact_SupplyChain_RAF[qtyerror])
+		lineageTag: 1614fe64-26e6-4e19-9b14-e48f714b6919
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Posted Date' = ```
+			
+			VAR dk = VALUES ( 'Fact_SupplyChain_RAF'[PostedDateKey] )
+			RETURN
+			CALCULATE (
+			    SELECTEDVALUE ( 'Dim_Date'[Date] ),
+			    -- neutralize any existing Dim_Date filter coming from the active relationship
+			    REMOVEFILTERS ( 'Dim_Date' ),
+			    -- apply the requested-ship keys as a filter on the date dimension
+			    TREATAS ( dk, 'Dim_Date'[DateKey] )
+			)
+			
+			```
+		formatString: General Date
+		lineageTag: d407c95d-7448-42b5-a95f-760d8b5e12e9
+
+		changedProperty = Name
+
+	measure 'Throughput Title' =
+			
+			VAR _grain =
+			    MAXX (
+			        SUMMARIZE (
+			            'Time Grain',
+			            'Time Grain'[Time Grain],
+			            'Time Grain'[Time Grain Fields]
+			        ),
+			        'Time Grain'[Time Grain]
+			    )
+			RETURN
+			"Quantity Good by " & COALESCE ( _grain, "Time" )
+		lineageTag: 8b6cfe4f-4cb0-4447-a397-fdf07572a30a
+
+		changedProperty = Name
+
+	measure 'RAF Row Exists' =
+			
+			IF (
+			    COUNTROWS ( Fact_SupplyChain_RAF ) > 0,
+			    1
+			)
+		formatString: 0
+		lineageTag: ad25ac2b-9d0d-4db8-a68e-8a73e1fc3814
+
+		changedProperty = Name
+
+	measure 'Q Rank Outcome for RAF Row' =
+			
+			VAR PBO =
+			    SELECTEDVALUE ( Dim_ProductionBatchOrder[ProductionBatchOrder] )
+			VAR Serial =
+			    SELECTEDVALUE ( Dim_SerialNumber[SerialNumber] )
+			VAR UnknownValue =
+			    "Unknown"
+			VAR SerialOutcome =
+			    CALCULATE (
+			        SELECTEDVALUE ( Fact_QualityOrderLineResults[testresultvalueoutcome] ),
+			        REMOVEFILTERS ( Dim_Date ),
+			        Fact_QualityOrderLineResults[testid] = "Q Rank"
+			    )
+			VAR BatchOutcome =
+			    CALCULATE (
+			        SELECTEDVALUE ( Fact_QualityOrderLineResults[testresultvalueoutcome] ),
+			        REMOVEFILTERS ( Dim_Date ),
+			        REMOVEFILTERS ( Dim_SerialNumber ),
+			        Dim_SerialNumber[SerialNumber] = UnknownValue,
+			        Fact_QualityOrderLineResults[testid] = "Q Rank"
+			    )
+			RETURN
+			IF (
+			    ISBLANK ( [QTY Good] ) || ISBLANK ( PBO ) || PBO = UnknownValue,
+			    BLANK (),
+			    IF (
+			        NOT ISBLANK ( Serial ) && Serial <> UnknownValue,
+			        COALESCE ( SerialOutcome, BatchOutcome ),
+			        BatchOutcome
+			    )
+			)
+		lineageTag: 493a7f18-0c75-46f3-8656-ccb03dd2a4c3
+
+		changedProperty = Name
+
+	measure 'Q Rank Outcome for RAF Row Lean' =
+			
+			VAR UnknownValue = "Unknown"
+			VAR SerialOutcome =
+			    CALCULATE (
+			        SELECTEDVALUE ( Fact_QualityOrderLineResults[testresultvalueoutcome] ),
+			        REMOVEFILTERS ( Dim_Date ),
+			        Fact_QualityOrderLineResults[testid] = "Q Rank"
+			    )
+			VAR BatchOutcome =
+			    CALCULATE (
+			        SELECTEDVALUE ( Fact_QualityOrderLineResults[testresultvalueoutcome] ),
+			        REMOVEFILTERS ( Dim_Date ),
+			        REMOVEFILTERS ( Dim_SerialNumber ),
+			        Dim_SerialNumber[SerialNumber] = UnknownValue,
+			        Fact_QualityOrderLineResults[testid] = "Q Rank"
+			    )
+			RETURN
+			IF (
+			    ISBLANK ( [QTY Good] ),
+			    BLANK (),
+			    COALESCE ( SerialOutcome, BatchOutcome )
+			)
+		lineageTag: ad564077-a8c9-425e-9d68-12903017e3f8
+
+		changedProperty = Name
+
+	measure 'Total RAFs' = COUNTROWS(Fact_SupplyChain_RAF)
+		formatString: 0
+		lineageTag: 79c5a71b-dd01-47f1-9402-20a8ef46eb86
+
+		changedProperty = Name
+
+	measure 'QTY Good - Matrix Hybrid' =
+			
+			VAR RowInScope =
+			    ISINSCOPE ( Dim_WorkCenter[WorkCenterName] )
+			        || ISINSCOPE ( Dim_ProductionBatchOrder[ProductionBatchOrder] )
+			        || ISINSCOPE ( Dim_SerialNumber[SerialNumber] )
+			
+			VAR QRankInScope =
+			    ISINSCOPE ( Fact_SupplyChain_RAF[QRankTestResult] )
+			
+			VAR IsBodyCell =
+			    RowInScope
+			        && QRankInScope
+			
+			VAR IsRowTotal =
+			    RowInScope
+			        && NOT QRankInScope
+			
+			VAR IsColumnTotal =
+			    NOT RowInScope
+			        && QRankInScope
+			
+			VAR IsGrandTotalCorner =
+			    NOT RowInScope
+			        && NOT QRankInScope
+			
+			VAR RowTotal =
+			    CALCULATE (
+			        [QTY Good],
+			        ALLSELECTED ( Fact_SupplyChain_RAF[QRankTestResult] )
+			    )
+			
+			VAR GrandTotal =
+			    CALCULATE (
+			        [QTY Good],
+			        ALLSELECTED ()
+			    )
+			
+			RETURN
+			SWITCH (
+			    TRUE (),
+			
+			    IsBodyCell,
+			        DIVIDE ( [QTY Good], RowTotal ),
+			
+			    IsRowTotal,
+			        [QTY Good],
+			
+			    IsColumnTotal,
+			        DIVIDE ( [QTY Good], GrandTotal ),
+			
+			    IsGrandTotalCorner,
+			        [QTY Good],
+			
+			    [QTY Good]
+			)
+		lineageTag: 51bd2219-f6cd-42f9-b0e8-e54acec55b2f
+
+		formatStringDefinition =
+				VAR RowInScope =
+				    ISINSCOPE ( Dim_WorkCenter[WorkCenterName] )
+				        || ISINSCOPE ( Dim_ProductionBatchOrder[ProductionBatchOrder] )
+				        || ISINSCOPE ( Dim_SerialNumber[SerialNumber] )
+				
+				VAR QRankInScope =
+				    ISINSCOPE ( Fact_SupplyChain_RAF[QRankTestResult] )
+				
+				VAR IsBodyCell =
+				    RowInScope
+				        && QRankInScope
+				
+				VAR IsColumnTotal =
+				    NOT RowInScope
+				        && QRankInScope
+				
+				RETURN
+				IF (
+				    IsBodyCell || IsColumnTotal,
+				    "0.0%",
+				    "#,0"
+				)
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+		changedProperty = FormatStringDefinition
+
+	measure 'QTY Good % of Period' =
+			
+			DIVIDE (
+			    [QTY Good],
+			    CALCULATE (
+			        [QTY Good],
+			        ALLSELECTED ( Fact_SupplyChain_RAF[QRankTestResult] )
+			    )
+			)
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 2c3d5fba-5331-4513-91e6-42bfe5e18825
+
+		changedProperty = Name
+
+		changedProperty = FormatString
+
+	column CMPNY
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(8000)
+		lineageTag: 5c5c5bdc-adb4-4cdd-8d7f-e618dad7a6e9
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProdId
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: c967a414-433c-44a3-9ca2-8199bc697f83
+		sourceLineageTag: ProdId
+		summarizeBy: none
+		sourceColumn: ProdId
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ItemId
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(8000)
+		lineageTag: 5de7edfb-6c59-451f-8dd4-ae1ea1b16842
+		sourceLineageTag: ItemId
+		summarizeBy: none
+		sourceColumn: ItemId
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column JournalId
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: cff15dea-c2a1-4f1d-9705-67cca0bc2cf3
+		sourceLineageTag: JournalId
+		summarizeBy: none
+		sourceColumn: JournalId
+
+		annotation SummarizationSetBy = Automatic
+
+	column posteddatetime
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: ef0dbd8a-4b95-42dd-8784-6ba7162ac2d0
+		sourceLineageTag: posteddatetime
+		summarizeBy: none
+		sourceColumn: posteddatetime
+
+		annotation SummarizationSetBy = Automatic
+
+	column qtyerror
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 5b0b9a81-3499-4694-855d-cba95ac448fa
+		sourceLineageTag: qtyerror
+		summarizeBy: sum
+		sourceColumn: qtyerror
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column transdate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: dfab9419-c70c-4e1b-9063-a28a195125f5
+		sourceLineageTag: transdate
+		summarizeBy: none
+		sourceColumn: transdate
+
+		annotation SummarizationSetBy = Automatic
+
+	column voucher
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: ce7ce11c-6607-4fb7-942f-c3f99f39b919
+		sourceLineageTag: voucher
+		summarizeBy: none
+		sourceColumn: voucher
+
+		annotation SummarizationSetBy = Automatic
+
+	column prodfinished
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 194bd188-1f23-4f9e-b168-5fe0dbe13b0a
+		sourceLineageTag: prodfinished
+		summarizeBy: none
+		sourceColumn: prodfinished
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column prodfinished_$label
+		dataType: string
+		sourceProviderType: varchar(3)
+		lineageTag: 1a62118c-09da-4049-902d-0c78efe22050
+		sourceLineageTag: prodfinished_$label
+		summarizeBy: none
+		sourceColumn: prodfinished_$label
+
+		annotation SummarizationSetBy = Automatic
+
+	column journaltype_$Label
+		dataType: string
+		sourceProviderType: varchar(24)
+		lineageTag: 2b8e368f-bb72-4b20-9a7a-61f096c98e80
+		sourceLineageTag: journaltype_$Label
+		summarizeBy: none
+		sourceColumn: journaltype_$Label
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 7056c9ed-acbe-4523-8b80-115587645364
+		sourceLineageTag: Legal_EntityKey
+		summarizeBy: none
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: a15e795d-dc49-4de7-8177-5f978c78cdef
+		sourceLineageTag: ProductKey
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductionBatchOrderKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 11f7a15f-877f-4af0-9821-964ba91e3533
+		sourceLineageTag: ProductionBatchOrderKey
+		summarizeBy: none
+		sourceColumn: ProductionBatchOrderKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SiteKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: f2a4bc94-e630-4da8-8d0f-cba299815b02
+		sourceLineageTag: SiteKey
+		summarizeBy: none
+		sourceColumn: SiteKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column WarehouseKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 7cc5c11d-e06b-486a-b3ab-a078d94174d2
+		sourceLineageTag: WarehouseKey
+		summarizeBy: none
+		sourceColumn: WarehouseKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column BatchKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 63f1bea5-ce11-447b-8187-0339bf0beb80
+		sourceLineageTag: BatchKey
+		summarizeBy: none
+		sourceColumn: BatchKey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column RouteKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 3f79a249-ab65-4fab-b866-a9a9061385e8
+		sourceLineageTag: RouteKey
+		summarizeBy: none
+		sourceColumn: RouteKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column journalnameid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: b324d61b-6f2d-41f5-8918-f98c59d27110
+		sourceLineageTag: journalnameid
+		summarizeBy: none
+		sourceColumn: journalnameid
+
+		annotation SummarizationSetBy = Automatic
+
+	column description
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: b4f59dc7-9f4a-466e-afda-2d7871724938
+		sourceLineageTag: description
+		summarizeBy: none
+		sourceColumn: description
+
+		annotation SummarizationSetBy = Automatic
+
+	column QTYGood
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(38, 6)
+		lineageTag: f359f47c-6385-4d21-af70-35df5ce8e539
+		sourceLineageTag: QTYGood
+		summarizeBy: sum
+		sourceColumn: QTYGood
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column wrkctrid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: f72eda01-ec33-4ba1-949a-40c0aac4da2b
+		sourceLineageTag: wrkctrid
+		summarizeBy: none
+		sourceColumn: wrkctrid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventsiteid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 7adc201c-e142-4ad5-850b-f65f700699d1
+		sourceLineageTag: inventsiteid
+		summarizeBy: none
+		sourceColumn: inventsiteid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventlocationid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 74b9ac5f-ea42-4d74-842b-5c9819c3df36
+		sourceLineageTag: inventlocationid
+		summarizeBy: none
+		sourceColumn: inventlocationid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventbatchid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: daaa3fb2-f668-47ce-8e52-bdbd7fccf424
+		sourceLineageTag: inventbatchid
+		summarizeBy: none
+		sourceColumn: inventbatchid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventserialid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: c60c6a83-813f-40d0-ac85-acc44145eb67
+		sourceLineageTag: inventserialid
+		summarizeBy: none
+		sourceColumn: inventserialid
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkCenterKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 87472914-b017-4638-8210-11f00050d546
+		sourceLineageTag: WorkCenterKey
+		summarizeBy: none
+		sourceColumn: WorkCenterKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column SerialNumberKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 45c2cacd-52c7-4a74-ad2c-b046c69fc368
+		sourceLineageTag: SerialNumberKey
+		summarizeBy: none
+		sourceColumn: SerialNumberKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column PostedDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 66539ab3-fca6-4c20-8980-f75973260962
+		sourceLineageTag: PostedDateKey
+		summarizeBy: none
+		sourceColumn: PostedDateKey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column TransDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: c9db43f3-4715-48bb-a0fa-d30f287c02c1
+		sourceLineageTag: TransDateKey
+		summarizeBy: none
+		sourceColumn: TransDateKey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column QRankTestResult
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 206a5b58-5b89-470a-a4a6-6ffcf0b9be8e
+		sourceLineageTag: QRankTestResult
+		summarizeBy: none
+		sourceColumn: QRankTestResult
+
+		annotation SummarizationSetBy = Automatic
+
+	column QuaityOrderStatus
+		dataType: string
+		sourceProviderType: varchar(4)
+		lineageTag: 97ef94d8-cad1-4d4c-91ba-ecf6be957e1f
+		sourceLineageTag: QuaityOrderStatus
+		summarizeBy: none
+		sourceColumn: QuaityOrderStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_SupplyChain_RAF = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Fact_SupplyChain_RAF
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

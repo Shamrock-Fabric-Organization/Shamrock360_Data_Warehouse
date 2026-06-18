@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "NJATP Model"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "e1fbe5f0-536c-9cc9-4439-d5d488f8a2db"
+  }
+}

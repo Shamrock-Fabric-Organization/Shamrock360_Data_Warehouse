@@ -1,0 +1,120 @@
+table Dim_Employee
+	lineageTag: f067f8f4-fa7b-4c2f-aaaf-e22098e0f3d4
+	sourceLineageTag: [dbo].[mtbl_EDW_Dim_Employee]
+
+	column EmployeeKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: a3d3af7d-c2d3-41e3-8b29-1b32bd93e356
+		sourceLineageTag: EmployeeKey
+		summarizeBy: none
+		sourceColumn: EmployeeKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Personnel_Number
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 083664a5-a0cc-4c0e-9f32-94f186e032e6
+		sourceLineageTag: Personnel_Number
+		summarizeBy: none
+		sourceColumn: Personnel_Number
+
+		annotation SummarizationSetBy = Automatic
+
+	column Employee_Name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: a1e1debf-7401-4da7-93fe-d9648e2bab14
+		sourceLineageTag: Employee_Name
+		summarizeBy: none
+		sourceColumn: Employee_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Employment_Type
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 03eb9f8a-daba-499d-9bee-7b6732f183da
+		sourceLineageTag: Employment_Type
+		summarizeBy: none
+		sourceColumn: Employment_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Employment_Type_Desc
+		dataType: string
+		sourceProviderType: varchar(10)
+		lineageTag: f2b33b7a-d3f5-49ba-8277-bbb7c32aac75
+		sourceLineageTag: Employment_Type_Desc
+		summarizeBy: none
+		sourceColumn: Employment_Type_Desc
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsPerson
+		dataType: string
+		sourceProviderType: varchar(3)
+		lineageTag: 284cca8b-d7fd-4ee7-ac62-10f3c29c27ae
+		sourceLineageTag: IsPerson
+		summarizeBy: none
+		sourceColumn: IsPerson
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		sourceProviderType: varchar(6)
+		lineageTag: 93bf974b-e47d-48ca-9c02-ff680e7e6dc1
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: dc6fa7ba-1099-4f8a-82ea-a21cbd72312a
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: f4279756-ea38-4e6f-86b7-b8b2921a939e
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 70a1d967-c76c-449c-b292-6ac6a726ccbb
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Employee = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Dim_Employee
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

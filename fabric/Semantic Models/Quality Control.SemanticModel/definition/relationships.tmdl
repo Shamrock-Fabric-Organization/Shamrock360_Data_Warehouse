@@ -1,0 +1,64 @@
+relationship fa059bd6-1666-bba9-7f80-75d748caab0d
+	fromColumn: Fact_QualityOrderLineResults.BatchKey
+	toColumn: Dim_Batch.BatchKey
+
+relationship 4b66bb76-68e6-2957-dc1c-67d380a17957
+	fromColumn: Fact_QualityOrderLineResults.CustomerKey
+	toColumn: Dim_Account.CustomerKey
+
+relationship c1763227-9e5b-b2ea-309e-bf4be6f4eb74
+	fromColumn: Fact_QualityOrderLineResults.Legal_EntityKey
+	toColumn: Dim_Legal_Entity.Legal_EntityKey
+
+relationship 5edb1d42-d161-dbdf-d71f-13f4bc362ad7
+	fromColumn: Fact_QualityOrderLineResults.ProductionBatchOrderKey
+	toColumn: Dim_ProductionBatchOrder.ProductionBatchOrderKey
+
+relationship 025465a5-ae34-6a43-9068-694b2b8b11f1
+	fromColumn: Fact_QualityOrderLineResults.ProductKey
+	toColumn: Dim_Product.ProductKey
+
+relationship 71747fcd-7b36-1bc3-574b-a28c7b0c240c
+	fromColumn: Fact_QualityOrderLineResults.SerialNumberKey
+	toColumn: Dim_SerialNumber.SerialNumberKey
+
+relationship acdcc12a-a50c-e028-3b16-77292ae0d51c
+	fromColumn: Fact_QualityOrderLineResults.SiteKey
+	toColumn: Dim_Site.SiteKey
+
+relationship 9930457d-fd7a-71e8-8563-e77a995f647c
+	fromColumn: Fact_QualityOrderLineResults.WarehouseKey
+	toColumn: Dim_Warehouse.WarehouseKey
+
+relationship 5614a66b-afa1-cec8-d3c5-d5ead70ef0fb
+	fromColumn: Fact_QualityOrderLineResults.WorkCenterKey
+	toColumn: Dim_WorkCenter.WorkCenterKey
+
+relationship 949335c7-cccc-0690-3a9f-4ef331d4f4bb
+	fromColumn: Fact_QualityOrderLineResults.RouteKey
+	toColumn: Dim_Route.RouteKey
+
+relationship db5538c6-2c89-045e-0d4c-2f9052448fb7
+	fromColumn: Fact_QualityOrderLineResults.LineCreatedDateKey
+	toColumn: Dim_Date.DateKey
+
+relationship 86d521c4-0562-4677-8ffd-0c022c1f2a40
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Reference Order'.ValidatedDateTime
+	toColumn: LocalDateTable_921371d7-6e72-4a57-a5c2-f231b18bcb64.Date
+
+relationship 4776e8ce-bafc-4db4-8318-28f01e557353
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Reference Order'.LineCreatedDateTime
+	toColumn: LocalDateTable_3c55ca01-feb7-4fb0-b273-d462f4a13e68.Date
+
+relationship 31c7a90c-4595-4fef-afb6-a507f4d4d0a5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Candidate Order'.ValidatedDateTime
+	toColumn: LocalDateTable_3f70a1bd-ecf3-4420-af16-3cd33c59bbc4.Date
+
+relationship 16cfdf8a-b4ac-45a7-87af-7ba97d85c994
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Candidate Order'.LineCreatedDateTime
+	toColumn: LocalDateTable_96fd5bbd-3954-40c4-9e24-6d97c9b40662.Date
+

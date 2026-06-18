@@ -1,0 +1,173 @@
+table DIM_Vendor
+	lineageTag: d56cb22f-681c-4f7b-a641-f1e4281e42f4
+	sourceLineageTag: [dbo].[mtbl_EDW_DIM_Vendor]
+
+	column VendorKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 0ad09bd6-861c-466d-9301-823f6b95fb74
+		sourceLineageTag: VendorKey
+		summarizeBy: none
+		sourceColumn: VendorKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		lineageTag: ad2cb737-f7c1-47a9-80d9-ebe01aa5b5a1
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column Vendor_ID
+		dataType: string
+		lineageTag: 277d011d-8fc7-49f4-9bcf-0a2de913ef3e
+		sourceLineageTag: Vendor_ID
+		summarizeBy: none
+		sourceColumn: Vendor_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Vendor_Name
+		dataType: string
+		lineageTag: 8c1b6f90-82fb-45ad-a629-ee055a4f4f7a
+		sourceLineageTag: Vendor_Name
+		summarizeBy: none
+		sourceColumn: Vendor_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Vendor_Type
+		dataType: string
+		lineageTag: 908f30f5-e3ab-46b6-8b96-f15ef2a824fa
+		sourceLineageTag: Vendor_Type
+		summarizeBy: none
+		sourceColumn: Vendor_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Address
+		dataType: string
+		lineageTag: 6239b796-b25c-4edb-806d-51d4a31ecb2c
+		sourceLineageTag: Address
+		summarizeBy: none
+		sourceColumn: Address
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		lineageTag: f0d55569-ceec-40ec-80dc-829645216ac2
+		sourceLineageTag: City
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column State
+		dataType: string
+		lineageTag: 47fda0a4-2141-4a96-bbe2-42d006314746
+		sourceLineageTag: State
+		summarizeBy: none
+		sourceColumn: State
+
+		annotation SummarizationSetBy = Automatic
+
+	column ZIP
+		dataType: string
+		lineageTag: 043a2c94-63a5-448f-b0d5-2a37bb0158d8
+		sourceLineageTag: ZIP
+		summarizeBy: none
+		sourceColumn: ZIP
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: 84e4d5a8-d816-444c-8b0c-3db081a109b4
+		sourceLineageTag: Country
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column Currency
+		dataType: string
+		lineageTag: 4ff2d86c-c8ad-4630-9c88-f23e56dc3c70
+		sourceLineageTag: Currency
+		summarizeBy: none
+		sourceColumn: Currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		lineageTag: 839f3fcd-9bb8-45e9-adce-d3bdad74be1d
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: daf2895a-94e0-44ea-937b-d5fdb51cfee5
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 02b98dcc-6ead-4b3b-bb49-f43a92e3482d
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		lineageTag: d94e3bb2-9048-400f-ac16-024388767a1e
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column vendgroup
+		dataType: string
+		lineageTag: 4a0e8901-8e68-423d-9ac9-e914b333a9e4
+		sourceLineageTag: vendgroup
+		summarizeBy: none
+		sourceColumn: vendgroup
+
+		annotation SummarizationSetBy = Automatic
+
+	column VendGroupName
+		dataType: string
+		lineageTag: 66d266ea-3a19-4253-9d52-6d322a839525
+		sourceLineageTag: VendGroupName
+		summarizeBy: none
+		sourceColumn: VendGroupName
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DIM_Vendor = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_DIM_Vendor
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+

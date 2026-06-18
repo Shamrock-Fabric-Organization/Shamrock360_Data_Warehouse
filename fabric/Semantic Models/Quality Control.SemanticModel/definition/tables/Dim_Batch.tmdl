@@ -1,0 +1,218 @@
+table Dim_Batch
+	lineageTag: d50292a4-5b74-4cf4-a13e-09e4bb166b64
+	sourceLineageTag: [dbo].[mtbl_EDW_DIM_Batch]
+
+	column BatchKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 92cc1bab-03d8-4299-9e48-96efcd4f2d5f
+		sourceLineageTag: BatchKey
+		summarizeBy: none
+		sourceColumn: BatchKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column CMPNY
+		dataType: string
+		lineageTag: 5ff8a194-d3ca-4fed-9b41-9eb10f936e25
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column BatchID
+		dataType: string
+		lineageTag: cb4c3f3b-48c1-419d-a31c-85ca4e4a463f
+		sourceLineageTag: BatchID
+		summarizeBy: none
+		sourceColumn: BatchID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductID
+		dataType: string
+		lineageTag: 270db51b-0d59-45d8-808d-3e91d1e5ee82
+		sourceLineageTag: ProductID
+		summarizeBy: none
+		sourceColumn: ProductID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CountryOfOrigin
+		dataType: string
+		lineageTag: 4bd5415f-3ce1-42dd-b05a-36e3da92aae5
+		sourceLineageTag: CountryOfOrigin
+		summarizeBy: none
+		sourceColumn: CountryOfOrigin
+
+		annotation SummarizationSetBy = Automatic
+
+	column DispositionCode
+		dataType: string
+		lineageTag: be26c0a8-f45e-48bc-aec9-eb6c0c80dcd3
+		sourceLineageTag: DispositionCode
+		summarizeBy: none
+		sourceColumn: DispositionCode
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductionDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: fb11a767-c6dd-4b8e-9867-05aa2816aff4
+		sourceLineageTag: ProductionDate
+		summarizeBy: none
+		sourceColumn: ProductionDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column FGTestedDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: b3a1fb55-6976-41af-b453-13bae9f48369
+		sourceLineageTag: FGTestedDate
+		summarizeBy: none
+		sourceColumn: FGTestedDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column ExpirationDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: b73cf8ba-2e99-4f57-a7b4-3b7219cce30e
+		sourceLineageTag: ExpirationDate
+		summarizeBy: none
+		sourceColumn: ExpirationDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column BestBeforeDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 8b8c3126-0296-40ed-9891-9e6c06edfbeb
+		sourceLineageTag: BestBeforeDate
+		summarizeBy: none
+		sourceColumn: BestBeforeDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column ShelfAdviceDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: b05408ba-88f9-47c1-85b4-068f990dd553
+		sourceLineageTag: ShelfAdviceDate
+		summarizeBy: none
+		sourceColumn: ShelfAdviceDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column VendorBatchDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 40240b99-1822-41f3-b556-0f4fbb573106
+		sourceLineageTag: VendorBatchDate
+		summarizeBy: none
+		sourceColumn: VendorBatchDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column VendorExpirationDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: d5f8f954-63b3-4ab0-af29-1c5f5b80a752
+		sourceLineageTag: VendorExpirationDate
+		summarizeBy: none
+		sourceColumn: VendorExpirationDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column VendorBatchID
+		dataType: string
+		lineageTag: f05574b1-7aa6-488b-8e4b-514f2d20f8e0
+		sourceLineageTag: VendorBatchID
+		summarizeBy: none
+		sourceColumn: VendorBatchID
+
+		annotation SummarizationSetBy = Automatic
+
+	column BatchNoteName
+		dataType: string
+		lineageTag: 082f4cfa-0e25-44b4-b36b-8bf89f6cf841
+		sourceLineageTag: BatchNoteName
+		summarizeBy: none
+		sourceColumn: BatchNoteName
+
+		annotation SummarizationSetBy = Automatic
+
+	column BatchNote
+		dataType: string
+		lineageTag: 1c7b548f-6aa7-4212-9a67-741429a98ec9
+		sourceLineageTag: BatchNote
+		summarizeBy: none
+		sourceColumn: BatchNote
+
+		annotation SummarizationSetBy = Automatic
+
+	column BatchNoteCreatedBy
+		dataType: string
+		lineageTag: e836c56a-01f4-484b-85d8-01e46ca8c4fc
+		sourceLineageTag: BatchNoteCreatedBy
+		summarizeBy: none
+		sourceColumn: BatchNoteCreatedBy
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		lineageTag: b9a49327-3dad-41bc-a7d1-bfbc4faf837c
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 26423ff6-383d-4c6b-b76b-b34b6155fd21
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 1ca21bff-a5b4-497d-b82e-408501307775
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		lineageTag: af99e4c7-5d96-45a0-ab6a-462ff3594322
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Batch = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_DIM_Batch
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+

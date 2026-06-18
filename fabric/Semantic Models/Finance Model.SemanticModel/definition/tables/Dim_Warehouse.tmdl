@@ -1,0 +1,154 @@
+table Dim_Warehouse
+	lineageTag: 27dc61a0-1a50-4b2a-9677-1d4520a5bbf5
+	sourceLineageTag: [dbo].[mtbl_EDW_DIM_Warehouse]
+
+	column WarehouseKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: d55bba01-64ce-4916-ac1c-9d3dcfb022b0
+		sourceLineageTag: WarehouseKey
+		summarizeBy: none
+		sourceColumn: WarehouseKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 2b958627-4e92-4d30-acf1-b03c869dc5ab
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column Warehouse_ID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: be130fb5-28d0-4012-aa9a-5209860663bd
+		sourceLineageTag: Warehouse_ID
+		summarizeBy: none
+		sourceColumn: Warehouse_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Warehouse_Name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 5339cbf6-1971-4799-bb32-69073abf28fc
+		sourceLineageTag: Warehouse_Name
+		summarizeBy: none
+		sourceColumn: Warehouse_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Site_ID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: c3531277-326e-4de4-b9fc-d4a37b96ee3e
+		sourceLineageTag: Site_ID
+		summarizeBy: none
+		sourceColumn: Site_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Site_Name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: e8372a14-dded-4434-a280-76e9f9601c61
+		sourceLineageTag: Site_Name
+		summarizeBy: none
+		sourceColumn: Site_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 5d570393-169c-41c3-b3de-be44f2f05e8a
+		sourceLineageTag: RecordStatus
+		summarizeBy: sum
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column LocationType
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 01d1a3e4-ecee-41af-af80-614976d67044
+		sourceLineageTag: LocationType
+		summarizeBy: sum
+		sourceColumn: LocationType
+
+		annotation SummarizationSetBy = Automatic
+
+	column LocationTypeDesc
+		dataType: string
+		sourceProviderType: varchar(15)
+		lineageTag: 42a131b8-1f3a-4871-b351-efc0ebe48483
+		sourceLineageTag: LocationTypeDesc
+		summarizeBy: none
+		sourceColumn: LocationTypeDesc
+
+		annotation SummarizationSetBy = Automatic
+
+	column LocationLevel
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 115755da-5a47-4b08-9805-a28282d4e452
+		sourceLineageTag: LocationLevel
+		summarizeBy: sum
+		sourceColumn: LocationLevel
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		sourceProviderType: varchar(25)
+		lineageTag: 2eb15aa3-9807-4a70-b148-b1f7f6404d9e
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 95445522-8cb5-4e35-9833-bb0190487c8a
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 96266766-2506-45c3-b548-f7a1349f1f53
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Warehouse = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_DIM_Warehouse
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

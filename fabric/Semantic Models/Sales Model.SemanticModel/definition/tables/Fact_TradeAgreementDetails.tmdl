@@ -1,0 +1,272 @@
+table Fact_TradeAgreementDetails
+	lineageTag: f6e44455-0201-4820-b0df-6de997392b96
+	sourceLineageTag: [dbo].[mtbl_EDW_Fact_TradeAgreementDetails]
+
+	measure 'Total Orders & TA' =
+			
+			COUNTROWS ( Fact_Sales )
+			    + COUNTROWS ( Fact_TradeAgreementDetails )
+		formatString: 0
+		lineageTag: d790482e-5ec8-4c5c-b070-749ba6db32ae
+
+		changedProperty = Name
+
+	measure 'Total TA' = COUNTROWS ( Fact_TradeAgreementDetails )
+		formatString: 0
+		lineageTag: 58cc9443-a46d-421c-837c-9150bb1d531a
+
+		changedProperty = Name
+
+	column Company
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 57cf34d9-3e45-4e62-8f7f-a1f2a127e082
+		sourceLineageTag: Company
+		summarizeBy: none
+		sourceColumn: Company
+
+		annotation SummarizationSetBy = Automatic
+
+	column AgreementId
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: b9fc8fb2-5051-410e-add2-ca52298fe096
+		sourceLineageTag: AgreementId
+		summarizeBy: none
+		sourceColumn: AgreementId
+
+		annotation SummarizationSetBy = Automatic
+
+	column Posted
+		dataType: string
+		sourceProviderType: varchar(3)
+		lineageTag: 4bda08bc-d32b-4713-a593-b3318afba668
+		sourceLineageTag: Posted
+		summarizeBy: none
+		sourceColumn: Posted
+
+		annotation SummarizationSetBy = Automatic
+
+	column Price
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: d959cb47-505a-4900-8f29-dcdd1efbcc77
+		sourceLineageTag: Price
+		summarizeBy: sum
+		sourceColumn: Price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Currency
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 17ffa9ef-e879-4795-88d8-75b4be0e8b2e
+		sourceLineageTag: Currency
+		summarizeBy: none
+		sourceColumn: Currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column PriceUnit
+		dataType: double
+		sourceProviderType: decimal(38, 12)
+		lineageTag: e8098cf0-4b7e-4b7a-96d3-06c65cce6c50
+		sourceLineageTag: PriceUnit
+		summarizeBy: sum
+		sourceColumn: PriceUnit
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Unit
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 0cbaaaaf-e8a7-4ebf-a744-65c4ce25c4f7
+		sourceLineageTag: Unit
+		summarizeBy: none
+		sourceColumn: Unit
+
+		annotation SummarizationSetBy = Automatic
+
+	column ValidFrom
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 7d681c63-b61e-41e4-969e-51094be3f982
+		sourceLineageTag: ValidFrom
+		summarizeBy: none
+		sourceColumn: ValidFrom
+
+		annotation SummarizationSetBy = Automatic
+
+	column ValidTo
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 14a34a8e-df9f-4ca0-bbcc-8ca9ac272b96
+		sourceLineageTag: ValidTo
+		summarizeBy: none
+		sourceColumn: ValidTo
+
+		annotation SummarizationSetBy = Automatic
+
+	column QtyFrom
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: b264396d-0545-4bd4-9b32-945c44b60ac8
+		sourceLineageTag: QtyFrom
+		summarizeBy: sum
+		sourceColumn: QtyFrom
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column QtyTo
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 8cbb1f7e-da48-4853-a17f-7337a29c8c20
+		sourceLineageTag: QtyTo
+		summarizeBy: sum
+		sourceColumn: QtyTo
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column PostedDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 4736f739-5ee6-413d-ae45-741f69e10734
+		sourceLineageTag: PostedDateKey
+		summarizeBy: none
+		sourceColumn: PostedDateKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerAccount
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 1ef2ec89-bcc5-4f7e-980e-3c748f8f5f99
+		sourceLineageTag: CustomerAccount
+		summarizeBy: none
+		sourceColumn: CustomerAccount
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 95367006-7d0e-464a-b727-e28818780c97
+		sourceLineageTag: CustomerKey
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ItemNumber
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 6c97a0cb-6713-4593-9554-35e02dced202
+		sourceLineageTag: ItemNumber
+		summarizeBy: none
+		sourceColumn: ItemNumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: bb9db130-5119-439e-8afa-f1af45a74c85
+		sourceLineageTag: ProductKey
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 5bb03a26-8959-400f-9010-4a84fe007c9a
+		sourceLineageTag: Legal_EntityKey
+		summarizeBy: none
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column TradeAgreementKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: f88cd1fc-29c9-4c8b-a89b-50b363de2f43
+		sourceLineageTag: TradeAgreementKey
+		summarizeBy: none
+		sourceColumn: TradeAgreementKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsRecent
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 822e8614-1465-430d-acf4-692a0a62f198
+		sourceLineageTag: IsRecent
+		summarizeBy: sum
+		sourceColumn: IsRecent
+
+		annotation SummarizationSetBy = Automatic
+
+	column CompanyChain
+		dataType: string
+		sourceProviderType: varchar(1000)
+		lineageTag: 55db9775-a273-4725-8258-6fc2b4080cd9
+		sourceLineageTag: CompanyChain
+		summarizeBy: none
+		sourceColumn: CompanyChain
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustAcct_EmployeeKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: d9497673-4284-4fcf-98fd-8b2b6f818451
+		sourceLineageTag: CustAcct_EmployeeKey
+		summarizeBy: none
+		sourceColumn: CustAcct_EmployeeKey
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_TradeAgreementDetails = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Fact_TradeAgreementDetails
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

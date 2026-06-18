@@ -1,0 +1,189 @@
+table Dim_ProductionBatchOrder
+	lineageTag: 5ceac22a-7249-47be-887e-4faa5ec5872b
+	sourceLineageTag: [dbo].[mtbl_EDW_DIM_ProductionBatchOrder]
+
+	column ProductionBatchOrderKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a7f1e8ba-f294-4b3c-9733-87c56cc13435
+		sourceLineageTag: ProductionBatchOrderKey
+		summarizeBy: none
+		sourceColumn: ProductionBatchOrderKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column CMPNY
+		dataType: string
+		lineageTag: d975b0a7-b4bf-49f1-a482-4cafffc977f6
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductionBatchOrder
+		dataType: string
+		lineageTag: d09dd7bf-0554-4c6c-9d57-9fad39e9ab8a
+		sourceLineageTag: ProductionBatchOrder
+		summarizeBy: none
+		sourceColumn: ProductionBatchOrder
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_ID
+		dataType: string
+		lineageTag: 4783ba0e-454a-445c-8a6a-ac1a2eb9d948
+		sourceLineageTag: Product_ID
+		summarizeBy: none
+		sourceColumn: Product_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column name
+		dataType: string
+		lineageTag: 5e96339d-ed94-424a-b9dd-0c6f5e0280ea
+		sourceLineageTag: name
+		summarizeBy: none
+		sourceColumn: name
+
+		annotation SummarizationSetBy = Automatic
+
+	column PBOStatus
+		dataType: int64
+		formatString: 0
+		lineageTag: 5e414d52-b9fe-4050-862f-4a61a0fb1a8d
+		sourceLineageTag: PBOStatus
+		summarizeBy: none
+		sourceColumn: PBOStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column PBOStatusDesc
+		dataType: string
+		lineageTag: a6e725a4-61ac-45bb-8212-76af97e26cb8
+		sourceLineageTag: PBOStatusDesc
+		summarizeBy: none
+		sourceColumn: PBOStatusDesc
+
+		annotation SummarizationSetBy = Automatic
+
+	column PBOCreatedDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 2ba63649-d2c8-4589-b7bd-5e16b07d58cd
+		sourceLineageTag: PBOCreatedDate
+		summarizeBy: none
+		sourceColumn: PBOCreatedDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column PBOModifiedDateTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: d472cd87-b080-40c0-8e0e-72b9a6aa22a3
+		sourceLineageTag: PBOModifiedDateTime
+		summarizeBy: none
+		sourceColumn: PBOModifiedDateTime
+
+		annotation SummarizationSetBy = Automatic
+
+	column collectrefprodid
+		dataType: string
+		lineageTag: 0763fd5e-f864-4eb9-9db6-c045d76ca34a
+		sourceLineageTag: collectrefprodid
+		summarizeBy: none
+		sourceColumn: collectrefprodid
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		lineageTag: 46ade936-e628-4a50-8094-1a9feac05f2c
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 734ba0d7-2aef-4436-b9e2-9fd60bef2328
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 62250ca3-a6ae-4551-adeb-dd0e7c7d73b0
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		lineageTag: 69c9aec1-802b-405c-996c-5b104daf2475
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column RemainStatus
+		dataType: int64
+		formatString: 0
+		lineageTag: ea771b85-9c5d-48b2-999e-4cbe85ea1e41
+		sourceLineageTag: RemainStatus
+		summarizeBy: none
+		sourceColumn: RemainStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column RemainStatusDescription
+		dataType: string
+		lineageTag: a6909dd3-7e37-4e4f-9361-d6b12989d49a
+		sourceLineageTag: RemainStatusDescription
+		summarizeBy: none
+		sourceColumn: RemainStatusDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column SchedulingStatus
+		dataType: int64
+		formatString: 0
+		lineageTag: df769ee3-b9bd-45b9-a000-ac0ad89bf640
+		sourceLineageTag: SchedulingStatus
+		summarizeBy: none
+		sourceColumn: SchedulingStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column SchedulingStatusDescription
+		dataType: string
+		lineageTag: 8a3ebc02-68b5-4a7f-a3d9-208cdf67be23
+		sourceLineageTag: SchedulingStatusDescription
+		summarizeBy: none
+		sourceColumn: SchedulingStatusDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_ProductionBatchOrder = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_DIM_ProductionBatchOrder
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+

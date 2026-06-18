@@ -1,0 +1,418 @@
+table vw360_Dim_CPC
+	lineageTag: 91583db4-0909-4d01-98e6-f1ac3c1f06ea
+	sourceLineageTag: [dbo].[mtbl_LEG_vw360_Dim_CPC]
+
+	column CPCID
+		dataType: string
+		lineageTag: a1980337-a17b-481a-879d-1c677119cfa2
+		sourceLineageTag: CPCID
+		summarizeBy: none
+		sourceColumn: CPCID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerID
+		dataType: string
+		lineageTag: 714baa4b-fea8-4085-af87-8029741507eb
+		sourceLineageTag: CustomerID
+		summarizeBy: none
+		sourceColumn: CustomerID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Office
+		dataType: string
+		lineageTag: 820bcab0-fa53-4496-a1b3-49362e45fd99
+		sourceLineageTag: Office
+		summarizeBy: none
+		sourceColumn: Office
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Customer No'
+		dataType: string
+		lineageTag: 5bd61c2a-41eb-4bb8-bf22-c286f3c7dd74
+		sourceLineageTag: Customer No
+		summarizeBy: none
+		sourceColumn: Customer No
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ship To No'
+		dataType: string
+		lineageTag: 236825b9-23d5-4aa6-bf2a-51fd2d0e5745
+		sourceLineageTag: Ship To No
+		summarizeBy: none
+		sourceColumn: Ship To No
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductCode
+		dataType: string
+		lineageTag: 35eeb00c-84f0-477e-b4b5-c31294464115
+		sourceLineageTag: ProductCode
+		summarizeBy: none
+		sourceColumn: ProductCode
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsPartOf_Emulsions
+		dataType: string
+		lineageTag: dbcff56c-3393-47d7-bbe4-59590f85db73
+		sourceLineageTag: IsPartOf_Emulsions
+		summarizeBy: none
+		sourceColumn: IsPartOf_Emulsions
+
+		annotation SummarizationSetBy = Automatic
+
+	column isPartOf_Lubricants
+		dataType: string
+		lineageTag: 8f9069df-cae7-4cd5-a87a-3ebce2f5ead5
+		sourceLineageTag: isPartOf_Lubricants
+		summarizeBy: none
+		sourceColumn: isPartOf_Lubricants
+
+		annotation SummarizationSetBy = Automatic
+
+	column isPartOf_InksAndCoatings
+		dataType: string
+		lineageTag: 826283a1-2b43-4b1e-a4da-f7957926a2fa
+		sourceLineageTag: isPartOf_InksAndCoatings
+		summarizeBy: none
+		sourceColumn: isPartOf_InksAndCoatings
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: string
+		lineageTag: dada9473-2bb2-4b29-b90d-01a78717accb
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		lineageTag: 18e93e11-45ea-4b0f-9b57-552d6eaf09a8
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'IsPartOf PLASTICS'
+		dataType: string
+		lineageTag: 533c36a1-a2fa-4186-a343-f6b07914f1f2
+		sourceLineageTag: IsPartOf PLASTICS
+		summarizeBy: none
+		sourceColumn: IsPartOf PLASTICS
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'IsPartOf TXTURES'
+		dataType: string
+		lineageTag: aa96eff0-0bee-43af-8cbc-13696fbef8c7
+		sourceLineageTag: IsPartOf TXTURES
+		summarizeBy: none
+		sourceColumn: IsPartOf TXTURES
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'isPartOf PTFE'
+		dataType: string
+		lineageTag: 0d13ff88-6a4e-4c70-ab33-66c9290bd8ef
+		sourceLineageTag: isPartOf PTFE
+		summarizeBy: none
+		sourceColumn: isPartOf PTFE
+
+		annotation SummarizationSetBy = Automatic
+
+	column isPartOf_Waxallurgy
+		dataType: string
+		lineageTag: 27c5e1d8-bfc0-42b0-99d4-fdb6fcc9dd53
+		sourceLineageTag: isPartOf_Waxallurgy
+		summarizeBy: none
+		sourceColumn: isPartOf_Waxallurgy
+
+		annotation SummarizationSetBy = Automatic
+
+	column EstimatedAnnualRevenue
+		dataType: string
+		lineageTag: 484fad53-fb3c-4a50-be71-d32885134e60
+		sourceLineageTag: EstimatedAnnualRevenue
+		summarizeBy: none
+		sourceColumn: EstimatedAnnualRevenue
+
+		annotation SummarizationSetBy = Automatic
+
+	column EARCurrency
+		dataType: string
+		lineageTag: 718b978b-425c-45fb-8db9-c0a2615ca57b
+		sourceLineageTag: EARCurrency
+		summarizeBy: none
+		sourceColumn: EARCurrency
+
+		annotation SummarizationSetBy = Automatic
+
+	column CPCIndustry
+		dataType: string
+		lineageTag: 3c2a7b4f-8a61-4868-a587-d429991f48e2
+		sourceLineageTag: CPCIndustry
+		summarizeBy: none
+		sourceColumn: CPCIndustry
+
+		annotation SummarizationSetBy = Automatic
+
+	column CPCIndustrySubSegment
+		dataType: string
+		lineageTag: a8bdab32-97a7-4e85-b7d6-65387ff82a8e
+		sourceLineageTag: CPCIndustrySubSegment
+		summarizeBy: none
+		sourceColumn: CPCIndustrySubSegment
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: string
+		lineageTag: b48c69ba-ef6d-4a04-a958-07a8f7132d4a
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: string
+		lineageTag: 2d756297-e753-4a5c-811d-e5cb60491e76
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RegulatoryRequirements
+		dataType: string
+		lineageTag: cb960085-cf6e-4e82-9351-adf4923a0d74
+		sourceLineageTag: RegulatoryRequirements
+		summarizeBy: none
+		sourceColumn: RegulatoryRequirements
+
+		annotation SummarizationSetBy = Automatic
+
+	column ListPrice
+		dataType: string
+		lineageTag: b0cb4d9f-28f1-430e-a3c5-2f7e18d0f362
+		sourceLineageTag: ListPrice
+		summarizeBy: none
+		sourceColumn: ListPrice
+
+		annotation SummarizationSetBy = Automatic
+
+	column CurrentPrice
+		dataType: string
+		lineageTag: fe170bc8-9789-4ec8-8e18-2ce22fcb1c72
+		sourceLineageTag: CurrentPrice
+		summarizeBy: none
+		sourceColumn: CurrentPrice
+
+		annotation SummarizationSetBy = Automatic
+
+	column CPCTier
+		dataType: string
+		lineageTag: c55415be-c089-4f49-a277-4ef11b63366f
+		sourceLineageTag: CPCTier
+		summarizeBy: none
+		sourceColumn: CPCTier
+
+		annotation SummarizationSetBy = Automatic
+
+	column EstimatedAnnualVolume
+		dataType: string
+		lineageTag: 6d71f752-f05c-45d3-9fd0-9fc6397e4f98
+		sourceLineageTag: EstimatedAnnualVolume
+		summarizeBy: none
+		sourceColumn: EstimatedAnnualVolume
+
+		annotation SummarizationSetBy = Automatic
+
+	column EAVUnitOfMeasure
+		dataType: string
+		lineageTag: 90a18368-86f7-46ff-96cb-934d1a19248b
+		sourceLineageTag: EAVUnitOfMeasure
+		summarizeBy: none
+		sourceColumn: EAVUnitOfMeasure
+
+		annotation SummarizationSetBy = Automatic
+
+	column Currency
+		dataType: string
+		lineageTag: efbfa6eb-9bf6-4957-b398-7eee6547ae74
+		sourceLineageTag: Currency
+		summarizeBy: none
+		sourceColumn: Currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column INCOTerms
+		dataType: string
+		lineageTag: 06acd2c8-f752-48f4-8017-e64d96d95212
+		sourceLineageTag: INCOTerms
+		summarizeBy: none
+		sourceColumn: INCOTerms
+
+		annotation SummarizationSetBy = Automatic
+
+	column Application
+		dataType: string
+		lineageTag: d2220c27-57b5-43ad-aa10-ad6c02ecb6b7
+		sourceLineageTag: Application
+		summarizeBy: none
+		sourceColumn: Application
+
+		annotation SummarizationSetBy = Automatic
+
+	column ApplicationDefinition
+		dataType: string
+		lineageTag: 62af90c4-796f-4020-9b0e-ff4f8f8e73b7
+		sourceLineageTag: ApplicationDefinition
+		summarizeBy: none
+		sourceColumn: ApplicationDefinition
+
+		annotation SummarizationSetBy = Automatic
+
+	column ApplicationDescription
+		dataType: string
+		lineageTag: 554b0360-dd05-4199-a19e-0771a97290b3
+		sourceLineageTag: ApplicationDescription
+		summarizeBy: none
+		sourceColumn: ApplicationDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column DesiredCharacteristics
+		dataType: string
+		lineageTag: f89bf72b-26de-4bed-ba57-4e695fd6ed9e
+		sourceLineageTag: DesiredCharacteristics
+		summarizeBy: none
+		sourceColumn: DesiredCharacteristics
+
+		annotation SummarizationSetBy = Automatic
+
+	column CPCStage
+		dataType: string
+		lineageTag: 2b03da84-e985-44b0-b529-4af4fcadc3c7
+		sourceLineageTag: CPCStage
+		summarizeBy: none
+		sourceColumn: CPCStage
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'CPC Descriptive'
+		dataType: string
+		lineageTag: b2db3f45-cffa-46d5-8195-6195b0abc1a5
+		sourceLineageTag: CPC Descriptive
+		summarizeBy: none
+		sourceColumn: CPC Descriptive
+
+		annotation SummarizationSetBy = Automatic
+
+	column CPCType
+		dataType: string
+		lineageTag: e45cc71b-1fcf-478c-b09a-2b84404a935f
+		sourceLineageTag: CPCType
+		summarizeBy: none
+		sourceColumn: CPCType
+
+		annotation SummarizationSetBy = Automatic
+
+	column FirstOrderDate
+		dataType: string
+		lineageTag: 768dca3d-9cc0-4c66-ab7c-b7a1e114c1ca
+		sourceLineageTag: FirstOrderDate
+		summarizeBy: none
+		sourceColumn: FirstOrderDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column MostRecentOrderDate
+		dataType: string
+		lineageTag: e89b2d5a-6bc1-472a-a556-0c81648b57cc
+		sourceLineageTag: MostRecentOrderDate
+		summarizeBy: none
+		sourceColumn: MostRecentOrderDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column MostRecentPrice
+		dataType: string
+		lineageTag: b2184ab9-d648-4d72-9fbe-b0e83aa11811
+		sourceLineageTag: MostRecentPrice
+		summarizeBy: none
+		sourceColumn: MostRecentPrice
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductName
+		dataType: string
+		lineageTag: 77a97163-229a-4f35-8737-3b1a2f563f42
+		sourceLineageTag: ProductName
+		summarizeBy: none
+		sourceColumn: ProductName
+
+		annotation SummarizationSetBy = Automatic
+
+	column CPCStatus
+		dataType: string
+		lineageTag: 085ad2d0-2cf6-4154-8015-c8bbeee4964c
+		sourceLineageTag: CPCStatus
+		summarizeBy: none
+		sourceColumn: CPCStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column WonReason
+		dataType: string
+		lineageTag: e1302835-6527-44a0-afb2-9ea600a34182
+		sourceLineageTag: WonReason
+		summarizeBy: none
+		sourceColumn: WonReason
+
+		annotation SummarizationSetBy = Automatic
+
+	column LostReason
+		dataType: string
+		lineageTag: 68a16d8f-404b-4a8f-8a82-08915d67cde8
+		sourceLineageTag: LostReason
+		summarizeBy: none
+		sourceColumn: LostReason
+
+		annotation SummarizationSetBy = Automatic
+
+	column CPCClassification
+		dataType: string
+		lineageTag: 9ce2a284-cdb4-4703-b0de-5861f56f2519
+		sourceLineageTag: CPCClassification
+		summarizeBy: none
+		sourceColumn: CPCClassification
+
+		annotation SummarizationSetBy = Automatic
+
+	column OriginalOPID
+		dataType: string
+		lineageTag: 54b135b1-52d9-4927-aec6-1a316f150e14
+		sourceLineageTag: OriginalOPID
+		summarizeBy: none
+		sourceColumn: OriginalOPID
+
+		annotation SummarizationSetBy = Automatic
+
+	partition vw360_Dim_CPC = entity
+		mode: directLake
+		source
+			entityName: mtbl_LEG_vw360_Dim_CPC
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+

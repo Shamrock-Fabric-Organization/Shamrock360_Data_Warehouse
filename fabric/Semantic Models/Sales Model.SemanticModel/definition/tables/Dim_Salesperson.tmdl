@@ -1,0 +1,52 @@
+table Dim_Salesperson
+	lineageTag: e71fb502-7866-4314-b68c-148e984cfde3
+
+	column PersonKey
+		isHidden
+		lineageTag: 33b49c7c-426c-40ab-847f-4bc28e593bb1
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [PersonKey]
+
+		annotation SummarizationSetBy = Automatic
+
+	column PersonName
+		isHidden
+		lineageTag: c2c83eb9-113c-4bf7-8519-dfbb41df20d5
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [PersonName]
+
+		annotation SummarizationSetBy = Automatic
+
+	column DisplayName
+		lineageTag: 069907ad-04a3-45a0-b971-c35dbef8a029
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [DisplayName]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Salesperson = calculated
+		mode: import
+		source = ```
+				
+				DATATABLE (
+				    "PersonKey", STRING,
+				    "PersonName", STRING,
+				    "DisplayName", STRING,
+				    {
+				        { "AHAQQ", "Alecia Haqq", "Alecia H" },
+				        { "CMOSELEY", "Chris Moseley", "Chris M" },
+				        { "JPADDOCK", "Jarrod Paddock", "Jarrod P" },
+				        { "JVERA", "Jonatan Vera", "Jon V" },
+				        { "JWOLFE", "Joshua Wolfe", "Josh W" },
+				        { "MARKV", "Mark Vitrone", "Mark V" },
+				        { "SKWAN", "Shichiu Kwan", "Shichiu K" }
+				    }
+				)
+				
+				```
+
+	annotation PBI_Id = a8d155ca41914fed813ceed8687d4276
+

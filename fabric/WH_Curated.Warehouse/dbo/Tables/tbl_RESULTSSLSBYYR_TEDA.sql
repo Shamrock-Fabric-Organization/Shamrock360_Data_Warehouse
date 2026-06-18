@@ -1,0 +1,25 @@
+CREATE TABLE [dbo].[tbl_RESULTSSLSBYYR_TEDA] (
+
+	[DEST] varchar(50) NULL, 
+	[Order Date] date NULL, 
+	[Order No] varchar(50) NULL, 
+	[Invoice Date] date NULL, 
+	[Invoice No] varchar(max) NULL, 
+	[Expected Ship Date] date NULL, 
+	[Product Name] varchar(50) NULL, 
+	[Product Description] varchar(50) NULL, 
+	[Quantity] decimal(18,0) NULL, 
+	[Net Weight LBS] decimal(18,2) NULL, 
+	[Unit Price] decimal(18,2) NULL, 
+	[Total Amount] decimal(18,2) NULL, 
+	[Net Amount] decimal(18,2) NULL, 
+	[Customer Name] varchar(50) NULL, 
+	[Customer No] varchar(50) NULL, 
+	[Country] varchar(50) NULL, 
+	[Salesman Name] varchar(50) NULL, 
+	[Salesman No] varchar(50) NULL, 
+	[SnapShotDate] datetime2(6) NULL, 
+	[DataUpdateDate] datetime2(6) NULL, 
+	[Source] varchar(10) NULL, 
+	[TED_SID] int NULL
+);

@@ -1,0 +1,1172 @@
+table Fact_Production_Batch_Orders
+	lineageTag: accea10f-7a52-4c7a-b832-da7ea83c022c
+	sourceLineageTag: [dbo].[mtbl_EDW_Fact_Production_Batch_Orders]
+
+	measure 'Schedule Start' = ```
+			
+			VAR dk = VALUES ( 'Fact_Production_Batch_Orders'[schedstartdatekey] )
+			RETURN
+			CALCULATE (
+			    SELECTEDVALUE ( 'Dim_Date'[Date] ),
+			    -- neutralize any existing Dim_Date filter coming from the active relationship
+			    REMOVEFILTERS ( 'Dim_Date' ),
+			    -- apply the requested-ship keys as a filter on the date dimension
+			    TREATAS ( dk, 'Dim_Date'[DateKey] )
+			)
+			
+			```
+		formatString: General Date
+		lineageTag: cf7a4df6-6cb9-450b-bfd3-72f8b655be5a
+
+		changedProperty = Name
+
+	measure 'Schedule End' = ```
+			
+			VAR dk = VALUES ( 'Fact_Production_Batch_Orders'[schedenddatekey] )
+			RETURN
+			CALCULATE (
+			    SELECTEDVALUE ( 'Dim_Date'[Date] ),
+			    -- neutralize any existing Dim_Date filter coming from the active relationship
+			    REMOVEFILTERS ( 'Dim_Date' ),
+			    -- apply the requested-ship keys as a filter on the date dimension
+			    TREATAS ( dk, 'Dim_Date'[DateKey] )
+			)
+			
+			```
+		formatString: General Date
+		lineageTag: 01498978-c4fb-4462-868b-7ae0d3378960
+
+		changedProperty = Name
+
+	measure 'As Of Date' = TODAY()
+		formatString: General Date
+		lineageTag: 3a319430-c8f0-4f55-b265-b11f5659fe32
+
+		changedProperty = Name
+
+	measure 'Open Qty Remaining (Scope)' = ```
+			
+			VAR asOf = [As Of Date]
+			VAR pboscope = SELECTEDVALUE ( 'PBO Scope'[Scope], "All Open" )
+			RETURN
+			SWITCH (
+			    pboscope,
+			    "All Open",
+			        CALCULATE (
+			            SUM ( Fact_Production_Batch_Orders[ReportRemainder] ),
+			            Fact_Production_Batch_Orders[ReportRemainder] > 0
+			        ),
+			    "Due ≤ 30 Days",
+			        CALCULATE (
+			            SUM ( Fact_Production_Batch_Orders[ReportRemainder] ),
+			            Fact_Production_Batch_Orders[ReportRemainder] > 0,
+			            NOT ISBLANK ( Dim_Date[Date] ),
+			            Dim_Date[Date] <= asOf + 30
+			        ),
+			    "Overdue Only",
+			        CALCULATE (
+			            SUM ( Fact_Production_Batch_Orders[ReportRemainder] ),
+			            Fact_Production_Batch_Orders[ReportRemainder] > 0,
+			            NOT ISBLANK ( Dim_Date[Date] ),
+			            Dim_Date[Date] < asOf
+			        )
+			)
+			
+			```
+		lineageTag: 7f4e821b-7f3b-4b81-a0ec-4fbc5f2d0b76
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Open PBO Count (Scope)' = ```
+			
+			VAR asOf = [As Of Date]
+			VAR pboscope = SELECTEDVALUE ( 'PBO Scope'[Scope], "All Open" )
+			RETURN
+			SWITCH (
+			    pboscope,
+			    "All Open",
+			        CALCULATE (
+			            DISTINCTCOUNT ( Fact_Production_Batch_Orders[ProductionBatchOrder] ),
+			            Fact_Production_Batch_Orders[ReportRemainder] > 0
+			        ),
+			    "Due ≤ 30 Days",
+			        CALCULATE (
+			            DISTINCTCOUNT ( Fact_Production_Batch_Orders[ProductionBatchOrder] ),
+			            Fact_Production_Batch_Orders[ReportRemainder] > 0,
+			            NOT ISBLANK ( Dim_Date[Date] ),
+			            Dim_Date[Date] <= asOf + 30
+			        ),
+			    "Overdue Only",
+			        CALCULATE (
+			            DISTINCTCOUNT ( Fact_Production_Batch_Orders[ProductionBatchOrder] ),
+			            Fact_Production_Batch_Orders[ReportRemainder] > 0,
+			            NOT ISBLANK ( Dim_Date[Date] ),
+			            Dim_Date[Date] < asOf
+			        )
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 897691ed-1f0c-4266-8cb5-3ccb8b631747
+
+		changedProperty = Name
+
+	measure 'Late Open Qty Remaining (Scope)' = ```
+			
+			VAR asOf = [As Of Date]
+			VAR pboscope = SELECTEDVALUE ( 'PBO Scope'[Scope], "All Open" )
+			RETURN
+			SWITCH (
+			    pboscope,
+			    "All Open",
+			        CALCULATE (
+			            SUM ( Fact_Production_Batch_Orders[ReportRemainder] ),
+			            Fact_Production_Batch_Orders[ReportRemainder] > 0,
+			            NOT ISBLANK ( Dim_Date[Date] ),
+			            Dim_Date[Date] < asOf
+			        ),
+			    "Due ≤ 30 Days",
+			        CALCULATE (
+			            SUM ( Fact_Production_Batch_Orders[ReportRemainder] ),
+			            Fact_Production_Batch_Orders[ReportRemainder] > 0,
+			            NOT ISBLANK ( Dim_Date[Date] ),
+			            Dim_Date[Date] <= asOf + 30,
+			            Dim_Date[Date] < asOf
+			        ),
+			    "Overdue Only",
+			        -- same as open under this scope
+			        [Open Qty Remaining (Scope)]
+			)
+			
+			```
+		lineageTag: 1121921a-7829-433c-9272-2ecdad7dbae5
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Late Open PBO Count (Scope)' = ```
+			
+			VAR asOf = [As Of Date]
+			VAR pboscope = SELECTEDVALUE ( 'PBO Scope'[Scope], "All Open" )
+			RETURN
+			SWITCH (
+			    pboscope,
+			    "All Open",
+			        CALCULATE (
+			            DISTINCTCOUNT ( Fact_Production_Batch_Orders[ProductionBatchOrder] ),
+			            Fact_Production_Batch_Orders[ReportRemainder] > 0,
+			            NOT ISBLANK ( Dim_Date[Date] ),
+			            Dim_Date[Date] < asOf
+			        ),
+			    "Due ≤ 30 Days",
+			        CALCULATE (
+			            DISTINCTCOUNT ( Fact_Production_Batch_Orders[ProductionBatchOrder] ),
+			            Fact_Production_Batch_Orders[ReportRemainder] > 0,
+			            NOT ISBLANK ( Fact_Production_Batch_Orders[ReportRemainder] ),
+			            Dim_Date[Date] <= asOf + 30,
+			            Dim_Date[Date] < asOf
+			        ),
+			    "Overdue Only",
+			        [Open PBO Count (Scope)]
+			)
+			
+			```
+		formatString: 0
+		lineageTag: f7d26f03-724b-486b-ba2d-078b1e3ac7c8
+
+		changedProperty = Name
+
+	measure '% Late (by Qty)' =
+			
+			COALESCE (
+			    DIVIDE (
+			        [Late Open Qty Remaining (Scope)],
+			        [Open Qty Remaining (Scope)]
+			    ),
+			    0
+			)
+		lineageTag: c224a98f-39d9-49b6-a046-7184bc7311e0
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'PBO - Is Open & Late (Bool)' = ```
+			
+			VAR QtyRemaining =
+			    SUM ( Fact_Production_Batch_Orders[ReportRemainder] )
+			VAR DueDate =
+			    MIN ( Dim_Date[Date] )
+			RETURN
+			    QtyRemaining > 0
+			        && NOT ISBLANK ( DueDate )
+			        && DueDate < TODAY ()
+			
+			```
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: a4e0afb6-fee5-4964-9631-0bdbd68dff4a
+
+		changedProperty = Name
+
+	measure 'PBO - Is Open & Late (Flag)' = ```
+			
+			IF ( [PBO - Is Open & Late (Bool)], 1, 0 )
+			
+			```
+		formatString: 0
+		lineageTag: 94f4c906-034c-4418-9bac-5f92a0c9d3f8
+
+		changedProperty = Name
+
+	measure 'Total PBOs' = COUNTROWS(Fact_Production_Batch_Orders)
+		formatString: 0
+		lineageTag: 1233a008-011b-4de3-b304-3270962c2d57
+
+		changedProperty = Name
+
+	measure 'As Of Date + 30' = TODAY() + 30
+		formatString: General Date
+		lineageTag: 27f1247f-e4ac-413e-8f2a-b04ce214512f
+
+		changedProperty = Name
+
+	measure 'Global Axis Max ReportRemainder + 10%' =
+			
+			VAR MaxAcrossWarehouses =
+			    MAXX(
+			        ALLSELECTED( 'Dim_Warehouse'[Warehouse_ID] ),
+			        CALCULATE( [ReportRemainder (Sum)] )
+			    )
+			RETURN
+			    MaxAcrossWarehouses * 1.10
+		lineageTag: a548b59a-6cac-470c-8b8d-25afaacd70e0
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'ReportRemainder (Sum)' =
+			
+			SUM ( 'Fact_Production_Batch_Orders'[ReportRemainder] )
+		lineageTag: 127b7980-64dc-44b2-8cf9-cb3b5f71d845
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Global Max ReportRemainder + 10% - RouteType' =
+			
+			VAR MaxAcrossWarehouses =
+			    MAXX(
+			        ALLSELECTED( 'Dim_Route'[RouteType] ),
+			        CALCULATE( [ReportRemainder (Sum)] )
+			    )
+			RETURN
+			    MaxAcrossWarehouses * 1.10
+		lineageTag: 3ac80245-1a5b-4bb5-8474-d09bc72c4afd
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column CMPNY
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 59bfb36d-d023-4303-a2de-f97599a7abe9
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductionBatchOrder
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 2ead2fde-577c-4dfb-9cd6-edce41744090
+		sourceLineageTag: ProductionBatchOrder
+		summarizeBy: none
+		sourceColumn: ProductionBatchOrder
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_ID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: aa913e26-7b6c-4c09-950f-6da19c915804
+		sourceLineageTag: Product_ID
+		summarizeBy: none
+		sourceColumn: Product_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column bomid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: e9a8cc8e-b86e-477b-abb6-a03e328c6b59
+		sourceLineageTag: bomid
+		summarizeBy: none
+		sourceColumn: bomid
+
+		annotation SummarizationSetBy = Automatic
+
+	column BOMDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: beb5fd89-a004-49b6-83a3-e800728a800d
+		sourceLineageTag: BOMDate
+		summarizeBy: none
+		sourceColumn: BOMDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column unitid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 2bd0a22d-a5f4-4277-9333-518319031fdb
+		sourceLineageTag: unitid
+		summarizeBy: none
+		sourceColumn: unitid
+
+		annotation SummarizationSetBy = Automatic
+
+	column RouteID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 267acd35-be1b-4df8-87df-3edb168d4415
+		sourceLineageTag: RouteID
+		summarizeBy: none
+		sourceColumn: RouteID
+
+		annotation SummarizationSetBy = Automatic
+
+	column PBOFinishedDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 199901b8-a533-462e-8dac-f5c6bd6729e6
+		sourceLineageTag: PBOFinishedDate
+		summarizeBy: none
+		sourceColumn: PBOFinishedDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column PBOFinishedDatekey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 8ac3584d-9683-4698-9e3f-f3f306947f1f
+		sourceLineageTag: PBOFinishedDatekey
+		summarizeBy: none
+		sourceColumn: PBOFinishedDatekey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column qtysched
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 8ae1add3-dfe3-4ab1-bff1-3611d53fee40
+		sourceLineageTag: qtysched
+		summarizeBy: sum
+		sourceColumn: qtysched
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column schedstartdate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 9ef07252-9f9b-47c4-816b-22566130ec92
+		sourceLineageTag: schedstartdate
+		summarizeBy: none
+		sourceColumn: schedstartdate
+
+		annotation SummarizationSetBy = Automatic
+
+	column schedstartdatekey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: c509814d-4615-467c-8b11-e4720132d879
+		sourceLineageTag: schedstartdatekey
+		summarizeBy: none
+		sourceColumn: schedstartdatekey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column schedenddate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 5cc7f7f9-b5cd-4e40-8ac8-5124b236af16
+		sourceLineageTag: schedenddate
+		summarizeBy: none
+		sourceColumn: schedenddate
+
+		annotation SummarizationSetBy = Automatic
+
+	column schedenddatekey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 4ca81369-4f84-4990-a81a-0304bdb5c5db
+		sourceLineageTag: schedenddatekey
+		summarizeBy: none
+		sourceColumn: schedenddatekey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column RequestedDeliveryDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: e7f145f6-e7ec-49a6-a7cc-5336f0289290
+		sourceLineageTag: RequestedDeliveryDate
+		summarizeBy: none
+		sourceColumn: RequestedDeliveryDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RequestedDeliveryDatekey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: c0c407fc-e62d-432f-baf9-be0a0b9e68dd
+		sourceLineageTag: RequestedDeliveryDatekey
+		summarizeBy: none
+		sourceColumn: RequestedDeliveryDatekey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column ScheduledFinishOnTime
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 505d14df-2fa9-4182-bb00-374755fc3a68
+		sourceLineageTag: ScheduledFinishOnTime
+		summarizeBy: sum
+		sourceColumn: ScheduledFinishOnTime
+
+		annotation SummarizationSetBy = Automatic
+
+	column ScheduledFinishDelayed
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 6c44e877-e433-4230-91d0-127fdc520100
+		sourceLineageTag: ScheduledFinishDelayed
+		summarizeBy: sum
+		sourceColumn: ScheduledFinishDelayed
+
+		annotation SummarizationSetBy = Automatic
+
+	column LastPhysicalInventoryReceiptDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 47349521-5ef8-42f7-a2d9-f5f6412a2606
+		sourceLineageTag: LastPhysicalInventoryReceiptDate
+		summarizeBy: none
+		sourceColumn: LastPhysicalInventoryReceiptDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column LastPhysicalInventoryReceiptDatekey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 103fb0cb-264b-4c65-b8c7-8611a7e342e8
+		sourceLineageTag: LastPhysicalInventoryReceiptDatekey
+		summarizeBy: none
+		sourceColumn: LastPhysicalInventoryReceiptDatekey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column ActualFinishOnTime
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 81d4d3d6-7121-4b3e-bb78-2e97b8ae900d
+		sourceLineageTag: ActualFinishOnTime
+		summarizeBy: sum
+		sourceColumn: ActualFinishOnTime
+
+		annotation SummarizationSetBy = Automatic
+
+	column ActualFinishDelayed
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: eaf24289-116b-433c-9094-a9ff27292991
+		sourceLineageTag: ActualFinishDelayed
+		summarizeBy: sum
+		sourceColumn: ActualFinishDelayed
+
+		annotation SummarizationSetBy = Automatic
+
+	column QtyGood
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: ec22cda2-3617-4386-a7ae-992786d14a33
+		sourceLineageTag: QtyGood
+		summarizeBy: sum
+		sourceColumn: QtyGood
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ReportRemainder
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 337856d0-dca0-4490-830e-10159c3c9657
+		sourceLineageTag: ReportRemainder
+		summarizeBy: sum
+		sourceColumn: ReportRemainder
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ScheduledStartDateTime
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 45f0c486-2041-46bb-a9d9-10181bdec60f
+		sourceLineageTag: ScheduledStartDateTime
+		summarizeBy: none
+		sourceColumn: ScheduledStartDateTime
+
+		annotation SummarizationSetBy = Automatic
+
+	column ScheduledEndDateTime
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 11d0fb86-e8ad-4828-8219-fafb2ccf274d
+		sourceLineageTag: ScheduledEndDateTime
+		summarizeBy: none
+		sourceColumn: ScheduledEndDateTime
+
+		annotation SummarizationSetBy = Automatic
+
+	column ScheduledCalendarDurationHrs
+		dataType: double
+		sourceProviderType: numeric(17, 6)
+		lineageTag: 14c5bf42-177d-4e01-9880-b67ea7b3c023
+		sourceLineageTag: ScheduledCalendarDurationHrs
+		summarizeBy: sum
+		sourceColumn: ScheduledCalendarDurationHrs
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column warehouse
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: f1a554ad-2bd7-42b8-bff8-a8e3f67874a9
+		sourceLineageTag: warehouse
+		summarizeBy: none
+		sourceColumn: warehouse
+
+		annotation SummarizationSetBy = Automatic
+
+	column configid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: abf9d7ab-6958-42b2-a39b-2358a18c953c
+		sourceLineageTag: configid
+		summarizeBy: none
+		sourceColumn: configid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventcolorid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 4825fee0-0cbc-4e8a-b4c0-17753b107b53
+		sourceLineageTag: inventcolorid
+		summarizeBy: none
+		sourceColumn: inventcolorid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventbatchid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: cc0c42e8-1c0b-4601-b2c7-11d23da93d42
+		sourceLineageTag: inventbatchid
+		summarizeBy: none
+		sourceColumn: inventbatchid
+
+		annotation SummarizationSetBy = Automatic
+
+	column SerialNumber
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 5906bba1-95b6-4afe-b6bf-5bc0b8a7ae7f
+		sourceLineageTag: SerialNumber
+		summarizeBy: none
+		sourceColumn: SerialNumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventsiteid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: ff537c82-feb7-41c8-a408-c49e10dd7220
+		sourceLineageTag: inventsiteid
+		summarizeBy: none
+		sourceColumn: inventsiteid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventsizeid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 91789182-0158-4e0b-a8d2-6f9a024ec080
+		sourceLineageTag: inventsizeid
+		summarizeBy: none
+		sourceColumn: inventsizeid
+
+		annotation SummarizationSetBy = Automatic
+
+	column wmslocationid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: d01ca793-3547-4814-bd5e-3a8441ccc1a6
+		sourceLineageTag: wmslocationid
+		summarizeBy: none
+		sourceColumn: wmslocationid
+
+		annotation SummarizationSetBy = Automatic
+
+	column licenseplateid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: a63830b4-5761-4f2b-8e13-b1c05e1f59d5
+		sourceLineageTag: licenseplateid
+		summarizeBy: none
+		sourceColumn: licenseplateid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventstatusid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: e4052559-609e-4330-97d3-15a615b0ed1d
+		sourceLineageTag: inventstatusid
+		summarizeBy: none
+		sourceColumn: inventstatusid
+
+		annotation SummarizationSetBy = Automatic
+
+	column PalletID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: c1af1fdb-b66b-49af-9c02-7a501d6b8e68
+		sourceLineageTag: PalletID
+		summarizeBy: none
+		sourceColumn: PalletID
+
+		annotation SummarizationSetBy = Automatic
+
+	column accountingcurrency
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 6d1418a1-deb3-425e-881b-03b05b5b5128
+		sourceLineageTag: accountingcurrency
+		summarizeBy: none
+		sourceColumn: accountingcurrency
+
+		annotation SummarizationSetBy = Automatic
+
+	column qtystup
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: b916c3b3-1e9f-4966-be15-dfea7a1dd2f2
+		sourceLineageTag: qtystup
+		summarizeBy: sum
+		sourceColumn: qtystup
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column qtycalc
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: ed784ef6-6994-475d-9415-cfc952fb8942
+		sourceLineageTag: qtycalc
+		summarizeBy: sum
+		sourceColumn: qtycalc
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column inventrefid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 838f1ea1-c493-4b2a-b613-625a183fda2d
+		sourceLineageTag: inventrefid
+		summarizeBy: none
+		sourceColumn: inventrefid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventreftransid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 3041d195-379f-40c6-bdc6-ac8929d80f1e
+		sourceLineageTag: inventreftransid
+		summarizeBy: none
+		sourceColumn: inventreftransid
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventreftype
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 9f8271b2-9aff-4a48-a223-f9c740c99202
+		sourceLineageTag: inventreftype
+		summarizeBy: sum
+		sourceColumn: inventreftype
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventreftype_$label
+		dataType: string
+		sourceProviderType: varchar(14)
+		lineageTag: 8fdc1fa8-58fd-44c6-9678-2f4f3c0d6182
+		sourceLineageTag: inventreftype_$label
+		summarizeBy: none
+		sourceColumn: inventreftype_$label
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventtransid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 322cf70d-d5f2-4b7b-af86-758b391d7fc8
+		sourceLineageTag: inventtransid
+		summarizeBy: none
+		sourceColumn: inventtransid
+
+		annotation SummarizationSetBy = Automatic
+
+	column prodorigid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 7d4cac5c-ff27-42f4-ab80-af747a2da30b
+		sourceLineageTag: prodorigid
+		summarizeBy: none
+		sourceColumn: prodorigid
+
+		annotation SummarizationSetBy = Automatic
+
+	column DateSchedulingPerformed
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 49e8831b-c00d-4c2e-8062-36c4f496419b
+		sourceLineageTag: DateSchedulingPerformed
+		summarizeBy: none
+		sourceColumn: DateSchedulingPerformed
+
+		annotation SummarizationSetBy = Automatic
+
+	column DateSchedulingPerformedkey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 4b77b81a-0dba-4ca7-9ac3-ce18342bd1d0
+		sourceLineageTag: DateSchedulingPerformedkey
+		summarizeBy: none
+		sourceColumn: DateSchedulingPerformedkey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column stupdate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 4a806222-909f-4103-bd57-dfd0d81557ba
+		sourceLineageTag: stupdate
+		summarizeBy: none
+		sourceColumn: stupdate
+
+		annotation SummarizationSetBy = Automatic
+
+	column stupdatekey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: abf1370e-9fc4-4aef-8d22-0dd42afe090d
+		sourceLineageTag: stupdatekey
+		summarizeBy: none
+		sourceColumn: stupdatekey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column CostCalcutaionDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: d9b8d474-edfa-416d-a0a1-dee0cdf153af
+		sourceLineageTag: CostCalcutaionDate
+		summarizeBy: none
+		sourceColumn: CostCalcutaionDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column CostCalcutaionDatekey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 070f7a4d-189c-47ae-8061-8e1eb8a5d996
+		sourceLineageTag: CostCalcutaionDatekey
+		summarizeBy: none
+		sourceColumn: CostCalcutaionDatekey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column LatestSchedDateTime
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 636effbf-efaa-4b1d-9096-e8c0da2461bd
+		sourceLineageTag: LatestSchedDateTime
+		summarizeBy: none
+		sourceColumn: LatestSchedDateTime
+
+		annotation SummarizationSetBy = Automatic
+
+	column latestscheddatekey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 22130cdb-594e-45c4-9995-7be02ac3c46c
+		sourceLineageTag: latestscheddatekey
+		summarizeBy: none
+		sourceColumn: latestscheddatekey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column RealiztionDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 41a44e15-e72e-4e60-963b-44e745839d23
+		sourceLineageTag: RealiztionDate
+		summarizeBy: none
+		sourceColumn: RealiztionDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column realdatekey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 26618cf2-84f7-4c50-b2dc-8077533fe270
+		sourceLineageTag: realdatekey
+		summarizeBy: none
+		sourceColumn: realdatekey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column ReleasedDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: b0ea5896-b2ce-4d8c-b513-05b1d2ea841c
+		sourceLineageTag: ReleasedDate
+		summarizeBy: none
+		sourceColumn: ReleasedDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column releaseddatekey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 62787795-7ee3-4881-85f7-09c0c837efb1
+		sourceLineageTag: releaseddatekey
+		summarizeBy: none
+		sourceColumn: releaseddatekey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column projcategoryid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: cc14be6f-91ec-45de-8a1e-9d96dcff1340
+		sourceLineageTag: projcategoryid
+		summarizeBy: none
+		sourceColumn: projcategoryid
+
+		annotation SummarizationSetBy = Automatic
+
+	column projcostamount
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: e9afbb97-cbd8-43ce-b253-b36cea6e7b71
+		sourceLineageTag: projcostamount
+		summarizeBy: sum
+		sourceColumn: projcostamount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column projcostprice
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 8f8e105f-dd1e-4dd0-ae3e-2ae13771c1b7
+		sourceLineageTag: projcostprice
+		summarizeBy: sum
+		sourceColumn: projcostprice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column projsalesprice
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 6b2b80dc-aaed-40c5-9cb8-94f07a63f36a
+		sourceLineageTag: projsalesprice
+		summarizeBy: sum
+		sourceColumn: projsalesprice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column pmfyieldpct
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: b92fc5ac-b358-44a9-a9e3-663526ca1fdc
+		sourceLineageTag: pmfyieldpct
+		summarizeBy: sum
+		sourceColumn: pmfyieldpct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column IsOpen
+		dataType: string
+		sourceProviderType: varchar(3)
+		lineageTag: 3415ad80-7332-4a12-9828-8d9b1a132d76
+		sourceLineageTag: IsOpen
+		summarizeBy: none
+		sourceColumn: IsOpen
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsLate
+		dataType: string
+		sourceProviderType: varchar(3)
+		lineageTag: 50f44b51-535a-4867-b75b-8826bd7e3498
+		sourceLineageTag: IsLate
+		summarizeBy: none
+		sourceColumn: IsLate
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsLateOpenOrder
+		dataType: string
+		sourceProviderType: varchar(3)
+		lineageTag: c2f1bc81-5e5f-419d-952e-09034b06fd2b
+		sourceLineageTag: IsLateOpenOrder
+		summarizeBy: none
+		sourceColumn: IsLateOpenOrder
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: c8c92797-f7f3-4a8c-9427-9b9b8a018515
+		sourceLineageTag: Legal_EntityKey
+		summarizeBy: none
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column HistoricalProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: b28ff6cd-d273-43ee-8173-acfad9dbff8a
+		sourceLineageTag: HistoricalProductKey
+		summarizeBy: none
+		sourceColumn: HistoricalProductKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column ProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: c13acdc2-9e2c-4a45-aed4-bfb20b0f1610
+		sourceLineageTag: ProductKey
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column ProductionBatchOrderKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: babfbc76-c833-4122-93ff-964c96718879
+		sourceLineageTag: ProductionBatchOrderKey
+		summarizeBy: none
+		sourceColumn: ProductionBatchOrderKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column SiteKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 44b1872a-5694-47cc-829d-b26b1432e204
+		sourceLineageTag: SiteKey
+		summarizeBy: none
+		sourceColumn: SiteKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column WarehouseKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 4643b5fd-36dc-45c1-a82e-5baeb9d1f05d
+		sourceLineageTag: WarehouseKey
+		summarizeBy: none
+		sourceColumn: WarehouseKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column RouteKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: d2b3c039-5409-457c-8687-8bcc9ad6804c
+		sourceLineageTag: RouteKey
+		summarizeBy: none
+		sourceColumn: RouteKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	partition Fact_Production_Batch_Orders = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Fact_Production_Batch_Orders
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

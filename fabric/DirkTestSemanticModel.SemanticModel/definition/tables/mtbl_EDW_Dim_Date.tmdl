@@ -1,0 +1,431 @@
+table mtbl_EDW_Dim_Date
+	lineageTag: eabaacfe-64df-4b5f-b30e-752b22a99fa9
+	sourceLineageTag: [dbo].[mtbl_EDW_Dim_Date]
+
+	column DateKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 1e06be4d-a5c6-419a-a5d1-8d00faf58932
+		sourceLineageTag: DateKey
+		summarizeBy: none
+		sourceColumn: DateKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecId
+		dataType: int64
+		formatString: 0
+		lineageTag: 9f8752ea-e293-4518-9f5b-fc00adaaf613
+		sourceLineageTag: RecId
+		summarizeBy: none
+		sourceColumn: RecId
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalQuarterNum
+		dataType: int64
+		formatString: 0
+		lineageTag: e2399aa2-e476-4ccb-bc2e-e62d9d889cc3
+		sourceLineageTag: FiscalQuarterNum
+		summarizeBy: none
+		sourceColumn: FiscalQuarterNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalYear
+		dataType: int64
+		formatString: 0
+		lineageTag: 3f4b99d1-516b-4ce7-941c-37d5078d6c06
+		sourceLineageTag: FiscalYear
+		summarizeBy: none
+		sourceColumn: FiscalYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column CalendarYear
+		dataType: int64
+		formatString: 0
+		lineageTag: 8c0b4199-4b9c-4897-857b-99237cf71512
+		sourceLineageTag: CalendarYear
+		summarizeBy: none
+		sourceColumn: CalendarYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column CalendarQuarterNum
+		dataType: int64
+		formatString: 0
+		lineageTag: 5d4b78d2-6e14-4453-8816-3c4ad3921a3d
+		sourceLineageTag: CalendarQuarterNum
+		summarizeBy: none
+		sourceColumn: CalendarQuarterNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthNameShort
+		dataType: string
+		lineageTag: 5ebe68ef-2c9c-49ae-99cf-baf543a3be15
+		sourceLineageTag: MonthNameShort
+		summarizeBy: none
+		sourceColumn: MonthNameShort
+
+		annotation SummarizationSetBy = Automatic
+
+	column WeekdayNameLong
+		dataType: string
+		lineageTag: acb2242f-2d1e-4071-94d6-07ad29cd111f
+		sourceLineageTag: WeekdayNameLong
+		summarizeBy: none
+		sourceColumn: WeekdayNameLong
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 1b6370ce-374a-4975-a693-f7731ee22667
+		sourceLineageTag: Date
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalDayNum
+		dataType: int64
+		formatString: 0
+		lineageTag: 69a98d3b-7c40-4c58-b70a-c6ece6baa89f
+		sourceLineageTag: FiscalDayNum
+		summarizeBy: none
+		sourceColumn: FiscalDayNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsWorkingDayUs
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 7fc5b946-ff5c-4970-b613-267662c182ad
+		sourceLineageTag: IsWorkingDayUs
+		summarizeBy: none
+		sourceColumn: IsWorkingDayUs
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsWorkingDayBvba
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 2b6b0a6b-09c3-4216-8fea-a16ab06a32cc
+		sourceLineageTag: IsWorkingDayBvba
+		summarizeBy: none
+		sourceColumn: IsWorkingDayBvba
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsWorkingDayTeda
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: d7d79f0a-2753-49ff-9d63-e11f51a06bb4
+		sourceLineageTag: IsWorkingDayTeda
+		summarizeBy: none
+		sourceColumn: IsWorkingDayTeda
+
+		annotation SummarizationSetBy = Automatic
+
+	column WeekStartDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 7efe7070-08ce-40cd-9d52-747bdb420af1
+		sourceLineageTag: WeekStartDate
+		summarizeBy: none
+		sourceColumn: WeekStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthStartDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: d4090551-d2e3-4c71-b6f8-fe78237dcc8a
+		sourceLineageTag: MonthStartDate
+		summarizeBy: none
+		sourceColumn: MonthStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column CurrentFiscalDayNum
+		dataType: int64
+		formatString: 0
+		lineageTag: 9989fb37-ef81-43b6-9b9d-b0e45098ddc6
+		sourceLineageTag: CurrentFiscalDayNum
+		summarizeBy: none
+		sourceColumn: CurrentFiscalDayNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column CurrentFiscalYear
+		dataType: int64
+		formatString: 0
+		lineageTag: a7c231b2-53ab-4298-bb4a-408fd16ad188
+		sourceLineageTag: CurrentFiscalYear
+		summarizeBy: none
+		sourceColumn: CurrentFiscalYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthNameLong
+		dataType: string
+		lineageTag: e2612200-f799-44d3-8c90-8bdcb2109516
+		sourceLineageTag: MonthNameLong
+		summarizeBy: none
+		sourceColumn: MonthNameLong
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearMonthNum
+		dataType: string
+		lineageTag: 4d056630-14c3-4b47-80bc-a6e21dd3d306
+		sourceLineageTag: YearMonthNum
+		summarizeBy: none
+		sourceColumn: YearMonthNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearMonthLabel
+		dataType: string
+		lineageTag: cd20f7d7-6673-4d25-a092-74c8c7efe2be
+		sourceLineageTag: YearMonthLabel
+		summarizeBy: none
+		sourceColumn: YearMonthLabel
+
+		annotation SummarizationSetBy = Automatic
+
+	column CalendarQuarterLabel
+		dataType: string
+		lineageTag: ae084249-8657-4c84-bb70-113b2c66e7df
+		sourceLineageTag: CalendarQuarterLabel
+		summarizeBy: none
+		sourceColumn: CalendarQuarterLabel
+
+		annotation SummarizationSetBy = Automatic
+
+	column CalendarYearQuarterNum
+		dataType: int64
+		formatString: 0
+		lineageTag: f13cca42-7646-4a38-973f-af3a2ccb8412
+		sourceLineageTag: CalendarYearQuarterNum
+		summarizeBy: none
+		sourceColumn: CalendarYearQuarterNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalQuarterLabel
+		dataType: string
+		lineageTag: 71c5c989-c67d-4773-b970-9efd287d1a54
+		sourceLineageTag: FiscalQuarterLabel
+		summarizeBy: none
+		sourceColumn: FiscalQuarterLabel
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalYearQuarterNum
+		dataType: int64
+		formatString: 0
+		lineageTag: d47e5747-0ad6-4acd-987a-68effac1a5e6
+		sourceLineageTag: FiscalYearQuarterNum
+		summarizeBy: none
+		sourceColumn: FiscalYearQuarterNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column WeekdayNum
+		dataType: int64
+		formatString: 0
+		lineageTag: 93ea534d-2482-49c5-a72a-99e9c1403c1d
+		sourceLineageTag: WeekdayNum
+		summarizeBy: none
+		sourceColumn: WeekdayNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column WeekdayNameShort
+		dataType: string
+		lineageTag: 953681f2-4d1f-4160-a1db-44f258fd68d1
+		sourceLineageTag: WeekdayNameShort
+		summarizeBy: none
+		sourceColumn: WeekdayNameShort
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearWeekNum
+		dataType: int64
+		formatString: 0
+		lineageTag: 1a3a518a-7f63-4d0f-8f87-069aae83b9ee
+		sourceLineageTag: YearWeekNum
+		summarizeBy: none
+		sourceColumn: YearWeekNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalYearWeekNum
+		dataType: int64
+		formatString: 0
+		lineageTag: 77762514-5316-4468-8cc5-97c461bd4689
+		sourceLineageTag: FiscalYearWeekNum
+		summarizeBy: none
+		sourceColumn: FiscalYearWeekNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayOfYearNum
+		dataType: int64
+		formatString: 0
+		lineageTag: 3409b126-5381-4241-b52f-8da342669044
+		sourceLineageTag: DayOfYearNum
+		summarizeBy: none
+		sourceColumn: DayOfYearNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsWeekend
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 6df6ee80-25b4-4d80-88d1-4f3548ceea0f
+		sourceLineageTag: IsWeekend
+		summarizeBy: none
+		sourceColumn: IsWeekend
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsToday
+		dataType: int64
+		formatString: 0
+		lineageTag: 064a5f24-0517-4d9a-a548-b61f0be4a8aa
+		sourceLineageTag: IsToday
+		summarizeBy: none
+		sourceColumn: IsToday
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsCurrentMonth
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: c6b5ec2a-02d0-4b29-8017-cdebd933c03f
+		sourceLineageTag: IsCurrentMonth
+		summarizeBy: none
+		sourceColumn: IsCurrentMonth
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsCurrentFiscalYear
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: f29b9b69-8b41-4a02-83a2-c57d18158f7f
+		sourceLineageTag: IsCurrentFiscalYear
+		summarizeBy: none
+		sourceColumn: IsCurrentFiscalYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalPeriodLabel
+		dataType: string
+		lineageTag: fe50c827-166c-45cf-9fd9-cbb84af4b7d9
+		sourceLineageTag: FiscalPeriodLabel
+		summarizeBy: none
+		sourceColumn: FiscalPeriodLabel
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Original FISCAL YR'
+		dataType: int64
+		formatString: 0
+		lineageTag: 6ae11051-4670-4427-83a4-910e58ff80ec
+		sourceLineageTag: Original FISCAL YR
+		summarizeBy: none
+		sourceColumn: Original FISCAL YR
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Original FISCAL PERIOD'
+		dataType: int64
+		formatString: 0
+		lineageTag: 539509ee-fd0a-409e-8b2e-db8d1b4edf39
+		sourceLineageTag: Original FISCAL PERIOD
+		summarizeBy: none
+		sourceColumn: Original FISCAL PERIOD
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Reconciliation Year'
+		dataType: string
+		lineageTag: cae19363-35af-4f95-894e-c8d2418935ca
+		sourceLineageTag: Reconciliation Year
+		summarizeBy: none
+		sourceColumn: Reconciliation Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalPeriodNum
+		dataType: int64
+		formatString: 0
+		lineageTag: 07f4adc0-7b91-40ec-9273-2b1e7f1afa57
+		sourceLineageTag: FiscalPeriodNum
+		summarizeBy: none
+		sourceColumn: FiscalPeriodNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column FiscalWeekNum
+		dataType: int64
+		formatString: 0
+		lineageTag: 0bb05cb1-7639-4f5b-aeac-9b876630d298
+		sourceLineageTag: FiscalWeekNum
+		summarizeBy: none
+		sourceColumn: FiscalWeekNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column WeeksInPeriod
+		dataType: int64
+		formatString: 0
+		lineageTag: 43550e41-0e52-4b4a-a37c-f1faa6b48bbb
+		sourceLineageTag: WeeksInPeriod
+		summarizeBy: none
+		sourceColumn: WeeksInPeriod
+
+		annotation SummarizationSetBy = Automatic
+
+	column WeekOfYearNum
+		dataType: int64
+		formatString: 0
+		lineageTag: 42332e51-c3f8-4dd6-85fb-6c6d06db1915
+		sourceLineageTag: WeekOfYearNum
+		summarizeBy: none
+		sourceColumn: WeekOfYearNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column DayOfMonthNum
+		dataType: int64
+		formatString: 0
+		lineageTag: 0b9b2c17-c174-4cc1-b337-ad7cf44ccd83
+		sourceLineageTag: DayOfMonthNum
+		summarizeBy: none
+		sourceColumn: DayOfMonthNum
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthNum
+		dataType: int64
+		formatString: 0
+		lineageTag: 78a5815f-5a69-4493-ab4a-f768c2062971
+		sourceLineageTag: MonthNum
+		summarizeBy: none
+		sourceColumn: MonthNum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mtbl_EDW_Dim_Date = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Dim_Date
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+

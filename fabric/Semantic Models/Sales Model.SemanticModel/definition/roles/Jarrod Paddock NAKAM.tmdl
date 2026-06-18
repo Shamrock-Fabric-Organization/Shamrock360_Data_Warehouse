@@ -1,0 +1,7 @@
+role 'Jarrod Paddock NAKAM'
+	modelPermission: read
+
+	tablePermission Dim_Account = [Invoice_Account] IN {"C000505"}
+
+	annotation PBI_Id = 7d1c7584094844d1b9c21f5f27566541
+

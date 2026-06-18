@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "pl_D365_snapshot_data"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "77fa3d56-c3ae-967f-4afd-596902e574db"
+  }
+}

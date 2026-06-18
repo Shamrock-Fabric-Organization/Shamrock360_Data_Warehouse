@@ -1,0 +1,11 @@
+model 11694a3b-9289-4cd1-854d-31791dd2bca1
+	culture: en-US
+	collation: Latin1_General_100_CI_AS_KS_WS_SC_UTF8
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+

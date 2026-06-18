@@ -1,0 +1,139 @@
+table Dim_Route
+	lineageTag: 5dc3a724-d6cb-4cd1-bbf8-680de5418cba
+	sourceLineageTag: [dbo].[mtbl_EDW_DIM_Route]
+
+	column RouteKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: dcdccd2a-71a0-4373-ac24-3235271c0a30
+		sourceLineageTag: RouteKey
+		summarizeBy: none
+		sourceColumn: RouteKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column CMPNY
+		dataType: string
+		lineageTag: 7a9d142a-34b3-4a04-ac46-74d5900177e2
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column RouteID
+		dataType: string
+		lineageTag: 1d8a8617-ed6c-4998-9cbb-e06964db9220
+		sourceLineageTag: RouteID
+		summarizeBy: none
+		sourceColumn: RouteID
+
+		annotation SummarizationSetBy = Automatic
+
+	column RouteName
+		dataType: string
+		lineageTag: 4c0baaa6-3d6e-4fa2-a9e2-fde3b7adb2bb
+		sourceLineageTag: RouteName
+		summarizeBy: none
+		sourceColumn: RouteName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ApproverPersonnelNumber
+		dataType: string
+		lineageTag: 25b936d6-12c3-4ecd-8509-5dd04382f7be
+		sourceLineageTag: ApproverPersonnelNumber
+		summarizeBy: none
+		sourceColumn: ApproverPersonnelNumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column ApproverName
+		dataType: string
+		lineageTag: 74546978-a811-47c9-8149-77689c9f5608
+		sourceLineageTag: ApproverName
+		summarizeBy: none
+		sourceColumn: ApproverName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Approved
+		dataType: string
+		lineageTag: 844bff64-c57f-4370-814a-8f220409e12b
+		sourceLineageTag: Approved
+		summarizeBy: none
+		sourceColumn: Approved
+
+		annotation SummarizationSetBy = Automatic
+
+	column CheckRoute
+		dataType: string
+		lineageTag: 7369d923-cd80-49b1-9f4a-604b0d8acb7e
+		sourceLineageTag: CheckRoute
+		summarizeBy: none
+		sourceColumn: CheckRoute
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		lineageTag: fee39fb7-0906-4857-ac87-ca4ddec8a217
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 3e1d6baa-c4d2-433b-bad2-bfe884b7e610
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 324f687b-4696-481f-83b8-3304977731df
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		lineageTag: 2006baf6-621f-4e88-b4fe-accad41747a7
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column RouteType
+		dataType: string
+		lineageTag: 56cca224-56f0-41ce-ad42-51aa78ef0fcc
+		sourceLineageTag: RouteType
+		summarizeBy: none
+		sourceColumn: RouteType
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Route = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_DIM_Route
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+

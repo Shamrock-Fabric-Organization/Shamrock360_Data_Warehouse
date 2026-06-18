@@ -1,0 +1,9 @@
+role 'Joshua Wolfe'
+	modelPermission: read
+
+	tablePermission BIDataSet_Opportunity = [Manager] == "JWOLFE"
+
+	tablePermission Dim_Employee = [Personnel_Number] IN {"1164"}
+
+	annotation PBI_Id = 7d8d5527ffb144b18799e3f50ed6692f
+

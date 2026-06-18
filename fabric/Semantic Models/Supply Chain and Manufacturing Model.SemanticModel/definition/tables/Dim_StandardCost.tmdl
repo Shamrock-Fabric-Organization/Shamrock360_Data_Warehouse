@@ -1,0 +1,362 @@
+table Dim_StandardCost
+	lineageTag: 9c7348dd-4d22-48e9-bb3e-006cc620619d
+	sourceLineageTag: [dbo].[mtbl_EDW_Dim_StandardCost]
+
+	column StandardCostKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: a8f0786b-68d1-4378-a99e-509198016690
+		sourceLineageTag: StandardCostKey
+		summarizeBy: none
+		sourceColumn: StandardCostKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: edd21083-8c53-412d-99b1-c85def63b192
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_ID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 08566a23-ec97-43de-b155-95fe92809e9d
+		sourceLineageTag: Product_ID
+		summarizeBy: none
+		sourceColumn: Product_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column LegacyProductCode
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: f04b71bc-bb44-46b7-83b0-ab68c10ee11a
+		sourceLineageTag: LegacyProductCode
+		summarizeBy: none
+		sourceColumn: LegacyProductCode
+
+		annotation SummarizationSetBy = Automatic
+
+	column SiteID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 89c7c6ed-f419-4a0c-b9a4-e6856251f2a8
+		sourceLineageTag: SiteID
+		summarizeBy: none
+		sourceColumn: SiteID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ActivationDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 36a80e17-c707-4a80-a6ca-00c16a009b20
+		sourceLineageTag: ActivationDate
+		summarizeBy: none
+		sourceColumn: ActivationDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column EndDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: a397b87b-e74e-4320-9544-5e2bd3211176
+		sourceLineageTag: EndDate
+		summarizeBy: none
+		sourceColumn: EndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column Costing_Version
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: d9072cd2-b220-4402-8edd-206e9e3638cc
+		sourceLineageTag: Costing_Version
+		summarizeBy: none
+		sourceColumn: Costing_Version
+
+		annotation SummarizationSetBy = Automatic
+
+	column CurrentActiveCost
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 3be0783a-1825-49f9-aac4-4efc187e1c45
+		sourceLineageTag: CurrentActiveCost
+		summarizeBy: none
+		sourceColumn: CurrentActiveCost
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductName
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: ed37949d-853a-4223-bf95-73050a66d4cb
+		sourceLineageTag: ProductName
+		summarizeBy: none
+		sourceColumn: ProductName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductSearchName
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 4372c46c-a13f-4eae-bcc0-5893bd4efcf6
+		sourceLineageTag: ProductSearchName
+		summarizeBy: none
+		sourceColumn: ProductSearchName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Direct_Material_Cost_Standard
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: ada6a184-95c2-411e-8703-cf739923c92d
+		sourceLineageTag: Direct_Material_Cost_Standard
+		summarizeBy: none
+		sourceColumn: Direct_Material_Cost_Standard
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Packaging_Cost_Standard
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: d4c689e3-ee53-4daa-9922-4bc42be4584f
+		sourceLineageTag: Packaging_Cost_Standard
+		summarizeBy: none
+		sourceColumn: Packaging_Cost_Standard
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Direct_Labor_Cost_Standard
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: bcb53d9b-3ada-4ff1-9605-d3da89d17ae2
+		sourceLineageTag: Direct_Labor_Cost_Standard
+		summarizeBy: none
+		sourceColumn: Direct_Labor_Cost_Standard
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Direct_Utility_Cost_Standard
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 722ea80b-4615-4ef6-949c-20da10b48314
+		sourceLineageTag: Direct_Utility_Cost_Standard
+		summarizeBy: none
+		sourceColumn: Direct_Utility_Cost_Standard
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Overhead_Warehouse_Cost_Standard
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 4b43cd27-1218-4579-920c-7deef64c771f
+		sourceLineageTag: Overhead_Warehouse_Cost_Standard
+		summarizeBy: none
+		sourceColumn: Overhead_Warehouse_Cost_Standard
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Overhead_Indirect_Supervisor_Cost_Standard
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 82ab2a8c-d1d7-488b-9634-233cfe6c0e68
+		sourceLineageTag: Overhead_Indirect_Supervisor_Cost_Standard
+		summarizeBy: none
+		sourceColumn: Overhead_Indirect_Supervisor_Cost_Standard
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Overhead_Quality_Cost_Standard
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: ce897042-a304-460e-a51a-5d784de66408
+		sourceLineageTag: Overhead_Quality_Cost_Standard
+		summarizeBy: none
+		sourceColumn: Overhead_Quality_Cost_Standard
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Overhead_Maintenance_Cost_Standard
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 7e5e154a-b1c3-44d9-aa7c-10be061293f5
+		sourceLineageTag: Overhead_Maintenance_Cost_Standard
+		summarizeBy: none
+		sourceColumn: Overhead_Maintenance_Cost_Standard
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Overhead_Manufacturing_Admin_Cost_Standard
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 65b26e40-a906-4d04-b120-f24d91292219
+		sourceLineageTag: Overhead_Manufacturing_Admin_Cost_Standard
+		summarizeBy: none
+		sourceColumn: Overhead_Manufacturing_Admin_Cost_Standard
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Overhead_Depreciation_Cost_Standard
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 77c02a28-7743-4176-a131-76bd5af1abd8
+		sourceLineageTag: Overhead_Depreciation_Cost_Standard
+		summarizeBy: none
+		sourceColumn: Overhead_Depreciation_Cost_Standard
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Overhead_Miscellaneous_Manufacturing_Cost_Standard
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 041add6d-8f42-4d5d-b07c-dd6c76a276ca
+		sourceLineageTag: Overhead_Miscellaneous_Manufacturing_Cost_Standard
+		summarizeBy: none
+		sourceColumn: Overhead_Miscellaneous_Manufacturing_Cost_Standard
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Outside_Processing_Cost_Standard
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: e0009ec3-6722-4a29-9850-125565f92330
+		sourceLineageTag: Outside_Processing_Cost_Standard
+		summarizeBy: none
+		sourceColumn: Outside_Processing_Cost_Standard
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Total_Direct_Cost_Standard
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: ed840684-9541-4831-9796-911197578aea
+		sourceLineageTag: Total_Direct_Cost_Standard
+		summarizeBy: none
+		sourceColumn: Total_Direct_Cost_Standard
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Total_Overhead_Cost_Standard
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 21cb073a-d0ad-474e-afb5-6774dcdee5f3
+		sourceLineageTag: Total_Overhead_Cost_Standard
+		summarizeBy: none
+		sourceColumn: Total_Overhead_Cost_Standard
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column TotalCost
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: f2e079d4-51b4-4654-af65-fba91272e4d7
+		sourceLineageTag: TotalCost
+		summarizeBy: none
+		sourceColumn: TotalCost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column accountingcurrency
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 7b41ff8e-b45f-4e8e-9dea-c098ea0bc4b3
+		sourceLineageTag: accountingcurrency
+		summarizeBy: none
+		sourceColumn: accountingcurrency
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 3a276ff5-42ba-4435-bb6c-e0e03bebf63a
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: de1f844c-eca0-4fe6-a3d9-78f3d680b747
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 2672396e-0270-413c-aa4e-5f4780eff560
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		sourceProviderType: varchar(6)
+		lineageTag: a335fb31-b2f6-4b35-b525-a27c691deb2d
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_StandardCost = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Dim_StandardCost
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

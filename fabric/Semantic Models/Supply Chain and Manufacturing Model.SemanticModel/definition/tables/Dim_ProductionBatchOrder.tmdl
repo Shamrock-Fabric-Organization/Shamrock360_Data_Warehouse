@@ -1,0 +1,207 @@
+table Dim_ProductionBatchOrder
+	lineageTag: 74952628-7a37-45e1-86c2-a406b2fea947
+	sourceLineageTag: [dbo].[mtbl_EDW_DIM_ProductionBatchOrder]
+
+	column ProductionBatchOrderKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 33bf2d0d-63cd-44a9-a423-e0eaae8a075f
+		sourceLineageTag: ProductionBatchOrderKey
+		summarizeBy: none
+		sourceColumn: ProductionBatchOrderKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 032d1de2-78c2-4e64-b670-41396f988683
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductionBatchOrder
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 387da5fc-e4a3-47c0-b6e0-426d3ac2ca8f
+		sourceLineageTag: ProductionBatchOrder
+		summarizeBy: none
+		sourceColumn: ProductionBatchOrder
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_ID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 53fda1c8-fecd-4a89-a86a-fac0e8c28cf2
+		sourceLineageTag: Product_ID
+		summarizeBy: none
+		sourceColumn: Product_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 65e073a4-ab4c-486e-8516-513df1a10244
+		sourceLineageTag: name
+		summarizeBy: none
+		sourceColumn: name
+
+		annotation SummarizationSetBy = Automatic
+
+	column PBOStatus
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: e325aa66-3c3d-405c-bf2f-8efd54501bd8
+		sourceLineageTag: PBOStatus
+		summarizeBy: sum
+		sourceColumn: PBOStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column PBOStatusDesc
+		dataType: string
+		sourceProviderType: varchar(16)
+		lineageTag: 0daa0667-26b6-4ac0-bbc8-2ff0ee67b64f
+		sourceLineageTag: PBOStatusDesc
+		summarizeBy: none
+		sourceColumn: PBOStatusDesc
+
+		annotation SummarizationSetBy = Automatic
+
+	column PBOCreatedDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 5709fe65-e693-4043-b8d6-6c2fb8bcd58d
+		sourceLineageTag: PBOCreatedDate
+		summarizeBy: none
+		sourceColumn: PBOCreatedDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column PBOModifiedDateTime
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 4fad93c6-14b3-4eac-b49e-c7d78b7b3836
+		sourceLineageTag: PBOModifiedDateTime
+		summarizeBy: none
+		sourceColumn: PBOModifiedDateTime
+
+		annotation SummarizationSetBy = Automatic
+
+	column collectrefprodid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 1429cb3b-a197-4902-ba16-675552b06f00
+		sourceLineageTag: collectrefprodid
+		summarizeBy: none
+		sourceColumn: collectrefprodid
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		sourceProviderType: varchar(6)
+		lineageTag: abebe147-ecca-48c3-a47e-f5671f53d6a8
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: cb97d5b5-6f87-43b1-bc8b-37713f35a9cc
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: d897e93c-e54f-46d7-b4b3-0e31c0709e96
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 65b44085-9d91-4493-9e1f-3e882fc5e3e8
+		sourceLineageTag: RecordStatus
+		summarizeBy: sum
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column RemainStatus
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 53d633bd-94b2-49b4-937b-95d255c7a542
+		sourceLineageTag: RemainStatus
+		summarizeBy: sum
+		sourceColumn: RemainStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column RemainStatusDescription
+		dataType: string
+		sourceProviderType: varchar(9)
+		lineageTag: dae0c053-782e-4435-88b1-8498ff533d5c
+		sourceLineageTag: RemainStatusDescription
+		summarizeBy: none
+		sourceColumn: RemainStatusDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column SchedulingStatus
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: df5760cd-b8d8-4e41-9b89-d6bc810cb2e4
+		sourceLineageTag: SchedulingStatus
+		summarizeBy: sum
+		sourceColumn: SchedulingStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column SchedulingStatusDescription
+		dataType: string
+		sourceProviderType: varchar(18)
+		lineageTag: 1f01a4e9-0439-4817-b0bf-ea2e5d5485c1
+		sourceLineageTag: SchedulingStatusDescription
+		summarizeBy: none
+		sourceColumn: SchedulingStatusDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_ProductionBatchOrder = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_DIM_ProductionBatchOrder
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

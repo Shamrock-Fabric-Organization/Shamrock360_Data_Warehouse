@@ -1,0 +1,49 @@
+model Model
+	culture: en-US
+	collation: Latin1_General_100_BIN2_UTF8
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["DatabaseQuery"]
+
+annotation PBI_ProTooling = ["WebModelingEdit","RemoteModeling"]
+
+ref table Dim_Legal_Entity
+ref table Dim_ProductionBatchOrder
+ref table Dim_Date
+ref table Fact_SupplyChain_RAF
+ref table Fact_SupplyChain_JobCard
+ref table Fact_SupplyChain_PickList
+ref table Dim_Product
+ref table Fact_Production_Batch_Orders
+ref table Dim_Warehouse
+ref table 'PBO Scope'
+ref table Dim_Route
+ref table Fact_Production_Job_Routes
+ref table Dim_WorkCenter
+ref table Fact_QualityOrderLineResults
+ref table Dim_QualityOrder
+ref table Fact_CustomerPackingSlipTransactions
+ref table Dim_Site
+ref table Dim_Batch
+ref table 'Time Grain'
+ref table Dim_CustomerPackingSlip
+ref table Fact_Sales
+ref table 'Date Grain'
+ref table Dim_Account
+ref table Dim_Employee
+ref table Dim_SalesOrder
+ref table Dim_SerialNumber
+ref table Dim_MarketSegmentation
+ref table Dim_Address
+ref table Fact_Inventory_Snapshot
+ref table Fact_Inventory_Snapshot_Extended
+ref table Dim_WorkOrder
+ref table Fact_WorkOrderCycleCountTransactions
+ref table Dim_StandardCost
+

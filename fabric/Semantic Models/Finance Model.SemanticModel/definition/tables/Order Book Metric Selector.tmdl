@@ -1,0 +1,36 @@
+table 'Order Book Metric Selector'
+	lineageTag: 41b1d8fc-e648-49a8-8798-45cb9d612d9c
+
+	column Metric
+		lineageTag: d7b7e854-3630-4f8e-8a0c-1e438b47effd
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Metric]
+		sortByColumn: MetricSort
+
+		annotation SummarizationSetBy = Automatic
+
+	column MetricSort
+		formatString: 0
+		lineageTag: a75076b2-c9f8-4584-a8e9-69c96edf8fec
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [MetricSort]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Order Book Metric Selector' = calculated
+		mode: import
+		source =
+				
+				DATATABLE (
+				    "Metric", STRING,
+				    "MetricSort", INTEGER,
+				    {
+				        { "Revenue", 1 },
+				        { "Quantity", 2 }
+				    }
+				)
+
+	annotation PBI_Id = 2748b72199db431695b979bd46b384cb
+

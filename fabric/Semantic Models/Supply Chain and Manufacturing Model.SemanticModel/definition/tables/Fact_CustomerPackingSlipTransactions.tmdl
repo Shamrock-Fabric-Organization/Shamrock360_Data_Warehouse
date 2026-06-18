@@ -1,0 +1,408 @@
+table Fact_CustomerPackingSlipTransactions
+	lineageTag: 42cda4ec-2bc3-467c-8e6c-94485340f33b
+	sourceLineageTag: [dbo].[mtbl_EDW_Fact_CustomerPackingSlipTransactions]
+
+	measure 'Days Late Against Lead Time' =
+			
+			VAR _custOrderDate =
+			    SELECTEDVALUE ( Fact_CustomerPackingSlipTransactions[SalesOrderCreatedDateTime] )
+			VAR _shipDate =
+			    SELECTEDVALUE ( Fact_CustomerPackingSlipTransactions[ActualShipDate] )
+			VAR _leadTime =
+			    SELECTEDVALUE ( Dim_Product[sales_leadtime] )
+			VAR _leadTimeAdj =
+			    IF ( COALESCE ( _leadTime, 0 ) = 0, 21, _leadTime )
+			VAR _dueDate =
+			    _custOrderDate + _leadTimeAdj
+			RETURN
+			IF (
+			    ISBLANK ( _custOrderDate ) || ISBLANK ( _shipDate ),
+			    BLANK (),
+			    DATEDIFF ( _dueDate, _shipDate, DAY )
+			)
+		formatString: 0
+		lineageTag: 51a63641-80c0-4b33-b9f0-c212db228c13
+
+		changedProperty = Name
+
+	measure 'Days Late Against Customer Request' =
+			
+			VAR _custReqDate =
+			    SELECTEDVALUE ( Fact_CustomerPackingSlipTransactions[SALESLINESHIPPINGDATEREQUESTED] )
+			VAR _shipDate =
+			    SELECTEDVALUE ( Fact_CustomerPackingSlipTransactions[ActualShipDate] )
+			RETURN
+			IF (
+			    ISBLANK ( _custReqDate ) || ISBLANK ( _shipDate ),
+			    BLANK (),
+			    DATEDIFF ( _custReqDate, _shipDate, DAY )
+			)
+		formatString: 0
+		lineageTag: e8663a90-ceee-4a09-9b37-ed19dbc3a0f8
+
+		changedProperty = Name
+
+	measure 'Qty Lbs for Packing Slip Row' =
+			
+			VAR SalesId =
+			    SELECTEDVALUE ( Fact_CustomerPackingSlipTransactions[SALESID] )
+			VAR LineNum =
+			    SELECTEDVALUE ( Fact_CustomerPackingSlipTransactions[LINENUM] )
+			RETURN
+			IF (
+			    ISBLANK ( SalesId ) || ISBLANK ( LineNum ),
+			    BLANK (),
+			    CALCULATE (
+			        SUM ( Fact_Sales[quantity_lbs] ),
+			        TREATAS (
+			            ROW ( "SalesId", SalesId, "LineNum", LineNum ),
+			            Fact_Sales[Customer_Order_Number],
+			            Fact_Sales[salesorderlinenumber]
+			        )
+			    )
+			)
+		lineageTag: 1c6a9548-779c-47d3-84fb-aada0cbfd673
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column CMPNY
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 7df78b6d-f2da-450f-85f0-7eee4d4a62e4
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column SALESID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 52190f58-3610-46d8-9ec2-2cf8e94ed6f4
+		sourceLineageTag: SALESID
+		summarizeBy: none
+		sourceColumn: SALESID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ITEMID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 39de725b-f1d6-4e45-a5ba-decadc899cae
+		sourceLineageTag: ITEMID
+		summarizeBy: none
+		sourceColumn: ITEMID
+
+		annotation SummarizationSetBy = Automatic
+
+	column LINENUM
+		dataType: double
+		sourceProviderType: decimal(38, 16)
+		lineageTag: 1825e2c8-ef80-4726-9757-977d2ceaf0f9
+		sourceLineageTag: LINENUM
+		summarizeBy: sum
+		sourceColumn: LINENUM
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column PACKINGSLIPID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 4a69bee6-6ded-43e5-af45-f629a8515b52
+		sourceLineageTag: PACKINGSLIPID
+		summarizeBy: none
+		sourceColumn: PACKINGSLIPID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerId
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 5b09ce4e-2002-4cf5-9234-fdea1f6f3ce3
+		sourceLineageTag: CustomerId
+		summarizeBy: none
+		sourceColumn: CustomerId
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesCategory
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: b80f0bc8-cbe7-4456-beb5-72cd32df3677
+		sourceLineageTag: SalesCategory
+		summarizeBy: none
+		sourceColumn: SalesCategory
+
+		annotation SummarizationSetBy = Automatic
+
+	column SiteID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 6c6b336c-26dd-4e82-814d-e2c4cef930e0
+		sourceLineageTag: SiteID
+		summarizeBy: none
+		sourceColumn: SiteID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Warehouse
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 863eb6d9-e86b-4b5f-b518-3640cc86a176
+		sourceLineageTag: Warehouse
+		summarizeBy: none
+		sourceColumn: Warehouse
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventbatchid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: a59894e0-5212-4b40-9db0-beb6fe90a29e
+		sourceLineageTag: inventbatchid
+		summarizeBy: none
+		sourceColumn: inventbatchid
+
+		annotation SummarizationSetBy = Automatic
+
+	column ActualShipDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 9f988ff4-44a2-4e12-8516-d279012afd13
+		sourceLineageTag: ActualShipDate
+		summarizeBy: none
+		sourceColumn: ActualShipDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column EstimatedDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 385d8671-44fe-4172-84b1-6a3e0f8c462c
+		sourceLineageTag: EstimatedDate
+		summarizeBy: none
+		sourceColumn: EstimatedDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column Delivered
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 86eff122-7bf6-42a2-85a6-afe244d463f4
+		sourceLineageTag: Delivered
+		summarizeBy: none
+		sourceColumn: Delivered
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DayVariance
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 79b4b3ab-3530-4fba-ac15-c6a7fbea4f43
+		sourceLineageTag: DayVariance
+		summarizeBy: none
+		sourceColumn: DayVariance
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column SALESLINESHIPPINGDATECONFIRMED
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 8be60cdd-9da7-445a-967a-9829f7b02983
+		sourceLineageTag: SALESLINESHIPPINGDATECONFIRMED
+		summarizeBy: none
+		sourceColumn: SALESLINESHIPPINGDATECONFIRMED
+
+		annotation SummarizationSetBy = Automatic
+
+	column SALESLINESHIPPINGDATEREQUESTED
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 346acd9f-0e2e-4fde-97a9-ca876fe44078
+		sourceLineageTag: SALESLINESHIPPINGDATEREQUESTED
+		summarizeBy: none
+		sourceColumn: SALESLINESHIPPINGDATEREQUESTED
+
+		annotation SummarizationSetBy = Automatic
+
+	column SalesOrderCreatedDateTime
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: b64f5ff9-8926-4fea-969f-5de2fd85c307
+		sourceLineageTag: SalesOrderCreatedDateTime
+		summarizeBy: none
+		sourceColumn: SalesOrderCreatedDateTime
+
+		annotation SummarizationSetBy = Automatic
+
+	column HistoricCustomerKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 5bdd3961-1932-4d2c-bc59-f5a8606a396d
+		sourceLineageTag: HistoricCustomerKey
+		summarizeBy: none
+		sourceColumn: HistoricCustomerKey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column CustomerKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 7615d11d-d3ea-404f-926d-5649a17478f9
+		sourceLineageTag: CustomerKey
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column HistoricProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: b7b782ce-2198-440e-937e-baab99b2868b
+		sourceLineageTag: HistoricProductKey
+		summarizeBy: none
+		sourceColumn: HistoricProductKey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column ProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: e94b0644-7f71-4a31-bf82-9f936c25d04a
+		sourceLineageTag: ProductKey
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 6f2182f2-d8b2-4748-a55e-6668155ecb61
+		sourceLineageTag: Legal_EntityKey
+		summarizeBy: none
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column SiteKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 212db9e3-c2f9-4f42-b857-3d2424dfa6d0
+		sourceLineageTag: SiteKey
+		summarizeBy: none
+		sourceColumn: SiteKey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column WarehouseKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 8fd0f690-2381-4130-8ceb-bb11e6b237b0
+		sourceLineageTag: WarehouseKey
+		summarizeBy: none
+		sourceColumn: WarehouseKey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column SalesOrderKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 9ec0f91f-f75d-4292-8e9c-3cd677c54a83
+		sourceLineageTag: SalesOrderKey
+		summarizeBy: none
+		sourceColumn: SalesOrderKey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column CustomerPackingSlipKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 690ca4b6-efce-4315-9bc1-677341e8e174
+		sourceLineageTag: CustomerPackingSlipKey
+		summarizeBy: none
+		sourceColumn: CustomerPackingSlipKey
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	partition Fact_CustomerPackingSlipTransactions = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Fact_CustomerPackingSlipTransactions
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

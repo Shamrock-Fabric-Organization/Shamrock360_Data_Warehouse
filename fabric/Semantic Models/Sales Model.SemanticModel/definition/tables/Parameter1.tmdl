@@ -1,0 +1,71 @@
+table Parameter1
+	isHidden
+	lineageTag: aff6d68a-2fc3-4530-826c-0b8b69ec2326
+
+	column Parameter1
+		isHidden
+		lineageTag: baaf18bf-b0c7-46bd-888d-cc634dd08e8f
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Parameter1 Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Parameter1 Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter1 Fields'
+		isHidden
+		lineageTag: 9bbcc83c-73c3-4ee2-8aaf-e8f0a9ee7b6d
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Parameter1 Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parameter1 Order'
+		isHidden
+		formatString: 0
+		lineageTag: 32b66544-a250-4342-981e-c28e45eb1568
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Parameter1 = calculated
+		mode: import
+		source =
+				{
+				    ("MTD Vol Open", NAMEOF('Fact_Sales'[MTD_Volume_Open]), 0),
+				    ("MTD Vol Shipped", NAMEOF('Fact_Sales'[MTD_Volume_Shipped]), 1),
+				    ("MTD Vol Budget", NAMEOF('Fact_Budget'[MTD_Volume_Budget]), 3),
+				    ("MTD Vol Total", NAMEOF('Fact_Sales'[MTD_Volume_Total]), 2),
+				    ("MTD Vol vs Bud", NAMEOF('Fact_Budget'[MTD_Volume_Variance]), 4),
+				
+				    ("YTD Vol Open", NAMEOF('Fact_Sales'[YTD_Volume_Open]), 5),
+				    ("YTD Vol Shipped", NAMEOF('Fact_Sales'[YTD_Volume_Shipped]), 6),
+				    ("YTD Vol Budget", NAMEOF('Fact_Budget'[YTD_Volume_Budget]), 8),
+				    ("YTD Vol Total", NAMEOF('Fact_Sales'[YTD_Volume_Total]), 7),
+				    ("YTD Vol vs Bud", NAMEOF('Fact_Budget'[YTD_Volume_Variance]), 9),
+				
+				    ("MTD Rev Open", NAMEOF('Fact_Sales'[MTD_Revenue_Open]), 10),
+				    ("MTD Rev Shipped", NAMEOF('Fact_Sales'[MTD_Revenue_Shipped]), 11),
+				    ("MTD Rev Budget", NAMEOF('Fact_Budget'[MTD_Revenue_Budget]), 13),
+				    ("MTD Rev Total", NAMEOF('Fact_Sales'[MTD_Revenue_Total]), 12),
+				    ("MTD Rev vs Bud", NAMEOF('Fact_Budget'[MTD_Revenue_Variance]), 14),
+				
+				    ("YTD Rev Open", NAMEOF('Fact_Sales'[YTD_Revenue_Open]), 15),
+				    ("YTD Rev Shipped", NAMEOF('Fact_Sales'[YTD_Revenue_Shipped]), 16),
+				    ("YTD Rev Total", NAMEOF('Fact_Sales'[YTD_Revenue_Total]), 17),
+				    ("YTD Rev Budget", NAMEOF('Fact_Budget'[YTD_Revenue_Budget]), 18),
+				    ("YTD Rev vs Bud", NAMEOF('Fact_Budget'[YTD_Revenue_Variance]), 19)
+				}
+
+	annotation PBI_Id = df63e42ba4214a03b88384359b944f9b
+

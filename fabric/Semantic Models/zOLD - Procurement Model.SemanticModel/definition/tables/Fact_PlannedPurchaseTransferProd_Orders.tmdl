@@ -1,0 +1,320 @@
+table Fact_PlannedPurchaseTransferProd_Orders
+	lineageTag: 48f09f9a-9154-4a7d-b05c-0ba123723970
+	sourceLineageTag: [dbo].[mtbl_EDW_Fact_PlannedPurchaseTransferProd_Orders]
+
+	measure 'Requirement Quantity' = SUM(Fact_PlannedPurchaseTransferProd_Orders[RequirementQuantity])
+		lineageTag: bb028267-43ea-4b51-becb-b89ac525164c
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column RecordID
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 46115167-7db6-4755-a236-d09cfab9189a
+		sourceLineageTag: RecordID
+		summarizeBy: count
+		sourceColumn: RecordID
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		lineageTag: 25d56be7-a46c-4e29-87f4-01bc2bcd66a8
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column RefId
+		dataType: string
+		lineageTag: f68ebea4-088f-487f-8bc2-47f59f334c16
+		sourceLineageTag: RefId
+		summarizeBy: none
+		sourceColumn: RefId
+
+		annotation SummarizationSetBy = Automatic
+
+	column reftype
+		dataType: int64
+		formatString: 0
+		lineageTag: 6f1a0846-06d4-42d3-ba3e-aebfce76739a
+		sourceLineageTag: reftype
+		summarizeBy: none
+		sourceColumn: reftype
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column reftype_$label
+		dataType: string
+		lineageTag: 944aff22-2859-423e-aeca-b2b77f7703b6
+		sourceLineageTag: reftype_$label
+		summarizeBy: none
+		sourceColumn: reftype_$label
+
+		annotation SummarizationSetBy = Automatic
+
+	column ItemId
+		dataType: string
+		lineageTag: ff3311e7-89de-4d8a-84ee-44dbe6462310
+		sourceLineageTag: ItemId
+		summarizeBy: none
+		sourceColumn: ItemId
+
+		annotation SummarizationSetBy = Automatic
+
+	column RequirementQuantity
+		dataType: double
+		isHidden
+		lineageTag: 0c93b2b9-c16c-4a6b-8ac3-c52843060e35
+		sourceLineageTag: RequirementQuantity
+		summarizeBy: sum
+		sourceColumn: RequirementQuantity
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Inventory_UoM
+		dataType: string
+		lineageTag: e1c915a1-a3b7-478e-9d00-9083949c1560
+		sourceLineageTag: Inventory_UoM
+		summarizeBy: none
+		sourceColumn: Inventory_UoM
+
+		annotation SummarizationSetBy = Automatic
+
+	column Purchasing_UoM
+		dataType: string
+		lineageTag: aeab677d-5c51-4778-a4e9-688daa4355cb
+		sourceLineageTag: Purchasing_UoM
+		summarizeBy: none
+		sourceColumn: Purchasing_UoM
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sales_UoM
+		dataType: string
+		lineageTag: 551c2f98-5448-43e5-b9c9-560cd63093e0
+		sourceLineageTag: Sales_UoM
+		summarizeBy: none
+		sourceColumn: Sales_UoM
+
+		annotation SummarizationSetBy = Automatic
+
+	column OrderDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: b94f5da6-6ba4-44ed-b664-3319a7b634a2
+		sourceLineageTag: OrderDate
+		summarizeBy: none
+		sourceColumn: OrderDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column DeliveryDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 95f432bf-251d-48c8-a199-c4a4e11e5f41
+		sourceLineageTag: DeliveryDate
+		summarizeBy: none
+		sourceColumn: DeliveryDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RequestedDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: e9e9833c-f16a-43d6-a1d8-d3f9e73ef553
+		sourceLineageTag: RequestedDate
+		summarizeBy: none
+		sourceColumn: RequestedDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column Delay_days
+		dataType: int64
+		formatString: 0
+		lineageTag: 56e93d83-4cc4-4bc6-82d3-1c406c8acf26
+		sourceLineageTag: Delay_days
+		summarizeBy: none
+		sourceColumn: Delay_days
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column actiontype
+		dataType: int64
+		formatString: 0
+		lineageTag: 8b6e200e-03e7-401e-a365-462b1bf6c47c
+		sourceLineageTag: actiontype
+		summarizeBy: none
+		sourceColumn: actiontype
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column actiontype_$label
+		dataType: string
+		lineageTag: 6138d0d2-4df9-4d09-ba5f-d37c17f5e763
+		sourceLineageTag: actiontype_$label
+		summarizeBy: none
+		sourceColumn: actiontype_$label
+
+		annotation SummarizationSetBy = Automatic
+
+	column Vendor
+		dataType: string
+		lineageTag: beea13b9-0c70-4d94-9448-c2a975e57da7
+		sourceLineageTag: Vendor
+		summarizeBy: none
+		sourceColumn: Vendor
+
+		annotation SummarizationSetBy = Automatic
+
+	column isderiveddirectly
+		dataType: int64
+		formatString: 0
+		lineageTag: c35b82ad-615e-4dac-8238-30a542d04fee
+		sourceLineageTag: isderiveddirectly
+		summarizeBy: none
+		sourceColumn: isderiveddirectly
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column isderiveddirectly_$label
+		dataType: string
+		lineageTag: 2732dd3e-48b1-45dd-8ffa-8b77e23e65ca
+		sourceLineageTag: isderiveddirectly_$label
+		summarizeBy: none
+		sourceColumn: isderiveddirectly_$label
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReqPOStatus
+		dataType: int64
+		formatString: 0
+		lineageTag: ce444781-373c-44a0-8d45-160d4f471d70
+		sourceLineageTag: ReqPOStatus
+		summarizeBy: none
+		sourceColumn: ReqPOStatus
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column reqpostatus_$label
+		dataType: string
+		lineageTag: d801a22f-18e2-436b-a378-bf31b6d43f12
+		sourceLineageTag: reqpostatus_$label
+		summarizeBy: none
+		sourceColumn: reqpostatus_$label
+
+		annotation SummarizationSetBy = Automatic
+
+	column leadtime
+		dataType: int64
+		formatString: 0
+		lineageTag: fcf23c7d-4840-4a7c-a700-e6966f6611cf
+		sourceLineageTag: leadtime
+		summarizeBy: none
+		sourceColumn: leadtime
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column ProductKey
+		dataType: int64
+		formatString: 0
+		lineageTag: a73fb6c7-bb5a-4fa2-a406-98ac623a72d7
+		sourceLineageTag: ProductKey
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_EntityKey
+		dataType: int64
+		formatString: 0
+		lineageTag: 9e39ed6d-094b-4c5c-b692-00c1e96ac461
+		sourceLineageTag: Legal_EntityKey
+		summarizeBy: none
+		sourceColumn: Legal_EntityKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column VendorKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 75a0b8a9-0074-45fa-aa9f-0367f8a4ce47
+		sourceLineageTag: VendorKey
+		summarizeBy: none
+		sourceColumn: VendorKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column OrderDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 86faa31b-016a-46e7-b799-d628a9f347b3
+		sourceLineageTag: OrderDateKey
+		summarizeBy: count
+		sourceColumn: OrderDateKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column DeliveryDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 851d7546-5088-4c8e-af17-04f6354f5590
+		sourceLineageTag: DeliveryDateKey
+		summarizeBy: count
+		sourceColumn: DeliveryDateKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column RequestedDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 883dbfaa-b5fd-4387-9be3-91a91926e9ee
+		sourceLineageTag: RequestedDateKey
+		summarizeBy: count
+		sourceColumn: RequestedDateKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_PlannedPurchaseTransferProd_Orders = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Fact_PlannedPurchaseTransferProd_Orders
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+

@@ -1,0 +1,86 @@
+[
+  {
+    "name": "ledger",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/ledger",
+        "itemId": "627abf1a-8f3f-406a-a301-e0e0c4decd5d",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "inventitemprice",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/inventitemprice",
+        "itemId": "627abf1a-8f3f-406a-a301-e0e0c4decd5d",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "inventdim",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/inventdim",
+        "itemId": "627abf1a-8f3f-406a-a301-e0e0c4decd5d",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "bomversion",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/bomversion",
+        "itemId": "627abf1a-8f3f-406a-a301-e0e0c4decd5d",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "bomcostgroup",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/bomcostgroup",
+        "itemId": "627abf1a-8f3f-406a-a301-e0e0c4decd5d",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "bomcalctrans",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/bomcalctrans",
+        "itemId": "627abf1a-8f3f-406a-a301-e0e0c4decd5d",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "bomcalctable",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/bomcalctable",
+        "itemId": "627abf1a-8f3f-406a-a301-e0e0c4decd5d",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  }
+]

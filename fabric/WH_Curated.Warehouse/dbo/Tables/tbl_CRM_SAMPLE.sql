@@ -1,0 +1,24 @@
+CREATE TABLE [dbo].[tbl_CRM_SAMPLE] (
+
+	[RequestDate] date NULL, 
+	[Company] varchar(40) NULL, 
+	[City] varchar(30) NULL, 
+	[State] varchar(20) NULL, 
+	[Country] varchar(20) NULL, 
+	[Region] varchar(20) NULL, 
+	[Customer #] varchar(20) NULL, 
+	[Salesman] varchar(20) NULL, 
+	[Industry] varchar(20) NULL, 
+	[LocationApplication] varchar(20) NULL, 
+	[Sample Request] varchar(35) NULL, 
+	[ProductLine] varchar(20) NULL, 
+	[Opportunity] varchar(50) NULL, 
+	[OpportunityType] varchar(80) NULL, 
+	[Stage] varchar(40) NULL, 
+	[EstimatedAnnualVolume] int NULL, 
+	[TargetPrice] decimal(19,4) NULL, 
+	[SampleRequestApplication] varchar(40) NULL, 
+	[SnapShotDate] varchar(100) NULL, 
+	[DataUpdateDate] varchar(100) NULL, 
+	[Source] varchar(10) NULL
+);

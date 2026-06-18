@@ -1,0 +1,1412 @@
+table Fact_GeneralLedger
+	lineageTag: 6b40e92b-1e3b-4114-bf4c-949dd958788c
+	sourceLineageTag: [dbo].[mtbl_EDW_Fact_GeneralLedger]
+
+	measure 'Accounting Currency Amount' = SUM(Fact_GeneralLedger[accountingcurrencyamount])
+		lineageTag: 5f17427c-5cec-4af4-952f-e69206041565
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Reporting Currency Amount' = SUM(Fact_GeneralLedger[reportingcurrencyamount])
+		lineageTag: ad1dd0dd-1602-46d1-b475-b6d0075d45f8
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Transaction Currency Amount' = SUM(Fact_GeneralLedger[transactioncurrencyamount])
+		lineageTag: 385428a5-ec90-4c54-b8fc-179279db5b26
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Qty = SUM(Fact_GeneralLedger[quantity])
+		lineageTag: d5ce3e0b-19e8-45c0-8aa7-825af45ab321
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Transactions' = COUNTROWS(Fact_GeneralLedger)
+		formatString: 0
+		lineageTag: 0a3e3995-2105-48cb-97a0-f68a07eadf88
+
+		changedProperty = Name
+
+	/// Returns the signed sum of reporting currency amounts in the current filter context (date, site, dept, GL account, etc.). This is the base building block for all “net” amounts.
+	measure 'ER - Amount (Signed)' = ```
+			
+			SUM ( Fact_GeneralLedger[reportingcurrencyamount] )
+			
+			```
+		lineageTag: 16998b5e-7b26-4edb-ba95-c5439ba3ceb3
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Sums amounts for lines flagged as non-credit (IsCredit = 0) within the current filter context. Does not force the sign; negative debits remain negative.
+	measure 'ER - Debit (Period)' =
+			
+			CALCULATE (
+			    SUM ( Fact_GeneralLedger[reportingcurrencyamount]),
+			    Fact_GeneralLedger[iscredit] = 0
+			)
+		lineageTag: 8aab7f3e-9364-4023-9efb-492ab8fc61ce
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Sums amounts for lines flagged as credit (IsCredit = 0) and multiplies by -1 so credits display with the “trial balance style” sign convention (credits typically show positive, but can show negative if the underlying credit amount is positive).
+	measure 'ER - Credit (Period)' =
+			
+			- CALCULATE (
+			    SUM ( Fact_GeneralLedger[reportingcurrencyamount] ),
+			    Fact_GeneralLedger[iscredit] = 1
+			)
+		lineageTag: db5cc04f-c2f1-4fe7-95b3-a56ed126c65e
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'ER - Opening Balance' = ```
+			
+			VAR StartDate =
+			    MIN ( 'Dim_Date'[Date] )
+			RETURN
+			    CALCULATE (
+			        [ER - Amount (Signed)],
+			        FILTER (
+			            ALL ( 'Dim_Date'[Date] ),
+			            'Dim_Date'[Date] < StartDate
+			        )
+			    )
+			
+			```
+		lineageTag: 18b014b8-8969-4d8d-a6a3-05b28b0e3988
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'ER - Closing Balance' = ```
+			
+			[ER - Opening Balance V3] + [ER - Debit (Period)] - [ER - Credit (Period)]
+			
+			```
+		lineageTag: 3a9388fd-4152-4c65-afc2-c7d9d8f55e48
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'ER - Closing Balance (Running)' = ```
+			
+			VAR EndDate =
+			    MAX ( 'Dim_Date'[Date] )
+			RETURN
+			    CALCULATE (
+			        [ER - Amount (Signed)],
+			        FILTER (
+			            ALL ( 'Dim_Date'[Date] ),
+			            'Dim_Date'[Date] <= EndDate
+			        )
+			    )
+			
+			```
+		lineageTag: 31231765-124b-4cc0-8de5-6f834f5e1adc
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Net Change (Period)
+	/// Computes net activity for the period as Debit (Period) - Credit (Period). Intended as “net expense movement” in the selected period.
+	measure 'ER - Net Change (Period)' = ```
+			
+			[ER - Debit (Period)] - [ER - Credit (Period)]
+			
+			```
+		lineageTag: 3f201db2-6b4f-4f34-bf61-af0431483ae8
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Finds the minimum calendar date in the selected fiscal year and fiscal period, ignoring current date filters (ALL('DimDate')). This reliably returns the true first day of the selected fiscal period.
+	measure 'ER - Selected Period Start Date' =
+			
+			VAR FY = [ER - Selected Fiscal Year]
+			VAR FP = [ER - Selected Fiscal Period]
+			RETURN
+			    CALCULATE (
+			        MIN ( 'Dim_Date'[Date] ),
+			        ALL ( 'Dim_Date' ),
+			        'Dim_Date'[FiscalYear] = FY,
+			        'Dim_Date'[FiscalPeriodNum] = FP
+			    )
+		formatString: General Date
+		lineageTag: f1488734-269b-453a-9d9b-0ad052bc0c9b
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+	/// Finds the maximum calendar date in the selected fiscal year and fiscal period, ignoring current date filters (ALL('DimDate')). This reliably returns the true last day of the selected fiscal period.
+	measure 'ER - Selected Period End Date' =
+			
+			VAR FY = [ER - Selected Fiscal Year]
+			VAR FP = [ER - Selected Fiscal Period]
+			RETURN
+			    CALCULATE (
+			        MAX ( 'Dim_Date'[Date] ),
+			        ALL ( 'Dim_Date' ),
+			        'Dim_Date'[FiscalYear] = FY,
+			        'Dim_Date'[FiscalPeriodNum] = FP
+			    )
+		formatString: General Date
+		lineageTag: 70c67b21-6ed9-4252-9a90-2afc30979b8f
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+	/// Returns the single selected fiscal year from the date slicer (SELECTEDVALUE). Used to anchor all date boundary calculations. Returns blank if multiple years are selected.
+	measure 'ER - Selected Fiscal Year' =
+			
+			SELECTEDVALUE ( 'Dim_Date'[FiscalYear] )
+		formatString: 0
+		lineageTag: 7a90b572-aa91-4358-b5da-d281739c972b
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+	/// Returns the single selected fiscal period from the slicer (SELECTEDVALUE). Used to anchor all period boundary calculations. Returns blank if multiple periods are selected.
+	measure 'ER - Selected Fiscal Period' =
+			
+			SELECTEDVALUE ( 'Dim_Date'[FiscalPeriodNum] )
+		formatString: 0
+		lineageTag: f9217881-ef24-4557-b93b-ed1cb4fb061a
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+	/// Chooses the earlier of (a) the selected period end date and (b) yesterday (TODAY()-1). Ensures incomplete current periods stop at yesterday rather than including today or future dates.
+	measure 'ER - As Of Date' =
+			
+			VAR PeriodEnd = [ER - Selected Period End Date]
+			VAR Cutoff = TODAY () - 1
+			RETURN
+			    MIN ( PeriodEnd, Cutoff )
+		formatString: General Date
+		lineageTag: cc6b1325-99cb-4810-876b-3fa114625f08
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+	/// Returns the number of days from selected period start date through As Of Date (inclusive). Used to create a mirrored “as-of” cutoff for last year’s same fiscal period.
+	measure 'ER - Days Into Period' = ```
+			
+			VAR StartDate = [ER - Selected Period Start Date]
+			VAR EndDate = [ER - As Of Date]
+			RETURN
+			    IF (
+			        NOT ISBLANK ( StartDate )
+			            && NOT ISBLANK ( EndDate )
+			            && EndDate >= StartDate,
+			        DATEDIFF ( StartDate, EndDate, DAY ) + 1
+			    )
+			
+			```
+		formatString: 0
+		lineageTag: 25c71b40-ee6e-4cc9-ae60-4170adee62a8
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+	/// Returns the net signed amount between selected period start date and As Of Date. This is the “current period expense, as-of yesterday” measure.
+	measure 'ER - Expense (Period AsOf)' = ```
+			
+			VAR StartDate = [ER - Selected Period Start Date]
+			VAR EndDate = [ER - As Of Date]
+			RETURN
+			    CALCULATE (
+			        [ER - Amount (Signed)],
+			        DATESBETWEEN ( 'Dim_Date'[Date], StartDate, EndDate )
+			    )
+			
+			```
+		lineageTag: 7a4cac5c-52c3-4654-b799-c6b524196617
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Returns the first calendar date of the same fiscal period in the prior fiscal year (FY-1), ignoring current date filters.
+	measure 'ER - LY Period Start Date' =
+			
+			VAR FY = [ER - Selected Fiscal Year]
+			VAR FP = [ER - Selected Fiscal Period]
+			RETURN
+			    CALCULATE (
+			        MIN ( 'Dim_Date'[Date] ),
+			        ALL ( 'Dim_Date' ),
+			        'Dim_Date'[FiscalYear] = FY - 1,
+			        'Dim_Date'[FiscalPeriodNum] = FP
+			    )
+		formatString: General Date
+		lineageTag: 7b6d33ef-2403-4748-8945-87a2025ab5e7
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+	/// Returns the last calendar date of the same fiscal period in the prior fiscal year (FY-1), ignoring current date filters.
+	measure 'ER - LY Period End Date' =
+			
+			VAR FY = [ER - Selected Fiscal Year]
+			VAR FP = [ER - Selected Fiscal Period]
+			RETURN
+			    CALCULATE (
+			        MAX ( 'Dim_Date'[Date] ),
+			        ALL ( 'Dim_Date' ),
+			        'Dim_Date'[FiscalYear] = FY - 1,
+			        'Dim_Date'[FiscalPeriodNum] = FP
+			    )
+		formatString: General Date
+		lineageTag: 4c5a8766-9b82-4c7c-bbd2-89a5045f46e9
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+	/// Computes the mirrored last-year cutoff date by taking LY Period Start Date + (Days Into Period - 1), then clamping it to not exceed LY Period End Date. Ensures last-year period comparison matches the same day-of-period depth as the current selection.
+	measure 'ER - LY As Of Date (Period)' = ```
+			
+			VAR DayNum = [ER - Days Into Period]
+			VAR StartLY = [ER - LY Period Start Date]
+			VAR EndLYPeriod = [ER - LY Period End Date]
+			VAR EndCandidate = StartLY + DayNum - 1
+			RETURN
+			    IF (
+			        ISBLANK ( DayNum ) || ISBLANK ( StartLY ),
+			        BLANK (),
+			        MIN ( EndCandidate, EndLYPeriod )
+			    )
+			
+			```
+		formatString: General Date
+		lineageTag: 2cddd153-1d2f-483d-a84c-8632622ab258
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+	/// Returns the net signed amount between LY Period Start Date and LY As Of Date (Period). This is the “same fiscal period last year, mirrored as-of cutoff” amount.
+	measure 'ER - Expense (Period LY AsOf)' = ```
+			
+			VAR FY = [ER - Selected Fiscal Year]
+			VAR FP = [ER - Selected Fiscal Period]
+			VAR StartLY = [ER - LY Period Start Date]
+			VAR EndLY = [ER - LY As Of Date (Period)]
+			RETURN
+			    CALCULATE (
+			        [ER - Amount (Signed)],
+			        DATESBETWEEN ( 'Dim_Date'[Date], StartLY, EndLY ),
+			        'Dim_Date'[FiscalYear] = FY - 1,
+			        'Dim_Date'[FiscalPeriodNum] = FP
+			    )
+			
+			```
+		lineageTag: f1393fef-42b7-451a-8a15-cca6bdd327b5
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Returns the dollar variance between current period as-of and last year period as-of:
+	/// Expense (Period AsOf) - Expense (Period LY AsOf).
+	measure 'ER - Expense (Period Var $)' =
+			
+			[ER - Expense (Period AsOf)] - [ER - Expense (Period LY AsOf)]
+		lineageTag: 7b83dcf0-094a-49d7-8659-5153bcda5a8d
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Returns the percent variance vs last year for the period:
+	/// (Current - LY) / ABS(LY) using DIVIDE for safe handling when LY is zero/blank.
+	measure 'ER - Expense (Period Var %)' =
+			
+			DIVIDE (
+			    [ER - Expense (Period Var $)],
+			    ABS ( [ER - Expense (Period LY AsOf)] )
+			)
+		lineageTag: 3a6a6a34-bd76-4ada-b72c-898da68f6f40
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Returns the first calendar date in the selected fiscal year, ignoring current date filters. This defines the start of the fiscal year for FYTD calculations.
+	measure 'ER - FY Start Date' = ```
+			
+			VAR FY = [ER - Selected Fiscal Year]
+			RETURN
+			    CALCULATE (
+			        MIN ( 'Dim_Date'[Date] ),
+			        ALL ( 'Dim_Date' ),
+			        'Dim_Date'[FiscalYear] = FY
+			    )
+			
+			```
+		formatString: General Date
+		lineageTag: c0bc42a7-a1da-4ce6-bffe-98b0dae8a890
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+	/// Returns the number of days from FY Start Date through As Of Date (inclusive). Used to build a mirrored last-year FYTD cutoff date.
+	measure 'ER - Days Into FY' = ```
+			
+			VAR FYStart = [ER - FY Start Date]
+			VAR EndDate = [ER - As Of Date]
+			RETURN
+			    IF (
+			        NOT ISBLANK ( FYStart )
+			            && NOT ISBLANK ( EndDate )
+			            && EndDate >= FYStart,
+			        DATEDIFF ( FYStart, EndDate, DAY ) + 1
+			    )
+			
+			```
+		formatString: 0
+		lineageTag: 3170c9b7-a220-477b-8632-4912a2d50b57
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+	/// Returns net signed amount from FY Start Date through As Of Date, while removing fiscal period filters so the sum spans multiple periods. Represents “fiscal YTD expense as-of yesterday” in the selected fiscal year.
+	measure 'ER - Expense (FYTD AsOf)' = ```
+			
+			VAR FY = [ER - Selected Fiscal Year]
+			VAR StartDate = [ER - FY Start Date]
+			VAR EndDate = [ER - As Of Date]
+			RETURN
+			    CALCULATE (
+			        [ER - Amount (Signed)],
+			        REMOVEFILTERS ( 'Dim_Date'[FiscalPeriodNum] ),
+			        DATESBETWEEN ( 'Dim_Date'[Date], StartDate, EndDate ),
+			        'Dim_Date'[FiscalYear] = FY
+			    )
+			
+			```
+		lineageTag: 8f7cceed-1387-4e90-a712-96ef4a739971
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Returns the first calendar date in the prior fiscal year (FY-1), ignoring current date filters.
+	measure 'ER - LY FY Start Date' =
+			
+			VAR FY = [ER - Selected Fiscal Year]
+			RETURN
+			    CALCULATE (
+			        MIN ( 'Dim_Date'[Date] ),
+			        ALL ( 'Dim_Date' ),
+			        'Dim_Date'[FiscalYear] = FY - 1
+			    )
+		formatString: General Date
+		lineageTag: f20d6c77-8711-4e69-9a3d-3f7ec6b8f24c
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+	/// Returns the last calendar date in the prior fiscal year (FY-1), ignoring current date filters.
+	measure 'ER - LY FY End Date' =
+			
+			VAR FY = [ER - Selected Fiscal Year]
+			RETURN
+			    CALCULATE (
+			        MAX ( 'Dim_Date'[Date] ),
+			        ALL ( 'Dim_Date' ),
+			        'Dim_Date'[FiscalYear] = FY - 1
+			    )
+		formatString: General Date
+		lineageTag: 6a221b22-98bd-467b-aa6b-17637f885a5a
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+	/// Computes the mirrored last-year FYTD cutoff date as LY FY Start Date + (Days Into FY - 1), clamped so it does not exceed LY FY End Date. Ensures FYTD comparisons are aligned to the same “day into fiscal year.”
+	measure 'ER - LY As Of Date (FY)' =
+			
+			VAR DayNum = [ER - Days Into FY]
+			VAR StartLY = [ER - LY FY Start Date]
+			VAR EndLYYear = [ER - LY FY End Date]
+			VAR EndCandidate = StartLY + DayNum - 1
+			RETURN
+			    IF (
+			        ISBLANK ( DayNum ) || ISBLANK ( StartLY ),
+			        BLANK (),
+			        MIN ( EndCandidate, EndLYYear )
+			    )
+		formatString: General Date
+		lineageTag: 593f1267-f41d-4e5d-8047-c86866f410db
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+	/// Returns net signed amount from LY FY Start Date through LY As Of Date (FY), removing fiscal period filters. Represents “prior year fiscal YTD expense through mirrored cutoff.”
+	measure 'ER - Expense (FYTD LY AsOf)' = ```
+			
+			VAR FY = [ER - Selected Fiscal Year]
+			VAR StartLY = [ER - LY FY Start Date]
+			VAR EndLY = [ER - LY As Of Date (FY)]
+			RETURN
+			    CALCULATE (
+			        [ER - Amount (Signed)],
+			        REMOVEFILTERS ( 'Dim_Date'[FiscalPeriodNum] ),
+			        DATESBETWEEN ( 'Dim_Date'[Date], StartLY, EndLY ),
+			        'Dim_Date'[FiscalYear] = FY - 1
+			    )
+			
+			```
+		lineageTag: 5486be97-9f08-4d65-b658-e7f3098ed792
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Returns dollar variance between current FYTD as-of and last year FYTD as-of:
+	/// Expense (FYTD AsOf) - Expense (FYTD LY AsOf).
+	measure 'ER - Expense (FYTD Var $)' =
+			
+			[ER - Expense (FYTD AsOf)] - [ER - Expense (FYTD LY AsOf)]
+		lineageTag: b0fe73bb-2444-4f9f-8d7d-ffe3e9538be0
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Returns percent variance vs last year for FYTD:
+	/// (Current FYTD - LY FYTD) / ABS(LY FYTD) using DIVIDE for safe handling when LY is zero/blank.
+	measure 'ER - Expense (FYTD Var %)' =
+			
+			DIVIDE (
+			    [ER - Expense (FYTD Var $)],
+			    ABS ( [ER - Expense (FYTD LY AsOf)] )
+			)
+		lineageTag: 5601422b-5de2-4bb9-94fc-600241964b1e
+
+		changedProperty = Name
+
+		changedProperty = Description
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'ER - Report As Of Label' =
+			
+			"As of " & FORMAT ( [ER - As Of Date], "mm/dd/yyyy" )
+		lineageTag: 0162d5f6-eace-4a8a-ad76-e2b4f0c93552
+
+		changedProperty = Name
+
+	measure 'ER - Opening Balance V2' = ```
+			
+			
+			VAR StartDate =
+			    MIN ( 'Dim_Date'[Date] )
+			
+			VAR StartFiscalYear =
+			    CALCULATE (
+			        MAX ( 'Dim_Date'[FiscalYear] ),
+			        FILTER ( ALL ( 'Dim_Date' ), 'Dim_Date'[Date] = StartDate )
+			    )
+			
+			VAR FYStartDate =
+			    CALCULATE (
+			        MIN ( 'Dim_Date'[Date] ),
+			        FILTER (
+			            ALL ( 'Dim_Date' ),
+			            'Dim_Date'[FiscalYear] = StartFiscalYear
+			                && 'Dim_Date'[FiscalDayNum] = 1
+			        )
+			    )
+			
+			-- Carry-forward accounts: life-to-date before StartDate
+			VAR CarryForwardOpen =
+			    CALCULATE (
+			        [ER - Amount (Signed)],
+			        FILTER ( ALL ( 'Dim_Date' ), 'Dim_Date'[Date] < StartDate ),
+			        KEEPFILTERS (
+			            FILTER (
+			                ALL ( 'Dim_GL_Account' ),
+			                NOT ( 'Dim_GL_Account'[Account_Type_Description]
+			                    -- IN { "ProfitAndLoss" } 
+			                    IN { "ProfitAndLoss", "Revenue" } 
+			                    )
+			            )
+			        )
+			    )
+			
+			-- P&L accounts: FY-to-date before StartDate
+			VAR PL_Open =
+			    CALCULATE (
+			        [ER - Amount (Signed)],
+			        FILTER (
+			            ALL ( 'Dim_Date' ),
+			            'Dim_Date'[Date] >= FYStartDate
+			                && 'Dim_Date'[Date] < StartDate
+			        ),
+			        KEEPFILTERS (
+			            FILTER (
+			                ALL ( 'Dim_GL_Account' ),
+			                'Dim_GL_Account'[Account_Type_Description]
+			                    -- IN { "ProfitAndLoss" }
+			                    IN { "ProfitAndLoss", "Revenue" }
+			            )
+			        )
+			    )
+			
+			RETURN
+			    -- COALESCE ( CarryForwardOpen, 0 ) + COALESCE ( PL_Open, 0 )
+			    CarryForwardOpen + PL_Open
+			
+			```
+		lineageTag: 6b36de97-955b-469c-b198-4f836e3816fe
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'ER - Opening Balance V3' = ```
+			
+			
+			
+			VAR StartDate =
+			    MIN ( 'Dim_Date'[Date] )
+			
+			VAR StartFiscalYear =
+			    CALCULATE (
+			        MAX ( 'Dim_Date'[FiscalYear] ),
+			        FILTER ( ALL ( 'Dim_Date' ), 'Dim_Date'[Date] = StartDate )
+			    )
+			
+			-- 1) Opening-period entries: include them up to AND INCLUDING StartDate
+			--    (critical for the first day of the fiscal year)
+			VAR OpeningEntries =
+			    CALCULATE (
+			        [ER - Amount (Signed)],
+			        FILTER (
+			            ALL ( 'Dim_Date' ),
+			            'Dim_Date'[FiscalYear] = StartFiscalYear
+			                && 'Dim_Date'[Date] <= StartDate
+			        ),
+			        Fact_GeneralLedger[FiscalCalendarPeriodType_$label] = "Opening"
+			    )
+			
+			-- 2) Everything else before StartDate (normal activity)
+			VAR NonOpeningBeforeStart =
+			    CALCULATE (
+			        [ER - Amount (Signed)],
+			        FILTER (
+			            ALL ( 'Dim_Date' ),
+			            'Dim_Date'[FiscalYear] = StartFiscalYear
+			                && 'Dim_Date'[Date] < StartDate
+			        ),
+			        Fact_GeneralLedger[FiscalCalendarPeriodType_$label] <> "Opening"
+			    )
+			
+			RETURN
+			    -- COALESCE ( OpeningEntries, 0 ) + COALESCE ( NonOpeningBeforeStart, 0 )
+			    OpeningEntries + NonOpeningBeforeStart
+			
+			```
+		lineageTag: 21d8bb7a-c867-47c7-8443-9523ac4f5a4e
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'ER - Non-Nulls' = ```
+			
+			[ER - Opening Balance V3] + [ER - Debit (Period)] + [ER - Credit (Period)] + [ER - Closing Balance]
+			
+			```
+		lineageTag: feb9ac6c-0829-45b1-bc00-d665d4004c6d
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'ER - Opening Balance (0)' =
+			
+			COALESCE ( [ER - Opening Balance V3], 0 )
+		lineageTag: 375fefc4-a540-4e07-9290-00f8d226901b
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'ER - Debit (0)' =
+			
+			COALESCE ( [ER - Debit (Period)], 0 )
+		lineageTag: 7b8dd322-0382-49f9-a56a-46994c6f836e
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'ER - Credit (0)' =
+			
+			COALESCE ( [ER - Credit (Period)], 0 )
+		lineageTag: 29c27ff3-3808-4538-81d4-5b394b78c63d
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'ER - Net (0)' =
+			
+			COALESCE ( [ER - Amount (Signed)], 0 )
+		lineageTag: 04fef944-027e-4b55-ba57-ca49965f66d7
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'ER - Closing Balance (0)' =
+			
+			COALESCE ( [ER - Closing Balance], 0 )
+		lineageTag: a700b195-29ff-42fa-8bc4-3d630f3bbe94
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Tooltip - Ledger' = ```
+			
+			MIN ( Fact_GeneralLedger[ledgeraccount] )
+			
+			```
+		lineageTag: ccba3313-48b9-4cdc-9e69-07fde7160a13
+
+		changedProperty = Name
+
+	measure 'ER - Non-Nulls (CM)' = ```
+			
+			[ER - Net Change (Period)] + [ER - Expense (Period LY AsOf)]
+			
+			```
+		lineageTag: 752e5de4-adf8-46c8-9ce7-09b1b7ceb06e
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'ER - Non-Nulls (CY)' =
+			
+			[ER - Net Change (Period)] + [ER - Expense (FYTD LY AsOf)]
+		lineageTag: 1072903e-c60f-41b5-abe4-2f39e636437f
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column GL_Account
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(8000)
+		lineageTag: c48f56c3-7cd8-476c-84ad-69d84e880459
+		sourceLineageTag: GL_Account
+		summarizeBy: none
+		sourceColumn: GL_Account
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column GL_AccountKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 0cf79f40-fd86-4f78-9a76-b667f46d88e6
+		sourceLineageTag: GL_AccountKey
+		summarizeBy: none
+		sourceColumn: GL_AccountKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column accountingdate
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: a5719aec-ea34-46e6-957d-c76a3645bbbc
+		sourceLineageTag: accountingdate
+		summarizeBy: none
+		sourceColumn: accountingdate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column accountingdatekey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: fb4c6f51-0148-440d-b372-bcbbcfb5f99b
+		sourceLineageTag: accountingdatekey
+		summarizeBy: none
+		sourceColumn: accountingdatekey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column transactioncurrencyamount
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 58cce514-8a5c-4f33-a87a-bf05dcca5f21
+		sourceLineageTag: transactioncurrencyamount
+		summarizeBy: sum
+		sourceColumn: transactioncurrencyamount
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column accountingcurrencyamount
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(38, 6)
+		lineageTag: be8fd92d-8065-4914-b341-99db1ffa6e4d
+		sourceLineageTag: accountingcurrencyamount
+		summarizeBy: sum
+		sourceColumn: accountingcurrencyamount
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column approver
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 268e93f2-511b-4529-8662-20508906d6ed
+		sourceLineageTag: approver
+		summarizeBy: none
+		sourceColumn: approver
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column dataareaid
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(8000)
+		lineageTag: 1494638c-d935-40ac-93b0-9a38170ebb7f
+		sourceLineageTag: dataareaid
+		summarizeBy: none
+		sourceColumn: dataareaid
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column journalnum
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 2eafa2d9-9f45-4dfd-bd63-03ceab58f7e8
+		sourceLineageTag: journalnum
+		summarizeBy: none
+		sourceColumn: journalnum
+
+		annotation SummarizationSetBy = Automatic
+
+	column postinglayer
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 7cb4f76b-f6df-4d9a-b99d-19eaa3188216
+		sourceLineageTag: postinglayer
+		summarizeBy: none
+		sourceColumn: postinglayer
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column postinglayer_$label
+		dataType: string
+		sourceProviderType: varchar(15)
+		lineageTag: d80dc94a-0af8-47e4-9cfa-46e42b6e66ed
+		sourceLineageTag: postinglayer_$label
+		summarizeBy: none
+		sourceColumn: postinglayer_$label
+
+		annotation SummarizationSetBy = Automatic
+
+	column subledgervoucher
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: e937e4ff-5449-4912-9d1b-f356d9504271
+		sourceLineageTag: subledgervoucher
+		summarizeBy: none
+		sourceColumn: subledgervoucher
+
+		annotation SummarizationSetBy = Automatic
+
+	column subledgervoucherdataareaid
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(8000)
+		lineageTag: b0035bd0-d785-48f9-80a3-b28a524c05e7
+		sourceLineageTag: subledgervoucherdataareaid
+		summarizeBy: none
+		sourceColumn: subledgervoucherdataareaid
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column lej_journalnumber
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: a64d4b24-ba92-4df5-a13e-1353bb77b0ec
+		sourceLineageTag: lej_journalnumber
+		summarizeBy: none
+		sourceColumn: lej_journalnumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column ledgerjournaltabledataareaid
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(8000)
+		lineageTag: dfdddd3f-00ff-41f9-8a0d-4030b199bd8a
+		sourceLineageTag: ledgerjournaltabledataareaid
+		summarizeBy: none
+		sourceColumn: ledgerjournaltabledataareaid
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column journalcategory_$label
+		dataType: string
+		sourceProviderType: varchar(49)
+		lineageTag: d05be9a0-6bc1-4a67-a6d3-52a6d0a0eba9
+		sourceLineageTag: journalcategory_$label
+		summarizeBy: none
+		sourceColumn: journalcategory_$label
+
+		annotation SummarizationSetBy = Automatic
+
+	column journalnumber
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: f084b775-5866-4645-acad-34130efd591b
+		sourceLineageTag: journalnumber
+		summarizeBy: none
+		sourceColumn: journalnumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column ledger
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 8b9f8248-1823-41f6-bb5d-11525b24876a
+		sourceLineageTag: ledger
+		summarizeBy: none
+		sourceColumn: ledger
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column Legal_Entity
+		dataType: string
+		isHidden
+		sourceProviderType: varchar(8000)
+		lineageTag: cdb62d21-7882-4216-8035-61cd6df30dd1
+		sourceLineageTag: Legal_Entity
+		summarizeBy: none
+		sourceColumn: Legal_Entity
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: b058b4a6-9500-4584-9578-117cbdcbda88
+		sourceLineageTag: Legal_EntityKey
+		summarizeBy: none
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ledgerentryjournal
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: fde4a253-eb77-44be-ad34-3a1d55ed0a58
+		sourceLineageTag: ledgerentryjournal
+		summarizeBy: none
+		sourceColumn: ledgerentryjournal
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column createdby
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 71d4ccc7-792f-4812-9621-b7fab6414ccd
+		sourceLineageTag: createdby
+		summarizeBy: none
+		sourceColumn: createdby
+
+		annotation SummarizationSetBy = Automatic
+
+	column createddatetime
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: e6bab8ea-b78b-4a03-9d3c-067ee77afbed
+		sourceLineageTag: createddatetime
+		summarizeBy: none
+		sourceColumn: createddatetime
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscalcalendarperiod
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 7b1d571e-cc51-43d5-bc86-c3472048ffac
+		sourceLineageTag: fiscalcalendarperiod
+		summarizeBy: none
+		sourceColumn: fiscalcalendarperiod
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column FiscalCalendarPeriodType
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 98a8b11a-8db8-4d62-82da-1fdc4e5f20fc
+		sourceLineageTag: FiscalCalendarPeriodType
+		summarizeBy: none
+		sourceColumn: FiscalCalendarPeriodType
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column FiscalCalendarPeriodType_$label
+		dataType: string
+		sourceProviderType: varchar(9)
+		lineageTag: b8910bbf-cde9-4c34-b19f-86cd8571ff11
+		sourceLineageTag: FiscalCalendarPeriodType_$label
+		summarizeBy: none
+		sourceColumn: FiscalCalendarPeriodType_$label
+
+		annotation SummarizationSetBy = Automatic
+
+	column journalcategory
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: f4b4bcf8-011e-4a96-9384-9cb2c8f9b668
+		sourceLineageTag: journalcategory
+		summarizeBy: none
+		sourceColumn: journalcategory
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column mainaccount
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 7c8f7720-babe-4af7-a7fa-ca87ead80ea9
+		sourceLineageTag: mainaccount
+		summarizeBy: none
+		sourceColumn: mainaccount
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column TEXT
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: d08d18aa-9d40-4c55-9dbe-23a2fd85fb41
+		sourceLineageTag: TEXT
+		summarizeBy: none
+		sourceColumn: TEXT
+
+		annotation SummarizationSetBy = Automatic
+
+	column reasonref
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: fef6bb32-e289-47f5-aec2-0c49cd79b440
+		sourceLineageTag: reasonref
+		summarizeBy: none
+		sourceColumn: reasonref
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column recid
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 458f6f28-cf65-4b4e-be59-917b116044e7
+		sourceLineageTag: recid
+		summarizeBy: sum
+		sourceColumn: recid
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ledgeraccount
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: a3ae0e5b-aace-45f8-9868-72c72f9b023a
+		sourceLineageTag: ledgeraccount
+		summarizeBy: none
+		sourceColumn: ledgeraccount
+
+		annotation SummarizationSetBy = Automatic
+
+	column documentdate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 961486e6-4552-4b17-92e7-8a7c6385e4d7
+		sourceLineageTag: documentdate
+		summarizeBy: none
+		sourceColumn: documentdate
+
+		annotation SummarizationSetBy = Automatic
+
+	column transactioncurrencycode
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 6e963522-0818-4ae4-9340-2e8323f09275
+		sourceLineageTag: transactioncurrencycode
+		summarizeBy: none
+		sourceColumn: transactioncurrencycode
+
+		annotation SummarizationSetBy = Automatic
+
+	column paymentreference
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 2ba84e0a-1220-425b-86e4-b1b54c36bc95
+		sourceLineageTag: paymentreference
+		summarizeBy: none
+		sourceColumn: paymentreference
+
+		annotation SummarizationSetBy = Automatic
+
+	column postingtype
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 786d65dd-6b0d-4b19-811d-4d3fc67ae937
+		sourceLineageTag: postingtype
+		summarizeBy: none
+		sourceColumn: postingtype
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column postingtype_$label
+		dataType: string
+		sourceProviderType: varchar(34)
+		lineageTag: 15815404-0bc0-4edd-be2d-b93bcf43ea57
+		sourceLineageTag: postingtype_$label
+		summarizeBy: none
+		sourceColumn: postingtype_$label
+
+		annotation SummarizationSetBy = Automatic
+
+	column ledgerdimension
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 83f5f817-c273-48d0-ada1-5877ac2d739f
+		sourceLineageTag: ledgerdimension
+		summarizeBy: sum
+		sourceColumn: ledgerdimension
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column generaljournalentry
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 96795f28-7828-445e-a9b3-750bfbb5bf6f
+		sourceLineageTag: generaljournalentry
+		summarizeBy: none
+		sourceColumn: generaljournalentry
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column reportingcurrencyamount
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(38, 6)
+		lineageTag: a12d22a9-97c8-4c37-aaed-d275cc32ae42
+		sourceLineageTag: reportingcurrencyamount
+		summarizeBy: sum
+		sourceColumn: reportingcurrencyamount
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column quantity
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 548fc63b-1bba-4606-84dc-10f4eb6c63ac
+		sourceLineageTag: quantity
+		summarizeBy: none
+		sourceColumn: quantity
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column iscorrection
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: a706f4e1-4797-4076-8540-cbb0089b8a85
+		sourceLineageTag: iscorrection
+		summarizeBy: none
+		sourceColumn: iscorrection
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column iscorrection_$label
+		dataType: string
+		sourceProviderType: varchar(3)
+		lineageTag: 7e1714f4-e03c-4c42-9833-e495d4552dae
+		sourceLineageTag: iscorrection_$label
+		summarizeBy: none
+		sourceColumn: iscorrection_$label
+
+		annotation SummarizationSetBy = Automatic
+
+	column iscredit
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 93ca1caf-aefb-4085-a9ac-8620c988d6b0
+		sourceLineageTag: iscredit
+		summarizeBy: none
+		sourceColumn: iscredit
+
+		changedProperty = SummarizeBy
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = User
+
+	column iscredit_$label
+		dataType: string
+		sourceProviderType: varchar(3)
+		lineageTag: e6607a48-4ce0-4975-95a2-29d0f44cab21
+		sourceLineageTag: iscredit_$label
+		summarizeBy: none
+		sourceColumn: iscredit_$label
+
+		annotation SummarizationSetBy = Automatic
+
+	column Business_Unit
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 20848948-7f02-4f58-b87e-a1ad906dca13
+		sourceLineageTag: Business_Unit
+		summarizeBy: none
+		sourceColumn: Business_Unit
+
+		annotation SummarizationSetBy = Automatic
+
+	column Department
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 865a2fa6-cb36-4709-ba95-7036071cbf35
+		sourceLineageTag: Department
+		summarizeBy: none
+		sourceColumn: Department
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_Line
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 18e5c7f0-baf6-428a-8f74-08e3223a7b45
+		sourceLineageTag: Product_Line
+		summarizeBy: none
+		sourceColumn: Product_Line
+
+		annotation SummarizationSetBy = Automatic
+
+	column Site
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: b0a7d832-c8f0-4dbf-85ee-c867bb4e6e55
+		sourceLineageTag: Site
+		summarizeBy: none
+		sourceColumn: Site
+
+		annotation SummarizationSetBy = Automatic
+
+	column DepartmentKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: fcfee1c4-2828-4310-95cb-64e6236257c5
+		sourceLineageTag: DepartmentKey
+		summarizeBy: none
+		sourceColumn: DepartmentKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SiteKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: ea6b6030-dc28-4ae6-bc52-8f0c741a6e0a
+		sourceLineageTag: SiteKey
+		summarizeBy: none
+		sourceColumn: SiteKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_GeneralLedger = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Fact_GeneralLedger
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

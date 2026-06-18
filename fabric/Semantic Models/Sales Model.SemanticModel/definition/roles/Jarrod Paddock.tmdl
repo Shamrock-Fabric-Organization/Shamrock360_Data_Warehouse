@@ -1,0 +1,9 @@
+role 'Jarrod Paddock'
+	modelPermission: read
+
+	tablePermission BIDataSet_Opportunity = [Manager] IN {"JPADDOCK","NTURPIN"}
+
+	tablePermission Dim_Employee = [Personnel_Number] IN {"1167","1162"}
+
+	annotation PBI_Id = ef1a0e69c6b343519a599733ddbd73f5
+

@@ -1,0 +1,599 @@
+table Fact_WorkOrderCycleCountTransactions
+	lineageTag: b6cb79a7-447e-46df-b706-aa7d9368cbcb
+	sourceLineageTag: [dbo].[mtbl_EDW_Fact_WorkOrderCycleCountTransactions]
+
+	measure 'AdjQtyWork LBs' = SUM(Fact_WorkOrderCycleCountTransactions[AdjQtyWork])
+		lineageTag: 9248683e-5453-4487-832a-35b14ecc1938
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'QtyCounted LBs' = SUM(Fact_WorkOrderCycleCountTransactions[QtyCounted])
+		lineageTag: 665c5763-1cd7-4164-a48b-8efa563eade7
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'QtyExpected LBs' = SUM(Fact_WorkOrderCycleCountTransactions[QtyExpected])
+		lineageTag: 32f9dc62-b432-408e-b19e-5e12ff859b29
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'QtyVariance LBs' = SUM(Fact_WorkOrderCycleCountTransactions[QtyVariance])
+		lineageTag: 638f8db9-af4e-48a2-adae-3bd4b6ab874e
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column CMPNY
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: e431622c-60bc-4e71-9fbf-2ec1baafebb4
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkId
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: fea40d0d-906e-42b4-97fc-19653de5a25b
+		sourceLineageTag: WorkId
+		summarizeBy: none
+		sourceColumn: WorkId
+
+		annotation SummarizationSetBy = Automatic
+
+	column LicensePlateId
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 47a89165-a8d7-47bb-961d-a032c85eaa97
+		sourceLineageTag: LicensePlateId
+		summarizeBy: none
+		sourceColumn: LicensePlateId
+
+		annotation SummarizationSetBy = Automatic
+
+	column InventStatusId
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 13df5ab7-2327-4313-9c53-1901e7930381
+		sourceLineageTag: InventStatusId
+		summarizeBy: none
+		sourceColumn: InventStatusId
+
+		annotation SummarizationSetBy = Automatic
+
+	column QtyExpected
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 8a47102c-9cc1-4c58-9854-68ac9e1f6967
+		sourceLineageTag: QtyExpected
+		summarizeBy: sum
+		sourceColumn: QtyExpected
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column QtyCounted
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 65f9ee55-1d6c-4fd4-a220-e9ca983f4519
+		sourceLineageTag: QtyCounted
+		summarizeBy: sum
+		sourceColumn: QtyCounted
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column QtyVariance
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 03473555-f083-4207-9ad8-1755dd9574d6
+		sourceLineageTag: QtyVariance
+		summarizeBy: sum
+		sourceColumn: QtyVariance
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ReasonCode
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: e78d28b3-c80f-496a-8e18-c524d519c46f
+		sourceLineageTag: ReasonCode
+		summarizeBy: none
+		sourceColumn: ReasonCode
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReasonDescription
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 1119d906-3e1a-42bb-bca5-0399e27a6ce4
+		sourceLineageTag: ReasonDescription
+		summarizeBy: none
+		sourceColumn: ReasonDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column LineNum
+		dataType: double
+		sourceProviderType: decimal(38, 16)
+		lineageTag: ee652739-421d-464d-8489-ae207f96784a
+		sourceLineageTag: LineNum
+		summarizeBy: sum
+		sourceColumn: LineNum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column WorkTransType
+		dataType: string
+		sourceProviderType: varchar(22)
+		lineageTag: 9ae6d9f5-2bd5-4f1f-8e27-d15b12585dac
+		sourceLineageTag: WorkTransType
+		summarizeBy: none
+		sourceColumn: WorkTransType
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsCounted
+		dataType: string
+		sourceProviderType: varchar(3)
+		lineageTag: 9d0ce064-5916-41ae-b307-6030b949834e
+		sourceLineageTag: IsCounted
+		summarizeBy: none
+		sourceColumn: IsCounted
+
+		annotation SummarizationSetBy = Automatic
+
+	column AcceptReject
+		dataType: string
+		sourceProviderType: varchar(6)
+		lineageTag: 9e7b3697-d652-4634-9684-7c071429319e
+		sourceLineageTag: AcceptReject
+		summarizeBy: none
+		sourceColumn: AcceptReject
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReconcileStatus
+		dataType: string
+		sourceProviderType: varchar(3)
+		lineageTag: 718281d7-7d69-4ad2-907a-dd2e5f5ac24b
+		sourceLineageTag: ReconcileStatus
+		summarizeBy: none
+		sourceColumn: ReconcileStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column WMSLocationId
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: d0051536-2fc9-4b20-9b08-01c890c83d25
+		sourceLineageTag: WMSLocationId
+		summarizeBy: none
+		sourceColumn: WMSLocationId
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsAnchored
+		dataType: string
+		sourceProviderType: varchar(3)
+		lineageTag: 3e1406e0-62f3-4cc6-bb83-18951a140e8b
+		sourceLineageTag: IsAnchored
+		summarizeBy: none
+		sourceColumn: IsAnchored
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsCountMandatory
+		dataType: string
+		sourceProviderType: varchar(3)
+		lineageTag: 230c2fda-135e-4da2-9ecc-bc67092df12d
+		sourceLineageTag: IsCountMandatory
+		summarizeBy: none
+		sourceColumn: IsCountMandatory
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsCountSkipped
+		dataType: string
+		sourceProviderType: varchar(3)
+		lineageTag: 325fe1b1-6b8e-4459-8b85-a6cbc2956809
+		sourceLineageTag: IsCountSkipped
+		summarizeBy: none
+		sourceColumn: IsCountSkipped
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkLineStatus
+		dataType: string
+		sourceProviderType: varchar(13)
+		lineageTag: 083c41c6-31ba-462d-be66-72ccace65653
+		sourceLineageTag: WorkLineStatus
+		summarizeBy: none
+		sourceColumn: WorkLineStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsWorkStopped
+		dataType: string
+		sourceProviderType: varchar(3)
+		lineageTag: 5d8a4093-847c-4206-a106-4b6c4777ff02
+		sourceLineageTag: IsWorkStopped
+		summarizeBy: none
+		sourceColumn: IsWorkStopped
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkLineType
+		dataType: string
+		sourceProviderType: varchar(24)
+		lineageTag: cfa4a9d8-d326-4eb7-9c8f-06b147d16389
+		sourceLineageTag: WorkLineType
+		summarizeBy: none
+		sourceColumn: WorkLineType
+
+		annotation SummarizationSetBy = Automatic
+
+	column AdjustmentWorkId
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 4b6b5e71-51c9-4110-bfba-c6a0138337b8
+		sourceLineageTag: AdjustmentWorkId
+		summarizeBy: none
+		sourceColumn: AdjustmentWorkId
+
+		annotation SummarizationSetBy = Automatic
+
+	column AdjWorkTransType
+		dataType: string
+		sourceProviderType: varchar(22)
+		lineageTag: ccd59cf4-f1ef-4f8b-9275-e9e4882aa774
+		sourceLineageTag: AdjWorkTransType
+		summarizeBy: none
+		sourceColumn: AdjWorkTransType
+
+		annotation SummarizationSetBy = Automatic
+
+	column AdjWorkStatus
+		dataType: string
+		sourceProviderType: varchar(13)
+		lineageTag: a9847c9e-f4c2-4c88-8582-836e951e82cb
+		sourceLineageTag: AdjWorkStatus
+		summarizeBy: none
+		sourceColumn: AdjWorkStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column AdjWorkCreatedBy
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 1fae0642-3b1a-49f9-a9e9-3f6f244f8cad
+		sourceLineageTag: AdjWorkCreatedBy
+		summarizeBy: none
+		sourceColumn: AdjWorkCreatedBy
+
+		annotation SummarizationSetBy = Automatic
+
+	column AdjWorkStartedUTC
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 8962b874-8bb6-46c5-af4a-23506936c7ef
+		sourceLineageTag: AdjWorkStartedUTC
+		summarizeBy: none
+		sourceColumn: AdjWorkStartedUTC
+
+		annotation SummarizationSetBy = Automatic
+
+	column AdjWorkClosedUTC
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 92f46400-8abd-4dfa-9e0b-72b9aeae61fc
+		sourceLineageTag: AdjWorkClosedUTC
+		summarizeBy: none
+		sourceColumn: AdjWorkClosedUTC
+
+		annotation SummarizationSetBy = Automatic
+
+	column AdjWorkType
+		dataType: string
+		sourceProviderType: varchar(24)
+		lineageTag: bb69c62e-d5fa-46ae-8e00-329b43f94437
+		sourceLineageTag: AdjWorkType
+		summarizeBy: none
+		sourceColumn: AdjWorkType
+
+		annotation SummarizationSetBy = Automatic
+
+	column AdjQtyWork
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: e4984bc5-e765-4745-a8d7-abc8a51ccc46
+		sourceLineageTag: AdjQtyWork
+		summarizeBy: sum
+		sourceColumn: AdjQtyWork
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column AdjWMSLocationId
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: b15a4abb-6d85-416c-87c3-a689c501eef7
+		sourceLineageTag: AdjWMSLocationId
+		summarizeBy: none
+		sourceColumn: AdjWMSLocationId
+
+		annotation SummarizationSetBy = Automatic
+
+	column AdjUnitId
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: ed912528-c43f-4d00-876a-e0d72640e9f8
+		sourceLineageTag: AdjUnitId
+		summarizeBy: none
+		sourceColumn: AdjUnitId
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 2d337b2f-a9c9-41d2-b8bc-93b6accb86cb
+		sourceLineageTag: Legal_EntityKey
+		summarizeBy: none
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkOrderKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 392b5ba5-7afe-4ebf-811f-80f97f17ce47
+		sourceLineageTag: WorkOrderKey
+		summarizeBy: none
+		sourceColumn: WorkOrderKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column AdjustmentWorkOrderKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 0a9441b8-74b3-4e4b-9335-d8a6425b4ee3
+		sourceLineageTag: AdjustmentWorkOrderKey
+		summarizeBy: none
+		sourceColumn: AdjustmentWorkOrderKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column ProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: e538a46b-7a21-4046-9220-889a73f0a090
+		sourceLineageTag: ProductKey
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SiteKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 4b5a44eb-01eb-4227-9d8c-47fe6e35a42f
+		sourceLineageTag: SiteKey
+		summarizeBy: none
+		sourceColumn: SiteKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column WarehouseKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 9b1df8e4-aa9e-4821-9982-84cac9721494
+		sourceLineageTag: WarehouseKey
+		summarizeBy: none
+		sourceColumn: WarehouseKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column BatchKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 9323a4e4-01a4-4ba3-b4df-3d21b239a50b
+		sourceLineageTag: BatchKey
+		summarizeBy: none
+		sourceColumn: BatchKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SerialNumberKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 98e2da46-59d2-4f0e-90f9-13500ab56a04
+		sourceLineageTag: SerialNumberKey
+		summarizeBy: none
+		sourceColumn: SerialNumberKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column StandardCostKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 44be35a0-adf1-41f9-a176-dece2f791c60
+		sourceLineageTag: StandardCostKey
+		summarizeBy: none
+		sourceColumn: StandardCostKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkCancelledUTCDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: f5dc9b8b-c09f-4296-b371-4964f18bf821
+		sourceLineageTag: WorkCancelledUTCDateKey
+		summarizeBy: none
+		sourceColumn: WorkCancelledUTCDateKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column WorkStartedUTCDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 29b959e9-7e07-431e-a80d-2748521511f9
+		sourceLineageTag: WorkStartedUTCDateKey
+		summarizeBy: none
+		sourceColumn: WorkStartedUTCDateKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkClosedUTCDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: cfed91ce-5079-470e-b00f-58ca5ad6d3d6
+		sourceLineageTag: WorkClosedUTCDateKey
+		summarizeBy: none
+		sourceColumn: WorkClosedUTCDateKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column CreatedDateTimeDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: ad1f5a11-4a4f-4eb5-906d-2c6a677e0d8e
+		sourceLineageTag: CreatedDateTimeDateKey
+		summarizeBy: none
+		sourceColumn: CreatedDateTimeDateKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column ModifiedDateTimeDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: bb55c4b5-e533-4819-953a-30c2d058520e
+		sourceLineageTag: ModifiedDateTimeDateKey
+		summarizeBy: none
+		sourceColumn: ModifiedDateTimeDateKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column AdjWorkStartedUTCDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 60e5e940-398a-4702-a1dc-f2275b0a8445
+		sourceLineageTag: AdjWorkStartedUTCDateKey
+		summarizeBy: none
+		sourceColumn: AdjWorkStartedUTCDateKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column AdjWorkClosedUTCDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 1992fd20-ab46-4a3a-a4ba-f06cbb83e30c
+		sourceLineageTag: AdjWorkClosedUTCDateKey
+		summarizeBy: none
+		sourceColumn: AdjWorkClosedUTCDateKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	partition Fact_WorkOrderCycleCountTransactions = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Fact_WorkOrderCycleCountTransactions
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

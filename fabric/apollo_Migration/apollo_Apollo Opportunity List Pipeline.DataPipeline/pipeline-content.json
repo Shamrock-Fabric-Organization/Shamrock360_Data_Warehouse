@@ -1,0 +1,583 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "name": "Opportunity List SP",
+        "type": "SqlServerStoredProcedure",
+        "dependsOn": [
+          {
+            "activity": "Cop VW_OpportunityList",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "storedProcedureName": "[dbo].[sp_OpportunityList]",
+          "database": "Apollo_Staging"
+        },
+        "externalReferences": {
+          "connection": "7d1e672c-1476-49a5-ae6f-bebdbda11870"
+        }
+      },
+      {
+        "name": "Success SP",
+        "type": "SqlServerStoredProcedure",
+        "state": "Inactive",
+        "dependsOn": [
+          {
+            "activity": "OpportunityList Staging to Cloud",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "storedProcedureName": "[dbo].[Apollo_Success_SP]",
+          "database": "Apollo_Cloud360",
+          "storedProcedureParameters": {
+            "Pipeline_Name": {
+              "value": {
+                "value": "@pipeline().Pipeline",
+                "type": "Expression"
+              },
+              "type": "String"
+            }
+          }
+        },
+        "externalReferences": {
+          "connection": "0"
+        }
+      },
+      {
+        "name": "Execute Azure SQL SP With Output",
+        "type": "Lookup",
+        "dependsOn": [
+          {
+            "activity": "Success SP",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "AzureSqlSource",
+            "sqlReaderStoredProcedureName": "[dbo].[sp_Format_Pipeline_Email]",
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
+          },
+          "datasetSettings": {
+            "annotations": [],
+            "type": "AzureSqlTable",
+            "schema": [
+              {
+                "name": "ID",
+                "type": "int",
+                "precision": 10
+              },
+              {
+                "name": "Pipeline_Run_Date",
+                "type": "date"
+              },
+              {
+                "name": "Pipeline_Name",
+                "type": "nchar"
+              },
+              {
+                "name": "Business_Line_Name",
+                "type": "nchar"
+              },
+              {
+                "name": "Responsible_Party",
+                "type": "nchar"
+              },
+              {
+                "name": "Reporting_Group",
+                "type": "nchar"
+              },
+              {
+                "name": "Rows_Read",
+                "type": "nchar"
+              },
+              {
+                "name": "Rows_Updated",
+                "type": "nchar"
+              },
+              {
+                "name": "Failed_Task_Name",
+                "type": "nchar"
+              },
+              {
+                "name": "Task_Dependency_Type",
+                "type": "nchar"
+              },
+              {
+                "name": "Task_Dependency_Name",
+                "type": "nchar"
+              },
+              {
+                "name": "Task_Output_Type",
+                "type": "nchar"
+              },
+              {
+                "name": "Task_Output_Name",
+                "type": "nchar"
+              },
+              {
+                "name": "Run_Status",
+                "type": "nchar"
+              },
+              {
+                "name": "Run_Information",
+                "type": "nchar"
+              },
+              {
+                "name": "Run_Comments",
+                "type": "nchar"
+              },
+              {
+                "name": "Run_Resolution",
+                "type": "nchar"
+              },
+              {
+                "name": "Run_Resolution_SignOff_BY",
+                "type": "nchar"
+              },
+              {
+                "name": "Run_Resolution_Due_Date",
+                "type": "date"
+              },
+              {
+                "name": "Run_Resolution_Actual_Date",
+                "type": "date"
+              },
+              {
+                "name": "Run_Start",
+                "type": "datetime2",
+                "scale": 7
+              },
+              {
+                "name": "Run_End",
+                "type": "datetime2",
+                "scale": 7
+              },
+              {
+                "name": "Run_ReStart_Ind",
+                "type": "nchar"
+              },
+              {
+                "name": "Pipeline_Active_Ind",
+                "type": "nchar"
+              }
+            ],
+            "typeProperties": {
+              "schema": "dbo",
+              "table": "tbl_Apollo_Pipeline_Daily_Status",
+              "database": "Apollo_Cloud360"
+            },
+            "externalReferences": {
+              "connection": "886b00a6-c3ab-4007-88d8-587e719d57f3"
+            }
+          }
+        }
+      },
+      {
+        "name": "Cop VW_OpportunityList",
+        "type": "Copy",
+        "state": "Inactive",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "SqlServerSource",
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None",
+            "datasetSettings": {
+              "annotations": [],
+              "type": "SqlServerTable",
+              "schema": [],
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "vw_OpportunityList"
+              },
+              "externalReferences": {
+                "connection": "0"
+              }
+            }
+          },
+          "sink": {
+            "type": "AzureSqlSink",
+            "preCopyScript": "Truncate table tbl_OpportunityList;",
+            "writeBehavior": "insert",
+            "sqlWriterUseTableLock": false,
+            "disableMetricsCollection": false,
+            "datasetSettings": {
+              "annotations": [],
+              "type": "AzureSqlTable",
+              "schema": [
+                {
+                  "name": "OpportunityID",
+                  "type": "varchar"
+                },
+                {
+                  "name": "RecordType",
+                  "type": "varchar"
+                },
+                {
+                  "name": "GMAccountno",
+                  "type": "varchar"
+                },
+                {
+                  "name": "Manager",
+                  "type": "varchar"
+                },
+                {
+                  "name": "Company",
+                  "type": "varchar"
+                },
+                {
+                  "name": "Contact",
+                  "type": "varchar"
+                },
+                {
+                  "name": "Opportunity",
+                  "type": "varchar"
+                },
+                {
+                  "name": "OpportunityStatus",
+                  "type": "varchar"
+                },
+                {
+                  "name": "OpportunityStage",
+                  "type": "varchar"
+                },
+                {
+                  "name": "OpportunityIndustry",
+                  "type": "varchar"
+                },
+                {
+                  "name": "StartDate",
+                  "type": "datetime",
+                  "precision": 23,
+                  "scale": 3
+                },
+                {
+                  "name": "ClosedDate",
+                  "type": "datetime",
+                  "precision": 23,
+                  "scale": 3
+                },
+                {
+                  "name": "CloseByDate",
+                  "type": "datetime",
+                  "precision": 23,
+                  "scale": 3
+                },
+                {
+                  "name": "Probability",
+                  "type": "smallint",
+                  "precision": 5
+                },
+                {
+                  "name": "Notes",
+                  "type": "text"
+                },
+                {
+                  "name": "ProductName",
+                  "type": "varchar"
+                },
+                {
+                  "name": "DesiredCharacteristics",
+                  "type": "varchar"
+                },
+                {
+                  "name": "EstimatedAnnualVolume",
+                  "type": "int",
+                  "precision": 10
+                },
+                {
+                  "name": "SpecificApplication",
+                  "type": "varchar"
+                },
+                {
+                  "name": "TargetPrice",
+                  "type": "float",
+                  "precision": 15
+                },
+                {
+                  "name": "OpportunityPriority",
+                  "type": "varchar"
+                },
+                {
+                  "name": "RecordID",
+                  "type": "varchar"
+                },
+                {
+                  "name": "RecordEffectiveStartDate",
+                  "type": "datetime",
+                  "precision": 23,
+                  "scale": 3
+                },
+                {
+                  "name": "RecordEffectiveEndDate",
+                  "type": "datetime",
+                  "precision": 23,
+                  "scale": 3
+                },
+                {
+                  "name": "RecordStatus",
+                  "type": "int",
+                  "precision": 10
+                },
+                {
+                  "name": "Source",
+                  "type": "varchar"
+                },
+                {
+                  "name": "OPP_SID",
+                  "type": "int",
+                  "precision": 10
+                }
+              ],
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_OpportunityList",
+                "database": "Apollo_Staging"
+              },
+              "externalReferences": {
+                "connection": "d727f1fe-1284-4e68-aca1-006dd9e42ffb"
+              }
+            }
+          },
+          "enableStaging": false,
+          "translator": {
+            "type": "TabularTranslator",
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          }
+        }
+      },
+      {
+        "name": "OpportunityList Staging to Cloud",
+        "type": "Copy",
+        "dependsOn": [
+          {
+            "activity": "Opportunity List SP",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "AzureSqlSource",
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None",
+            "datasetSettings": {
+              "annotations": [],
+              "type": "AzureSqlTable",
+              "schema": [],
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_OpportunityList ",
+                "database": "Apollo_Staging"
+              },
+              "externalReferences": {
+                "connection": "1f69ecd9-84da-4df0-9344-f61868d2b2bb"
+              }
+            }
+          },
+          "sink": {
+            "type": "AzureSqlSink",
+            "preCopyScript": "Truncate table [dbo].[tbl_OpportunityList]\n",
+            "writeBehavior": "insert",
+            "sqlWriterUseTableLock": false,
+            "disableMetricsCollection": false,
+            "datasetSettings": {
+              "annotations": [],
+              "type": "AzureSqlTable",
+              "schema": [
+                {
+                  "name": "OpportunityID",
+                  "type": "varchar"
+                },
+                {
+                  "name": "RecordType",
+                  "type": "varchar"
+                },
+                {
+                  "name": "GMAccountno",
+                  "type": "varchar"
+                },
+                {
+                  "name": "Manager",
+                  "type": "varchar"
+                },
+                {
+                  "name": "Company",
+                  "type": "varchar"
+                },
+                {
+                  "name": "Contact",
+                  "type": "varchar"
+                },
+                {
+                  "name": "Opportunity",
+                  "type": "varchar"
+                },
+                {
+                  "name": "OpportunityStatus",
+                  "type": "varchar"
+                },
+                {
+                  "name": "OpportunityStage",
+                  "type": "varchar"
+                },
+                {
+                  "name": "OpportunityIndustry",
+                  "type": "varchar"
+                },
+                {
+                  "name": "StartDate",
+                  "type": "datetime",
+                  "precision": 23,
+                  "scale": 3
+                },
+                {
+                  "name": "ClosedDate",
+                  "type": "datetime",
+                  "precision": 23,
+                  "scale": 3
+                },
+                {
+                  "name": "CloseByDate",
+                  "type": "datetime",
+                  "precision": 23,
+                  "scale": 3
+                },
+                {
+                  "name": "Probability",
+                  "type": "smallint",
+                  "precision": 5
+                },
+                {
+                  "name": "Notes",
+                  "type": "text"
+                },
+                {
+                  "name": "ProductName",
+                  "type": "varchar"
+                },
+                {
+                  "name": "DesiredCharacteristics",
+                  "type": "varchar"
+                },
+                {
+                  "name": "EastimatedAnnualVolume",
+                  "type": "int",
+                  "precision": 10
+                },
+                {
+                  "name": "SpecificApplication",
+                  "type": "varchar"
+                },
+                {
+                  "name": "TargetPrice",
+                  "type": "float",
+                  "precision": 15
+                },
+                {
+                  "name": "OpportunityPriority",
+                  "type": "varchar"
+                },
+                {
+                  "name": "RecordID",
+                  "type": "varchar"
+                },
+                {
+                  "name": "RecordEffectiveStartDate",
+                  "type": "datetime",
+                  "precision": 23,
+                  "scale": 3
+                },
+                {
+                  "name": "RecordEffectiveEndDate",
+                  "type": "datetime",
+                  "precision": 23,
+                  "scale": 3
+                },
+                {
+                  "name": "RecordStatus",
+                  "type": "nchar"
+                },
+                {
+                  "name": "Source",
+                  "type": "varchar"
+                }
+              ],
+              "typeProperties": {
+                "schema": "dbo",
+                "table": "tbl_OpportunityList ",
+                "database": "Apollo_Cloud360"
+              },
+              "externalReferences": {
+                "connection": "e9bbdeb6-3c5f-4340-a79a-382354c692b5"
+              }
+            }
+          },
+          "enableStaging": false,
+          "translator": {
+            "type": "TabularTranslator",
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          }
+        }
+      }
+    ],
+    "policy": {
+      "elapsedTimeMetric": {}
+    },
+    "annotations": []
+  }
+}

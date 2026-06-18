@@ -156,6 +156,58 @@
     }
   },
   {
+    "name": "whsworktable",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "670e3cc3-a375-42bb-a13e-012ba2f2957e",
+        "deltaLakeFolder": "https://aethbb67fc04c2934d9d9af2.dfs.core.windows.net/aeth-b6246884-9474-45da-be5a-a63212622a69/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-prod.crm.dynamics.com",
+        "tableName": "whsworktable_partitioned"
+      }
+    }
+  },
+  {
+    "name": "whsworklinecyclecount",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "670e3cc3-a375-42bb-a13e-012ba2f2957e",
+        "deltaLakeFolder": "https://aethbb67fc04c2934d9d9af2.dfs.core.windows.net/aeth-b6246884-9474-45da-be5a-a63212622a69/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-prod.crm.dynamics.com",
+        "tableName": "whsworklinecyclecount_partitioned"
+      }
+    }
+  },
+  {
+    "name": "whsworkline",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "670e3cc3-a375-42bb-a13e-012ba2f2957e",
+        "deltaLakeFolder": "https://aethbb67fc04c2934d9d9af2.dfs.core.windows.net/aeth-b6246884-9474-45da-be5a-a63212622a69/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-prod.crm.dynamics.com",
+        "tableName": "whsworkline_partitioned"
+      }
+    }
+  },
+  {
+    "name": "whscyclecountplan",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "670e3cc3-a375-42bb-a13e-012ba2f2957e",
+        "deltaLakeFolder": "https://aethbb67fc04c2934d9d9af2.dfs.core.windows.net/aeth-b6246884-9474-45da-be5a-a63212622a69/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-prod.crm.dynamics.com",
+        "tableName": "whscyclecountplan_partitioned"
+      }
+    }
+  },
+  {
     "name": "vendtable",
     "path": "/Tables",
     "target": {
@@ -7254,6 +7306,97 @@
     }
   },
   {
+    "name": "inventtestvariableoutcome",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "670e3cc3-a375-42bb-a13e-012ba2f2957e",
+        "deltaLakeFolder": "https://aethbb67fc04c2934d9d9af2.dfs.core.windows.net/aeth-b6246884-9474-45da-be5a-a63212622a69/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-prod.crm.dynamics.com",
+        "tableName": "inventtestvariableoutcome_partitioned"
+      }
+    }
+  },
+  {
+    "name": "inventtestvariable",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "670e3cc3-a375-42bb-a13e-012ba2f2957e",
+        "deltaLakeFolder": "https://aethbb67fc04c2934d9d9af2.dfs.core.windows.net/aeth-b6246884-9474-45da-be5a-a63212622a69/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-prod.crm.dynamics.com",
+        "tableName": "inventtestvariable_partitioned"
+      }
+    }
+  },
+  {
+    "name": "inventtesttable",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "670e3cc3-a375-42bb-a13e-012ba2f2957e",
+        "deltaLakeFolder": "https://aethbb67fc04c2934d9d9af2.dfs.core.windows.net/aeth-b6246884-9474-45da-be5a-a63212622a69/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-prod.crm.dynamics.com",
+        "tableName": "inventtesttable_partitioned"
+      }
+    }
+  },
+  {
+    "name": "inventtestqualitygroup",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "670e3cc3-a375-42bb-a13e-012ba2f2957e",
+        "deltaLakeFolder": "https://aethbb67fc04c2934d9d9af2.dfs.core.windows.net/aeth-b6246884-9474-45da-be5a-a63212622a69/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-prod.crm.dynamics.com",
+        "tableName": "inventtestqualitygroup_partitioned"
+      }
+    }
+  },
+  {
+    "name": "inventtestgroupmember",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "670e3cc3-a375-42bb-a13e-012ba2f2957e",
+        "deltaLakeFolder": "https://aethbb67fc04c2934d9d9af2.dfs.core.windows.net/aeth-b6246884-9474-45da-be5a-a63212622a69/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-prod.crm.dynamics.com",
+        "tableName": "inventtestgroupmember_partitioned"
+      }
+    }
+  },
+  {
+    "name": "inventtestgroup",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "670e3cc3-a375-42bb-a13e-012ba2f2957e",
+        "deltaLakeFolder": "https://aethbb67fc04c2934d9d9af2.dfs.core.windows.net/aeth-b6246884-9474-45da-be5a-a63212622a69/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-prod.crm.dynamics.com",
+        "tableName": "inventtestgroup_partitioned"
+      }
+    }
+  },
+  {
+    "name": "inventtestassociationtable",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "670e3cc3-a375-42bb-a13e-012ba2f2957e",
+        "deltaLakeFolder": "https://aethbb67fc04c2934d9d9af2.dfs.core.windows.net/aeth-b6246884-9474-45da-be5a-a63212622a69/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-prod.crm.dynamics.com",
+        "tableName": "inventtestassociationtable_partitioned"
+      }
+    }
+  },
+  {
     "name": "inventtablemodule",
     "path": "/Tables",
     "target": {
@@ -7523,6 +7666,19 @@
         "deltaLakeFolder": "https://aethbb67fc04c2934d9d9af2.dfs.core.windows.net/aeth-b6246884-9474-45da-be5a-a63212622a69/CDS2/deltalake",
         "environmentDomain": "https://operations-sti-prod.crm.dynamics.com",
         "tableName": "inventdim_partitioned"
+      }
+    }
+  },
+  {
+    "name": "inventcountingreasoncode",
+    "path": "/Tables",
+    "target": {
+      "type": "Dataverse",
+      "dataverse": {
+        "connectionId": "670e3cc3-a375-42bb-a13e-012ba2f2957e",
+        "deltaLakeFolder": "https://aethbb67fc04c2934d9d9af2.dfs.core.windows.net/aeth-b6246884-9474-45da-be5a-a63212622a69/CDS2/deltalake",
+        "environmentDomain": "https://operations-sti-prod.crm.dynamics.com",
+        "tableName": "inventcountingreasoncode_partitioned"
       }
     }
   },

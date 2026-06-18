@@ -1,10 +1,11 @@
 -- Auto Generated (Do not modify) BB0539C1F9CD8E1061880825EF966A88F2932E2D99D9120AE6FA398D47BAB9D4
-/****** Object:  View [dbo].[vw_EDW_Dim_Account]    Script Date: 5/4/2026 10:20:39 AM ******/
-/****** Object:  View [dbo].[vw_EDW_Dim_Account]    Script Date: 5/1/2026 3:19:05 PM ******/
+/****** Object:  View [dbo].[vw_EDW_Dim_Account]    Script Date: 5/04/2026 10:20:39 AM ******/
+/****** Object:  View [dbo].[vw_EDW_Dim_Account]    Script Date: 5/01/2026 3:19:05 PM ******/
+/****** Adjustment: Included global legacy customer Script Date: 6/12/2026            ******/
 --drop view [vw_EDW_Dim_Account]
 
 
-CREATE                        View [dbo].[vw_EDW_Dim_Account] 
+CREATE                          View [dbo].[vw_EDW_Dim_Account] 
 	--WITH SCHEMABINDING 
 		as
 
@@ -71,7 +72,7 @@ SELECT [CustomerKey]
       ,0                  -- int in D365 
       ,0                  -- int in D365 
       ,[CustomerName]
-      ,[CustomerName]
+      ,[GlobalName]
       ,COALESCE(Address1 + ' ', '') + 
        COALESCE(Address2 + ' ', '') + 
        COALESCE(Address3, '') +

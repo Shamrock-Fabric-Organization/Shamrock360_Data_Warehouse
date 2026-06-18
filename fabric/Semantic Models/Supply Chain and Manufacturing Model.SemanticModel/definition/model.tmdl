@@ -43,4 +43,7 @@ ref table Dim_MarketSegmentation
 ref table Dim_Address
 ref table Fact_Inventory_Snapshot
 ref table Fact_Inventory_Snapshot_Extended
+ref table Dim_WorkOrder
+ref table Fact_WorkOrderCycleCountTransactions
+ref table Dim_StandardCost
 

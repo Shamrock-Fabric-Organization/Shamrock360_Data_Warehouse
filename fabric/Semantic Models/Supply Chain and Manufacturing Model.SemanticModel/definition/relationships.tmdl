@@ -301,3 +301,44 @@ relationship e8a350af-0889-d640-63ee-c6eaa41a24b8
 	fromColumn: Fact_Inventory_Snapshot_Extended.SerialNumberKey
 	toColumn: Dim_SerialNumber.SerialNumberKey
 
+relationship f6b9e786-aa08-b54a-8b87-964ac0af34e0
+	fromColumn: Fact_WorkOrderCycleCountTransactions.BatchKey
+	toColumn: Dim_Batch.BatchKey
+
+relationship 043d8039-580d-663a-fc70-568daf61c274
+	fromColumn: Fact_WorkOrderCycleCountTransactions.Legal_EntityKey
+	toColumn: Dim_Legal_Entity.Legal_EntityKey
+
+relationship 5371859d-dfd9-b0b1-b985-be00c8375812
+	fromColumn: Fact_WorkOrderCycleCountTransactions.ProductKey
+	toColumn: Dim_Product.ProductKey
+
+relationship 56637b25-bd89-0533-5368-d2ba74dbdf4e
+	fromColumn: Fact_WorkOrderCycleCountTransactions.SerialNumberKey
+	toColumn: Dim_SerialNumber.SerialNumberKey
+
+relationship 35fc8bd7-56e3-d745-f8d5-34cf4d5fa621
+	fromColumn: Fact_WorkOrderCycleCountTransactions.SiteKey
+	toColumn: Dim_Site.SiteKey
+
+relationship eb1bfd8c-65df-9444-8d52-044046f2ad63
+	fromColumn: Fact_WorkOrderCycleCountTransactions.WarehouseKey
+	toColumn: Dim_Warehouse.WarehouseKey
+
+relationship 2d2dc85c-1efe-8468-8673-ce4c514bc3ba
+	fromColumn: Fact_WorkOrderCycleCountTransactions.WorkOrderKey
+	toColumn: Dim_WorkOrder.WorkOrderKey
+
+relationship 35b7c282-a222-bf5c-929a-dab7eb267b2d
+	fromColumn: Fact_WorkOrderCycleCountTransactions.WorkStartedUTCDateKey
+	toColumn: Dim_Date.DateKey
+
+relationship 939ddcb2-479f-fc5a-358f-9afdf7d4da92
+	fromColumn: Fact_WorkOrderCycleCountTransactions.StandardCostKey
+	toColumn: Dim_StandardCost.StandardCostKey
+
+relationship a4125c84-4688-10c3-571c-b598491fed7e
+	isActive: false
+	fromColumn: Fact_WorkOrderCycleCountTransactions.AdjustmentWorkOrderKey
+	toColumn: Dim_WorkOrder.WorkOrderKey
+

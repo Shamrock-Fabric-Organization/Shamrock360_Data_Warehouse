@@ -785,6 +785,29 @@ table Fact_QualityOrderLineResults
 
 		annotation SummarizationSetBy = Automatic
 
+	column testgroupid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 763ca825-8ea1-400b-b1a8-10973d9301e4
+		sourceLineageTag: testgroupid
+		summarizeBy: none
+		sourceColumn: testgroupid
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestGroupKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 1b54f5ea-56fb-4100-a675-cf3523b6177e
+		sourceLineageTag: TestGroupKey
+		summarizeBy: none
+		sourceColumn: TestGroupKey
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
 	partition Fact_QualityOrderLineResults = entity
 		mode: directLake
 		source

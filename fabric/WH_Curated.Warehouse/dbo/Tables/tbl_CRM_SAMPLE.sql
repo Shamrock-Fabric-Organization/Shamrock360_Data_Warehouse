@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[tbl_CRM_Sample] (
+CREATE TABLE [dbo].[tbl_CRM_SAMPLE] (
 
 	[RequestDate] date NULL, 
 	[Company] varchar(40) NULL, 
@@ -18,8 +18,7 @@ CREATE TABLE [dbo].[tbl_CRM_Sample] (
 	[EstimatedAnnualVolume] int NULL, 
 	[TargetPrice] decimal(19,4) NULL, 
 	[SampleRequestApplication] varchar(40) NULL, 
-	[SnapShotDate] datetime2(6) NULL, 
-	[DataUpdateDate] datetime2(6) NULL, 
-	[Source] varchar(10) NULL, 
-	[SAM_SID] int NULL
+	[SnapShotDate] varchar(100) NULL, 
+	[DataUpdateDate] varchar(100) NULL, 
+	[Source] varchar(10) NULL
 );

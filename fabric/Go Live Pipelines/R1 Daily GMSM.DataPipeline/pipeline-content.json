@@ -1193,9 +1193,9 @@
                 "properties": {
                   "type": "DataWarehouse",
                   "typeProperties": {
-                    "artifactId": "e80cf5d2-f264-ac00-472b-838f66bd9948",
+                    "artifactId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
                     "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com",
-                    "workspaceId": "00000000-0000-0000-0000-000000000000"
+                    "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
                   },
                   "annotations": []
                 }
@@ -1504,6 +1504,8 @@
         },
         "name": "tbl_CRM_Sample",
         "description": "Copy GMSM crm_Sample to D365 to Fact Saample Requests",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
         "dependsOn": [
           {
             "activity": "tbl_DIM_Opportunity_List",

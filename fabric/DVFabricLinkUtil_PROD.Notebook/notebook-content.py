@@ -73,7 +73,7 @@ WAREHOUSE_VIEW_DDL_PARAMETERS = {
             "source_schema": "dbo",
             "target_schema": "dbo",
             "only_fno_tables": 1,
-            "tables_to_include":"prodbom,budgetmodel",
+            "tables_to_include":"prodbom,WHSCycleCountPlan",
             "tables_to_exclude": "*",
             "filter_deleted_rows": 1,
             "join_derived_tables": 1,
@@ -328,7 +328,7 @@ def main():
     if create_case_insensitive_warehouse(WORKSPACE_ID, FABRIC_WH_DATABASE):
 
         logger.info("🔹 Step 3/7: Fetch tables and schema map from Synapse.")
-        tables_to_include = 'prodbom,budgetmodel'
+        tables_to_include = 'prodbom,WHSCycleCountPlan'
         schema_map = '[]'
         if is_not_none_and_empty(SYNAPSE_SERVER) and is_not_none_and_empty(SYNAPSE_EDL_DATABASE) :
           

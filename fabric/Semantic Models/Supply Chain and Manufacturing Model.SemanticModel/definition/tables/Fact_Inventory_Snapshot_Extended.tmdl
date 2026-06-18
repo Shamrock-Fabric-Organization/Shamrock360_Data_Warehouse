@@ -31,10 +31,12 @@ table Fact_Inventory_Snapshot_Extended
 		sourceProviderType: bigint
 		lineageTag: 74c4ec96-095e-4a2f-b1b6-ed09fb5e45f5
 		sourceLineageTag: InventorySnapshotKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: InventorySnapshotKey
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	column CMPNY
 		dataType: string
@@ -582,10 +584,12 @@ table Fact_Inventory_Snapshot_Extended
 		sourceProviderType: bigint
 		lineageTag: 3151a993-8a52-4b67-8b53-e27c81a281ef
 		sourceLineageTag: VendorKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: VendorKey
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	column StandardCostKey
 		dataType: int64
@@ -593,10 +597,12 @@ table Fact_Inventory_Snapshot_Extended
 		sourceProviderType: bigint
 		lineageTag: 19524eb6-9038-4416-b95e-4d4aadc2e0c1
 		sourceLineageTag: StandardCostKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: StandardCostKey
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	column BatchKey
 		dataType: int64

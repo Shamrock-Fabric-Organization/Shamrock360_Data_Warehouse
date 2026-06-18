@@ -1,11 +1,12 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
   "metadata": {
-    "type": "SemanticModel",
-    "displayName": "dataverse_stiuat_cds2_workspace_unqb7d4a6439257f0118ee5002248282"
+    "type": "Notebook",
+    "displayName": "DVFabricLinkUtil_UAT",
+    "description": "New notebook"
   },
   "config": {
     "version": "2.0",
-    "logicalId": "6b47cfdb-faa6-858f-4089-882dc882cfb1"
+    "logicalId": "6bea2e2d-e0f4-8a3d-4839-bbd59bf018b9"
   }
 }

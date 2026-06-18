@@ -1,0 +1,195 @@
+table Dim_WorkOrder
+	lineageTag: 363bb375-5cd6-4250-a8cf-f9894690cf26
+	sourceLineageTag: [dbo].[mtbl_EDW_Dim_WorkOrder]
+
+	column WorkOrderKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: a5447dc9-7a43-4156-9025-175e7df71370
+		sourceLineageTag: WorkOrderKey
+		summarizeBy: none
+		sourceColumn: WorkOrderKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 6a6ec95f-5cfd-4d3e-82e2-fc7588179720
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkId
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 7ce9ccd8-68e7-460a-b843-aa24f0bbbe88
+		sourceLineageTag: WorkId
+		summarizeBy: none
+		sourceColumn: WorkId
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkCancelledUTC
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: a5d9e579-b608-40e7-a5af-5d7c105dc091
+		sourceLineageTag: WorkCancelledUTC
+		summarizeBy: none
+		sourceColumn: WorkCancelledUTC
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkStartedUTC
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: aac93d74-6f0c-4768-9204-c5c0e01a4157
+		sourceLineageTag: WorkStartedUTC
+		summarizeBy: none
+		sourceColumn: WorkStartedUTC
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkClosedUTC
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: cda7dd8d-e62d-4b68-b5ce-d4293da9cc17
+		sourceLineageTag: WorkClosedUTC
+		summarizeBy: none
+		sourceColumn: WorkClosedUTC
+
+		annotation SummarizationSetBy = Automatic
+
+	column CreatedDateTime
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 71b88e1b-1cc2-4523-9afa-a94fed1a406f
+		sourceLineageTag: CreatedDateTime
+		summarizeBy: none
+		sourceColumn: CreatedDateTime
+
+		annotation SummarizationSetBy = Automatic
+
+	column ModifiedDateTime
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 406c6e2e-bc99-42b9-819e-e51348a97c34
+		sourceLineageTag: ModifiedDateTime
+		summarizeBy: none
+		sourceColumn: ModifiedDateTime
+
+		annotation SummarizationSetBy = Automatic
+
+	column CountWorkStatus
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 3fd2a522-98b8-4c78-b997-b7ea4bad2c12
+		sourceLineageTag: CountWorkStatus
+		summarizeBy: none
+		sourceColumn: CountWorkStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkCreatedBy
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: e944d175-7ee2-44d2-895a-1108d684e837
+		sourceLineageTag: WorkCreatedBy
+		summarizeBy: none
+		sourceColumn: WorkCreatedBy
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsPartialCount
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 77048f81-4e3c-4ed8-be94-08ab541c9af3
+		sourceLineageTag: IsPartialCount
+		summarizeBy: none
+		sourceColumn: IsPartialCount
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkTransType
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 8ab9e4bd-9098-42f7-ab51-388071ceadac
+		sourceLineageTag: WorkTransType
+		summarizeBy: none
+		sourceColumn: WorkTransType
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkPriority
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 3916d623-016f-4937-adf1-4d7482f0185d
+		sourceLineageTag: WorkPriority
+		summarizeBy: none
+		sourceColumn: WorkPriority
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		sourceProviderType: varchar(6)
+		lineageTag: 5b647454-fd8d-43fe-a23e-5a18c7d5f738
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 04dae8a9-2498-4084-bdd8-fb0e84c20390
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 35dfb68b-b6d9-4ea0-a1be-0157a64d4b67
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 3b2158a5-288e-441f-992b-f739a5c2e213
+		sourceLineageTag: RecordStatus
+		summarizeBy: none
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_WorkOrder = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Dim_WorkOrder
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+

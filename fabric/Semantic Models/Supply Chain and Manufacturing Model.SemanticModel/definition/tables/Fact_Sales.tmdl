@@ -85,10 +85,12 @@ table Fact_Sales
 		sourceProviderType: int
 		lineageTag: ea22a6ee-a70f-44d7-a469-769f8d277c58
 		sourceLineageTag: OrderDateKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: OrderDateKey
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	column SalesLine_RequestedShipDate
 		dataType: dateTime
@@ -107,10 +109,12 @@ table Fact_Sales
 		sourceProviderType: int
 		lineageTag: d2f3fa98-6bb3-4cb0-af88-d1b48ca4dc80
 		sourceLineageTag: SalesLine_RequestedShipDateKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: SalesLine_RequestedShipDateKey
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	column SalesLine_ShipDate
 		dataType: dateTime
@@ -129,10 +133,12 @@ table Fact_Sales
 		sourceProviderType: int
 		lineageTag: 88ad4c48-207e-4e08-9ccc-642c9067ca87
 		sourceLineageTag: SalesLine_ShipDateKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: SalesLine_ShipDateKey
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	column SalesLine_DeliveryDate
 		dataType: dateTime
@@ -151,10 +157,12 @@ table Fact_Sales
 		sourceProviderType: int
 		lineageTag: 9c1850eb-e10b-485d-ad4a-5434b2e511f8
 		sourceLineageTag: SalesLine_DeliveryDateKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: SalesLine_DeliveryDateKey
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	column InvoiceDate
 		dataType: dateTime
@@ -173,10 +181,12 @@ table Fact_Sales
 		sourceProviderType: int
 		lineageTag: 39a451c6-897c-4d37-8879-5bc8c3717efc
 		sourceLineageTag: InvoiceDateKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: InvoiceDateKey
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	column Legal_Entity_ID
 		dataType: string
@@ -409,12 +419,14 @@ table Fact_Sales
 		sourceProviderType: bigint
 		lineageTag: 4b641cee-c141-49b3-97a1-567756966a4f
 		sourceLineageTag: HistoricCustomerKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: HistoricCustomerKey
 
 		changedProperty = IsHidden
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	column CustomerKey
 		dataType: int64
@@ -436,10 +448,12 @@ table Fact_Sales
 		sourceProviderType: bigint
 		lineageTag: ac0182d3-01a8-467e-8834-1dc874d17ec3
 		sourceLineageTag: HistoricProductKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: HistoricProductKey
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	column ProductKey
 		dataType: int64
@@ -458,10 +472,12 @@ table Fact_Sales
 		sourceProviderType: bigint
 		lineageTag: f58b65c6-cf45-45f5-9941-8b040818f55c
 		sourceLineageTag: StandardCostKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: StandardCostKey
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	column Legal_EntityKey
 		dataType: int64
@@ -491,10 +507,12 @@ table Fact_Sales
 		sourceProviderType: bigint
 		lineageTag: b20deeba-adb9-4378-8c54-2fddff2236cb
 		sourceLineageTag: SalesLine_EmployeeKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: SalesLine_EmployeeKey
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	column CustAcct_EmployeeKey
 		dataType: int64
@@ -513,10 +531,12 @@ table Fact_Sales
 		sourceProviderType: bigint
 		lineageTag: a4dd6e3e-c369-4185-8c03-e17331e6a57e
 		sourceLineageTag: SalesTaker_EmployeeKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: SalesTaker_EmployeeKey
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	column WarehouseKey
 		dataType: int64
@@ -610,10 +630,12 @@ table Fact_Sales
 		sourceProviderType: int
 		lineageTag: 8d94b86a-81e6-4cca-adca-1a357bcde755
 		sourceLineageTag: SalesLineCreatedDateKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: SalesLineCreatedDateKey
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	column MarketSegmentationKey
 		dataType: int64
@@ -656,6 +678,36 @@ table Fact_Sales
 		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = User
+
+	column CPCID2
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: c79586fb-01eb-4d53-b0d3-2c7ee064e69b
+		sourceLineageTag: CPCID2
+		summarizeBy: none
+		sourceColumn: CPCID2
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductID2
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 510d06fd-401e-4dd2-9264-1d96f5d9ab83
+		sourceLineageTag: ProductID2
+		summarizeBy: none
+		sourceColumn: ProductID2
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsPhantom2
+		dataType: string
+		sourceProviderType: varchar(3)
+		lineageTag: 7d107919-347f-4daa-b4fa-a40a9575add1
+		sourceLineageTag: IsPhantom2
+		summarizeBy: none
+		sourceColumn: IsPhantom2
+
+		annotation SummarizationSetBy = Automatic
 
 	partition Fact_Sales = entity
 		mode: directLake

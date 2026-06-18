@@ -6,9 +6,8 @@
       "type": "OneLake",
       "oneLake": {
         "path": "Tables/ledger",
-        "itemId": "c4decd5d-e0e0-a301-406a-8f3f627abf1a",
-        "workspaceId": "00000000-0000-0000-0000-000000000000",
-        "artifactType": "Lakehouse"
+        "itemId": "627abf1a-8f3f-406a-a301-e0e0c4decd5d",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
       }
     }
   },
@@ -19,9 +18,8 @@
       "type": "OneLake",
       "oneLake": {
         "path": "Tables/inventitemprice",
-        "itemId": "c4decd5d-e0e0-a301-406a-8f3f627abf1a",
-        "workspaceId": "00000000-0000-0000-0000-000000000000",
-        "artifactType": "Lakehouse"
+        "itemId": "627abf1a-8f3f-406a-a301-e0e0c4decd5d",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
       }
     }
   },
@@ -32,9 +30,8 @@
       "type": "OneLake",
       "oneLake": {
         "path": "Tables/inventdim",
-        "itemId": "c4decd5d-e0e0-a301-406a-8f3f627abf1a",
-        "workspaceId": "00000000-0000-0000-0000-000000000000",
-        "artifactType": "Lakehouse"
+        "itemId": "627abf1a-8f3f-406a-a301-e0e0c4decd5d",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
       }
     }
   },
@@ -45,9 +42,8 @@
       "type": "OneLake",
       "oneLake": {
         "path": "Tables/bomversion",
-        "itemId": "c4decd5d-e0e0-a301-406a-8f3f627abf1a",
-        "workspaceId": "00000000-0000-0000-0000-000000000000",
-        "artifactType": "Lakehouse"
+        "itemId": "627abf1a-8f3f-406a-a301-e0e0c4decd5d",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
       }
     }
   },
@@ -58,9 +54,8 @@
       "type": "OneLake",
       "oneLake": {
         "path": "Tables/bomcostgroup",
-        "itemId": "c4decd5d-e0e0-a301-406a-8f3f627abf1a",
-        "workspaceId": "00000000-0000-0000-0000-000000000000",
-        "artifactType": "Lakehouse"
+        "itemId": "627abf1a-8f3f-406a-a301-e0e0c4decd5d",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
       }
     }
   },
@@ -71,9 +66,8 @@
       "type": "OneLake",
       "oneLake": {
         "path": "Tables/bomcalctrans",
-        "itemId": "c4decd5d-e0e0-a301-406a-8f3f627abf1a",
-        "workspaceId": "00000000-0000-0000-0000-000000000000",
-        "artifactType": "Lakehouse"
+        "itemId": "627abf1a-8f3f-406a-a301-e0e0c4decd5d",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
       }
     }
   },
@@ -84,9 +78,8 @@
       "type": "OneLake",
       "oneLake": {
         "path": "Tables/bomcalctable",
-        "itemId": "c4decd5d-e0e0-a301-406a-8f3f627abf1a",
-        "workspaceId": "00000000-0000-0000-0000-000000000000",
-        "artifactType": "Lakehouse"
+        "itemId": "627abf1a-8f3f-406a-a301-e0e0c4decd5d",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
       }
     }
   }

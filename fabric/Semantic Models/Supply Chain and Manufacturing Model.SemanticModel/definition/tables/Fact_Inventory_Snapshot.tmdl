@@ -15,10 +15,12 @@ table Fact_Inventory_Snapshot
 		sourceProviderType: bigint
 		lineageTag: d0502700-40a7-4ea9-88cf-a07a14500ffa
 		sourceLineageTag: inventorySnapshotKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: inventorySnapshotKey
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	column CMPNY
 		dataType: string
@@ -536,10 +538,12 @@ table Fact_Inventory_Snapshot
 		sourceProviderType: bigint
 		lineageTag: 4dc3e544-555c-43a6-a153-7eb1dc5f85f7
 		sourceLineageTag: VendorKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: VendorKey
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	column StandardCostKey
 		dataType: int64
@@ -547,10 +551,12 @@ table Fact_Inventory_Snapshot
 		sourceProviderType: bigint
 		lineageTag: f349fa9c-7326-433d-8cb5-ccbaff4026d7
 		sourceLineageTag: StandardCostKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: StandardCostKey
 
-		annotation SummarizationSetBy = Automatic
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
 
 	partition Fact_Inventory_Snapshot = entity
 		mode: directLake

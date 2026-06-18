@@ -1698,6 +1698,36 @@ table Fact_Sales
 
 		annotation SummarizationSetBy = Automatic
 
+	column CPCID2
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: c71d44e6-f920-4c7f-be76-21bb4b80e97c
+		sourceLineageTag: CPCID2
+		summarizeBy: none
+		sourceColumn: CPCID2
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductID2
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 691c46c4-5ebe-4ec5-a3ab-d3ac4fcabff1
+		sourceLineageTag: ProductID2
+		summarizeBy: none
+		sourceColumn: ProductID2
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsPhantom2
+		dataType: string
+		sourceProviderType: varchar(3)
+		lineageTag: d78b64a4-cc95-4e7e-9a25-887aa9a8df0b
+		sourceLineageTag: IsPhantom2
+		summarizeBy: none
+		sourceColumn: IsPhantom2
+
+		annotation SummarizationSetBy = Automatic
+
 	partition Fact_Sales = entity
 		mode: directLake
 		source

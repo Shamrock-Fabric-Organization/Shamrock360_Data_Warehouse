@@ -7,3 +7,5 @@ expression DatabaseQuery =
 
 	annotation PBI_IncludeFutureArtifacts = False
 
+	annotation PBI_RemovedChildren = [{"remoteItemId":{"analysisServicesObject":{"sourceName":null,"sourceLineageTag":"[dbo].[mtbl_EDW_Dim_WorkOrder]"}},"objectType":"Table"},{"remoteItemId":{"analysisServicesObject":{"sourceName":null,"sourceLineageTag":"[dbo].[mtbl_EDW_Fact_WorkOrderCycleCountTransactions]"}},"objectType":"Table"}]
+

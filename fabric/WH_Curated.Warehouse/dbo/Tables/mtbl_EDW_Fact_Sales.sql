@@ -57,5 +57,8 @@ CREATE TABLE [dbo].[mtbl_EDW_Fact_Sales] (
 	[SalesLineCreatedDateKey] int NULL, 
 	[MarketSegmentationKey] bigint NOT NULL, 
 	[PurchaseOrderFormNumber] varchar(8000) NULL, 
-	[DeliveryAddressKey] bigint NOT NULL
+	[DeliveryAddressKey] bigint NOT NULL, 
+	[CPCID2] varchar(8000) NULL, 
+	[ProductID2] varchar(8000) NULL, 
+	[IsPhantom2] varchar(3) NULL
 );

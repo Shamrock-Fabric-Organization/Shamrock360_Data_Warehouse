@@ -53,5 +53,6 @@ CREATE TABLE [dbo].[tbl_Fact_QualityOrderLineResults] (
 	[VendorKey] bigint NOT NULL, 
 	[CustomerKey] bigint NOT NULL, 
 	[WorkCenterKey] bigint NOT NULL, 
+	[TestGroupKey] bigint NOT NULL, 
 	[QuaityOrderStatus] varchar(4) NULL
 );

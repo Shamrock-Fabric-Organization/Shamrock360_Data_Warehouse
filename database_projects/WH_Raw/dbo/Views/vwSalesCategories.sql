@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) BADA5C5BAA551057635566A032DD394B5493367175BAEA41AA2707F31CD56A18
 
 
 
@@ -50,6 +51,4 @@ LEFT JOIN EcoResCategory EC_L5 ON EC_L4.ParentCategory = EC_L5.RecId
 JOIN EcoResCategoryHierarchy ECH ON EC_L1.CategoryHierarchy = ECH.RecId
 WHERE ECH.Name = 'Sales Categories'
 --order by 1,3,4,5,6,7
-
-GO
-
+--order by 1,3,4,5,6,7

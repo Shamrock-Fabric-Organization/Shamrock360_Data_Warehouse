@@ -1,28 +1,25 @@
 CREATE TABLE [dbo].[tbl_Opportunity_Header] (
-    [Salesman]               VARCHAR (8000) NULL,
-    [Customer]               VARCHAR (8000) NULL,
-    [StartDate]              DATETIME2 (6)  NULL,
-    [CloseByDate]            DATETIME2 (6)  NULL,
-    [ActualCloseDate]        DATETIME2 (6)  NULL,
-    [OpportunityName]        VARCHAR (8000) NULL,
-    [Status]                 VARCHAR (8000) NULL,
-    [CYCLE]                  VARCHAR (8000) NULL,
-    [Stage]                  VARCHAR (8000) NULL,
-    [Source]                 VARCHAR (8000) NULL,
-    [Probability]            FLOAT (53)     NULL,
-    [EstAnnualVolume]        FLOAT (53)     NULL,
-    [EstAnnualRevenue]       FLOAT (53)     NULL,
-    [Product]                VARCHAR (8000) NULL,
-    [DesiredCharacteristics] VARCHAR (8000) NULL,
-    [UEAV]                   FLOAT (53)     NULL,
-    [SpecificApplication]    VARCHAR (8000) NULL,
-    [TargetPrice]            FLOAT (53)     NULL,
-    [UTSPROJID]              VARCHAR (8000) NULL,
-    [OPID]                   VARCHAR (8000) NULL,
-    [ACCOUNTNO]              VARCHAR (8000) NULL,
-    [RECID]                  VARCHAR (8000) NULL
+
+	[Salesman] varchar(8000) NULL, 
+	[Customer] varchar(8000) NULL, 
+	[StartDate] datetime2(6) NULL, 
+	[CloseByDate] datetime2(6) NULL, 
+	[ActualCloseDate] datetime2(6) NULL, 
+	[OpportunityName] varchar(8000) NULL, 
+	[Status] varchar(8000) NULL, 
+	[CYCLE] varchar(8000) NULL, 
+	[Stage] varchar(8000) NULL, 
+	[Source] varchar(8000) NULL, 
+	[Probability] float NULL, 
+	[EstAnnualVolume] float NULL, 
+	[EstAnnualRevenue] float NULL, 
+	[Product] varchar(8000) NULL, 
+	[DesiredCharacteristics] varchar(8000) NULL, 
+	[UEAV] float NULL, 
+	[SpecificApplication] varchar(8000) NULL, 
+	[TargetPrice] float NULL, 
+	[UTSPROJID] varchar(8000) NULL, 
+	[OPID] varchar(8000) NULL, 
+	[ACCOUNTNO] varchar(8000) NULL, 
+	[RECID] varchar(8000) NULL
 );
-
-
-GO
-

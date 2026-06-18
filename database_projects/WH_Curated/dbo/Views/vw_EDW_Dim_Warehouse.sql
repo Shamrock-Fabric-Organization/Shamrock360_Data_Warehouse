@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) BC8B5070B9A7897AD1FEC5FF3F48ACCE232A66B3934FCEA87D0904DEF858ACCF
 /****** Object:  View [dbo].[vw_EDW_Dim_Warehouse]    Script Date: 5/4/2026 10:30:55 AM ******/
 /****** Object:  View [dbo].[vw_EDW_Dim_Warehouse]    Script Date: 5/1/2026 3:22:37 PM ******/
 /****** Object:  View [dbo].[vw_EDW_Dim_Warehouse]    Script Date: 1/22/2026 9:55:18 AM ******/
@@ -79,6 +80,3 @@ FROM (
 					)
 			)
 	) lw
-
-GO
-

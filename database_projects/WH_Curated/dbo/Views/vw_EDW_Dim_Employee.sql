@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) D0E4F6C363A49BEE832EB1726E979E02210BAECC5A43ABADE5B75DDACF4F55BD
 
 
 
@@ -44,6 +45,3 @@ from tbl_DIM_Employee
 ) s
 where not (isnull(Salesman,'') in ('','(X)','DO NOT USE','DO NOT USE (X)') )
 ) s1
-
-GO
-

@@ -1,7 +1,5 @@
+-- Auto Generated (Do not modify) 1F9B02B9257E53812D6BAEA7D414B9D9A99E626AEF1A8E4A7BA0ACC089C93559
 
       CREATE   VIEW dbo.securitysubrole AS 
       SELECT [securitysubrole].[Id] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [Id],[securitysubrole].[SinkCreatedOn] AS [SinkCreatedOn],[securitysubrole].[SinkModifiedOn] AS [SinkModifiedOn],[securitysubrole].[sysdatastatecode] AS [sysdatastatecode],[securitysubrole].[securityrole] AS [securityrole],[securitysubrole].[securitysubrole] AS [securitysubrole],[securitysubrole].[validfrom] AS [validfrom],[securitysubrole].[validto] AS [validto],[securitysubrole].[modifieddatetime] AS [modifieddatetime],[securitysubrole].[modifiedby] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [modifiedby],[securitysubrole].[modifiedtransactionid] AS [modifiedtransactionid],[securitysubrole].[createddatetime] AS [createddatetime],[securitysubrole].[createdby] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [createdby],[securitysubrole].[createdtransactionid] AS [createdtransactionid],[securitysubrole].[dataareaid] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [dataareaid],[securitysubrole].[recversion] AS [recversion],[securitysubrole].[partition] AS [partition],[securitysubrole].[sysrowversion] AS [sysrowversion],[securitysubrole].[recid] AS [recid],[securitysubrole].[tableid] AS [tableid],[securitysubrole].[versionnumber] AS [versionnumber],[securitysubrole].[createdon] AS [createdon],[securitysubrole].[modifiedon] AS [modifiedon],[securitysubrole].[IsDelete] AS [IsDelete],[securitysubrole].[PartitionId] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [PartitionId]
       FROM dataverse_stiprod_cds2_workspace_unqce8cf9ab47aff01187066045bdff8.dbo.securitysubrole WHERE securitysubrole.IsDelete IS NULL
-
-GO
-

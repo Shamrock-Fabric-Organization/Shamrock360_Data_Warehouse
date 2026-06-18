@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 76AFADA59C41C3F0DCCB0647D5C8B6B9FF8984491EA9C350B39BEDFAAAE50434
 /*
 ================================================================================
   Script  : DIM_SurrogateKey_DuplicateCheck.sql
@@ -189,6 +190,3 @@ FROM (
     ) summary
 ) results
 WHERE Status = 'FAIL'
-
-GO
-

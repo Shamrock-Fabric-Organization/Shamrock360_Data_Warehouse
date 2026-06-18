@@ -1,6 +1,3 @@
-
-
-
 --USE WH_Transform
 
 CREATE   PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimAddress]
@@ -244,6 +241,3 @@ BEGIN
     --DROP VIEW IF EXISTS vw_stage_DIM_Address_incoming;
 
 END;
-
-GO
-

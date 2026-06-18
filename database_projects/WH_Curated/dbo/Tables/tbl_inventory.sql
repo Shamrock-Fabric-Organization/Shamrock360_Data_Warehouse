@@ -1,18 +1,15 @@
 CREATE TABLE [dbo].[tbl_inventory] (
-    [PRODUCT CODE]   VARCHAR (8000) NULL,
-    [PRODUCT NAME]   VARCHAR (8000) NULL,
-    [PRODUCT TYPE]   VARCHAR (8000) NULL,
-    [PRODUCT LINE]   VARCHAR (8000) NULL,
-    [PRODUCT GRADE]  VARCHAR (8000) NULL,
-    [WHSE CODE]      VARCHAR (8000) NULL,
-    [WHSE NAME]      VARCHAR (8000) NULL,
-    [WHSE ON-HAND]   VARCHAR (8000) NULL,
-    [WHSE MIN]       VARCHAR (8000) NULL,
-    [SnapShotDate]   DATETIME2 (6)  NULL,
-    [DataUpdateDate] DATETIME2 (6)  NULL,
-    [Source]         VARCHAR (10)   NULL
+
+	[PRODUCT CODE] varchar(8000) NULL, 
+	[PRODUCT NAME] varchar(8000) NULL, 
+	[PRODUCT TYPE] varchar(8000) NULL, 
+	[PRODUCT LINE] varchar(8000) NULL, 
+	[PRODUCT GRADE] varchar(8000) NULL, 
+	[WHSE CODE] varchar(8000) NULL, 
+	[WHSE NAME] varchar(8000) NULL, 
+	[WHSE ON-HAND] varchar(8000) NULL, 
+	[WHSE MIN] varchar(8000) NULL, 
+	[SnapShotDate] datetime2(6) NULL, 
+	[DataUpdateDate] datetime2(6) NULL, 
+	[Source] varchar(10) NULL
 );
-
-
-GO
-

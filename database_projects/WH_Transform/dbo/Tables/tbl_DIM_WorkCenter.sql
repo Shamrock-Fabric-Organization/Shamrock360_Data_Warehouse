@@ -1,24 +1,21 @@
 CREATE TABLE [dbo].[tbl_DIM_WorkCenter] (
-    [WorkCenterKey]            BIGINT          NULL,
-    [CMPNY]                    VARCHAR (8000)  NULL,
-    [WorkCenterID]             VARCHAR (8000)  NULL,
-    [WorkCenterName]           VARCHAR (8000)  NULL,
-    [WorkCenterIDandName]      VARCHAR (8000)  NULL,
-    [wrkctrtype]               BIGINT          NULL,
-    [wrkctrtype_$label]        VARCHAR (9)     NULL,
-    [effectivitypct]           DECIMAL (38, 6) NULL,
-    [errorpct]                 DECIMAL (38, 6) NULL,
-    [operationschedpct]        DECIMAL (38, 6) NULL,
-    [processcategoryid]        VARCHAR (8000)  NULL,
-    [routegroupid]             VARCHAR (8000)  NULL,
-    [ResourceGroup]            VARCHAR (8000)  NULL,
-    [ResourceGroupName]        VARCHAR (8000)  NULL,
-    [Source]                   VARCHAR (6)     NOT NULL,
-    [RecordEffectiveStartDate] DATETIME2 (3)   NULL,
-    [RecordEffectiveEndDate]   DATETIME2 (3)   NULL,
-    [RecordStatus]             INT             NULL
+
+	[WorkCenterKey] bigint NULL, 
+	[CMPNY] varchar(8000) NULL, 
+	[WorkCenterID] varchar(8000) NULL, 
+	[WorkCenterName] varchar(8000) NULL, 
+	[WorkCenterIDandName] varchar(8000) NULL, 
+	[wrkctrtype] bigint NULL, 
+	[wrkctrtype_$label] varchar(9) NULL, 
+	[effectivitypct] decimal(38,6) NULL, 
+	[errorpct] decimal(38,6) NULL, 
+	[operationschedpct] decimal(38,6) NULL, 
+	[processcategoryid] varchar(8000) NULL, 
+	[routegroupid] varchar(8000) NULL, 
+	[ResourceGroup] varchar(8000) NULL, 
+	[ResourceGroupName] varchar(8000) NULL, 
+	[Source] varchar(6) NOT NULL, 
+	[RecordEffectiveStartDate] datetime2(3) NULL, 
+	[RecordEffectiveEndDate] datetime2(3) NULL, 
+	[RecordStatus] int NULL
 );
-
-
-GO
-

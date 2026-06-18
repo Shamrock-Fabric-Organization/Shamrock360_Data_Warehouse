@@ -1,25 +1,22 @@
 CREATE TABLE [dbo].[tbl_DIM_Vendor] (
-    [VendorKey]                BIGINT         NULL,
-    [CMPNY]                    VARCHAR (8000) NULL,
-    [Vendor_ID]                VARCHAR (8000) NULL,
-    [Vendor_Name]              VARCHAR (8000) NULL,
-    [Vendor_Type]              VARCHAR (8000) NULL,
-    [Address]                  VARCHAR (8000) NULL,
-    [City]                     VARCHAR (8000) NULL,
-    [State]                    VARCHAR (8000) NULL,
-    [ZIP]                      VARCHAR (8000) NULL,
-    [Country]                  VARCHAR (8000) NULL,
-    [Currency]                 VARCHAR (8000) NULL,
-    [vendgroup]                VARCHAR (8000) NULL,
-    [VendGroupName]            VARCHAR (8000) NULL,
-    [SegmentID]                VARCHAR (8000) NULL,
-    [SubsegmentID]             VARCHAR (8000) NULL,
-    [Source]                   VARCHAR (6)    NOT NULL,
-    [RecordEffectiveStartDate] DATETIME2 (3)  NULL,
-    [RecordEffectiveEndDate]   DATETIME2 (3)  NULL,
-    [RecordStatus]             INT            NULL
+
+	[VendorKey] bigint NULL, 
+	[CMPNY] varchar(8000) NULL, 
+	[Vendor_ID] varchar(8000) NULL, 
+	[Vendor_Name] varchar(8000) NULL, 
+	[Vendor_Type] varchar(8000) NULL, 
+	[Address] varchar(8000) NULL, 
+	[City] varchar(8000) NULL, 
+	[State] varchar(8000) NULL, 
+	[ZIP] varchar(8000) NULL, 
+	[Country] varchar(8000) NULL, 
+	[Currency] varchar(8000) NULL, 
+	[vendgroup] varchar(8000) NULL, 
+	[VendGroupName] varchar(8000) NULL, 
+	[SegmentID] varchar(8000) NULL, 
+	[SubsegmentID] varchar(8000) NULL, 
+	[Source] varchar(6) NOT NULL, 
+	[RecordEffectiveStartDate] datetime2(3) NULL, 
+	[RecordEffectiveEndDate] datetime2(3) NULL, 
+	[RecordStatus] int NULL
 );
-
-
-GO
-

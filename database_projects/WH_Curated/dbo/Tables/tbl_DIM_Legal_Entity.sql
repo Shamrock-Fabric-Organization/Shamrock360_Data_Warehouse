@@ -1,15 +1,12 @@
 CREATE TABLE [dbo].[tbl_DIM_Legal_Entity] (
-    [Legal_EntityKey]          BIGINT         NULL,
-    [CMPNY]                    VARCHAR (8000) NULL,
-    [Legal_Entity_Name]        VARCHAR (8000) NULL,
-    [accountingcurrency]       VARCHAR (8000) NULL,
-    [reportingcurrency]        VARCHAR (8000) NULL,
-    [Source]                   VARCHAR (6)    NOT NULL,
-    [RecordEffectiveStartDate] DATETIME2 (3)  NULL,
-    [RecordEffectiveEndDate]   DATETIME2 (3)  NULL,
-    [RecordStatus]             INT            NULL
+
+	[Legal_EntityKey] bigint NULL, 
+	[CMPNY] varchar(8000) NULL, 
+	[Legal_Entity_Name] varchar(8000) NULL, 
+	[accountingcurrency] varchar(8000) NULL, 
+	[reportingcurrency] varchar(8000) NULL, 
+	[Source] varchar(6) NOT NULL, 
+	[RecordEffectiveStartDate] datetime2(3) NULL, 
+	[RecordEffectiveEndDate] datetime2(3) NULL, 
+	[RecordStatus] int NULL
 );
-
-
-GO
-

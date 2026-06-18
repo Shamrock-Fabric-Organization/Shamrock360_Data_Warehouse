@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) D6894DF587B0ADE32C38CF78340285D87735A7F994C8700E3C564F70AB03CC9A
 
 CREATE view [dbo].[BIDataSet_Opportunity] as
 
@@ -45,6 +46,3 @@ SELECT h.[OpportunityID]
 FROM vw_Opportunity_Header  h
 LEFT OUTER JOIN [vw360_Opportunity_OppType]  t
 	ON h.OpportunityID = t.LOPID
-
-GO
-

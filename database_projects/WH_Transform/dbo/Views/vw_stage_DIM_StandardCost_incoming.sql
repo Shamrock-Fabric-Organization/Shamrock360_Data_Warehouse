@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 03507983082C89750846408A8504EC1F887EFE673070F20B98F2B8BD1F5DABF8
 /****** Object:  View [dbo].[vw_stage_DIM_StandardCost_incoming]    Script Date: 5/19/2026 4:04:15 PM ******/
 -- =============================================================================
 -- vw_stage_DIM_StandardCost_incoming v10
@@ -203,6 +204,3 @@ SELECT -1              [StandardCostKey]
 ,   NULL               [RecordEffectiveEndDate]
 ,   NULL               [RecordStatus]
 ,   'D365FO'           [Source]
-
-GO
-

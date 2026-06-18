@@ -1,5 +1,3 @@
-
-
 CREATE   PROCEDURE [dbo].[sp_Execute_SCD_Logic_dimMarketSegmentation]
 AS
 BEGIN
@@ -300,6 +298,3 @@ BEGIN
     DROP TABLE IF EXISTS stage_tbl_DIM_MarketSegmentation_ForUpdates_Prior;
 
 END;
-
-GO
-

@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 04E1A94B5DD0FA9FB2B3F0D3CF3F87414049878D6637CA3F1F8E87A4D2422A2C
 /****** Object:  View [dbo].[vw_stage_Fact_Inventory_Snapshot_incoming]    Script Date: 5/19/2026 4:18:30 PM ******/
 /****** Object:  View [dbo].[vw_stage_Fact_Inventory_Snapshot_incoming]    Script Date: 4/14/2026 9:39:36 AM ******/
 /****** Object:  View [dbo].[vw_stage_Fact_Inventory_Snapshot_incoming]    Script Date: 3/6/2026 1:56:23 PM ******/
@@ -183,6 +184,10 @@ S.dataareaid
 	
 --	,s.inventstatusid
 --	,s.wmslocationid
-
-GO
-
+--ORDER BY s.dataareaid
+--	,s.itemid
+--	, s.inventsiteid
+--	, s.inventlocationid
+	
+--	,s.inventstatusid
+--	,s.wmslocationid

@@ -1,13 +1,10 @@
 CREATE TABLE [dbo].[tbl_DIM_SALES_Heirarchy] (
-    [GMUserID]              CHAR (10)      NULL,
-    [Salesteam]             CHAR (50)      NULL,
-    [AssignedSalesman]      VARCHAR (8000) NULL,
-    [RegionalSalesman]      VARCHAR (8000) NULL,
-    [RegionalSalesDirector] VARCHAR (8000) NULL,
-    [GlobalSalesDirector]   VARCHAR (8000) NULL,
-    [RecordStatus]          VARCHAR (8000) NULL
+
+	[GMUserID] char(10) NULL, 
+	[Salesteam] char(50) NULL, 
+	[AssignedSalesman] varchar(8000) NULL, 
+	[RegionalSalesman] varchar(8000) NULL, 
+	[RegionalSalesDirector] varchar(8000) NULL, 
+	[GlobalSalesDirector] varchar(8000) NULL, 
+	[RecordStatus] varchar(8000) NULL
 );
-
-
-GO
-

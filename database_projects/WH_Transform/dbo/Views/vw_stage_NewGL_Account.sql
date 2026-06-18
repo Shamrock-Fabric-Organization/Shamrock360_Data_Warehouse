@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 175FF77130925FE70B673A4B9684674248B6B4C2C1E9BBBD4104E04D5EDBA0DB
 
 
 CREATE     VIEW [dbo].[vw_stage_NewGL_Account]
@@ -23,6 +24,3 @@ WHERE NOT EXISTS (
 		WHERE Target.[GL_Account_Number] = Source.[GL_Account_Number]
 			AND Target.RecordStatus = 1
 		);
-
-GO
-

@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) E250D6D6B31CBD43DE5F3A016D5C408E889F213B81D53485EA972D4C8AAAB335
 
 --use WH_transform
 --go
@@ -123,5 +124,12 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_WorkCenter dwc
 
 --	--7534
 
-GO
+----where prj.prodid = 'PBO0001963'
 
+--ORDER BY 1
+--	,2
+--	,4
+--	,5
+--	,7
+
+--	--7534

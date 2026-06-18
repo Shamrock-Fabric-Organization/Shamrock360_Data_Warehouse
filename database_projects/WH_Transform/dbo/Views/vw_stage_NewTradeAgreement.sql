@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 01B7CB55691D55E4DCC17C7A10A13BFB717FFDD51F253F675EF9A87A4B54BADE
 -- USE WH_Transform
 
 -- Create a view to identify new records not present in the current dimension
@@ -27,6 +28,3 @@ WHERE NOT EXISTS (
       AND Target.CMPNY        = Source.CMPNY
       AND Target.RecordStatus = 1
     )
-
-GO
-

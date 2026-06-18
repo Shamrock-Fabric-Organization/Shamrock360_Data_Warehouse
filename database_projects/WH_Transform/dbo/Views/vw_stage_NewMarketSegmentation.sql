@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) DA35222BAABA6183B713CE264B7F3015C97440EB470B34C9D1747C3830378E07
 
 
 
@@ -29,6 +30,3 @@ WHERE NOT EXISTS (
 			AND Target.CMPNY = Source.CMPNY
 			AND Target.RecordStatus = 1
 		);
-
-GO
-

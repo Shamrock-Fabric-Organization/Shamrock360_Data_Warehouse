@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) DA35222BAABA6183B713CE264B7F3015C97440EB470B34C9D1747C3830378E07
 /****** Object:  View [dbo].[vw_stage_DIM_MarketSegmentation_incoming]    Script Date: 6/2/2026 9:31:10 AM ******/
 
 ----select * from vw_stage_DIM_MarketSegmentation_incoming
@@ -292,6 +293,3 @@ SELECT
     ,NULL       [RecordEffectiveEndDate]
     ,NULL       [RecordStatus]
     ,'D365FO'   [Source]
-
-GO
-

@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 8EF74670B29E9571A8CEC39922198C0FF52CDC136B7820F03C39F9908631CB4B
 
 create   view vwExchangeRate
 as
@@ -30,6 +31,3 @@ join exchangeratecurrencypair ercp
   on ercp.recid = er.exchangeratecurrencypair
 join exchangeratetype ert
   on ert.recid = ercp.exchangeratetype
-
-GO
-

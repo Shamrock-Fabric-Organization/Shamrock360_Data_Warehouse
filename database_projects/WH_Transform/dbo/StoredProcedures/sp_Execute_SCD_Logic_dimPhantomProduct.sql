@@ -1,6 +1,3 @@
-
-
-
 CREATE     PROCEDURE [dbo].[sp_Execute_SCD_Logic_dimPhantomProduct]
 AS
 BEGIN
@@ -244,6 +241,3 @@ BEGIN
 	---- Drop the staging/source table after processing is complete -- not needed using a view for incoming data
 	--DROP TABLE IF EXISTS vw_stage_dim_PhantomProduct_incoming;
 END;
-
-GO
-

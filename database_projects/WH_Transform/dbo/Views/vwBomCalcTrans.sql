@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) CE7F24B427F6C6579D233C5BA4D67DCB62499B377C1A0FC3EF716635B048B62F
 
 create   view vwBomCalcTrans
 as
@@ -67,6 +68,3 @@ left join WH_Raw.dbo.vwInventItemPriceAgg IIPa
 	and IIPa.pricetypedesc = 'Cost'
 LEFT JOIN WH_Raw.dbo.ledger l
   on b.dataareaid = l.name
-
-GO
-

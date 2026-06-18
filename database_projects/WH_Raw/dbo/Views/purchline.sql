@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) B12D77E1668C896BFA108C382F1293315306FE77FE9E9967BE309AE20EA93FBD
 
 	CREATE   VIEW  purchline 
 	AS
@@ -764,6 +765,3 @@
 			END AS workflowstate_$label
 	FROM [dataverse_stiprod_cds2_workspace_unqce8cf9ab47aff01187066045bdff8].dbo.purchline
 	WHERE purchline.IsDelete IS NULL
-
-GO
-

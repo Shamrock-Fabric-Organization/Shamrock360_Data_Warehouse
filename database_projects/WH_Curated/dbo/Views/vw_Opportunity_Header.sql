@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 842422AFDF7E92CCC06B44458067FCEAC3F92AF2960F68C01D5205523055BCA4
 
 
 
@@ -73,6 +74,3 @@ from [tbl_OpportunityList]
 where 
 RecordStatus='1' 
 and Manager in ('WKUIPERS','ECAMGOZ','JSTEMMLE','LGIANZIN','JRODRIGU','MOLEJNIC')
-
-GO
-

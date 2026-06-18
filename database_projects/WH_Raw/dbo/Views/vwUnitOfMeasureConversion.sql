@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) B0327BEA38C7DF65BCFBAE263F04B7B6A2EB563F6684760F2AA45EDD51C23164
 CREATE VIEW vwUnitOfMeasureConversion -- This populates UNITOFMEASURECONVERSION used in the UDF
 AS
 SELECT UMC.product
@@ -48,6 +49,3 @@ WHERE NOT EXISTS (
 					)
 				)
 		)
-
-GO
-

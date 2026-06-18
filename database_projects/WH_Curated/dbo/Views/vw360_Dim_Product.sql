@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 9E052F26D7A22A17B23DDBF009C9D8F1FD47432E73D4E828623839E4380720FC
 /****** Object:  View [dbo].[vw360_Dim_Product]    Script Date: 5/4/2026 12:14:12 PM ******/
 /****** Object:  View [dbo].[vw360_Dim_Product]    Script Date: 5/1/2026 2:49:26 PM ******/
 
@@ -111,6 +112,3 @@ CREATE            View [dbo].[vw360_Dim_Product]
     FROM [dbo].[tbl_DIM_Product] p
     left join [dbo].[XREF_Product_ID] X ON p.Product_ID = x.D365_ProductID  
      where RecordStatus='1'
-
-GO
-

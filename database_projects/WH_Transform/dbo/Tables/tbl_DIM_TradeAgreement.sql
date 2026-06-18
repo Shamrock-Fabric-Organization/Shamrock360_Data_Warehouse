@@ -1,18 +1,15 @@
 CREATE TABLE [dbo].[tbl_DIM_TradeAgreement] (
-    [TradeAgreementKey]        BIGINT         NULL,
-    [CMPNY]                    VARCHAR (8000) NULL,
-    [AgreementID]              VARCHAR (8000) NULL,
-    [JournalName]              VARCHAR (8000) NULL,
-    [AgreementName]            VARCHAR (8000) NULL,
-    [PostedDate]               DATETIME2 (6)  NULL,
-    [Posted]                   VARCHAR (8000) NULL,
-    [DefaultRelation]          VARCHAR (8000) NULL,
-    [Source]                   VARCHAR (6)    NOT NULL,
-    [RecordEffectiveStartDate] DATETIME2 (3)  NULL,
-    [RecordEffectiveEndDate]   DATETIME2 (3)  NULL,
-    [RecordStatus]             INT            NULL
+
+	[TradeAgreementKey] bigint NULL, 
+	[CMPNY] varchar(8000) NULL, 
+	[AgreementID] varchar(8000) NULL, 
+	[JournalName] varchar(8000) NULL, 
+	[AgreementName] varchar(8000) NULL, 
+	[PostedDate] datetime2(6) NULL, 
+	[Posted] varchar(8000) NULL, 
+	[DefaultRelation] varchar(8000) NULL, 
+	[Source] varchar(6) NOT NULL, 
+	[RecordEffectiveStartDate] datetime2(3) NULL, 
+	[RecordEffectiveEndDate] datetime2(3) NULL, 
+	[RecordStatus] int NULL
 );
-
-
-GO
-

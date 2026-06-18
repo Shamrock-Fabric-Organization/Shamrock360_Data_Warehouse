@@ -1,19 +1,16 @@
 CREATE TABLE [dbo].[tbl_OPMGRFLD] (
-    [LOPID]          VARCHAR (15)   NULL,
-    [ACCOUNTNO]      VARCHAR (20)   NULL,
-    [RECTYPE]        VARCHAR (1)    NULL,
-    [FNAME]          VARCHAR (40)   NULL,
-    [FVALUE]         CHAR (8000)    NULL,
-    [NOTES]          VARCHAR (8000) NULL,
-    [LINKEDDOC]      VARCHAR (8000) NULL,
-    [U_FNAME]        VARCHAR (40)   NULL,
-    [recid]          VARCHAR (15)   NULL,
-    [SnapShotDate]   DATETIME2 (6)  NULL,
-    [DataUpdateDate] DATETIME2 (6)  NULL,
-    [Source]         VARCHAR (10)   NULL,
-    [OPF_SID]        INT            NULL
+
+	[LOPID] varchar(15) NULL, 
+	[ACCOUNTNO] varchar(20) NULL, 
+	[RECTYPE] varchar(1) NULL, 
+	[FNAME] varchar(40) NULL, 
+	[FVALUE] char(8000) NULL, 
+	[NOTES] varchar(8000) NULL, 
+	[LINKEDDOC] varchar(8000) NULL, 
+	[U_FNAME] varchar(40) NULL, 
+	[recid] varchar(15) NULL, 
+	[SnapShotDate] datetime2(6) NULL, 
+	[DataUpdateDate] datetime2(6) NULL, 
+	[Source] varchar(10) NULL, 
+	[OPF_SID] int NULL
 );
-
-
-GO
-

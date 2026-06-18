@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 535252255A41A8D7B9335B710D5EB4592F32FFB850E03A9DFB25935F595E56CF
 /****** Object:  View [dbo].[vw_stage_NewCustomer]    Script Date: 4/6/2026 4:00:40 PM ******/
 
 
@@ -50,6 +51,3 @@ WHERE NOT EXISTS (
 			AND Target.CMPNY = Source.CMPNY
 			AND Target.RecordStatus = 1
 		);
-
-GO
-

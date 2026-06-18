@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) B28F5D7CF38D99DFA9CCAEFEF5178D1819E6990B4F6472D66C2CF2DCE16EFD32
 /****** Object:  View [dbo].[vw_stage_DIM_Batch_incoming]    Script Date: 4/17/2026 1:45:04 PM ******/
 /****** Object:  View [dbo].[vw_stage_DIM_Customer_incoming]    Script Date: 9/2/2025 1:02:23 PM ******/
 --drop  VIEW dbo.[vw_stage_DIM_Batch_incoming]	
@@ -75,6 +76,3 @@ SELECT -1 [BatchKey]
 , NULL [RecordEffectiveStartDate]
 , NULL [RecordEffectiveEndDate]
 , NULL [RecordStatus]
-
-GO
-

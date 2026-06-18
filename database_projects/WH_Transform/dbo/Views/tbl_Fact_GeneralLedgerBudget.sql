@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) B8E2C2AE9893CB4518CE0BA78A78313DF325777EC0A8C9AF4F08B0D127C0BD14
 
 CREATE   VIEW tbl_Fact_GeneralLedgerBudget 
 as
@@ -86,5 +87,17 @@ LEFT JOIN [dbo].[tbl_DIM_BudgetModel] dbm
 --,isnull(dd.DepartmentKey, -1) --DepartmentKey
 --,isnull(ds.SiteKey, -1) --SiteKey
 
-GO
 
+--GROUP BY budgetmodeldataareaid --CMPNY
+--, GL_Account
+--, date
+--, CONVERT(INT, CONVERT(CHAR(8), date, 112) ) --BudgetDateKey
+--,budgetmodelid -- BudgetModel
+--,budgettype_$label --BudgetTypeDesc
+--,transactioncurrency  --CurrencyCode
+--,budgettransactiontype_$label --BudgetTransactionType
+
+--,isnull(dle.Legal_EntityKey, -1) --Legal_EntityKey
+--,isnull(dbm.BudgetModelKey, -1) --BudgetModelKey
+--,isnull(dd.DepartmentKey, -1) --DepartmentKey
+--,isnull(ds.SiteKey, -1) --SiteKey

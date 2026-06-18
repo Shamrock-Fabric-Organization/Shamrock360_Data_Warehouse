@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 7DBABE904831139B9D574FAF2D106C3EC1FA42743ECD01AE7B7BCF71C143CD97
 
 CREATE    view [dbo].[vw360_Dim_CPC_BusinessUnit_Indicator] as
 select 
@@ -52,6 +53,6 @@ Product, Industry, ProdLineAcctg, vw360_Dim_Account.CustomerID, vw360_Dim_Produc
 --, 
 --vw360_Fact_Sales.CPCID,
 --vw360_Fact_Sales.cmpny
-
-GO
-
+--, 
+--vw360_Fact_Sales.CPCID,
+--vw360_Fact_Sales.cmpny

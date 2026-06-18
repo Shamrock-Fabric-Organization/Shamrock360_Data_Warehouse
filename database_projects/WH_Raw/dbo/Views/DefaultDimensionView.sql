@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) D4AA8D69C6A1F8F375F07670C34EED06D73DA581B8535AD1A9A1CF3ADEE6960A
 
 	CREATE   VIEW  DefaultDimensionView
 	AS
@@ -29,6 +30,3 @@
 					AND (T2.PARTITION = T3.PARTITION)
 					)
 				)
-
-GO
-

@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 8354CE25AB361399DCDF68B4A2D4138323C8E791E3F78598FF841E76F8E71A5A
 
 -------------------------------------------------------------------------------------------
 --  Section 0a
@@ -1206,6 +1207,4 @@ FROM [dbo].[tbl_Reconciliation_Adjustments] s
 left outer join [dbo].[tbl_Dim_Date] d on
 [Reconciliation Year] = s.[Reconciliation_Year]
 --group by s.cmpny, s.reconciliation_year, s.[Total_Adjustments]
-
-GO
-
+--group by s.cmpny, s.reconciliation_year, s.[Total_Adjustments]

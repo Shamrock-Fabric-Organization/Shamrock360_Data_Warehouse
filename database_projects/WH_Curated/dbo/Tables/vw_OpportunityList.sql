@@ -1,28 +1,25 @@
 CREATE TABLE [dbo].[vw_OpportunityList] (
-    [OpportunityID]          VARCHAR (15)   NULL,
-    [RecordType]             VARCHAR (3)    NULL,
-    [GMAccountno]            VARCHAR (20)   NULL,
-    [Manager]                VARCHAR (8)    NULL,
-    [Company]                VARCHAR (40)   NULL,
-    [Contact]                VARCHAR (40)   NULL,
-    [Opportunity]            VARCHAR (50)   NULL,
-    [OpportunityStatus]      VARCHAR (50)   NULL,
-    [OpportunityStage]       VARCHAR (30)   NULL,
-    [OpportunityIndustry]    VARCHAR (30)   NULL,
-    [StartDate]              DATETIME2 (3)  NULL,
-    [ClosedDate]             DATETIME2 (3)  NULL,
-    [CloseByDate]            DATETIME2 (3)  NULL,
-    [Probability]            SMALLINT       NULL,
-    [Notes]                  VARCHAR (8000) NULL,
-    [ProductName]            VARCHAR (50)   NULL,
-    [DesiredCharacteristics] VARCHAR (80)   NULL,
-    [EstimatedAnnualVolume]  INT            NULL,
-    [SpecificApplication]    VARCHAR (80)   NULL,
-    [TargetPrice]            FLOAT (53)     NULL,
-    [OpportunityPriority]    VARCHAR (20)   NULL,
-    [RecordID]               VARCHAR (15)   NULL
+
+	[OpportunityID] varchar(15) NULL, 
+	[RecordType] varchar(3) NULL, 
+	[GMAccountno] varchar(20) NULL, 
+	[Manager] varchar(8) NULL, 
+	[Company] varchar(40) NULL, 
+	[Contact] varchar(40) NULL, 
+	[Opportunity] varchar(50) NULL, 
+	[OpportunityStatus] varchar(50) NULL, 
+	[OpportunityStage] varchar(30) NULL, 
+	[OpportunityIndustry] varchar(30) NULL, 
+	[StartDate] datetime2(3) NULL, 
+	[ClosedDate] datetime2(3) NULL, 
+	[CloseByDate] datetime2(3) NULL, 
+	[Probability] smallint NULL, 
+	[Notes] varchar(8000) NULL, 
+	[ProductName] varchar(50) NULL, 
+	[DesiredCharacteristics] varchar(80) NULL, 
+	[EstimatedAnnualVolume] int NULL, 
+	[SpecificApplication] varchar(80) NULL, 
+	[TargetPrice] float NULL, 
+	[OpportunityPriority] varchar(20) NULL, 
+	[RecordID] varchar(15) NULL
 );
-
-
-GO
-

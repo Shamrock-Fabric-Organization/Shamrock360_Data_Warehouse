@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 25CA1AA6082BE5A932333A1B714D273BB6EFC04F7B6E4A6C822F236016C888A5
 
 
 
@@ -283,6 +284,3 @@ tbl_RESULTSSLSBYYR_TEDA.[Product Name]= vw360_Dim_Product.Product_Code
 where 
 [Customer No] not in ('C1E101','C1E201')
 and isNull([Invoice No],'Open Order')='Open Order'
-
-GO
-

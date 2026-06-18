@@ -1,13 +1,10 @@
 CREATE TABLE [dbo].[mtbl_EDW_DIM_Department] (
-    [DepartmentKey]            BIGINT         NULL,
-    [Department]               VARCHAR (8000) NULL,
-    [Department_Name]          VARCHAR (8000) NULL,
-    [Source]                   VARCHAR (6)    NOT NULL,
-    [RecordEffectiveStartDate] DATETIME2 (3)  NULL,
-    [RecordEffectiveEndDate]   DATETIME2 (3)  NULL,
-    [RecordStatus]             INT            NULL
+
+	[DepartmentKey] bigint NULL, 
+	[Department] varchar(8000) NULL, 
+	[Department_Name] varchar(8000) NULL, 
+	[Source] varchar(6) NOT NULL, 
+	[RecordEffectiveStartDate] datetime2(3) NULL, 
+	[RecordEffectiveEndDate] datetime2(3) NULL, 
+	[RecordStatus] int NULL
 );
-
-
-GO
-

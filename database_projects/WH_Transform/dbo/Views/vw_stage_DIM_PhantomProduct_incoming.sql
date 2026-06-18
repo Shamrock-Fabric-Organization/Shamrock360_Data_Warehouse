@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 87599916A546078082FC93CB69D8A8C9CE936A6A54468B6B423BBD8C526F02A8
 /****** Object:  View [dbo].[vw_stage_DIM_Product_incoming]    Script Date: 9/16/2025 1:44:46 PM ******/
 --drop  VIEW dbo.vw_stage_DIM_Product_incoming	
 
@@ -109,6 +110,3 @@ SELECT -1 [PhantomProductKey]
 , NULL [RecordEffectiveEndDate]
 , NULL [RecordStatus]
 , 'D365FO' [Source]
-
-GO
-

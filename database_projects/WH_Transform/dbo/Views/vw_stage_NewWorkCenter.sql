@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 8E9CE925924DF3D33D72223E7CBB94F83260593748FC0730146DC71FDEAF942E
 --use WH_transform
 --go
 
@@ -33,6 +34,3 @@ WHERE NOT EXISTS (
 			AND Target.CMPNY = Source.CMPNY
 			AND Target.RecordStatus = 1
 		);
-
-GO
-

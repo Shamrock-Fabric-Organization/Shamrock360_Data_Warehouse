@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 5EEFADCCA14DAB1F7A77EBF6A0A1D6F8511720BE8BE152C90C3566709BAA86B7
 /****** Object:  View [dbo].[tbl_Fact_FinishedGoodsRawMaterials]    Script Date: 5/27/2026 2:12:04 PM ******/
 /****** Object:  View [dbo].[tbl_Fact_FinishedGoodsRawMaterials]    Script Date: 5/1/2026 9:10:30 AM ******/
 
@@ -83,5 +84,21 @@ WHERE FGitemid in
 order by 2,3,4,6
 */
 
-GO
+/*
+select distinct FgItemId
+FROM tbl_ExplodedFormula_ByVersion  f
+where bomlevel = 10
 
+
+
+select *
+FROM tbl_ExplodedFormula_ByVersion  f
+WHERE FGitemid in
+(
+'11334',
+'11427',
+'11802',
+'11339'
+)
+order by 2,3,4,6
+*/

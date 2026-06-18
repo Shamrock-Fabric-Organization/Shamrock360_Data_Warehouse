@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) F3382C7414B68A365A32A73CC395664D9D47C51479F7087FB3C870655A3555D8
 
 
     -- Create a view to identify new records not present in the current dimension --needed because the CTAS does not allow the logic used
@@ -19,6 +20,3 @@ WHERE NOT EXISTS (
 		WHERE Target.Department = Source.Department
 			AND Target.RecordStatus = 1
 		);
-
-GO
-

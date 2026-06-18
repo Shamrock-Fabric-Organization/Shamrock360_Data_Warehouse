@@ -12,3 +12,6 @@ obj/
 # Pipelines without connection permissions
 New BVBA 4 Forecast TABLES from APOLLO BVBA Pipeline.DataPipeline
 Go Live Pipelines/
+
+# Fabric Warehouse artifacts
+WH_Raw.Warehouse/dbo

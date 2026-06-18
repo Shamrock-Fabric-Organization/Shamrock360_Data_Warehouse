@@ -1,0 +1,10 @@
+# Build output
+bin/
+obj/
+*.dacpac
+
+# Publish profiles (may contain connection strings)
+*.publish.xml
+
+# Fabric lakehouse artifacts
+*.Lakehouse/

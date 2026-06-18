@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 700C26E436AA4241352B95579B0B09C538FF9B08852A68B13971A79B56FADA8F
 
 	CREATE   VIEW  projpostedtranstable 
 	AS
@@ -185,6 +186,3 @@ SELECT [projpostedtranstable].[Id] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF
 		END AS transactionorigin_$label
 	FROM [dataverse_stiprod_cds2_workspace_unqce8cf9ab47aff01187066045bdff8].dbo.projpostedtranstable
 	WHERE projpostedtranstable.IsDelete IS NULL
-
-GO
-

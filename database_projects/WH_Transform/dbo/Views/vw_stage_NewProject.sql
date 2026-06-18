@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 72ACDEAF9B180D17505C9FD28A75141743494A1101434EBFBFC5802574A75E3A
 --use WH_Transform
 
     -- Create a view to identify new records not present in the current dimension --needed because the CTAS does not allow the logic used
@@ -31,6 +32,3 @@ WHERE NOT EXISTS (
           AND Target.CMPNY   = Source.CMPNY
           AND Target.RecordStatus = 1
         );
-
-GO
-

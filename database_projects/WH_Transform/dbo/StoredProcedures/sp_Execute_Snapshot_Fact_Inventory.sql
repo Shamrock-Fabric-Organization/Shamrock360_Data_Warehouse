@@ -1,8 +1,3 @@
-
-
-
-
-
 CREATE               PROCEDURE [dbo].[sp_Execute_Snapshot_Fact_Inventory]
 AS
 BEGIN
@@ -90,6 +85,3 @@ BEGIN
 	DROP TABLE IF EXISTS stage_tbl_InventSum_Snapshot_append;
 	
 END;
-
-GO
-

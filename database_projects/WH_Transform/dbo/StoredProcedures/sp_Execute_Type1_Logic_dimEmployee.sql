@@ -1,6 +1,3 @@
-
-
-
 CREATE   PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimEmployee]
 AS
 BEGIN
@@ -200,6 +197,3 @@ BEGIN
     DROP TABLE IF EXISTS stage_tbl_DIM_Employee_Type1_OnlyUpdatedRecords;
 
 END;
-
-GO
-

@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 56ECE0F12C7EE1C6638DB86B2AF06D00019622FD802E58776C52D599612493FD
 
 
 
@@ -1794,6 +1795,3 @@ where
 [Customer No] not in ('68600F','68700F','69600F','N06044','N08032','N09900','C1E201')
 and isNull([Invoice No],'0')<>'0'
 --and CAST([Invoice Date] as date)>= '2026-01-01'                     -- Corby Static update 2-27-26 '01/01/2023'
-
-GO
-

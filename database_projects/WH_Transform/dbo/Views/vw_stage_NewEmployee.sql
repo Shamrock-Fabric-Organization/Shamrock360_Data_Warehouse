@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) D0E4F6C363A49BEE832EB1726E979E02210BAECC5A43ABADE5B75DDACF4F55BD
 /****** Object:  View [dbo].[vw_stage_NewEmployee]    Script Date: 5/21/2026 1:03:17 PM ******/
 
 
@@ -25,6 +26,3 @@ WHERE NOT EXISTS (
     WHERE Target.Personnel_Number = Source.Personnel_Number
         AND Target.RecordEffectiveStartDate = CAST(Source.ValidFrom AS DATETIME2(3))
 );
-
-GO
-

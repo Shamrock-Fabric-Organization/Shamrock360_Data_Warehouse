@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 05F34950B4AC17FE07D42EFFEE7B44E708354658C39871672223435116E3AA32
 /****** Object:  View [dbo].[vw_EDW_Dim_Product_Corby]    Script Date: 5/4/2026 12:13:21 PM ******/
 /****** Object:  View [dbo].[vw_EDW_Dim_Product_Corby]    Script Date: 5/1/2026 2:49:51 PM ******/
 /****** Object:  View [dbo].[vw_EDW_Dim_Product_Corby]    Script Date: 3/6/2026 1:42:56 PM ******/
@@ -247,6 +248,3 @@ CREATE            View [dbo].[vw_EDW_Dim_Product_Corby]
   --    --RecordStatus = '1'
   --    --and 
   --    NOT([Product Name] in (select [Apollo_ProductID] from [dbo].[XREF_Product_ID]))
-
-GO
-

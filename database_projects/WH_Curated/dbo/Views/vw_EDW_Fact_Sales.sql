@@ -1,80 +1,87 @@
-/****** Object:  View [dbo].[vw_EDW_Fact_Sales]    Script Date: 4/28/2026 7:59:27 AM ******/
-/****** Object:  View [dbo].[vw_EDW_Fact_Sales]    Script Date: 4/24/2026 1:34:33 PM ******/
+-- Auto Generated (Do not modify) 73D194995B201602AC0E85D0F089470837DBDF399C118E8FCD67D479CEF2B29A
+/****** Object:  View [dbo].[vw_EDW_Fact_Sales]    Script Date: 6/10/2026 3:15:46 PM ******/
 
 
 
+CREATE                 view [dbo].[vw_EDW_Fact_Sales] as  
+SELECT f.[RecordID]
+	,f.[CMPNY]
+	,f.[SalesLine_Status]
+	,f.[DATE]
+	,f.[DATEKey]
+	,f.[OrderDate]
+	,f.[OrderDateKey]
+	,f.[SalesLine_RequestedShipDate]
+	,f.[SalesLine_RequestedShipDateKey]
+	,f.[SalesLine_ShipDate]
+	,f.[SalesLine_ShipDateKey]
+	,f.[SalesLine_DeliveryDate]
+	,f.[SalesLine_DeliveryDateKey]
+
+	,f.[InvoiceDate]
+	,f.[InvoiceDateKey]
+	,f.[Legal_Entity_ID]
+	,f.[CustomerID]
+	,f.[InvoiceAccount]
+	,f.[ProductID]
+
+	,f.[CPCID]
+	,f.[InvoiceNo]
+	,f.[Customer_Order_Number]
+	,f.[Quantity]
+	,f.[Quantity_UoM]
+	,f.[Quantity_LBs]
+	,f.[Volume]
+	,f.[Volume_UoM]
+	,f.[Price]
+	,f.[Currency]
+	,f.[Amount]
+	,f.[Amount_Currency]
+	,f.[Returned_Quantity]
+	,f.[Returned_Amount]
+	,f.[SalesLine_Salesman_ID]
+	,f.[Customer_Salesman_ID]
+	--,f.[Total_Direct_Cost_Standard]
+	--,f.[Total_Overhead_Cost_Standard]
+	--,f.[Packaging_Cost_Standard]
+	--,f.[TotalCost]
+	,CONVERT(varchar(50), f.[Source]) AS [Source]
+	,f.[HistoricCustomerKey]
+	,f.[CustomerKey]
+	,f.[HistoricProductKey]
+	,f.[ProductKey]
+	,f.[StandardCostKey]
+	,f.[Legal_EntityKey]
+	,f.[SiteKey]
+	,f.[SalesLine_EmployeeKey]
+	,f.[CustAcct_EmployeeKey]
+	,f.[SalesTaker_EmployeeKey]
+	,f.[WarehouseKey]
+	,f.[SalesOrderKey]
+	,f.[OnHold]
+	,f.[OrderOnHold]
+	,f.[HoldCode]
+	,f.[HoldReasonCode]
+	,f.[SalesOrderLineNumber]
+	,f.[SalesLineCreatedDate]
+	,f.[SalesLineCreatedDateKey]
+	--,f.[HistoricMarketSegmentationKey]  --Per Kevin Y 2026-02-02 historic value not needed
+	,f.[MarketSegmentationKey]
+	,f.[PurchaseOrderFormNumber]
+	,f.[DeliveryAddressKey]
+
+	,f.[CPCID]	CPCID2
+	,f.[ProductID]  ProductID2
+
+	, dpc.IsPhantom  IsPhantom2
 
 
+FROM [dbo].[tbl_Fact_Sales]  f
+LEFT JOIN mtbl_EDW_DIM_Product dpc
+	ON f.ProductID = dpc.Product_ID
+		and	f.CMPNY = dpc.CMPNY
+		AND dpc.Record_Status=1
 
-
-
-CREATE           view [dbo].[vw_EDW_Fact_Sales] as  
-SELECT [RecordID]
-	,[CMPNY]
-	,[SalesLine_Status]
-	,[DATE]
-	,[DATEKey]
-	,[OrderDate]
-	,[OrderDateKey]
-	,[SalesLine_RequestedShipDate]
-	,[SalesLine_RequestedShipDateKey]
-	,[SalesLine_ShipDate]
-	,[SalesLine_ShipDateKey]
-	,[SalesLine_DeliveryDate]
-	,[SalesLine_DeliveryDateKey]
-
-	,[InvoiceDate]
-	,[InvoiceDateKey]
-	,[Legal_Entity_ID]
-	,[CustomerID]
-	,[InvoiceAccount]
-	,[ProductID]
-
-	,[CPCID]
-	,[InvoiceNo]
-	,[Customer_Order_Number]
-	,[Quantity]
-	,[Quantity_UoM]
-	,[Quantity_LBs]
-	,[Volume]
-	,[Volume_UoM]
-	,[Price]
-	,[Currency]
-	,[Amount]
-	,[Amount_Currency]
-	,[Returned_Quantity]
-	,[Returned_Amount]
-	,[SalesLine_Salesman_ID]
-	,[Customer_Salesman_ID]
-	--,[Total_Direct_Cost_Standard]
-	--,[Total_Overhead_Cost_Standard]
-	--,[Packaging_Cost_Standard]
-	--,[TotalCost]
-	,CONVERT(varchar(50), [Source]) AS [Source]
-	,[HistoricCustomerKey]
-	,[CustomerKey]
-	,[HistoricProductKey]
-	,[ProductKey]
-	,[StandardCostKey]
-	,[Legal_EntityKey]
-	,[SiteKey]
-	,[SalesLine_EmployeeKey]
-	,[CustAcct_EmployeeKey]
-	,[SalesTaker_EmployeeKey]
-	,[WarehouseKey]
-	,[SalesOrderKey]
-	,[OnHold]
-	,[OrderOnHold]
-	,[HoldCode]
-	,[HoldReasonCode]
-	,[SalesOrderLineNumber]
-	,[SalesLineCreatedDate]
-	,[SalesLineCreatedDateKey]
-	--,[HistoricMarketSegmentationKey]  --Per Kevin Y 2026-02-02 historic value not needed
-	,[MarketSegmentationKey]
-	,[PurchaseOrderFormNumber]
-	,[DeliveryAddressKey]
-FROM [dbo].[tbl_Fact_Sales]
 
 Union ALL
 
@@ -177,7 +184,32 @@ Union ALL
 	,NULL [PurchaseOrderFormNumber]
 	,ISNULL(da.AddressKey, -1) [DeliveryAddressKey]
 
+	,case when isnull(dpc.isphantom,'') = 'Yes' 
+		THEN 
+			CASE WHEN s.Cmpny in ('001','002') then '101' 
+			 WHEN s.Cmpny = '101' THEN '301'  
+			 WHEN s.Cmpny = '201' THEN '501'
+			 WHEN s.CMPNY = '999' THEN '301'
+			 else s.Cmpny end
+				+'-'+ COALESCE(y.D365_CustomerID, s.CustomerID, 'UnknownCustomer')
+				+'-'+ s.Product 
+		ELSE 
+			CASE WHEN s.Cmpny in ('001','002') then '101' 
+			 WHEN s.Cmpny = '101' THEN '301'  
+			 WHEN s.Cmpny = '201' THEN '501'
+			 WHEN s.CMPNY = '999' THEN '301'
+			 else s.Cmpny end
+				+'-'+ COALESCE(y.D365_CustomerID, s.CustomerID, 'UnknownCustomer')
+				+'-'+ COALESCE(x.D365_ProductID, s.Product, 'UnknownProduct')
+		END CPCID2
+		,case when isnull(dpc.isphantom,'') = 'Yes'	
+			THEN s.Product   
+			ELSE COALESCE(x.D365_ProductID, s.Product)
+			END as ProductID2
+	, dpc.IsPhantom  IsPhantom2
+
 FROM [dbo].[legacy_tbl_Fact_Sales] s
+
  left join [dbo].[XREF_Product_ID] X 
 	ON s.Product = x.Apollo_ProductID  
 	  --AND case when s.Cmpny = '002' then '001' else s.Cmpny end = X.Company  --case statement not used as the XRef has the legacy company values = X.Company
@@ -408,13 +440,22 @@ SELECT  ABS(CAST(CAST(
 		 WHEN f.Cmpny = '201' THEN '501'
 		 WHEN f.CMPNY = '999' THEN '301'
 		 else f.Cmpny end as [Legal_Entity_ID]
---  , 'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6) as CustomerID - KY 4/8/26
-
-	, 'A'+f.Cmpny+trim([Customer No])+'000000' as CustomerID
-	
+--  , 'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6) as CustomerID -- KY 4/8/26
+--	, 'A'+f.Cmpny+trim([Customer No])+'000000' as CustomerID -- KY 6/15/26
+	, 'A' + f.Cmpny 
+       + TRIM(f.[Customer No])
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) as CustomerID
 	, null as [InvoiceAccount]
 	, COALESCE(x.D365_ProductID, f.Product)  ProductID
-	, 'A' + Trim(f.Cmpny) + Trim([Customer No]) + Trim([Ship To No]) + '---' + Trim(f.Product) AS CPCID
+	----,[CPCID]  ----replaced with CASE logic code below
+	,CASE WHEN f.Cmpny in ('001','002') then '101' 
+		 WHEN f.Cmpny = '101' THEN '301'  
+		 WHEN f.Cmpny = '201' THEN '501'
+		 WHEN f.CMPNY = '999' THEN '301'
+		 else f.Cmpny end
+			+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+			+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 	CPCID
+	----, 'A' + Trim(f.Cmpny) + Trim([Customer No]) + Trim([Ship To No]) + '---' + Trim(f.Product) AS CPCID
 	, [Invoice No]  InvoiceNo
 	, [Order No]  Customer_Order_Number
 	, null as [Quantity]
@@ -460,6 +501,30 @@ SELECT  ABS(CAST(CAST(
 	,NULL [PurchaseOrderFormNumber]
 	,ISNULL(da.AddressKey, -1) [DeliveryAddressKey]
 
+	,case when isnull(dpc.isphantom,'') = 'Yes' 
+		THEN 
+			CASE WHEN f.Cmpny in ('001','002') then '101' 
+				 WHEN f.Cmpny = '101' THEN '301'  
+				 WHEN f.Cmpny = '201' THEN '501'
+				 WHEN f.CMPNY = '999' THEN '301'
+				 else f.Cmpny end
+					+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+					+'-'+ Trim(f.Product) 
+		ELSE 
+			CASE WHEN f.Cmpny in ('001','002') then '101' 
+				 WHEN f.Cmpny = '101' THEN '301'  
+				 WHEN f.Cmpny = '201' THEN '501'
+				 WHEN f.CMPNY = '999' THEN '301'
+				 else f.Cmpny end
+					+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+					+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 
+		END CPCID2
+		,case when isnull(dpc.isphantom,'') = 'Yes'	
+			THEN f.Product   
+			ELSE COALESCE(x.D365_ProductID, f.Product)
+			END as ProductID2
+	, dpc.IsPhantom  IsPhantom2
+
 FROM tbl_RESULTSSLSBYYR_BVBA f
 
 left join mtbl_EDW_Dim_Date_Forex ddf on f.[Invoice Date] = ddf.date 
@@ -471,8 +536,11 @@ left join mtbl_EDW_Dim_Date_Forex ddf on f.[Invoice Date] = ddf.date
 LEFT JOIN mtbl_EDW_DIM_Account dc
 	--ON coalesce(y.D365_CustomerID, f.[Customer No])  = dc.Customer_ID
 --	ON f.[Customer No]  = dc.Customer_ID
---	ON 'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No]  as varchar(6)),6) = dc.Customer_ID - KY 4/8/26
-	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = dc.Customer_ID
+--	ON 'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No]  as varchar(6)),6) = dc.Customer_ID -- KY 4/8/26
+--	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = dc.Customer_ID -- KY 6/15/26
+	ON 'A' + f.Cmpny 
+       + TRIM(f.[Customer No])
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dc.Customer_ID
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
@@ -483,8 +551,11 @@ LEFT JOIN mtbl_EDW_DIM_Account dc
 LEFT JOIN mtbl_EDW_DIM_Account dcc
 	--ON coalesce(y.D365_CustomerID, f.[Customer No])  = dc.Customer_ID
 --	ON f.[Customer No]  = dc.Customer_ID
---	ON'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6) = dcc.Customer_ID - KY 4/8/26
-	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = dcc.Customer_ID
+--	ON'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6) = dcc.Customer_ID -- KY 4/8/26
+--	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = dcc.Customer_ID -- KY 6/15/26
+	ON 'A' + f.Cmpny 
+       + TRIM(f.[Customer No])
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dcc.Customer_ID
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
@@ -560,7 +631,9 @@ LEFT JOIN mtbl_EDW_DIM_Warehouse dw
 			END = dw.Warehouse_ID
 
 LEFT JOIN [dbo].[tbl_DIM_Accounts] lda --Legacy Account data with Salesman needed
-	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = lda.CustomerID
+	ON 'A' + f.Cmpny 
+       + TRIM(f.[Customer No])
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = lda.CustomerID
 		AND f.Cmpny = lda.CMPNY
 		AND lda.RecordStatus=1
 
@@ -595,7 +668,9 @@ LEFT JOIN mtbl_EDW_DIM_Employee de3
 --		AND CONVERT(datetime2(6), [Ord Date] ) between dms.RecordEffectiveStartDate and dms.RecordEffectiveEndDate  --Per Kevin Y 2026-02-02 historic value not needed
 
 LEFT JOIN mtbl_EDW_DIM_MarketSegmentation dmsc
-	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = dmsc.CustomerID
+	ON 'A' + f.Cmpny 
+       + TRIM(f.[Customer No])
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dmsc.CustomerID
 		AND COALESCE(x.D365_ProductID, f.Product) = dmsc.ProductID
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
@@ -671,7 +746,11 @@ SELECT  ABS(CAST(CAST(
 	, 'A201'+Trim(f.[Customer No])+'000000'  CustomerID
 	, null as [InvoiceAccount]
 	, COALESCE(x.D365_ProductID, f.[Product Name])  ProductID
-	, 'A201'+Trim(f.[Customer No])+'000000'+'---'+Trim(f.[Product Name]) AS CPCID
+	----,[CPCID]  ----replaced with CASE logic code below
+	,'501'
+			+'-'+ COALESCE(Trim(f.[Customer No]) + '000000', 'UnknownCustomer')
+			+'-'+ COALESCE(x.D365_ProductID, Trim(f.[Product Name]), 'UnknownProduct') 	CPCID
+	----, 'A201'+Trim(f.[Customer No])+'000000'+'---'+Trim(f.[Product Name]) AS CPCID
 	, [Invoice No]  InvoiceNo
 	, [Order No]  Customer_Order_Number
 	, null as [Quantity]
@@ -716,6 +795,23 @@ SELECT  ABS(CAST(CAST(
 	, ISNULL(dmsc.MarketSegmentationKey, -1) MarketSegmentationKey
 	,NULL [PurchaseOrderFormNumber]
 	,ISNULL(da.AddressKey, -1) [DeliveryAddressKey]
+
+
+	,case when isnull(dpc.isphantom,'') = 'Yes' 
+		THEN 
+				'501'
+				+'-'+ COALESCE(Trim(f.[Customer No]) + '000000', 'UnknownCustomer')
+				+'-'+ Trim(f.[Product Name])
+		ELSE 
+				'501'
+				+'-'+ COALESCE(Trim(f.[Customer No]) + '000000', 'UnknownCustomer')
+				+'-'+ COALESCE(x.D365_ProductID, Trim(f.[Product Name]), 'UnknownProduct') 
+		END CPCID2
+		,case when isnull(dpc.isphantom,'') = 'Yes'	
+			THEN f.[Product Name]   
+			ELSE COALESCE(x.D365_ProductID, f.[Product Name])
+			END as ProductID2
+	, dpc.IsPhantom  IsPhantom2
 
 from tbl_RESULTSSLSBYYR_TEDA f
 left join [dbo].[XREF_Product_ID] X 
@@ -894,10 +990,20 @@ SELECT  ABS(CAST(CAST(
 		 else f.Cmpny end as [Legal_Entity_ID]
 
 --	, 'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6) as CustomerID -- KY 4/8/26
-	, 'A'+f.Cmpny+trim([Customer No])+'000000' as CustomerID
+	, 'A' + f.Cmpny 
+       + TRIM(f.[Customer No])
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) as CustomerID
 	, null as [InvoiceAccount]
 	, COALESCE(x.D365_ProductID, f.Product)  ProductID
-	, 'A'+Trim(f.Cmpny)+Trim([Customer No])+Trim([Ship To No])+'---'+Trim(Product) AS CPCID
+	----,[CPCID]  ----replaced with CASE logic code below
+	,CASE WHEN f.Cmpny in ('001','002') then '101' 
+		 WHEN f.Cmpny = '101' THEN '301'  
+		 WHEN f.Cmpny = '201' THEN '501'
+		 WHEN f.CMPNY = '999' THEN '301'
+		 else f.Cmpny end
+			+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+			+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 	CPCID
+	--, 'A'+Trim(f.Cmpny)+Trim([Customer No])+Trim([Ship To No])+'---'+Trim(Product) AS CPCID
 	, [Invoice No]  InvoiceNo
 	, [Order No]  Customer_Order_Number
 	, null as [Quantity]
@@ -944,6 +1050,30 @@ SELECT  ABS(CAST(CAST(
 	,NULL [PurchaseOrderFormNumber]
 	,ISNULL(da.AddressKey, -1) [DeliveryAddressKey]
 
+	,case when isnull(dpc.isphantom,'') = 'Yes' 
+		THEN 
+			CASE WHEN f.Cmpny in ('001','002') then '101' 
+				 WHEN f.Cmpny = '101' THEN '301'  
+				 WHEN f.Cmpny = '201' THEN '501'
+				 WHEN f.CMPNY = '999' THEN '301'
+				 else f.Cmpny end
+					+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+					+'-'+ Trim(f.Product) 
+		ELSE 
+			CASE WHEN f.Cmpny in ('001','002') then '101' 
+				 WHEN f.Cmpny = '101' THEN '301'  
+				 WHEN f.Cmpny = '201' THEN '501'
+				 WHEN f.CMPNY = '999' THEN '301'
+				 else f.Cmpny end
+					+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+					+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 
+		END CPCID2
+		,case when isnull(dpc.isphantom,'') = 'Yes'	
+			THEN f.Product   
+			ELSE COALESCE(x.D365_ProductID, f.Product)
+			END as ProductID2
+	, dpc.IsPhantom  IsPhantom2
+
 from tbl_RESULTSSLSBYYR_BVBA_Open f
 
 left join mtbl_EDW_Dim_Date_Forex ddf on f.[Ord Date] = ddf.date 
@@ -955,8 +1085,11 @@ left join mtbl_EDW_Dim_Date_Forex ddf on f.[Ord Date] = ddf.date
 LEFT JOIN mtbl_EDW_DIM_Account dc
 	--ON coalesce(y.D365_CustomerID, f.[Customer No])  = dc.Customer_ID
 --	ON f.[Customer No]  = dc.Customer_ID
-	ON 'A'+f.Cmpny+trim([Customer No])+'000000'  = dc.Customer_ID
+--	ON 'A'+f.Cmpny+trim([Customer No])+'000000'  = dc.Customer_ID
 		--'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6)  = dc.Customer_ID
+	ON 'A' + f.Cmpny 
+       + TRIM(f.[Customer No])
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dc.Customer_ID
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
@@ -967,8 +1100,11 @@ LEFT JOIN mtbl_EDW_DIM_Account dc
 LEFT JOIN mtbl_EDW_DIM_Account dcc
 	--ON coalesce(y.D365_CustomerID, f.[Customer No])  = dc.Customer_ID
 --	ON f.[Customer No]  = dc.Customer_ID
-	ON 'A'+f.Cmpny+trim([Customer No])+'000000'  = dcc.Customer_ID
+--	ON 'A'+f.Cmpny+trim([Customer No])+'000000'  = dcc.Customer_ID
 		--'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6)  = dcc.Customer_ID
+	ON 'A' + f.Cmpny 
+       + TRIM(f.[Customer No])
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dcc.Customer_ID
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
@@ -1041,7 +1177,9 @@ LEFT JOIN mtbl_EDW_DIM_Warehouse dw
 
 LEFT JOIN [dbo].[tbl_DIM_Accounts] lda --Legacy Account data with Salesman needed
 	--ON f.[Customer No] = lda.CustomerID
-	ON 'A'+f.Cmpny+trim(f.[Customer No])+'000000' = lda.CustomerID
+	ON 'A' + f.Cmpny 
+       + TRIM(f.[Customer No])
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = lda.CustomerID
 		AND f.Cmpny = lda.CMPNY
 		AND lda.RecordStatus=1
 
@@ -1076,7 +1214,9 @@ LEFT JOIN mtbl_EDW_DIM_Employee de3
 --		AND CONVERT(datetime2(6), [Ord Date] ) between dms.RecordEffectiveStartDate and dms.RecordEffectiveEndDate  --Per Kevin Y 2026-02-02 historic value not needed
 
 LEFT JOIN mtbl_EDW_DIM_MarketSegmentation dmsc
-	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = dmsc.CustomerID
+	ON 'A' + f.Cmpny 
+       + TRIM(f.[Customer No])
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dmsc.CustomerID
 		AND COALESCE(x.D365_ProductID, f.Product) = dmsc.ProductID
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
@@ -1154,7 +1294,11 @@ SELECT  ABS(CAST(CAST(
 	, 'A201'+Trim(f.[Customer No])+'000000' CustomerID
 	, null as [InvoiceAccount]
 	, COALESCE(x.D365_ProductID, f.[Product Name])  ProductID
-	, 'A201'+Trim([Customer No])+'000000'+'---'+Trim([Product Name]) AS CPCID
+	----,[CPCID]  ----replaced with CASE logic code below
+	,'501'
+			+'-'+ COALESCE(Trim(f.[Customer No]) + '000000', 'UnknownCustomer')
+			+'-'+ COALESCE(x.D365_ProductID, Trim(f.[Product Name]), 'UnknownProduct') 	CPCID
+	--, 'A201'+Trim([Customer No])+'000000'+'---'+Trim([Product Name]) AS CPCID
 	, [Invoice No]  InvoiceNo
 	, [Order No]  Customer_Order_Number
 	, null as [Quantity]
@@ -1199,6 +1343,22 @@ SELECT  ABS(CAST(CAST(
 	, ISNULL(dmsc.MarketSegmentationKey, -1) MarketSegmentationKey
 	,NULL [PurchaseOrderFormNumber]
 	,ISNULL(da.AddressKey, -1) [DeliveryAddressKey]
+
+	,case when isnull(dpc.isphantom,'') = 'Yes' 
+		THEN 
+				'501'
+				+'-'+ COALESCE(Trim(f.[Customer No]) + '000000', 'UnknownCustomer')
+				+'-'+ Trim(f.[Product Name])
+		ELSE 
+				'501'
+				+'-'+ COALESCE(Trim(f.[Customer No]) + '000000', 'UnknownCustomer')
+				+'-'+ COALESCE(x.D365_ProductID, Trim(f.[Product Name]), 'UnknownProduct') 
+		END CPCID2
+		,case when isnull(dpc.isphantom,'') = 'Yes'	
+			THEN f.[Product Name]   
+			ELSE COALESCE(x.D365_ProductID, f.[Product Name])
+			END as ProductID2
+	, dpc.IsPhantom  IsPhantom2
 
 from tbl_RESULTSSLSBYYR_TEDA f
 left join [dbo].[XREF_Product_ID] X 
@@ -1399,6 +1559,11 @@ UNION ALL
 	,NULL [PurchaseOrderFormNumber]
 	, -1 [DeliveryAddressKey]
 
+
+	,NULL CPCID2
+	,NULL ProductID2
+	,NULL  IsPhantom2
+
 FROM [dbo].[tbl_Reconciliation_Adjustments] s
 left outer join (select [Reconciliation Year], min(date) Date, min(datekey) DateKey FROM [dbo].[tbl_Dim_Date] group by [Reconciliation Year]) d on
 d.[Reconciliation Year] = s.[Reconciliation_Year]
@@ -1473,11 +1638,21 @@ SELECT  ABS(CAST(CAST(
 --	, 'A'+f.Cmpny+trim([Customer No])+'000000' as CustomerID
 
 --	, 'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6) as CustomerID - KY 4/8/26
-	, 'A'+f.Cmpny+trim([Customer No])+'000000' as CustomerID
+	, 'A' + f.Cmpny 
+       + TRIM(f.[Customer No])
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) as CustomerID
 	
 	, null as [InvoiceAccount]
 	, COALESCE(x.D365_ProductID, f.Product)  ProductID
-	, 'A' + Trim(f.Cmpny) + Trim([Customer No]) + Trim([Ship To No]) + '---' + Trim(f.Product) AS CPCID
+	----,[CPCID]  ----replaced with CASE logic code below
+	,CASE WHEN f.Cmpny in ('001','002') then '101' 
+		 WHEN f.Cmpny = '101' THEN '301'  
+		 WHEN f.Cmpny = '201' THEN '501'
+		 WHEN f.CMPNY = '999' THEN '301'
+		 else f.Cmpny end
+			+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+			+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 	CPCID
+	--, 'A' + Trim(f.Cmpny) + Trim([Customer No]) + Trim([Ship To No]) + '---' + Trim(f.Product) AS CPCID
 	, [Invoice No]  InvoiceNo
 	, [Order No]  Customer_Order_Number
 	, null as [Quantity]
@@ -1523,6 +1698,30 @@ SELECT  ABS(CAST(CAST(
 	,NULL [PurchaseOrderFormNumber]
 	,ISNULL(da.AddressKey, -1) [DeliveryAddressKey]
 
+	,case when isnull(dpc.isphantom,'') = 'Yes' 
+		THEN 
+			CASE WHEN f.Cmpny in ('001','002') then '101' 
+				 WHEN f.Cmpny = '101' THEN '301'  
+				 WHEN f.Cmpny = '201' THEN '501'
+				 WHEN f.CMPNY = '999' THEN '301'
+				 else f.Cmpny end
+					+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+					+'-'+ Trim(f.Product) 
+		ELSE 
+			CASE WHEN f.Cmpny in ('001','002') then '101' 
+				 WHEN f.Cmpny = '101' THEN '301'  
+				 WHEN f.Cmpny = '201' THEN '501'
+				 WHEN f.CMPNY = '999' THEN '301'
+				 else f.Cmpny end
+					+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+					+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 
+		END CPCID2
+		,case when isnull(dpc.isphantom,'') = 'Yes'	
+			THEN f.Product   
+			ELSE COALESCE(x.D365_ProductID, f.Product)
+			END as ProductID2
+	, dpc.IsPhantom  IsPhantom2
+
 FROM tbl_RESULTSSLSBYYR_BVBA_Thru2025 f
 
 left join mtbl_EDW_Dim_Date_Forex ddf on f.[Invoice Date] = ddf.date 
@@ -1534,8 +1733,11 @@ left join mtbl_EDW_Dim_Date_Forex ddf on f.[Invoice Date] = ddf.date
 LEFT JOIN mtbl_EDW_DIM_Account dc
 	--ON coalesce(y.D365_CustomerID, f.[Customer No])  = dc.Customer_ID
 --	ON f.[Customer No]  = dc.Customer_ID
-	ON 'A'+f.Cmpny+trim([Customer No])+'000000'  = dc.Customer_ID
+--	ON 'A'+f.Cmpny+trim([Customer No])+'000000'  = dc.Customer_ID
 		--'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No]  as varchar(6)),6) = dc.Customer_ID
+	ON 'A' + f.Cmpny 
+       + TRIM(f.[Customer No])
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dc.Customer_ID
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
@@ -1546,8 +1748,11 @@ LEFT JOIN mtbl_EDW_DIM_Account dc
 LEFT JOIN mtbl_EDW_DIM_Account dcc
 	--ON coalesce(y.D365_CustomerID, f.[Customer No])  = dc.Customer_ID
 --	ON f.[Customer No]  = dc.Customer_ID
-	ON 'A'+f.Cmpny+trim([Customer No])+'000000'  = dcc.Customer_ID
+--	ON 'A'+f.Cmpny+trim([Customer No])+'000000'  = dcc.Customer_ID
 		--'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6) = dcc.Customer_ID
+	ON 'A' + f.Cmpny 
+       + TRIM(f.[Customer No])
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dcc.Customer_ID
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
@@ -1623,7 +1828,9 @@ LEFT JOIN mtbl_EDW_DIM_Warehouse dw
 			END = dw.Warehouse_ID
 
 LEFT JOIN [dbo].[tbl_DIM_Accounts] lda --Legacy Account data with Salesman needed
-	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = lda.CustomerID
+	ON 'A' + f.Cmpny 
+       + TRIM(f.[Customer No])
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = lda.CustomerID
 		AND f.Cmpny = lda.CMPNY
 		AND lda.RecordStatus=1
 
@@ -1658,7 +1865,9 @@ LEFT JOIN mtbl_EDW_DIM_Employee de3
 --		AND CONVERT(datetime2(6), [Ord Date] ) between dms.RecordEffectiveStartDate and dms.RecordEffectiveEndDate  --Per Kevin Y 2026-02-02 historic value not needed
 
 LEFT JOIN mtbl_EDW_DIM_MarketSegmentation dmsc
-	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = dmsc.CustomerID
+	ON 'A' + f.Cmpny 
+       + TRIM(f.[Customer No])
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dmsc.CustomerID
 		AND COALESCE(x.D365_ProductID, f.Product) = dmsc.ProductID
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
@@ -1734,7 +1943,11 @@ SELECT  ABS(CAST(CAST(
 	, 'A201'+Trim(f.[Customer No])+'000000'  CustomerID
 	, null as [InvoiceAccount]
 	, COALESCE(x.D365_ProductID, f.[Product Name])  ProductID
-	, 'A201'+Trim(f.[Customer No])+'000000'+'---'+Trim(f.[Product Name]) AS CPCID
+	----,[CPCID]  ----replaced with CASE logic code below
+	,'501'
+			+'-'+ COALESCE(Trim(f.[Customer No]) + '000000', 'UnknownCustomer')
+			+'-'+ COALESCE(x.D365_ProductID, Trim(f.[Product Name]), 'UnknownProduct') 	CPCID
+	--, 'A201'+Trim(f.[Customer No])+'000000'+'---'+Trim(f.[Product Name]) AS CPCID
 	, [Invoice No]  InvoiceNo
 	, [Order No]  Customer_Order_Number
 	, null as [Quantity]
@@ -1779,6 +1992,22 @@ SELECT  ABS(CAST(CAST(
 	, ISNULL(dmsc.MarketSegmentationKey, -1) MarketSegmentationKey
 	,NULL [PurchaseOrderFormNumber]
 	,ISNULL(da.AddressKey, -1) [DeliveryAddressKey]
+
+	,case when isnull(dpc.isphantom,'') = 'Yes' 
+		THEN 
+				'501'
+				+'-'+ COALESCE(Trim(f.[Customer No]) + '000000', 'UnknownCustomer')
+				+'-'+ Trim(f.[Product Name])
+		ELSE 
+				'501'
+				+'-'+ COALESCE(Trim(f.[Customer No]) + '000000', 'UnknownCustomer')
+				+'-'+ COALESCE(x.D365_ProductID, Trim(f.[Product Name]), 'UnknownProduct') 
+		END CPCID2
+		,case when isnull(dpc.isphantom,'') = 'Yes'	
+			THEN f.[Product Name]   
+			ELSE COALESCE(x.D365_ProductID, f.[Product Name])
+			END as ProductID2
+	, dpc.IsPhantom  IsPhantom2
 
 from tbl_RESULTSSLSBYYR_TEDA_Thru2025 f
 left join [dbo].[XREF_Product_ID] X 
@@ -1899,6 +2128,3 @@ LEFT JOIN (SELECT street
 where 
 [Customer No] not in ('68600F','68700F','69600F','N06044','N08032','N09900','C1E201')
 and isNull([Invoice No],'0')<>'0'
-
-GO
-

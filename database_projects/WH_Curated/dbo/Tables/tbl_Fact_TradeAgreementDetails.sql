@@ -1,27 +1,24 @@
 CREATE TABLE [dbo].[tbl_Fact_TradeAgreementDetails] (
-    [Company]              VARCHAR (8000)   NULL,
-    [AgreementId]          VARCHAR (8000)   NULL,
-    [Posted]               VARCHAR (3)      NULL,
-    [Price]                DECIMAL (38, 6)  NULL,
-    [Currency]             VARCHAR (8000)   NULL,
-    [PriceUnit]            DECIMAL (38, 12) NULL,
-    [Unit]                 VARCHAR (8000)   NULL,
-    [ValidFrom]            DATETIME2 (6)    NULL,
-    [ValidTo]              DATETIME2 (6)    NULL,
-    [QtyFrom]              DECIMAL (38, 6)  NULL,
-    [QtyTo]                DECIMAL (38, 6)  NULL,
-    [PostedDateKey]        INT              NULL,
-    [IsRecent]             INT              NOT NULL,
-    [CustomerAccount]      VARCHAR (8000)   NULL,
-    [CustomerKey]          BIGINT           NOT NULL,
-    [CompanyChain]         VARCHAR (1000)   NULL,
-    [ItemNumber]           VARCHAR (8000)   NULL,
-    [ProductKey]           BIGINT           NOT NULL,
-    [Legal_EntityKey]      BIGINT           NOT NULL,
-    [TradeAgreementKey]    BIGINT           NOT NULL,
-    [CustAcct_EmployeeKey] BIGINT           NOT NULL
+
+	[Company] varchar(8000) NULL, 
+	[AgreementId] varchar(8000) NULL, 
+	[Posted] varchar(3) NULL, 
+	[Price] decimal(38,6) NULL, 
+	[Currency] varchar(8000) NULL, 
+	[PriceUnit] decimal(38,12) NULL, 
+	[Unit] varchar(8000) NULL, 
+	[ValidFrom] datetime2(6) NULL, 
+	[ValidTo] datetime2(6) NULL, 
+	[QtyFrom] decimal(38,6) NULL, 
+	[QtyTo] decimal(38,6) NULL, 
+	[PostedDateKey] int NULL, 
+	[IsRecent] int NOT NULL, 
+	[CustomerAccount] varchar(8000) NULL, 
+	[CustomerKey] bigint NOT NULL, 
+	[CompanyChain] varchar(1000) NULL, 
+	[ItemNumber] varchar(8000) NULL, 
+	[ProductKey] bigint NOT NULL, 
+	[Legal_EntityKey] bigint NOT NULL, 
+	[TradeAgreementKey] bigint NOT NULL, 
+	[CustAcct_EmployeeKey] bigint NOT NULL
 );
-
-
-GO
-

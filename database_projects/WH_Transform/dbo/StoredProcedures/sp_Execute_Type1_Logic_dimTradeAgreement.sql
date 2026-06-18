@@ -1,6 +1,3 @@
-
-
-
 -- USE WH_Transform
 
 CREATE   PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimTradeAgreement]
@@ -146,6 +143,3 @@ BEGIN
     DROP TABLE IF EXISTS stage_tbl_DIM_TradeAgreement_Type1_OnlyUpdatedRecords;
 
 END;
-
-GO
-

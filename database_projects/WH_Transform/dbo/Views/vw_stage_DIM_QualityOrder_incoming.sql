@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 7525A2A192EE827C3F6F1C92417E82C542540DDA7340226516776C65B80407B6
 /****** Object:  View [dbo].[vw_stage_DIM_QualityOrder_incoming]    Script Date: 5/27/2026 8:28:07 AM ******/
 
 CREATE       VIEW [dbo].[vw_stage_DIM_QualityOrder_incoming]			
@@ -60,6 +61,3 @@ SELECT -1 [QualityOrderKey]
 , NULL [RecordEffectiveStartDate]
 , NULL [RecordEffectiveEndDate]
 , NULL [RecordStatus]
-
-GO
-

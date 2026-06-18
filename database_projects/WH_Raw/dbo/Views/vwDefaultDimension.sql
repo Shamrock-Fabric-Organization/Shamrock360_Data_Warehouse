@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) AF0BD3952448F4A05AD3DFA599915E50C8254E25A55B2763FA1006CA1610A73C
 
 
 
@@ -130,6 +131,3 @@ FROM (select distinct DEFAULTDIMENSION from DefaultDimensionView) R
 		--		S.[DEFAULTDIMENSION]
 		--) S7 ON
 		--	S7.[~Key] = R.[DefaultDimension]
-
-GO
-

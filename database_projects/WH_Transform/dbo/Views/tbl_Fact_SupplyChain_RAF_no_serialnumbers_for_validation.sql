@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 895D47B0B49C0E0678B61C5FEADD015C13BEC3D33114F00E024D181BB61D227A
 /****** Object:  View [dbo].[tbl_Fact_SupplyChain_RAF]    Script Date: 3/11/2026 8:38:02 AM ******/
 /****** Object:  View [dbo].[tbl_Fact_SupplyChain_RAF]    Script Date: 2/24/2026 12:50:27 PM ******/
 
@@ -84,6 +85,3 @@ WHERE
 ----and    
 pjt.journaltype_$Label = 'ReportFinished'
 --ORDER BY pjp.ProdId, pjp.JournalId, pt.ItemId
-
-GO
-

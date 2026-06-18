@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 918D09B14DE89A64A917CC35FBE604093D910CDE2A076072F7E4F3C94488DD11
 
 --use WH_Transform
 --select count(1) from [vw_stage_NewAddress]
@@ -42,6 +43,3 @@ WHERE NOT EXISTS (
         AND Target.Source<>'D365FO'
 )
 ;
-
-GO
-

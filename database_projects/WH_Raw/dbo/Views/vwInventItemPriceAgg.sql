@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) A673B938623B6BCEBDFFB4F7084ABF11353549E6012EEE5749980AEB865BAA29
 
 
 CREATE   VIEW vwInventItemPriceAgg
@@ -23,6 +24,3 @@ join vwInventItemPrice l
 	and a.todate = l.todate
 	and a.pricetype = l.pricetype
 	and a.createddatetime = l.createddatetime
-
-GO
-

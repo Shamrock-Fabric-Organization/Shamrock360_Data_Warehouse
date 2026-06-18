@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) A6BB70D5D65F402870AC895A284A3FCB4DE1AE8603C40BE1528060B39BEA1611
 
 	CREATE   VIEW [dbo].[purchtable]
 	AS
@@ -723,6 +724,3 @@
 			END AS vatnumtabletype_$label
 	FROM [dataverse_stiprod_cds2_workspace_unqce8cf9ab47aff01187066045bdff8].dbo.purchtable
 	WHERE purchtable.IsDelete IS NULL
-
-GO
-

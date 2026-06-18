@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) DC5FD7703ED2BA1B51AE33C366D3079606CD8AF1F6D956D6A37F2524C5441E80
 /****** Object:  View [dbo].[tbl_Fact_SupplyChain_RAF]    Script Date: 5/1/2026 9:23:23 AM ******/
 
 
@@ -601,6 +602,3 @@ LEFT JOIN (
     AND d.ProdId = qrank2.inventrefid
 
 --where d.ProdId = 'PBO0000228'
-
-GO
-

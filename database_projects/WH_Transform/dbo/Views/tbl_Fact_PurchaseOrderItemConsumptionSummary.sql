@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 642A1DDAA044535EFEA08BDFEBA4F04B764FA767010B43F20CE649288F1E45D9
 /****** Object:  View [dbo].[tbl_Fact_PurchaseOrderItemConsumptionSummary]    Script Date: 3/6/2026 1:54:46 PM ******/
 
 /*
@@ -263,6 +264,3 @@ GROUP by CMPNY
 , WarehouseKey
 , PurchaseOrerKey
 , BatchKey
-
-GO
-

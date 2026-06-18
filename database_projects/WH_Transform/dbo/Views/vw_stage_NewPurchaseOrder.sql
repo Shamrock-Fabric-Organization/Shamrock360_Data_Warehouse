@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) ED39E76CB2B960F3C47742C7D2AFC3C96D8591B4D2820E1A57A56C10DCCBC381
 /****** Object:  View [dbo].[vw_stage_NewPurchaseOrder]    Script Date: 2/3/2026 1:53:07 PM ******/
 /****** Object:  View [dbo].[vw_stage_NewPurchaseOrder]    Script Date: 1/26/2026 12:44:15 PM ******/
 
@@ -50,6 +51,3 @@ WHERE NOT EXISTS (
 			AND Target.CMPNY = Source.CMPNY
 			AND Target.RecordStatus = 1
 		);
-
-GO
-

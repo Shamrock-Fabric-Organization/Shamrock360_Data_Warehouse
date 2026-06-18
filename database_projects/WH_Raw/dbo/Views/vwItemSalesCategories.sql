@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) E8402C50B2B6F94FB35739886A84B0DA1DF7E2DADC99D57C0BC6EB28B2DE9B78
 CREATE   VIEW vwItemSalesCategories
 as
 SELECT IT.DATAAREAID
@@ -78,6 +79,3 @@ WHERE ECH.Name = 'Sales Categories'
 --JOIN EcoResCategoryHierarchy ECH
 --	ON EC_L1.CategoryHierarchy = ECH.RecId
 --WHERE ECH.Name = 'Sales Categories'
-
-GO
-

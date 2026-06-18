@@ -1,7 +1,3 @@
-
-
-
-
 CREATE       PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimVendor]
 AS
 BEGIN
@@ -272,6 +268,3 @@ BEGIN
 	---- Drop the staging/source table after processing is complete -- not needed using a view for incoming data
 	--DROP TABLE IF EXISTS vw_stage_DIM_Vendor_incoming;
 END;
-
-GO
-

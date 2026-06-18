@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 00D8A384DC19110001EA31135E9B1CBD2AB164D5BEC3AA6E1D8FC7314979319B
 /****** Object:  View [dbo].[tbl_Fact_Customer_Invoices]    Script Date: 5/19/2026 4:15:43 PM ******/
 /****** Object:  View [dbo].[tbl_Fact_Customer_Invoices]    Script Date: 4/23/2026 2:42:06 PM ******/
 
@@ -224,6 +225,3 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_SalesOrder dso
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Address da
 	ON cit.deliverypostaladdress = da.AddressRecID
 		AND dso.RecordStatus=1
-
-GO
-

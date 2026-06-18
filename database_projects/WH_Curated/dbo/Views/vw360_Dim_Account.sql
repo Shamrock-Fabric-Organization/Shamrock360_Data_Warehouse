@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) CE175AB05553D0D8829CCD54CF44A82AF977F1CF1685CD98E5EEE78D76C14E82
 /****** Object:  View [dbo].[vw360_Dim_Account]    Script Date: 5/4/2026 10:21:53 AM ******/
 /****** Object:  View [dbo].[vw360_Dim_Account]    Script Date: 5/1/2026 3:20:03 PM ******/
 --drop view [vw360_Dim_Account]
@@ -137,6 +138,3 @@ SELECT [CustomerKey] as Recid
 
 	left join [dbo].[XREF_Salesman_ID] S ON S.D365_SalesmanID = c.Salesman_ID 
      where RecordStatus='1'
-
-GO
-

@@ -1,6 +1,3 @@
-
-
-
 --truncate table tbl_DIM_SerialNumber
 
 CREATE           PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimSerialNumber]
@@ -230,6 +227,3 @@ BEGIN
 	---- Drop the staging/source table after processing is complete -- not needed using a view for incoming data
 	--DROP TABLE IF EXISTS vw_stage_DIM_SerialNumber_incoming;
 END;
-
-GO
-

@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 133CAD7D5FC8F57ED5109328B8EE5881010CCCEBCF0906805577AB2C28EBD709
 
 
 
@@ -35,6 +36,3 @@ Cast([Gross Margin] as float) as GrossMargin,
 [DataUpdateDate],
 [Source]
 from tbl_dlyorder
-
-GO
-

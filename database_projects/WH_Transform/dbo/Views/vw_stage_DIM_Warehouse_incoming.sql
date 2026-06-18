@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) BC8B5070B9A7897AD1FEC5FF3F48ACCE232A66B3934FCEA87D0904DEF858ACCF
 
 /****** Object:  View [dbo].[vw_stage_DIM_Customer_incoming]    Script Date: 9/2/2025 1:02:23 PM ******/
 --drop  VIEW dbo.[vw_stage_DIM_Warehouse_incoming]	
@@ -77,6 +78,3 @@ SELECT -3 [WarehouseKey]
 	,NULL [RecordEffectiveStartDate]
 	,NULL [RecordEffectiveEndDate]
 	,NULL [RecordStatus]
-
-GO
-

@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) AF4CABC8655942F0927E017334587BF9E477C5B0D66B6BE417DAB23E6FA28B5E
 
 
 
@@ -63,6 +64,3 @@ SELECT -1 [SiteKey]
 , NULL [RecordEffectiveStartDate]
 , NULL [RecordEffectiveEndDate]
 , NULL [RecordStatus]
-
-GO
-

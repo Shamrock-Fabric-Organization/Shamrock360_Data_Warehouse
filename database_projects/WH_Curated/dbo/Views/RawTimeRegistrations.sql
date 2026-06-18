@@ -1,6 +1,4 @@
+-- Auto Generated (Do not modify) 88EB0F5F181F9E59F809E9F38692F21A2804AFDA3525567AF9AF84D329868443
 
 CREATE VIEW RawTimeRegistrations as
 SELECT * FROM WH_Raw.dbo.jmgtermreg
-
-GO
-

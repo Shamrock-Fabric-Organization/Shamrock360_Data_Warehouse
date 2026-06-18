@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 9BE3A25373107DF47852DFE90A65FDA5B8C9378CD7A3B6F15B039FEFE44E9BB8
 
 	CREATE   VIEW  salesline 
 	AS
@@ -857,6 +858,3 @@
 			END AS unbilledrevenuecredit_$label
 	FROM [dataverse_stiprod_cds2_workspace_unqce8cf9ab47aff01187066045bdff8].dbo.salesline
 	WHERE salesline.IsDelete IS NULL
-
-GO
-

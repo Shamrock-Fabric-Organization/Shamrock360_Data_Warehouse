@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) D59BA5D7AEB05055D7B067B163C3362E9F5F696C2DF4F28D3D5BC747C1EA2843
 --use WH_Transform
 --go
 
@@ -174,6 +175,3 @@ SELECT
 , NULL RecordEffectiveStartDate
 , NULL RecordEffectiveEndDate
 , NULL RecordStatus
-
-GO
-

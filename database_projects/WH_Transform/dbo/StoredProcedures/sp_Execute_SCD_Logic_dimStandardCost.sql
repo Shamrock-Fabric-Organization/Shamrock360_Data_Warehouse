@@ -1,6 +1,3 @@
-
-
-
 CREATE     PROCEDURE [dbo].[sp_Execute_SCD_Logic_dimStandardCost]
 AS
 BEGIN
@@ -407,6 +404,3 @@ BEGIN
     DROP TABLE IF EXISTS stage_tbl_DIM_StandardCost_Append;
     DROP TABLE IF EXISTS stage_tbl_DIM_StandardCost_Append_Extended;
 END;
-
-GO
-

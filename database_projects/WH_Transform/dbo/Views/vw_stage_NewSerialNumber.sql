@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 5A46B0A20DAB48653D8C632DDC890831475AA94165A699262AC9415C0BDD9EA7
 /****** Object:  View [dbo].[vw_stage_NewSerialNumber]    Script Date: 4/17/2026 2:31:40 PM ******/
 /****** Object:  View [dbo].[vw_stage_NewSerialNumber]    Script Date: 3/10/2026 10:14:57 AM ******/
 
@@ -26,6 +27,3 @@ WHERE NOT EXISTS (
 			AND Target.[CMPNY] = Source.[CMPNY]
 			AND Target.RecordStatus = 1
 		);
-
-GO
-

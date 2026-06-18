@@ -1,5 +1,3 @@
-
-
 CREATE     PROCEDURE [dbo].[sp_Process_Exploded_BOM_Costing_Snapshot]
 AS
 BEGIN
@@ -2613,6 +2611,3 @@ BEGIN
     DROP TABLE IF EXISTS stage_expbom_EndDates;    -- v5: new staging table
 
 END
-
-GO
-

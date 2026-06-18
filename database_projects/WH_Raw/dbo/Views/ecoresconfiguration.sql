@@ -1,7 +1,5 @@
+-- Auto Generated (Do not modify) 8CC24A54729D6789DCAE9474D2BD07FBE49560BC611F0D6A69A03E9A7DE3C738
 
       CREATE   VIEW dbo.ecoresconfiguration AS 
       SELECT [ecoresconfiguration].[Id] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [Id],[ecoresconfiguration].[SinkCreatedOn] AS [SinkCreatedOn],[ecoresconfiguration].[SinkModifiedOn] AS [SinkModifiedOn],[ecoresconfiguration].[sysdatastatecode] AS [sysdatastatecode],[ecoresconfiguration].[name] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [name],[ecoresconfiguration].[modifieddatetime] AS [modifieddatetime],[ecoresconfiguration].[modifiedby] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [modifiedby],[ecoresconfiguration].[modifiedtransactionid] AS [modifiedtransactionid],[ecoresconfiguration].[createddatetime] AS [createddatetime],[ecoresconfiguration].[createdby] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [createdby],[ecoresconfiguration].[createdtransactionid] AS [createdtransactionid],[ecoresconfiguration].[dataareaid] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [dataareaid],[ecoresconfiguration].[recversion] AS [recversion],[ecoresconfiguration].[partition] AS [partition],[ecoresconfiguration].[sysrowversion] AS [sysrowversion],[ecoresconfiguration].[recid] AS [recid],[ecoresconfiguration].[tableid] AS [tableid],[ecoresconfiguration].[versionnumber] AS [versionnumber],[ecoresconfiguration].[createdon] AS [createdon],[ecoresconfiguration].[modifiedon] AS [modifiedon],[ecoresconfiguration].[IsDelete] AS [IsDelete],[ecoresconfiguration].[PartitionId] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [PartitionId]
       FROM dataverse_stiprod_cds2_workspace_unqce8cf9ab47aff01187066045bdff8.dbo.ecoresconfiguration WHERE ecoresconfiguration.IsDelete IS NULL
-
-GO
-

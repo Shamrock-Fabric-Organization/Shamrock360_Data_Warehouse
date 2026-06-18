@@ -1,24 +1,21 @@
 CREATE TABLE [dbo].[tbl_DIM_Date_ORIG] (
-    [RECID]            FLOAT (53)     NULL,
-    [Fiscal_Qtr]       FLOAT (53)     NULL,
-    [Fiscal_Yr]        FLOAT (53)     NULL,
-    [Fiscal_Period]    VARCHAR (8000) NULL,
-    [Weeks_In_Period]  FLOAT (53)     NULL,
-    [Fiscal_Week_#]    FLOAT (53)     NULL,
-    [Year]             FLOAT (53)     NULL,
-    [Qtr]              FLOAT (53)     NULL,
-    [Month]            VARCHAR (8000) NULL,
-    [Day]              FLOAT (53)     NULL,
-    [Weekday]          VARCHAR (8000) NULL,
-    [Week_#]           FLOAT (53)     NULL,
-    [Date]             DATETIME2 (6)  NULL,
-    [Day_#]            INT            NULL,
-    [Fiscal_Day_#]     INT            NULL,
-    [US_Working_Day]   FLOAT (53)     NULL,
-    [BVBA_Working_Day] FLOAT (53)     NULL,
-    [TEDA_Working_Day] FLOAT (53)     NULL
+
+	[RECID] float NULL, 
+	[Fiscal_Qtr] float NULL, 
+	[Fiscal_Yr] float NULL, 
+	[Fiscal_Period] varchar(8000) NULL, 
+	[Weeks_In_Period] float NULL, 
+	[Fiscal_Week_#] float NULL, 
+	[Year] float NULL, 
+	[Qtr] float NULL, 
+	[Month] varchar(8000) NULL, 
+	[Day] float NULL, 
+	[Weekday] varchar(8000) NULL, 
+	[Week_#] float NULL, 
+	[Date] datetime2(6) NULL, 
+	[Day_#] int NULL, 
+	[Fiscal_Day_#] int NULL, 
+	[US_Working_Day] float NULL, 
+	[BVBA_Working_Day] float NULL, 
+	[TEDA_Working_Day] float NULL
 );
-
-
-GO
-

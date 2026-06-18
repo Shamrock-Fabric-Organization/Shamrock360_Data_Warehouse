@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 15F67DCC538FC4C030B51F13A594983C88A60A30985A5CC7E36091C638E6A612
 
 
 CREATE   VIEW vwLedgerDimension AS
@@ -27,6 +28,3 @@ LEFT JOIN vwStageLedgerDimension PL
 LEFT JOIN vwStageLedgerDimension S
   ON LD.LedgerDimension = S.LEDGERDIMENSION
     AND S.DIMENSIONNAME = 'Site'
-
-GO
-

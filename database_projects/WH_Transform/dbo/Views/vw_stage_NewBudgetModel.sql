@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) E87B9EA825290B453A00A989583ED2878EDB842619AA6FDDAB17AC1A2D56F420
 
 --use WH_Transform
 
@@ -24,6 +25,3 @@ WHERE NOT EXISTS (
       AND Target.[BudgetModel]  = Source.[BudgetModel]
 )
 ;
-
-GO
-

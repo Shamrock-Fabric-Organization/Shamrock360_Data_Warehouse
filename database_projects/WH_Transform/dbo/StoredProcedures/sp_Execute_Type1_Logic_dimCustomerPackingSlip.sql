@@ -287,6 +287,3 @@ BEGIN
 	---- Drop the staging/source table after processing is complete -- not needed using a view for incoming data
 	--DROP TABLE IF EXISTS vw_stage_DIM_CustomerPackingSlip_incoming;
 END;
-
-GO
-

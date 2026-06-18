@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 643D9A4001C0212D71C200D300EDF28D554FB6962B6BA24F0BEB31A1DF61E44D
 
 --USE WH_Transform
 
@@ -145,6 +146,3 @@ FROM CustPackingSlipJour cpj
 
 
 */
-
-GO
-

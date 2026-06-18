@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 89D5393B227809C3171B9746450EAA42B8D48334473515F61818E25F27BF75F1
 /****** Object:  View [dbo].[vw_stage_DIM_Customer_incoming]    Script Date: 9/2/2025 1:02:23 PM ******/
 --drop  VIEW dbo.[vw_stage_DIM_Legal_Entity_incoming]	
 
@@ -29,6 +30,3 @@ SELECT -1 [Legal_EntityKey]
 , NULL [RecordEffectiveStartDate]
 , NULL [RecordEffectiveEndDate]
 , NULL [RecordStatus]
-
-GO
-

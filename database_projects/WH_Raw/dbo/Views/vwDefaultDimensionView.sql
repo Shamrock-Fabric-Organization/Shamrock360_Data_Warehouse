@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 9869007230375748B4CAAF26147EEE09B9CCCE1300D9A766447ED381CF0B10AE
 
 CREATE   VIEW [dbo].[vwDefaultDimensionView]
 AS
@@ -18,6 +19,3 @@ WHERE (
 			AND (T2.PARTITION = T3.PARTITION)
 			)
 		)
-
-GO
-

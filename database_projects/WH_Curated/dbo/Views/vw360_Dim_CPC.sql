@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 0B0489582472A2FA7D2A9BEB96914374E4DE41108821F87B9238F84A85221779
 
 
 CREATE view [dbo].[vw360_Dim_CPC] as
@@ -49,6 +50,3 @@ select
     'na' as isPartOf_InksAndCoatings	   
 --select *
 from tbl_CPCIndustry
-
-GO
-

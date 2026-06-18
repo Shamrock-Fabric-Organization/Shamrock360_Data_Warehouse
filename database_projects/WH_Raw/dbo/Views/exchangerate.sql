@@ -1,7 +1,5 @@
+-- Auto Generated (Do not modify) 27A9783CFEDF631E2523292453CACA5BA0A1225CD8DC17A2C434235FA91E1400
 
       CREATE   VIEW dbo.exchangerate AS 
       SELECT [exchangerate].[Id] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [Id],[exchangerate].[SinkCreatedOn] AS [SinkCreatedOn],[exchangerate].[SinkModifiedOn] AS [SinkModifiedOn],[exchangerate].[sysdatastatecode] AS [sysdatastatecode],[exchangerate].[exchangerate] AS [exchangerate],[exchangerate].[exchangeratecurrencypair] AS [exchangeratecurrencypair],[exchangerate].[validfrom] AS [validfrom],[exchangerate].[validto] AS [validto],[exchangerate].[modifieddatetime] AS [modifieddatetime],[exchangerate].[modifiedby] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [modifiedby],[exchangerate].[modifiedtransactionid] AS [modifiedtransactionid],[exchangerate].[createddatetime] AS [createddatetime],[exchangerate].[createdby] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [createdby],[exchangerate].[createdtransactionid] AS [createdtransactionid],[exchangerate].[dataareaid] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [dataareaid],[exchangerate].[recversion] AS [recversion],[exchangerate].[partition] AS [partition],[exchangerate].[sysrowversion] AS [sysrowversion],[exchangerate].[recid] AS [recid],[exchangerate].[tableid] AS [tableid],[exchangerate].[versionnumber] AS [versionnumber],[exchangerate].[createdon] AS [createdon],[exchangerate].[modifiedon] AS [modifiedon],[exchangerate].[IsDelete] AS [IsDelete],[exchangerate].[PartitionId] COLLATE Latin1_General_100_CI_AS_KS_WS_SC_UTF8 AS [PartitionId]
       FROM dataverse_stiprod_cds2_workspace_unqce8cf9ab47aff01187066045bdff8.dbo.exchangerate WHERE exchangerate.IsDelete IS NULL
-
-GO
-

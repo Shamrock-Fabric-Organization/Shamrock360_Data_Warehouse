@@ -1,24 +1,21 @@
 CREATE TABLE [dbo].[tbl_DIM_ProductionBatchOrder] (
-    [ProductionBatchOrderKey]     BIGINT         NULL,
-    [CMPNY]                       VARCHAR (8000) NULL,
-    [ProductionBatchOrder]        VARCHAR (8000) NULL,
-    [Product_ID]                  VARCHAR (8000) NULL,
-    [name]                        VARCHAR (8000) NULL,
-    [PBOStatus]                   BIGINT         NULL,
-    [PBOStatusDesc]               VARCHAR (16)   NULL,
-    [PBOCreatedDate]              DATETIME2 (6)  NULL,
-    [PBOModifiedDateTime]         DATETIME2 (6)  NULL,
-    [collectrefprodid]            VARCHAR (8000) NULL,
-    [RemainStatus]                BIGINT         NULL,
-    [RemainStatusDescription]     VARCHAR (9)    NULL,
-    [SchedulingStatus]            BIGINT         NULL,
-    [SchedulingStatusDescription] VARCHAR (18)   NULL,
-    [Source]                      VARCHAR (6)    NOT NULL,
-    [RecordEffectiveStartDate]    DATETIME2 (3)  NULL,
-    [RecordEffectiveEndDate]      DATETIME2 (3)  NULL,
-    [RecordStatus]                INT            NULL
+
+	[ProductionBatchOrderKey] bigint NULL, 
+	[CMPNY] varchar(8000) NULL, 
+	[ProductionBatchOrder] varchar(8000) NULL, 
+	[Product_ID] varchar(8000) NULL, 
+	[name] varchar(8000) NULL, 
+	[PBOStatus] bigint NULL, 
+	[PBOStatusDesc] varchar(16) NULL, 
+	[PBOCreatedDate] datetime2(6) NULL, 
+	[PBOModifiedDateTime] datetime2(6) NULL, 
+	[collectrefprodid] varchar(8000) NULL, 
+	[RemainStatus] bigint NULL, 
+	[RemainStatusDescription] varchar(9) NULL, 
+	[SchedulingStatus] bigint NULL, 
+	[SchedulingStatusDescription] varchar(18) NULL, 
+	[Source] varchar(6) NOT NULL, 
+	[RecordEffectiveStartDate] datetime2(3) NULL, 
+	[RecordEffectiveEndDate] datetime2(3) NULL, 
+	[RecordStatus] int NULL
 );
-
-
-GO
-

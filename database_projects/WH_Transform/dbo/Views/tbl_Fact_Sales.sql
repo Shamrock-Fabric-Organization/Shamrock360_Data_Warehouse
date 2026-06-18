@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) F4C42C2B9BE90E3F7FE4B3D8B3DA619392C12953CE4DD43CAF21BA00897E3B9B
 /****** Object:  View [dbo].[tbl_Fact_Sales]    Script Date: 5/19/2026 4:12:14 PM ******/
 /****** Object:  View [dbo].[tbl_Fact_Sales]    Script Date: 4/23/2026 2:40:48 PM ******/
 
@@ -240,6 +241,3 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_SalesOrder dso
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Address da
 	ON SL.deliverypostaladdress = da.AddressRecID
 		AND dso.RecordStatus=1
-
-GO
-

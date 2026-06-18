@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 86319C8D597BA5159BD03776CF86095DB47664C8A3A0EB2ECE8E15F22210BE7F
 
 
 CREATE view [dbo].[vw360_Dim_CPC_Extended] as
@@ -20,6 +21,3 @@ and isNull(vw360_Fact_Sales.[Invoice No],'') not in ('','0')
 
 group by isNull([CPCID],'n.a.')
 --order by isNull([CPCID],'n.a.')
-
-GO
-

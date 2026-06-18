@@ -1,21 +1,18 @@
 CREATE TABLE [dbo].[tbl_Fact_GeneralLedgerBudget] (
-    [CMPNY]                     VARCHAR (8000)  NULL,
-    [GL_Account]                VARCHAR (8000)  NULL,
-    [date]                      DATETIME2 (6)   NULL,
-    [BudgetDateKey]             INT             NULL,
-    [BudgetModel]               VARCHAR (8000)  NULL,
-    [BudgetTypeDesc]            VARCHAR (7)     NULL,
-    [CurrencyCode]              VARCHAR (8000)  NULL,
-    [BudgetTransactionType]     VARCHAR (18)    NULL,
-    [accountingcurrencyamount]  DECIMAL (38, 6) NULL,
-    [transactioncurrencyamount] DECIMAL (38, 6) NULL,
-    [quantity]                  DECIMAL (38, 6) NULL,
-    [Legal_EntityKey]           BIGINT          NOT NULL,
-    [BudgetModelKey]            BIGINT          NOT NULL,
-    [DepartmentKey]             BIGINT          NOT NULL,
-    [SiteKey]                   BIGINT          NOT NULL
+
+	[CMPNY] varchar(8000) NULL, 
+	[GL_Account] varchar(8000) NULL, 
+	[date] datetime2(6) NULL, 
+	[BudgetDateKey] int NULL, 
+	[BudgetModel] varchar(8000) NULL, 
+	[BudgetTypeDesc] varchar(7) NULL, 
+	[CurrencyCode] varchar(8000) NULL, 
+	[BudgetTransactionType] varchar(18) NULL, 
+	[accountingcurrencyamount] decimal(38,6) NULL, 
+	[transactioncurrencyamount] decimal(38,6) NULL, 
+	[quantity] decimal(38,6) NULL, 
+	[Legal_EntityKey] bigint NOT NULL, 
+	[BudgetModelKey] bigint NOT NULL, 
+	[DepartmentKey] bigint NOT NULL, 
+	[SiteKey] bigint NOT NULL
 );
-
-
-GO
-

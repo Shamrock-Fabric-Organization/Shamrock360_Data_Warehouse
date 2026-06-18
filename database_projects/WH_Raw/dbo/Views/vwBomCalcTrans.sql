@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 4F0ED33E6183E4A9C4476D9623B91B3351494F6A84D13225FB257DC11DD86C50
 /****** Object:  View [dbo].[vwBomCalcTrans]    Script Date: 3/23/2026 12:49:56 PM ******/
 
 
@@ -110,6 +111,3 @@ LEFT JOIN WH_Raw.dbo.ledger l
 
 GO
 */
-
-GO
-

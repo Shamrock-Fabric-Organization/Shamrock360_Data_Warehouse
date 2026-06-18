@@ -1,10 +1,12 @@
+-- Auto Generated (Do not modify) 539D1665A7D3F104202CBA822A0B802CE024B26DDCE63991663FEBA625F88B88
+/****** Object:  View [dbo].[vw_stage_DIM_Product_incoming]    Script Date: 6/17/2026 9:12:46 AM ******/
 
 /****** Object:  View [dbo].[vw_stage_DIM_Product_incoming]    Script Date: 1/21/2026 2:17:03 PM ******/
 
 
 ----select * from vw_stage_DIM_Product_incoming
 
-CREATE       VIEW [dbo].[vw_stage_DIM_Product_incoming]			
+CREATE         VIEW [dbo].[vw_stage_DIM_Product_incoming]			
 AS			
 SELECT 			
     ABS(CAST(CAST(
@@ -66,7 +68,7 @@ SELECT
 	, iiss.multipleqty multiple_sales_qty
 	, iiss.standardqty std_sales_order_qty
 	, iiss.highestqty max_sales_order_qty
-	, iiss.leadtime sales_leadtime
+	, case when iiss.overridesalesleadtime = 0 then 0 else iiss.leadtime end sales_leadtime
 
 	, ITMs.price BaseSalesPrice
 	, CASE WHEN ISNULL(CASE WHEN ITMs.unitid = 'lb' then 1 else UOM_s.UOMConversionFactor end, 0) = 0
@@ -199,6 +201,3 @@ SELECT -1 [ProductKey]
 , NULL [RecordEffectiveEndDate]
 , NULL [RecordStatus]
 , 'D365FO' [Source]
-
-GO
-

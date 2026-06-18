@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 93F6A95030FF2C53737DF1F8226B7352E4F6659C84621158212C03DE21EF3147
 
 	CREATE   VIEW  salestable 
 	AS
@@ -953,6 +954,3 @@
 			END AS vatnumtabletype_$label
 	FROM [dataverse_stiprod_cds2_workspace_unqce8cf9ab47aff01187066045bdff8].dbo.salestable
 	WHERE salestable.IsDelete IS NULL
-
-GO
-

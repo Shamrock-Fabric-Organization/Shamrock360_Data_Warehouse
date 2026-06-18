@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 82A8CF7057E2B93EC396E139771C03279D746CCD2435BD2D3A3D40E60113AF37
 CREATE                            VIEW [dbo].[tbl_Fact_SupplyChain_RAF] 
 AS 
 with workcenterdata as
@@ -615,6 +616,3 @@ LEFT JOIN (
 		) qrank2
   ON d.CMPNY = qrank2.CMPNY
     AND d.ProdId = qrank2.inventrefid
-
-GO
-

@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) A251754DDD6AE6EC882121427AF175F9ACE58FD686EF00948A41B80D699C78F1
 
 --use WH_Transform
 
@@ -58,6 +59,3 @@ SELECT -1 [RouteKey]
 , NULL [RecordEffectiveStartDate]
 , NULL [RecordEffectiveEndDate]
 , NULL [RecordStatus]
-
-GO
-

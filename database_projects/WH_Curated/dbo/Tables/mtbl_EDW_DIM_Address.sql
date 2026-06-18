@@ -1,21 +1,18 @@
 CREATE TABLE [dbo].[mtbl_EDW_DIM_Address] (
-    [AddressKey]               BIGINT         NULL,
-    [AddressRecId]             BIGINT         NULL,
-    [Location]                 BIGINT         NULL,
-    [Street]                   VARCHAR (8000) NULL,
-    [City]                     VARCHAR (8000) NULL,
-    [State]                    VARCHAR (8000) NULL,
-    [ZipCode]                  VARCHAR (8000) NULL,
-    [Country]                  VARCHAR (8000) NULL,
-    [ValidFrom]                DATETIME2 (6)  NULL,
-    [ValidTo]                  DATETIME2 (6)  NULL,
-    [LocationName]             VARCHAR (8000) NULL,
-    [Source]                   VARCHAR (6)    NOT NULL,
-    [RecordEffectiveStartDate] DATETIME2 (3)  NULL,
-    [RecordEffectiveEndDate]   DATETIME2 (3)  NULL,
-    [RecordStatus]             INT            NULL
+
+	[AddressKey] bigint NULL, 
+	[AddressRecId] bigint NULL, 
+	[Location] bigint NULL, 
+	[Street] varchar(8000) NULL, 
+	[City] varchar(8000) NULL, 
+	[State] varchar(8000) NULL, 
+	[ZipCode] varchar(8000) NULL, 
+	[Country] varchar(8000) NULL, 
+	[ValidFrom] datetime2(6) NULL, 
+	[ValidTo] datetime2(6) NULL, 
+	[LocationName] varchar(8000) NULL, 
+	[Source] varchar(6) NOT NULL, 
+	[RecordEffectiveStartDate] datetime2(3) NULL, 
+	[RecordEffectiveEndDate] datetime2(3) NULL, 
+	[RecordStatus] int NULL
 );
-
-
-GO
-

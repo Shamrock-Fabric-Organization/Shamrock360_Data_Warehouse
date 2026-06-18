@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) AF4CABC8655942F0927E017334587BF9E477C5B0D66B6BE417DAB23E6FA28B5E
 
 
     -- Create a view to identify new records not present in the current dimension --needed because the CTAS does not allow the logic used
@@ -21,6 +22,3 @@ WHERE NOT EXISTS (
 			AND Target.CMPNY = Source.CMPNY
 			AND Target.RecordStatus = 1
 		);
-
-GO
-

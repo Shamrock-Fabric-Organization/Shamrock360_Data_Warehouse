@@ -1,10 +1,12 @@
+-- Auto Generated (Do not modify) 9FA19A5F8860EDB89C506076733D6091104B873DA7D13EB11461CA19B1589376
+/****** Object:  View [dbo].[tbl_Fact_QualityOrderLineResults]    Script Date: 6/12/2026 10:26:39 AM ******/
 /****** Object:  View [dbo].[tbl_Fact_QualityOrderLineResults]    Script Date: 6/3/2026 9:42:50 AM ******/
 /****** Object:  View [dbo].[tbl_Fact_QualityOrderLineResults]    Script Date: 5/15/2026 9:49:51 AM ******/
 
 
 
 -----SON, PON, PBO in inventrefid  , also TON - transfer orders but no dim for that
-CREATE         VIEW [dbo].[tbl_Fact_QualityOrderLineResults] as
+CREATE           VIEW [dbo].[tbl_Fact_QualityOrderLineResults] as
 with iqot as
 (
 
@@ -123,6 +125,7 @@ r.dataareaid CMPNY
 		,ISNULL(dv.VendorKey, -1) VendorKey
 		,ISNULL(dc.CustomerKey, -1) CustomerKey
 		,ISNULL(dwc.WorkCenterKey, -1) WorkCenterKey
+		,ISNULL(dtg.TestGroupKey, -1) TestGroupKey
 , i.orderstatus_$label QuaityOrderStatus
 from WH_Raw.dbo.inventqualityorderlineresults r
   join WH_Raw.dbo.inventqualityorderline l
@@ -190,5 +193,7 @@ from WH_Raw.dbo.inventqualityorderlineresults r
 			AND wc.dataareaid = dwc.CMPNY
 			AND dwc.RecordStatus=1
 
-GO
-
+	LEFT JOIN WH_Transform.dbo.tbl_DIM_TestGroup dtg
+		ON i.testgroupid = dtg.TestGroupId
+			AND i.dataareaid = dtg.CMPNY
+			AND dtg.RecordStatus=1

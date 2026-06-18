@@ -1,5 +1,3 @@
-
-
 /*
 ================================================================================
   Procedure:  sp_Build_ExplodedFormula_ByVersion
@@ -1288,6 +1286,3 @@ BEGIN
     DROP TABLE IF EXISTS stage_fml_Result_New;
 
 END;
-
-GO
-

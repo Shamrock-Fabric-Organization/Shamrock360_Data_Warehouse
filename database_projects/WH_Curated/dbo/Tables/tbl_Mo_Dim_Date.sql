@@ -1,22 +1,19 @@
 CREATE TABLE [dbo].[tbl_Mo_Dim_Date] (
-    [RECID]               BIGINT         NULL,
-    [FISCAL QTR]          BIGINT         NULL,
-    [FISCAL YR]           BIGINT         NULL,
-    [FISCAL PERIOD]       BIGINT         NULL,
-    [WEEKS IN PERIOD]     FLOAT (53)     NULL,
-    [FISCAL WEEK #]       BIGINT         NULL,
-    [YEAR]                BIGINT         NULL,
-    [QTR]                 BIGINT         NULL,
-    [MONTH]               BIGINT         NULL,
-    [DAY]                 BIGINT         NULL,
-    [WEEKDAY]             VARCHAR (8000) NULL,
-    [WEEK #]              BIGINT         NULL,
-    [DATE]                DATE           NULL,
-    [DAY #]               BIGINT         NULL,
-    [FISCAL DAY #]        BIGINT         NULL,
-    [Reconciliation Year] VARCHAR (8000) NULL
+
+	[RECID] bigint NULL, 
+	[FISCAL QTR] bigint NULL, 
+	[FISCAL YR] bigint NULL, 
+	[FISCAL PERIOD] bigint NULL, 
+	[WEEKS IN PERIOD] float NULL, 
+	[FISCAL WEEK #] bigint NULL, 
+	[YEAR] bigint NULL, 
+	[QTR] bigint NULL, 
+	[MONTH] bigint NULL, 
+	[DAY] bigint NULL, 
+	[WEEKDAY] varchar(8000) NULL, 
+	[WEEK #] bigint NULL, 
+	[DATE] date NULL, 
+	[DAY #] bigint NULL, 
+	[FISCAL DAY #] bigint NULL, 
+	[Reconciliation Year] varchar(8000) NULL
 );
-
-
-GO
-

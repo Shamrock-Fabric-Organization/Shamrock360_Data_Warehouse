@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 34BC87A8E26613342073C50823349663A4BB10C06F4661EF30AAE40EE2A6B196
 
 /*  ------ORIGINAL CODE
 
@@ -113,6 +114,3 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_Customer dcc
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Legal_Entity dle
 	ON ct.dataareaid = dle.CMPNY
 		AND dle.RecordStatus=1
-
-GO
-

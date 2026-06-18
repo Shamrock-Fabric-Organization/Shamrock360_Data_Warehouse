@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 99BF34920BC503195DC0D7F9DC620A9191A1139A2F0DFFD76358665A9FADD974
 
 ----drop VIEW [dbo].[vw_stage_DIM_CustomerPackingSlip_incoming]
 
@@ -74,6 +75,3 @@ SELECT
 , NULL [RecordEffectiveStartDate]
 , NULL [RecordEffectiveEndDate]
 , NULL [RecordStatus]
-
-GO
-

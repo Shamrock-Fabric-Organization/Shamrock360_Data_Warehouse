@@ -1,7 +1,3 @@
-
-
-
-
 CREATE procedure [dbo].[SP_Item_Hskpg]
 as
 
@@ -12,6 +8,3 @@ as
 ----------				,Source = 'D365';     
 				
 ----------Truncate table tbl_DIM_Item;
-
-GO
-

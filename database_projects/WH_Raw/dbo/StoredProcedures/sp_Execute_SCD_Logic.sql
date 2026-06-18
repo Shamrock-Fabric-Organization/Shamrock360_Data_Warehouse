@@ -264,6 +264,3 @@ BEGIN
     -- Drop the staging/source table after processing is complete
     DROP TABLE IF EXISTS tbl_Product_SCD;
 END;
-
-GO
-

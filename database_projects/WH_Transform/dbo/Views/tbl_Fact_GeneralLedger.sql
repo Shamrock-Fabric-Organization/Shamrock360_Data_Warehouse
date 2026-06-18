@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) FAFCC21D9C4D4347E81E1EA14FEF179D8C1B6CC5AC5B81BB2947FD04C60D2547
 
 
 
@@ -100,6 +101,3 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_Site ds
 	ON LD.Site = ds.Site_ID
 		AND gje.subledgervoucherdataareaid = ds.CMPNY
 		AND ds.RecordStatus=1
-
-GO
-

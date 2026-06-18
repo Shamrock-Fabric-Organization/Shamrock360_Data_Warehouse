@@ -1,8 +1,5 @@
 CREATE TABLE [dbo].[mtbl_EDW_RouteType] (
-    [RouteNo]   VARCHAR (8000) NULL,
-    [RouteType] VARCHAR (8000) NULL
+
+	[RouteNo] varchar(8000) NULL, 
+	[RouteType] varchar(8000) NULL
 );
-
-
-GO
-

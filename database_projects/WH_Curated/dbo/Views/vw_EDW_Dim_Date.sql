@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) ED32015109BFF752B7B66BA04E12967A5E722DB96BE0FFA592157CFE7FB4A20C
 /****** Object:  View [dbo].[vw_EDW_Dim_Date]    Script Date: 5/12/2026 8:50:21 AM ******/
 /****** Object:  View [dbo].[vw_EDW_Dim_Date]    Script Date: 2/24/2026 3:34:39 PM ******/
 
@@ -89,6 +90,3 @@ SELECT
       ,[Original FISCAL PERIOD]
       ,[Reconciliation Year]
   FROM [dbo].[tbl_DIM_Date] --order by Istoday desc
-
-GO
-

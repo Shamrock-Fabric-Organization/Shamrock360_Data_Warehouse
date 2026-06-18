@@ -1,3 +1,4 @@
+-- Auto Generated (Do not modify) 3EEF590986E903EE7699652963D2F34B400FC02921E3CE2A9CB1A6D5F3B55A25
 /****** Object:  View [dbo].[vw_stage_DIM_SerialNumber_incoming]    Script Date: 4/17/2026 2:31:30 PM ******/
 /****** Object:  View [dbo].[vw_stage_DIM_SerialNumber_incoming]    Script Date: 3/10/2026 9:55:52 AM ******/
 /****** Object:  View [dbo].[vw_stage_DIM_SerialNumber_incoming]    Script Date: 3/9/2026 10:44:31 AM ******/
@@ -120,6 +121,3 @@ SELECT -1 [SerialNumberKey]
 , NULL [RecordEffectiveStartDate]
 , NULL [RecordEffectiveEndDate]
 , NULL [RecordStatus]
-
-GO
-

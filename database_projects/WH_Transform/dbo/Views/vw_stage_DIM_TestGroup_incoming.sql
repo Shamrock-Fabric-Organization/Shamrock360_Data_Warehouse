@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) 593CDA5BE38D3034B287CEB03899722DB7E8857D2A64A757FA86F1478FFA3DF7
 --use WH_Transform
 
 --drop VIEW dbo.[vw_stage_DIM_TestGroup_incoming]
@@ -41,3 +40,5 @@ SELECT
     ,NULL                                AS RecordEffectiveStartDate
     ,NULL                                AS RecordEffectiveEndDate
     ,NULL                                AS RecordStatus
+GO
+

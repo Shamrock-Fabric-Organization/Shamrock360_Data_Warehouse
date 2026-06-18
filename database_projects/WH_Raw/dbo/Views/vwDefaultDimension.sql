@@ -131,3 +131,15 @@ FROM (select distinct DEFAULTDIMENSION from DefaultDimensionView) R
 		--		S.[DEFAULTDIMENSION]
 		--) S7 ON
 		--	S7.[~Key] = R.[DefaultDimension]
+		--LEFT OUTER JOIN
+		--(
+		--	SELECT
+		--		MAX(S.[DISPLAYVALUE]) AS [~Value]
+		--		, S.[DEFAULTDIMENSION] AS [~Key]
+		--	FROM DefaultDimensionView S
+		--	WHERE
+		--		S.[NAME] = 'OrderReason'
+		--	GROUP BY
+		--		S.[DEFAULTDIMENSION]
+		--) S7 ON
+		--	S7.[~Key] = R.[DefaultDimension]

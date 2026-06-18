@@ -602,3 +602,5 @@ LEFT JOIN (
     AND d.ProdId = qrank2.inventrefid
 
 --where d.ProdId = 'PBO0000228'
+
+--where d.ProdId = 'PBO0000228'

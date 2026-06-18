@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) AA1225EDF9C6FB68A81A6E131A61ECA27DE919D41788033E28FDEAA7DC6E2798
 
 CREATE   VIEW tbl_Fact_TestGroupDetails
 AS
@@ -71,3 +70,5 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_TestGroup dtg
 	ON tg.testgroupid = dtg.TestGroupId
 		AND tg.dataareaid = dtg.CMPNY
 		AND dtg.RecordStatus=1
+GO
+

@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) 9375EC3291DD5203FC61FBB6C54384FAF6DAD65F501C66EAFA33C726C9C9F536
 --use WH_Transform
 
 /****** Object:  View [dbo].[vw_stage_NewWorkOrder]    Script Date: 2026-06-11 ******/
@@ -34,3 +33,5 @@ WHERE NOT EXISTS (
       AND Target.[CMPNY]  = Source.[CMPNY]
       AND Target.[RecordStatus] = 1
 )
+GO
+

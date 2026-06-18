@@ -11,3 +11,4 @@ where
 RECTYPE = 'X'
 and FNAME = 'OppType'
 --and RecordStatus = '1'
+--and RecordStatus = '1'

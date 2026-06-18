@@ -96,3 +96,6 @@ LEFT JOIN mtbl_EDW_DIM_MarketSegmentation dmsc
 
 
 --order by 1,2,5,6,4
+
+
+--order by 1,2,5,6,4

@@ -69,4 +69,7 @@ and
 f.Date between  '2022-01-01' and '2025-12-31'   -- order by date asc
 --) a
 --group by [Reconciliation Year], cmpny
+--order by 1 desc,2 asc   -- order by date asc
+--) a
+--group by [Reconciliation Year], cmpny
 --order by 1 desc,2 asc

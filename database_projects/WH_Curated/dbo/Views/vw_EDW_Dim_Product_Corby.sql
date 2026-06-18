@@ -248,3 +248,53 @@ CREATE            View [dbo].[vw_EDW_Dim_Product_Corby]
   --    --RecordStatus = '1'
   --    --and 
   --    NOT([Product Name] in (select [Apollo_ProductID] from [dbo].[XREF_Product_ID]))
+	  
+  --Union ALL
+
+
+  --         SELECT ABS(CAST(CAST(
+  --              HASHBYTES('SHA2_256', 
+  --                  CONCAT(
+  --                      CAST(NEWID() AS VARCHAR(36)), '|'
+  --                      ,CAST(SYSDATETIME() AS VARCHAR(30)), '|'
+  --                      ,CAST(NEWID() AS VARCHAR(36)), '|'
+  --                      -- Add row-specific data for extra uniqueness
+  --                      ,CAST([Product Name] AS VARCHAR(100))
+  --                  )
+  --              ) AS BINARY(8)) AS BIGINT))  AS ProductKey
+  --        ,'201' as [CMPNY]
+  --        ,[Product Name] as [Product_ID]
+  --        ,[Product Name] as Product_Name
+  --        ,[Product Name] as Search_Name
+  --        ,'' as [Commercial_Name]
+  --        ,'' as [Technology]
+  --        ,'' as [Material]
+  --        ,'' as [Business_Line]
+  --        ,[Product Description] as [Product_Line]
+  --        ,'' as [Lifecycle]
+  --        --,0.00 as Package_Weight
+  --        ,'lbs' as [Inventory_UoM]
+  --        --,'ea' as [Purchasing_UoM]
+  --        ,'lbs' as [Sales_UoM]
+  --        ,'20' [Item_Type]                 --need clarification
+  --        --,[ProductID] as Product_ID
+  --        ,NULL PTFE_Flag
+  --        ,NULL Reorder_Point
+ 	--        ,NULL itemmodelgroupid
+	 --       ,NULL producttype
+	 --       ,[Product Description] producttype_desc
+	 --       ,NULL itemgroupid
+	 --       ,NULL ItemGroupName
+	 --       ,NULL ItemGroupType
+	 --       ,NULL ItemGroupTypeName
+  --          ,NULL ItemBuyerGroupID
+  --          ,NULL ItemBuyerGroupDesc
+  --       ,[SnapShotDate] as Start_Date
+  --        ,[SnapShotDate] as End_Date
+  --        ,1 as Record_Status
+  --        ,'BVBA' as [Source]
+  --    FROM [dbo].[tbl_RESULTSSLSBYYR_TEDA] 
+  --    where 
+  --    --RecordStatus = '1'
+  --    --and 
+  --    NOT([Product Name] in (select [Apollo_ProductID] from [dbo].[XREF_Product_ID]))

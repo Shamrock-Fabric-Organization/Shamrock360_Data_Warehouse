@@ -123,3 +123,13 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_WorkCenter dwc
 --	,7
 
 --	--7534
+
+----where prj.prodid = 'PBO0001963'
+
+--ORDER BY 1
+--	,2
+--	,4
+--	,5
+--	,7
+
+--	--7534

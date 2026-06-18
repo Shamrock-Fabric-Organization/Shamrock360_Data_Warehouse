@@ -21,3 +21,4 @@ and isNull(vw360_Fact_Sales.[Invoice No],'') not in ('','0')
 
 group by isNull([CPCID],'n.a.')
 --order by isNull([CPCID],'n.a.')
+--order by isNull([CPCID],'n.a.')

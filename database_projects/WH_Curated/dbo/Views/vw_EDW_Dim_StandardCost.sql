@@ -119,3 +119,5 @@ SELECT
           AND p.record_status = 1
 
 --order by source desc, cmpny, Product_ID
+
+--order by source desc, cmpny, Product_ID

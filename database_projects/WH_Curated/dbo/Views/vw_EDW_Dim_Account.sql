@@ -112,3 +112,4 @@ where
 isNull(CustomerID,'') not in ('A201','A101','AEurope','')
 and NOT(CustomerID in (select [Apollo_CustomerID] from [dbo].[XREF_Customer_ID]))
 --and RecordStatus=1
+--and RecordStatus=1

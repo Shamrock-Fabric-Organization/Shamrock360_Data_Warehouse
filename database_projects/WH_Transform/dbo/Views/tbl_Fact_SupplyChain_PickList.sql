@@ -93,3 +93,6 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_ProductionBatchOrder dpbo
 
 ----where pjt.prodid = 'PBO0001075'
 ----order by 2,1,3
+
+----where pjt.prodid = 'PBO0001075'
+----order by 2,1,3

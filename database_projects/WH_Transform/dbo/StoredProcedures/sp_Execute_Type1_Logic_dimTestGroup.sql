@@ -179,3 +179,5 @@ BEGIN
     --DROP TABLE IF EXISTS vw_stage_DIM_TestGroup_incoming;
 
 END;
+GO
+

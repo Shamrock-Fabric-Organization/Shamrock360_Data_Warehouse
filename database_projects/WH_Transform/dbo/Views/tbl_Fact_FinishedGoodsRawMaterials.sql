@@ -83,3 +83,22 @@ WHERE FGitemid in
 )
 order by 2,3,4,6
 */
+
+/*
+select distinct FgItemId
+FROM tbl_ExplodedFormula_ByVersion  f
+where bomlevel = 10
+
+
+
+select *
+FROM tbl_ExplodedFormula_ByVersion  f
+WHERE FGitemid in
+(
+'11334',
+'11427',
+'11802',
+'11339'
+)
+order by 2,3,4,6
+*/

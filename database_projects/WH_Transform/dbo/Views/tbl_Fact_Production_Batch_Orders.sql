@@ -185,3 +185,18 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_Route dr
 ----, pb.linenum
 
 ----order by 1,2
+
+
+--where pt.prodid = 'PBO0000001'
+
+
+--order by 
+--pt.dataareaid
+--, pt.prodid
+--, pt.itemid
+----, ptj.transdate
+----, ptj.journaltype
+----, it.voucherphysical
+----, pb.linenum
+
+----order by 1,2

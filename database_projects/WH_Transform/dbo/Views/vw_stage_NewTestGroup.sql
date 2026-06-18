@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) 593CDA5BE38D3034B287CEB03899722DB7E8857D2A64A757FA86F1478FFA3DF7
 --use WH_Transform
 
 /****** Object:  View [dbo].[vw_stage_NewTestGroup]    Script Date: 2026-06-10 ******/
@@ -27,3 +26,5 @@ WHERE NOT EXISTS (
       AND Target.[CMPNY]       = Source.[CMPNY]
       AND Target.[RecordStatus] = 1
 )
+GO
+

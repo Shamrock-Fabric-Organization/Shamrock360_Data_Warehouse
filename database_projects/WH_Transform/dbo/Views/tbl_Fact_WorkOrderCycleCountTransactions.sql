@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) 84B1A88E06B9D1FF5A7AF349D8A5FD759094AA0D33B8EB78E04312C961A5ABEF
 
 
 /*=============================================================================
@@ -176,3 +175,5 @@ OUTER APPLY (
 
 
 WHERE wt.[WORKTRANSTYPE] = 10   -- CycleCount work orders only
+GO
+

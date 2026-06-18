@@ -85,3 +85,4 @@ WHERE
 ----and    
 pjt.journaltype_$Label = 'ReportFinished'
 --ORDER BY pjp.ProdId, pjp.JournalId, pt.ItemId
+--ORDER BY pjp.ProdId, pjp.JournalId, pt.ItemId

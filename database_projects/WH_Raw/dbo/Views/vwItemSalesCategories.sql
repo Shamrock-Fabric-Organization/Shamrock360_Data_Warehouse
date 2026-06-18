@@ -79,3 +79,30 @@ WHERE ECH.Name = 'Sales Categories'
 --JOIN EcoResCategoryHierarchy ECH
 --	ON EC_L1.CategoryHierarchy = ECH.RecId
 --WHERE ECH.Name = 'Sales Categories'
+
+--SELECT IT.DATAAREAID
+--	,IT.ItemId
+--	,IT.PRODUCT
+--	,COALESCE(EC_L5.Name, EC_L4.Name,EC_L3.Name,EC_L2.Name,EC_L1.Name) AS Level1Category
+--	,COALESCE(EC_L4.Name,EC_L3.Name,EC_L2.Name,EC_L1.Name) AS Level2Category
+--	,COALESCE(EC_L3.Name,EC_L2.Name,EC_L1.Name) AS Level3Category
+--	,COALESCE(EC_L2.Name,EC_L1.Name) AS Level4Category 
+--	,EC_L1.Name AS Level5Category
+--FROM InventTable IT
+--JOIN EcoResProduct EP
+--	ON IT.Product = EP.RecId
+--JOIN EcoResProductCategory EPC
+--	ON EP.RecId = EPC.Product
+--JOIN EcoResCategory EC_L1
+--	ON EPC.Category = EC_L1.RecId
+--LEFT JOIN EcoResCategory EC_L2
+--	ON EC_L1.ParentCategory = EC_L2.RecId
+--LEFT JOIN EcoResCategory EC_L3
+--	ON EC_L2.ParentCategory = EC_L3.RecId
+--LEFT JOIN EcoResCategory EC_L4
+--	ON EC_L3.ParentCategory = EC_L4.RecId
+--LEFT JOIN EcoResCategory EC_L5
+--	ON EC_L4.ParentCategory = EC_L5.RecId
+--JOIN EcoResCategoryHierarchy ECH
+--	ON EC_L1.CategoryHierarchy = ECH.RecId
+--WHERE ECH.Name = 'Sales Categories'

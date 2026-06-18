@@ -53,3 +53,6 @@ Product, Industry, ProdLineAcctg, vw360_Dim_Account.CustomerID, vw360_Dim_Produc
 --, 
 --vw360_Fact_Sales.CPCID,
 --vw360_Fact_Sales.cmpny
+--, 
+--vw360_Fact_Sales.CPCID,
+--vw360_Fact_Sales.cmpny

@@ -1,3 +1,4 @@
+
 Create   procedure [dbo].[sp_SACT_REFRESH]
 as
 
@@ -5,3 +6,5 @@ as
   set SnapShotDate = GetDate()AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time'
       ,DataUpdateDate = GetDate()AT TIME ZONE 'UTC' AT TIME ZONE 'Eastern Standard Time'
 	  ,Source = 'DWApollo'
+GO
+

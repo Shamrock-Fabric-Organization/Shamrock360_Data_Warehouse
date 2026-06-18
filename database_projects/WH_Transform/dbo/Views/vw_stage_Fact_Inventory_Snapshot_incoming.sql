@@ -184,3 +184,10 @@ S.dataareaid
 	
 --	,s.inventstatusid
 --	,s.wmslocationid
+--ORDER BY s.dataareaid
+--	,s.itemid
+--	, s.inventsiteid
+--	, s.inventlocationid
+	
+--	,s.inventstatusid
+--	,s.wmslocationid

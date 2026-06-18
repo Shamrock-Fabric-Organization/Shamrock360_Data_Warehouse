@@ -210,3 +210,5 @@ BEGIN
     --DROP TABLE IF EXISTS vw_stage_DIM_WorkOrder_incoming;
 
 END;
+GO
+

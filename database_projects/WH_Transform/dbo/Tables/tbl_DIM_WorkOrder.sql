@@ -1,20 +1,21 @@
 CREATE TABLE [dbo].[tbl_DIM_WorkOrder] (
-
-	[WorkOrderKey] bigint NULL, 
-	[CMPNY] varchar(8000) NULL, 
-	[WorkId] varchar(8000) NULL, 
-	[WorkCancelledUTC] datetime2(6) NULL, 
-	[WorkStartedUTC] datetime2(6) NULL, 
-	[WorkClosedUTC] datetime2(6) NULL, 
-	[CreatedDateTime] datetime2(6) NULL, 
-	[ModifiedDateTime] datetime2(6) NULL, 
-	[CountWorkStatus] varchar(8000) NULL, 
-	[WorkCreatedBy] varchar(8000) NULL, 
-	[IsPartialCount] varchar(8000) NULL, 
-	[WorkTransType] varchar(8000) NULL, 
-	[WorkPriority] bigint NULL, 
-	[Source] varchar(6) NOT NULL, 
-	[RecordEffectiveStartDate] datetime2(3) NULL, 
-	[RecordEffectiveEndDate] datetime2(3) NULL, 
-	[RecordStatus] int NULL
+    [WorkOrderKey]             BIGINT         NULL,
+    [CMPNY]                    VARCHAR (8000) NULL,
+    [WorkId]                   VARCHAR (8000) NULL,
+    [WorkCancelledUTC]         DATETIME2 (6)  NULL,
+    [WorkStartedUTC]           DATETIME2 (6)  NULL,
+    [WorkClosedUTC]            DATETIME2 (6)  NULL,
+    [CreatedDateTime]          DATETIME2 (6)  NULL,
+    [ModifiedDateTime]         DATETIME2 (6)  NULL,
+    [CountWorkStatus]          VARCHAR (8000) NULL,
+    [WorkCreatedBy]            VARCHAR (8000) NULL,
+    [IsPartialCount]           VARCHAR (8000) NULL,
+    [WorkTransType]            VARCHAR (8000) NULL,
+    [WorkPriority]             BIGINT         NULL,
+    [Source]                   VARCHAR (6)    NOT NULL,
+    [RecordEffectiveStartDate] DATETIME2 (3)  NULL,
+    [RecordEffectiveEndDate]   DATETIME2 (3)  NULL,
+    [RecordStatus]             INT            NULL
 );
+GO
+

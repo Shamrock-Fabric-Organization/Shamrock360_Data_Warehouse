@@ -51,3 +51,4 @@ LEFT JOIN EcoResCategory EC_L5 ON EC_L4.ParentCategory = EC_L5.RecId
 JOIN EcoResCategoryHierarchy ECH ON EC_L1.CategoryHierarchy = ECH.RecId
 WHERE ECH.Name = 'Sales Categories'
 --order by 1,3,4,5,6,7
+--order by 1,3,4,5,6,7

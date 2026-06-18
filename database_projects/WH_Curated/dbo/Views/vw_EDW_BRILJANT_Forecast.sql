@@ -85,3 +85,4 @@ SELECT
 FROM Filled
 GROUP BY CPCID, CustomerNo, ProductCode
 --ORDER BY CPCID
+--ORDER BY CPCID

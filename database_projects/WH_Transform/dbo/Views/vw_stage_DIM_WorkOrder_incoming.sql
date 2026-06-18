@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) 9375EC3291DD5203FC61FBB6C54384FAF6DAD65F501C66EAFA33C726C9C9F536
 /****** Object:  View [dbo].[vw_stage_DIM_WorkOrder_incoming]    Script Date: 6/12/2026 10:04:05 AM ******/
 --use WH_Transform
 
@@ -60,3 +59,5 @@ SELECT
     ,NULL                                    AS RecordEffectiveStartDate
     ,NULL                                    AS RecordEffectiveEndDate
     ,NULL                                    AS RecordStatus
+GO
+

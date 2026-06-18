@@ -89,4 +89,4 @@ SELECT
       ,[Original FISCAL YR]
       ,[Original FISCAL PERIOD]
       ,[Reconciliation Year]
-  FROM [dbo].[tbl_DIM_Date] --order by Istoday desc
+  FROM [dbo].[tbl_DIM_Date] --order by Istoday desc --order by Istoday desc

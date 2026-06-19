@@ -14,5 +14,7 @@ New BVBA 4 Forecast TABLES from APOLLO BVBA Pipeline.DataPipeline
 Go Live Pipelines/
 
 # Fabric Warehouse artifacts
-WH_Raw.Warehouse/dbo
-dev_WH_Raw.Warehouse/
+fabric/*.Warehouse/dbo/
+fabric/dev_WH_Raw.Warehouse/
+fabric/*.SQLDatabase/dbo/
+

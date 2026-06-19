@@ -11,6 +11,344 @@
     },
     "defaultPowerBIDataSourceVersion": "powerBI_V3",
     "sourceQueryCulture": "en-US",
+    "tables": [
+      {
+        "name": "Budget_2026",
+        "sourceLineageTag": "[dbo].[Budget_2026]",
+        "columns": [
+          {
+            "name": "CPCID",
+            "dataType": "string",
+            "sourceColumn": "CPCID",
+            "sourceProviderType": "varchar",
+            "sourceLineageTag": "CPCID",
+            "summarizeBy": "none",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ]
+          },
+          {
+            "name": "CustomerID",
+            "dataType": "string",
+            "sourceColumn": "CustomerID",
+            "sourceProviderType": "varchar",
+            "sourceLineageTag": "CustomerID",
+            "summarizeBy": "none",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ]
+          },
+          {
+            "name": "ProductID",
+            "dataType": "string",
+            "sourceColumn": "ProductID",
+            "sourceProviderType": "varchar",
+            "sourceLineageTag": "ProductID",
+            "summarizeBy": "none",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ]
+          },
+          {
+            "name": "Office",
+            "dataType": "string",
+            "sourceColumn": "Office",
+            "sourceProviderType": "varchar",
+            "sourceLineageTag": "Office",
+            "summarizeBy": "none",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ]
+          },
+          {
+            "name": "CMPNY",
+            "dataType": "string",
+            "sourceColumn": "CMPNY",
+            "sourceProviderType": "varchar",
+            "sourceLineageTag": "CMPNY",
+            "summarizeBy": "none",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ]
+          },
+          {
+            "name": "Month",
+            "dataType": "string",
+            "sourceColumn": "Month",
+            "sourceProviderType": "varchar",
+            "sourceLineageTag": "Month",
+            "summarizeBy": "none",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ]
+          },
+          {
+            "name": "datekey",
+            "dataType": "int64",
+            "sourceColumn": "datekey",
+            "formatString": "0",
+            "sourceProviderType": "int",
+            "sourceLineageTag": "datekey",
+            "summarizeBy": "sum",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ]
+          },
+          {
+            "name": "Quantity_LBs",
+            "dataType": "double",
+            "sourceColumn": "Quantity_LBs",
+            "sourceProviderType": "decimal",
+            "sourceLineageTag": "Quantity_LBs",
+            "summarizeBy": "sum",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ]
+          },
+          {
+            "name": "Amount",
+            "dataType": "double",
+            "sourceColumn": "Amount",
+            "sourceProviderType": "decimal",
+            "sourceLineageTag": "Amount",
+            "summarizeBy": "sum",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ]
+          }
+        ],
+        "partitions": [
+          {
+            "name": "{{Partition_Name}}",
+            "mode": "directLake",
+            "source": {
+              "type": "entity",
+              "entityName": "Budget_2026",
+              "expressionSource": "DatabaseQuery",
+              "schemaName": "dbo"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "IsTableInBiModel",
+            "value": "True"
+          }
+        ]
+      },
+      {
+        "name": "marketsegmentation",
+        "sourceLineageTag": "[dbo].[marketsegmentation]",
+        "columns": [
+          {
+            "name": "ProductID",
+            "dataType": "string",
+            "sourceColumn": "ProductID",
+            "sourceProviderType": "varchar",
+            "sourceLineageTag": "ProductID",
+            "summarizeBy": "none",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ]
+          },
+          {
+            "name": "CustomerID",
+            "dataType": "string",
+            "sourceColumn": "CustomerID",
+            "sourceProviderType": "varchar",
+            "sourceLineageTag": "CustomerID",
+            "summarizeBy": "none",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ]
+          },
+          {
+            "name": "Industry",
+            "dataType": "string",
+            "sourceColumn": "Industry",
+            "sourceProviderType": "varchar",
+            "sourceLineageTag": "Industry",
+            "summarizeBy": "none",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ]
+          },
+          {
+            "name": "SubIndustry",
+            "dataType": "string",
+            "sourceColumn": "SubIndustry",
+            "sourceProviderType": "varchar",
+            "sourceLineageTag": "SubIndustry",
+            "summarizeBy": "none",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ]
+          },
+          {
+            "name": "Legacy",
+            "dataType": "string",
+            "sourceColumn": "Legacy",
+            "sourceProviderType": "varchar",
+            "sourceLineageTag": "Legacy",
+            "summarizeBy": "none",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ]
+          }
+        ],
+        "partitions": [
+          {
+            "name": "{{Partition_Name}}",
+            "mode": "directLake",
+            "source": {
+              "type": "entity",
+              "entityName": "marketsegmentation",
+              "expressionSource": "DatabaseQuery",
+              "schemaName": "dbo"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "IsTableInBiModel",
+            "value": "True"
+          }
+        ]
+      },
+      {
+        "name": "vwAgingBuckets",
+        "sourceLineageTag": "[dbo].[vwAgingBuckets]",
+        "columns": [
+          {
+            "name": "AgingBucketKey",
+            "dataType": "int64",
+            "sourceColumn": "AgingBucketKey",
+            "formatString": "0",
+            "sourceProviderType": "int",
+            "sourceLineageTag": "AgingBucketKey",
+            "summarizeBy": "sum",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ]
+          },
+          {
+            "name": "FromDays",
+            "dataType": "int64",
+            "sourceColumn": "FromDays",
+            "formatString": "0",
+            "sourceProviderType": "int",
+            "sourceLineageTag": "FromDays",
+            "summarizeBy": "sum",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ]
+          },
+          {
+            "name": "ToDays",
+            "dataType": "int64",
+            "sourceColumn": "ToDays",
+            "formatString": "0",
+            "sourceProviderType": "int",
+            "sourceLineageTag": "ToDays",
+            "summarizeBy": "sum",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ]
+          },
+          {
+            "name": "Description",
+            "dataType": "string",
+            "sourceColumn": "Description",
+            "sourceProviderType": "varchar",
+            "sourceLineageTag": "Description",
+            "summarizeBy": "none",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ]
+          }
+        ],
+        "partitions": [
+          {
+            "name": "{{Partition_Name}}",
+            "mode": "directLake",
+            "source": {
+              "type": "entity",
+              "entityName": "vwAgingBuckets",
+              "expressionSource": "DatabaseQuery",
+              "schemaName": "dbo"
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "IsTableInBiModel",
+            "value": "True"
+          }
+        ]
+      }
+    ],
     "expressions": [
       {
         "name": "DatabaseQuery",

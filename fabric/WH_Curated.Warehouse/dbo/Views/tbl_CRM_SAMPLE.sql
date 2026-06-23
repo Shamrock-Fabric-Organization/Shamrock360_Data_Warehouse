@@ -1,0 +1,3 @@
+-- Auto Generated (Do not modify) 99BCE18E14D9C1E76D05A032D82F5D70B6F65A04650EF1173732457CCA49BE91
+CREATE   VIEW [dbo].[tbl_CRM_SAMPLE] AS
+SELECT * FROM [LH_staging_for_prod_Curated_data].[dbo].[tbl_CRM_SAMPLE];

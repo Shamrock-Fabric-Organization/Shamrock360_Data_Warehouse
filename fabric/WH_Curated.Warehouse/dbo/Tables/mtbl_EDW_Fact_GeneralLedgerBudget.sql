@@ -1,0 +1,18 @@
+CREATE TABLE [dbo].[mtbl_EDW_Fact_GeneralLedgerBudget] (
+
+	[CMPNY] varchar(8000) NULL, 
+	[GL_Account] varchar(8000) NULL, 
+	[date] datetime2(6) NULL, 
+	[BudgetDateKey] int NULL, 
+	[BudgetModel] varchar(8000) NULL, 
+	[BudgetTypeDesc] varchar(7) NULL, 
+	[CurrencyCode] varchar(8000) NULL, 
+	[BudgetTransactionType] varchar(18) NULL, 
+	[accountingcurrencyamount] decimal(38,6) NULL, 
+	[transactioncurrencyamount] decimal(38,6) NULL, 
+	[quantity] decimal(38,6) NULL, 
+	[Legal_EntityKey] bigint NOT NULL, 
+	[BudgetModelKey] bigint NOT NULL, 
+	[DepartmentKey] bigint NOT NULL, 
+	[SiteKey] bigint NOT NULL
+);

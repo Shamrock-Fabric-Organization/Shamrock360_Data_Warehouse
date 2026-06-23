@@ -1,0 +1,3 @@
+-- Auto Generated (Do not modify) 21C6E63077A080CED379F02241AF97EDF72A52A83E72134083D633D3AF0288AF
+CREATE   VIEW [dbo].[tbl_OFFERTE] AS
+SELECT * FROM [LH_staging_for_prod_Curated_data].[dbo].[tbl_OFFERTE];

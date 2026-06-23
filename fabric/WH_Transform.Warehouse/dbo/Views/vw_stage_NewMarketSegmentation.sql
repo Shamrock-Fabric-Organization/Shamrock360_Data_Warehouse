@@ -1,0 +1,33 @@
+-- Auto Generated (Do not modify) DA35222BAABA6183B713CE264B7F3015C97440EB470B34C9D1747C3830378E07
+
+
+
+
+    -- Create a view to identify new records not present in the current dimension --needed because the CTAS does not allow the logic used
+CREATE   VIEW [dbo].[vw_stage_NewMarketSegmentation]
+AS
+SELECT 
+	[MarketSegmentationKey]
+	, [CMPNY]
+	, [CustomerID]
+	, [ProductID]
+	, [CPCID]
+	, [LegacyCPCID]
+	, [Industry]
+	, [SubIndustry]
+	, [AccountTranslatedToD365]
+	, [ProductTranslatedToD365]
+	
+	,CAST('1900-01-01' AS DATETIME2(3)) AS RecordEffectiveStartDate
+	,CAST('2099-12-31 00:00:01.000' AS DATETIME2(3)) AS RecordEffectiveEndDate
+	,1 AS RecordStatus
+	,[Source]
+FROM vw_stage_DIM_MarketSegmentation_incoming AS Source
+WHERE NOT EXISTS (
+		SELECT 1
+		FROM tbl_DIM_MarketSegmentation AS Target
+		WHERE Target.ProductID = Source.ProductID
+			AND Target.CustomerID = Source.CustomerID
+			AND Target.CMPNY = Source.CMPNY
+			AND Target.RecordStatus = 1
+		);

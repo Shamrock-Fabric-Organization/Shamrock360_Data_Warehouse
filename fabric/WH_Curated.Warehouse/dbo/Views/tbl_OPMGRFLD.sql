@@ -1,0 +1,3 @@
+-- Auto Generated (Do not modify) 894AC665F451AD214C5FD1C67BCCFCC3EFD20F8391289C9EF59527DDDFD8BA9A
+CREATE   VIEW [dbo].[tbl_OPMGRFLD] AS
+SELECT * FROM [LH_staging_for_prod_Curated_data].[dbo].[tbl_OPMGRFLD];

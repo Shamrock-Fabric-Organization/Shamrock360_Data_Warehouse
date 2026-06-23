@@ -1,0 +1,554 @@
+[
+  {
+    "name": "XREF_Salesman_ID",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/XREF_Salesman_ID",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "XREF_Product_ID",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/XREF_Product_ID",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "XREF_Customer_ID",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/XREF_Customer_ID",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "vw_OpportunityList",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/vw_OpportunityList",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "vw_OpMgrFld",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/vw_OpMgrFld",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "vw_OpMgr",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/vw_OpMgr",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "vw_crm_Sample_Activity",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/vw_crm_Sample_Activity",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "vw_crm_Activity",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/vw_crm_Activity",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_SampleDashboardData",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_SampleDashboardData",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_RESULTSSLSBYYR_TEDA_Thru2025",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_RESULTSSLSBYYR_TEDA_Thru2025",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_RESULTSSLSBYYR_TEDA",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_RESULTSSLSBYYR_TEDA",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_RESULTSSLSBYYR_BVBA_Thru2025",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_RESULTSSLSBYYR_BVBA_Thru2025",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_RESULTSSLSBYYR_BVBA_OPEN",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_RESULTSSLSBYYR_BVBA_OPEN",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_RESULTSSLSBYYR_BVBA",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_RESULTSSLSBYYR_BVBA",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_Reconciliation_Adjustments",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_Reconciliation_Adjustments",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_OpportunityList",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_OpportunityList",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_Opportunity_Header",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_Opportunity_Header",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_OPMGRFLD",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_OPMGRFLD",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_OFFERTE",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_OFFERTE",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_OFFD",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_OFFD",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_NewProductLine2025_Temp",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_NewProductLine2025_Temp",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_Mo_Dim_Date",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_Mo_Dim_Date",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_legacy_budget_data",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_legacy_budget_data",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_inventory",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_inventory",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_Fact_Call_Reports",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_Fact_Call_Reports",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_dlyorder",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_dlyorder",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_DIM_Date_ORIG",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_DIM_Date_ORIG",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_DIM_Date",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_DIM_Date",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_DIM_Accounts",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_DIM_Accounts",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_custtrans",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_custtrans",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_CRM_SAMPLE",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_CRM_SAMPLE",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_crm_Activity_CY",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_crm_Activity_CY",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "tbl_CPCIndustry",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/tbl_CPCIndustry",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "mtbl_EDW_RouteType",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/mtbl_EDW_RouteType",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "mtbl_EDW_BIDataSet_Opportunity",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/mtbl_EDW_BIDataSet_Opportunity",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "legacy_tbl_RESULTSSLSBYYR",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/legacy_tbl_RESULTSSLSBYYR",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "legacy_tbl_Fact_Sales_April152026_BACKUP",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/legacy_tbl_Fact_Sales_April152026_BACKUP",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "legacy_tbl_Fact_Sales",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/legacy_tbl_Fact_Sales",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "legacy_tbl_Dim_StandardCost",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/legacy_tbl_Dim_StandardCost",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "legacy_tbl_DIM_Salesman_Heirarchy",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/legacy_tbl_DIM_Salesman_Heirarchy",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "legacy_tbl_DIM_Product_Other",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/legacy_tbl_DIM_Product_Other",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "legacy_tbl_DIM_Product",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/legacy_tbl_DIM_Product",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "legacy_tbl_DIM_CPC",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/legacy_tbl_DIM_CPC",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "KLANTEN",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/KLANTEN",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "Cust_TDSGyroDet",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/Cust_TDSGyroDet",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  },
+  {
+    "name": "ARTIKEL",
+    "path": "/Tables",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dbo/ARTIKEL",
+        "itemId": "66bd9948-838f-472b-ac00-f264e80cf5d2",
+        "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05"
+      }
+    }
+  }
+]

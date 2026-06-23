@@ -1,0 +1,3 @@
+-- Auto Generated (Do not modify) AE08C95214788DE99ED63BC1D0BEEAC44878E8FFD7D6B02BE46E0D68B8128131
+CREATE   VIEW [dbo].[legacy_tbl_RESULTSSLSBYYR] AS
+SELECT * FROM [LH_staging_for_prod_Curated_data].[dbo].[legacy_tbl_RESULTSSLSBYYR];

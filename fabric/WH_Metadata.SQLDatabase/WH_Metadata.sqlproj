@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build">
   <Sdk Name="Microsoft.Build.Sql" Version="2.1.0" />
   <PropertyGroup>
     <Name>WH_Metadata</Name>
-    <ProjectGuid>{00000000-0000-0000-0000-000000000000}</ProjectGuid>
+    <ProjectGuid>{B52BCB0F-F6BB-4035-9027-0036BE9CC39F}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.SqlDbFabricDatabaseSchemaProvider</DSP>
     <ModelCollation>1033, CI</ModelCollation>
   </PropertyGroup>

@@ -8,3 +8,13 @@ obj/
 
 # Fabric lakehouse artifacts
 *.Lakehouse/
+
+# Pipelines without connection permissions
+New BVBA 4 Forecast TABLES from APOLLO BVBA Pipeline.DataPipeline
+Go Live Pipelines/
+
+# Fabric Warehouse artifacts
+fabric/*.Warehouse/dbo/
+fabric/dev_WH_Raw.Warehouse/
+fabric/*.SQLDatabase/dbo/
+

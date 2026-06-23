@@ -36,7 +36,7 @@ Date:   		Author:      		Description:
 **************************************************************/
 
 
-CREATE             PROCEDURE [dbo].[usp_CreateDataVirtualizationViews_Prep] 
+CREATE   PROCEDURE [dbo].[usp_CreateDataVirtualizationViews_Prep] 
 AS
 
 	/***********************************************************************************/

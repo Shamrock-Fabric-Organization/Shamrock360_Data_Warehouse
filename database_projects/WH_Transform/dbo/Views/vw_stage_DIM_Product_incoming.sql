@@ -6,9 +6,10 @@
 
 ----select * from vw_stage_DIM_Product_incoming
 
-CREATE         VIEW [dbo].[vw_stage_DIM_Product_incoming]			
+CREATE OR ALTER        VIEW [dbo].[vw_stage_DIM_Product_incoming]			
 AS			
-SELECT 			
+WITH base AS (
+SELECT
     ABS(CAST(CAST(
     HASHBYTES('SHA2_256', 
         CONCAT(
@@ -29,14 +30,11 @@ SELECT
 	,SC_bl.Level3Category	 Business_Line	 --Type 2 from product attributes
 	,SC_bl.Level4Category	 Product_Line	 --Type 2 from product attributes
 	,SC_m.Level3Category	 MiscRevenue	 --Type 2 from product attributes
-	----,SC_m.Level4Category	 Material	 --Type 2 from product attributes  Not defined when adding on 2026-01-26
 	, NULL Lifecycle
-	--,IT.netweight	 PackageWeight	--needed?
 	,ITMi.unitid  Inventory_UoM
 	,ITMp.unitid  Purchasing_UoM
 	,ITMs.unitid  Sales_UoM
 	,IT.itemtype_$label	 Item_Type
-	--, IT.product  ProductID
 	,CONVERT(int, NULL) PTFE_Flag
 	,CONVERT(numeric(20,4), NULL) Reorder_Point
 
@@ -75,10 +73,19 @@ SELECT
 		THEN NULL
 		ELSE (ITMs.price / CASE WHEN ITMs.unitid = 'lb' then 1 else UOM_s.UOMConversionFactor end ) 
 		END BaseSalesPricePerLB
-	,NULL	 RecordEffectiveStartDate	 --SCD2 control field
-	,NULL	 RecordEffectiveEndDate	 --SCD2 control field
-	,NULL	 RecordStatus	 --SCD2 control field
-	,'D365FO'	 Source    --	is D365FO the correct value?
+	,CAST(NULL AS DATETIME2(3))	 RecordEffectiveStartDate	 --SCD2 control field
+	,CAST(NULL AS DATETIME2(3))	 RecordEffectiveEndDate	 --SCD2 control field
+	,CAST(NULL AS INT)	 RecordStatus	 --SCD2 control field
+	,'D365FO'	 Source
+
+	-- Collapse any join fan-out to a single row per product. The observed
+	-- duplicates are identical across attribute columns, so the pick is
+	-- lossless. If two genuinely different attribute rows ever appear for one
+	-- product, revisit this ORDER BY to encode the business-preferred winner.
+	, ROW_NUMBER() OVER (
+	      PARTITION BY IT.dataareaid, IT.ItemID
+	      ORDER BY (SELECT 1)
+	  ) AS _dedupe_rn
 
 FROM WH_Raw.dbo.InventTable IT		
 LEFT JOIN WH_Raw.dbo.InventTableModule ITMi
@@ -141,6 +148,61 @@ LEFT JOIN WH_Raw.dbo.vwUnitOfMeasureConversion UOM_s
 	ON IT.product = UOM_s.product
 		AND ITMs.unitid = UOM_s.SYMBOLFROM
 		AND UOM_s.SYMBOLTO = 'lb'
+)
+
+SELECT
+     ProductKey
+    ,CMPNY
+    ,Product_ID
+    ,ProductName
+    ,ProductSearchName
+    ,Commercial_Name
+    ,Technology
+    ,Material
+    ,Business_Line
+    ,Product_Line
+    ,MiscRevenue
+    ,Lifecycle
+    ,Inventory_UoM
+    ,Purchasing_UoM
+    ,Sales_UoM
+    ,Item_Type
+    ,PTFE_Flag
+    ,Reorder_Point
+    ,itemmodelgroupid
+    ,producttype
+    ,producttype_desc
+    ,itemgroupid
+    ,ItemGroupName
+    ,ItemGroupType
+    ,ItemGroupTypeName
+    ,itembuyergroupid
+    ,ItemBuyerGroupDesc
+    ,Phantom
+    ,IsPhantom
+    ,min_purchase_qty
+    ,multiple_purchase_qty
+    ,std_purchase_order_qty
+    ,max_purchase_order_qty
+    ,purchase_leadtime
+    ,min_inventory_qty
+    ,multiple_inventory_qty
+    ,std_inventory_order_qty
+    ,max_inventory_order_qty
+    ,inventory_leadtime
+    ,min_sales_qty
+    ,multiple_sales_qty
+    ,std_sales_order_qty
+    ,max_sales_order_qty
+    ,sales_leadtime
+    ,BaseSalesPrice
+    ,BaseSalesPricePerLB
+    ,RecordEffectiveStartDate
+    ,RecordEffectiveEndDate
+    ,RecordStatus
+    ,Source
+FROM base
+WHERE _dedupe_rn = 1
 
 ----WHERE ISNULL(IT.Phantom,0) <> 1  --removed on 2026-02-24 per Kevin Y
 

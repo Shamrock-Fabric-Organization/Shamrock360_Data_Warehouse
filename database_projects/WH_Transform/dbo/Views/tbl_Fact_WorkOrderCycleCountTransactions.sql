@@ -13,7 +13,7 @@
 
 =============================================================================*/
 
-CREATE   VIEW tbl_Fact_WorkOrderCycleCountTransactions 
+CREATE OR ALTER  VIEW tbl_Fact_WorkOrderCycleCountTransactions 
 AS
 SELECT
      wt.[DATAAREAID]                               AS CMPNY
@@ -136,6 +136,7 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_Warehouse dw
 
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Batch db
 	ON id.inventbatchid = db.BatchID
+        AND wlcc.itemid = db.ProductID
 		AND wt.dataareaid = db.CMPNY
 		AND db.RecordStatus=1
 

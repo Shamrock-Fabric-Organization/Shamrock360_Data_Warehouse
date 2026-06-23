@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "CopyJob",
+    "displayName": "CopyJob_For_WH_Raw"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "444dba1a-f23d-b95d-4901-84ec245595da"
+  }
+}

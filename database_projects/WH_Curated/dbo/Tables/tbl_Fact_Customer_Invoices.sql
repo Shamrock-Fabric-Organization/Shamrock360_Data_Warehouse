@@ -23,10 +23,11 @@ CREATE TABLE [dbo].[tbl_Fact_Customer_Invoices] (
 	[Warehouse_ID] varchar(8000) NULL, 
 	[LineAmount] decimal(38,6) NULL, 
 	[LineAmountMST] decimal(38,6) NULL, 
-	[Current_Code] varchar(8000) NULL, 
+	[Currency_Code] varchar(8000) NULL, 
 	[salesunit] varchar(8000) NULL, 
 	[Qty] decimal(38,6) NULL, 
 	[Quantity_LBs] decimal(38,6) NULL, 
+	[Quantity_KGs] decimal(38,6) NULL, 
 	[SalesPrice] decimal(38,6) NULL, 
 	[CostAmount] decimal(38,6) NULL, 
 	[CostAmountPhysical] decimal(38,6) NULL, 
@@ -46,3 +47,5 @@ CREATE TABLE [dbo].[tbl_Fact_Customer_Invoices] (
 	[SalesOrderKey] bigint NOT NULL, 
 	[DeliveryAddressKey] bigint NOT NULL
 );
+
+

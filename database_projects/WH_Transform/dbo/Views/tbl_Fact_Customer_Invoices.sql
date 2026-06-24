@@ -3,7 +3,7 @@
 /****** Object:  View [dbo].[tbl_Fact_Customer_Invoices]    Script Date: 4/23/2026 2:42:06 PM ******/
 
 
-CREATE                             VIEW [dbo].[tbl_Fact_Customer_Invoices]
+CREATE OR ALTER                            VIEW [dbo].[tbl_Fact_Customer_Invoices]
 as
 select  cit.dataareaid CMPNY  
 , cit.invoiceid  Invoice_ID
@@ -35,7 +35,17 @@ select  cit.dataareaid CMPNY
 , cit.salesunit 
 --, CASE WHEN left( cit.invoiceid ,2) = 'FT' and cit.qty=1 then cij.qty else cit.qty end Qty
 , cit.qty Qty
-	,case when cit.salesunit = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * cit.qty  	Quantity_LBs
+     , CASE
+         WHEN cit.salesunit = 'lb' THEN 1                                               -- already in LB
+         WHEN UOMC_lb.UOMConversionFactor IS NOT NULL THEN UOMC_lb.UOMConversionFactor  -- direct sales-unit -> LB conversion
+         ELSE (case when cit.salesunit = 'kg' then 1 else UOMC_kg.UOMConversionFactor end) * 2.20462262185 -- fallback: convert KG -> LB (1 / 0.45359237)
+       END * cit.qty      Quantity_LBs
+
+     , CASE
+         WHEN cit.salesunit = 'kg' THEN 1                                               -- already in KG
+         WHEN UOMC_kg.UOMConversionFactor IS NOT NULL THEN UOMC_kg.UOMConversionFactor  -- direct sales-unit -> KG conversion
+         ELSE (case when cit.salesunit = 'lb' then 1 else UOMC_lb.UOMConversionFactor end ) * 0.45359237  -- fallback: convert LBs -> KG
+       END * cit.qty      Quantity_KGs
 --,cit.inventqty
 
 , cit.salesprice SalesPrice
@@ -143,6 +153,11 @@ LEFT JOIN WH_Raw.dbo.vwUnitOfMeasureConversion UOMC_lb
     ON IT.product = UOMC_lb.product
 	    AND cit.salesunit = UOMC_lb.SYMBOLFROM
 		AND UOMC_lb.SYMBOLTO = 'lb'
+ 
+ LEFT JOIN WH_Raw.dbo.vwUnitOfMeasureConversion UOMC_kg
+     ON IT.product = UOMC_kg.product
+         AND cit.salesunit = UOMC_kg.SYMBOLFROM
+         AND UOMC_kg.SYMBOLTO = 'kg'
 
  
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Customer dc

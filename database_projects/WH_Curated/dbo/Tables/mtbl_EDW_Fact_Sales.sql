@@ -25,6 +25,7 @@ CREATE TABLE [dbo].[mtbl_EDW_Fact_Sales] (
 	[Quantity] decimal(38,6) NULL, 
 	[Quantity_UoM] varchar(8000) NULL, 
 	[Quantity_LBs] decimal(38,6) NULL, 
+	[Quantity_KGs] decimal(38,6) NULL, 
 	[Volume] decimal(38,6) NULL, 
 	[Volume_UoM] varchar(8000) NULL, 
 	[Price] decimal(38,6) NULL, 

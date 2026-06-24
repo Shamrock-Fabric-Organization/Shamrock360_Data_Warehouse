@@ -17,6 +17,7 @@ CREATE TABLE [dbo].[tbl_Fact_PurchaseOrderItemConsumptionSummary] (
 	[qtyordered] decimal(38,6) NULL, 
 	[purchunit] varchar(8000) NULL, 
 	[QtyOrdered_LBs] decimal(38,6) NULL, 
+	[QtyOrdered_KGs] decimal(38,6) NULL, 
 	[vendaccount] varchar(8000) NULL, 
 	[Inventory_UoM] varchar(8000) NULL, 
 	[NumberFinishedGoods] int NULL, 

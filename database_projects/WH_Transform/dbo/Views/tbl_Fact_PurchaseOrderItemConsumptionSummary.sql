@@ -21,7 +21,7 @@ order by 1,2,3,4
 
 
 ----Summary Purchase Order Level consumption
-CREATE     VIEW [dbo].[tbl_Fact_PurchaseOrderItemConsumptionSummary] 
+CREATE OR ALTER    VIEW [dbo].[tbl_Fact_PurchaseOrderItemConsumptionSummary] 
 as
 select CMPNY
 , PurchaseOrderNumber
@@ -42,6 +42,7 @@ select CMPNY
 , qtyordered
 , purchunit
 , QtyOrdered_LBs
+, QtyOrdered_KGs
 , vendaccount
 , Inventory_UoM
 , COUNT(Distinct FinishedGoodProductID) NumberFinishedGoods
@@ -84,8 +85,18 @@ from
 		, pl.purchqty
 		, pl.qtyordered
 		, pl.purchunit
-			, case when pl.purchunit = 'lb' then 1 
-				else coalesce(UOMC_lb.UOMConversionFactor, UOMC_lb_generic.UOMConversionFactor) end * pl.qtyordered	QtyOrdered_LBs
+		, CASE
+			WHEN pl.purchunit = 'lb' THEN 1                                               -- already in LB
+			WHEN coalesce(UOMC_lb.UOMConversionFactor, UOMC_lb_generic.UOMConversionFactor) IS NOT NULL THEN coalesce(UOMC_lb.UOMConversionFactor, UOMC_lb_generic.UOMConversionFactor)  -- direct sales-unit -> LB conversion
+			ELSE (case when pl.purchunit = 'kg' then 1 else UOMC_kg.UOMConversionFactor end) * 2.20462262185 -- fallback: convert KG -> LB (1 / 0.45359237)
+		END * pl.qtyordered      QtyOrdered_LBs
+
+		, CASE
+			WHEN pl.purchunit = 'kg' THEN 1                                               -- already in KG
+			WHEN UOMC_kg.UOMConversionFactor IS NOT NULL THEN UOMC_kg.UOMConversionFactor  -- direct sales-unit -> KG conversion
+			ELSE (case when pl.purchunit = 'lb' then 1 else coalesce(UOMC_lb.UOMConversionFactor, UOMC_lb_generic.UOMConversionFactor) end ) * 0.45359237  -- fallback: convert LBs -> KG
+		END * pl.qtyordered      QtyOrdered_KGs
+		
 		, pl.vendaccount
 
 		, ito.referencecategory
@@ -163,6 +174,11 @@ from
 			ON UOMC_lb_generic.product = 0
 				AND pl.purchunit = UOMC_lb_generic.SYMBOLFROM
 				AND UOMC_lb_generic.SYMBOLTO = 'lb'
+ 
+		LEFT JOIN WH_Raw.dbo.vwUnitOfMeasureConversion UOMC_kg
+			ON IT.product = UOMC_kg.product
+				AND pl.purchunit = UOMC_kg.SYMBOLFROM
+				AND UOMC_kg.SYMBOLTO = 'kg'
 
 		LEFT JOIN WH_Raw.dbo.hcmworker HCM
 			ON pt.workerpurchplacer = HCM.recid
@@ -247,6 +263,7 @@ GROUP by CMPNY
 , qtyordered
 , purchunit
 , QtyOrdered_LBs
+, QtyOrdered_KGs
 , vendaccount
 --, NumberOfFinishedGoods
 --, FinishedGoodName

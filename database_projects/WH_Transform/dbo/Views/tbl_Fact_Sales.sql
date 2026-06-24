@@ -3,7 +3,7 @@
 /****** Object:  View [dbo].[tbl_Fact_Sales]    Script Date: 4/23/2026 2:40:48 PM ******/
 
 
-CREATE                           VIEW [dbo].[tbl_Fact_Sales] AS 		
+CREATE  OR ALTER                         VIEW [dbo].[tbl_Fact_Sales] AS 		
 SELECT 
 	CONVERT(BIGINT, CONVERT(VARBINARY, CONCAT(NEWID(), GETDATE())))	RecordID
 	,ST.dataareaid	CMPNY
@@ -40,7 +40,18 @@ SELECT
 	,ST.salesid	Customer_Order_Number
 	,SL.salesqty	Quantity
 	,SL.salesunit	Quantity_UoM
-	,case when SL.salesunit = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * SL.salesqty	Quantity_LBs
+     , CASE
+         WHEN SL.salesunit = 'lb' THEN 1                                               -- already in LB
+         WHEN UOMC_lb.UOMConversionFactor IS NOT NULL THEN UOMC_lb.UOMConversionFactor  -- direct sales-unit -> LB conversion
+         ELSE (case when SL.salesunit = 'kg' then 1 else UOMC_kg.UOMConversionFactor end) * 2.20462262185 -- fallback: convert KG -> LB (1 / 0.45359237)
+       END * SL.salesqty      Quantity_LBs
+
+     , CASE
+         WHEN SL.salesunit = 'kg' THEN 1                                               -- already in KG
+         WHEN UOMC_kg.UOMConversionFactor IS NOT NULL THEN UOMC_kg.UOMConversionFactor  -- direct sales-unit -> KG conversion
+         ELSE (case when SL.salesunit = 'lb' then 1 else UOMC_lb.UOMConversionFactor end ) * 0.45359237  -- fallback: convert LBs -> KG
+       END * SL.salesqty      Quantity_KGs
+
 	,IT.unitvolume * SL.salesqty	Volume
 	,SL.salesunit	Volume_UoM
 	,SL.salesprice	Price
@@ -111,6 +122,11 @@ LEFT JOIN WH_Raw.dbo.vwUnitOfMeasureConversion UOMC_lb
     ON IT.product = UOMC_lb.product
 	    AND SL.salesunit = UOMC_lb.SYMBOLFROM
 		AND UOMC_lb.SYMBOLTO = 'lb'
+ 
+ LEFT JOIN WH_Raw.dbo.vwUnitOfMeasureConversion UOMC_kg
+     ON IT.product = UOMC_kg.product
+         AND SL.salesunit = UOMC_kg.SYMBOLFROM
+         AND UOMC_kg.SYMBOLTO = 'kg'
 
 
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Customer dc

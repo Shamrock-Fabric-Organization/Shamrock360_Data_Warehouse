@@ -3,7 +3,7 @@
 
 
 
-CREATE             VIEW [dbo].[vw_stage_Fact_Inventory_Snapshot_Extended_incoming] AS 		
+CREATE OR ALTER            VIEW [dbo].[vw_stage_Fact_Inventory_Snapshot_Extended_incoming] AS 		
 SELECT 
 	CONVERT(BIGINT, CONVERT(VARBINARY, CONCAT(NEWID(), GETDATE())))	InventorySnapshotKey
 	,S.dataareaid	CMPNY
@@ -51,19 +51,128 @@ SELECT
 	--, SUM( /*case when s.inventstatusid = 'Available' then*/ s.physicalinvent/* else 0 end */) -
 	--  SUM( case when s.inventstatusid = 'Available' and s.wmslocationid is null then s.reservphysical  else 0 end ) AvailablePhysical
 
-	, sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.arrived) 	arrived_LBs
-	, sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.availordered) 	availordered_LBs
-	, sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.availphysical) 	availphysical_LBs
-	, sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.deducted) 	deducted_LBs
-	, sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.onorder) 	onorder_LBs
-	, sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.ordered) 	ordered_LBs
-	, sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.physicalinvent) 	physicalinvent_LBs
-	, sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.picked) 	picked_LBs
-	, sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.postedqty) 	postedqty_LBs
-	, sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.received) 	received_LBs
-	, sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.registered) 	registered_LBs
-	, sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.reservordered) 	reservordered_LBs
-	, sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.reservphysical) 	reservphysical_LBs
+	-- , sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.arrived) 	arrived_LBs
+	-- , sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.availordered) 	availordered_LBs
+	-- , sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.availphysical) 	availphysical_LBs
+	-- , sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.deducted) 	deducted_LBs
+	-- , sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.onorder) 	onorder_LBs
+	-- , sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.ordered) 	ordered_LBs
+	-- , sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.physicalinvent) 	physicalinvent_LBs
+	-- , sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.picked) 	picked_LBs
+	-- , sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.postedqty) 	postedqty_LBs
+	-- , sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.received) 	received_LBs
+	-- , sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.registered) 	registered_LBs
+	-- , sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.reservordered) 	reservordered_LBs
+	-- , sum(case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end * s.reservphysical) 	reservphysical_LBs
+
+		     -- ===== LB measures (updated: fall back to KG -> LB when no LB conversion) =====
+     , sum(CASE WHEN ITMi.unitid = 'lb' THEN 1
+                WHEN UOMC_lb.UOMConversionFactor IS NOT NULL THEN UOMC_lb.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'kg' then 1 else UOMC_kg.UOMConversionFactor end) / 0.45359237
+           END * s.arrived)         arrived_LBs
+     , sum(CASE WHEN ITMi.unitid = 'lb' THEN 1
+                WHEN UOMC_lb.UOMConversionFactor IS NOT NULL THEN UOMC_lb.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'kg' then 1 else UOMC_kg.UOMConversionFactor end) / 0.45359237
+           END * s.availordered)    availordered_LBs
+     , sum(CASE WHEN ITMi.unitid = 'lb' THEN 1
+                WHEN UOMC_lb.UOMConversionFactor IS NOT NULL THEN UOMC_lb.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'kg' then 1 else UOMC_kg.UOMConversionFactor end) / 0.45359237
+           END * s.availphysical)   availphysical_LBs
+     , sum(CASE WHEN ITMi.unitid = 'lb' THEN 1
+                WHEN UOMC_lb.UOMConversionFactor IS NOT NULL THEN UOMC_lb.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'kg' then 1 else UOMC_kg.UOMConversionFactor end) / 0.45359237
+           END * s.deducted)        deducted_LBs
+     , sum(CASE WHEN ITMi.unitid = 'lb' THEN 1
+                WHEN UOMC_lb.UOMConversionFactor IS NOT NULL THEN UOMC_lb.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'kg' then 1 else UOMC_kg.UOMConversionFactor end) / 0.45359237
+           END * s.onorder)         onorder_LBs
+     , sum(CASE WHEN ITMi.unitid = 'lb' THEN 1
+                WHEN UOMC_lb.UOMConversionFactor IS NOT NULL THEN UOMC_lb.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'kg' then 1 else UOMC_kg.UOMConversionFactor end) / 0.45359237
+           END * s.ordered)         ordered_LBs
+     , sum(CASE WHEN ITMi.unitid = 'lb' THEN 1
+                WHEN UOMC_lb.UOMConversionFactor IS NOT NULL THEN UOMC_lb.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'kg' then 1 else UOMC_kg.UOMConversionFactor end) / 0.45359237
+           END * s.physicalinvent)  physicalinvent_LBs
+     , sum(CASE WHEN ITMi.unitid = 'lb' THEN 1
+                WHEN UOMC_lb.UOMConversionFactor IS NOT NULL THEN UOMC_lb.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'kg' then 1 else UOMC_kg.UOMConversionFactor end) / 0.45359237
+           END * s.picked)          picked_LBs
+     , sum(CASE WHEN ITMi.unitid = 'lb' THEN 1
+                WHEN UOMC_lb.UOMConversionFactor IS NOT NULL THEN UOMC_lb.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'kg' then 1 else UOMC_kg.UOMConversionFactor end) / 0.45359237
+           END * s.postedqty)       postedqty_LBs
+     , sum(CASE WHEN ITMi.unitid = 'lb' THEN 1
+                WHEN UOMC_lb.UOMConversionFactor IS NOT NULL THEN UOMC_lb.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'kg' then 1 else UOMC_kg.UOMConversionFactor end) / 0.45359237
+           END * s.received)        received_LBs
+     , sum(CASE WHEN ITMi.unitid = 'lb' THEN 1
+                WHEN UOMC_lb.UOMConversionFactor IS NOT NULL THEN UOMC_lb.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'kg' then 1 else UOMC_kg.UOMConversionFactor end) / 0.45359237
+           END * s.registered)      registered_LBs
+     , sum(CASE WHEN ITMi.unitid = 'lb' THEN 1
+                WHEN UOMC_lb.UOMConversionFactor IS NOT NULL THEN UOMC_lb.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'kg' then 1 else UOMC_kg.UOMConversionFactor end) / 0.45359237
+           END * s.reservordered)   reservordered_LBs
+     , sum(CASE WHEN ITMi.unitid = 'lb' THEN 1
+                WHEN UOMC_lb.UOMConversionFactor IS NOT NULL THEN UOMC_lb.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'kg' then 1 else UOMC_kg.UOMConversionFactor end) / 0.45359237
+           END * s.reservphysical)  reservphysical_LBs
+ 
+     -- ===== KG measures (new: fall back to LB -> KG when no KG conversion) =====
+     , sum(CASE WHEN ITMi.unitid = 'kg' THEN 1
+                WHEN UOMC_kg.UOMConversionFactor IS NOT NULL THEN UOMC_kg.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end) * 0.45359237
+           END * s.arrived)         arrived_KGs
+     , sum(CASE WHEN ITMi.unitid = 'kg' THEN 1
+                WHEN UOMC_kg.UOMConversionFactor IS NOT NULL THEN UOMC_kg.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end) * 0.45359237
+           END * s.availordered)    availordered_KGs
+     , sum(CASE WHEN ITMi.unitid = 'kg' THEN 1
+                WHEN UOMC_kg.UOMConversionFactor IS NOT NULL THEN UOMC_kg.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end) * 0.45359237
+           END * s.availphysical)   availphysical_KGs
+     , sum(CASE WHEN ITMi.unitid = 'kg' THEN 1
+                WHEN UOMC_kg.UOMConversionFactor IS NOT NULL THEN UOMC_kg.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end) * 0.45359237
+           END * s.deducted)        deducted_KGs
+     , sum(CASE WHEN ITMi.unitid = 'kg' THEN 1
+                WHEN UOMC_kg.UOMConversionFactor IS NOT NULL THEN UOMC_kg.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end) * 0.45359237
+           END * s.onorder)         onorder_KGs
+     , sum(CASE WHEN ITMi.unitid = 'kg' THEN 1
+                WHEN UOMC_kg.UOMConversionFactor IS NOT NULL THEN UOMC_kg.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end) * 0.45359237
+           END * s.ordered)         ordered_KGs
+     , sum(CASE WHEN ITMi.unitid = 'kg' THEN 1
+                WHEN UOMC_kg.UOMConversionFactor IS NOT NULL THEN UOMC_kg.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end) * 0.45359237
+           END * s.physicalinvent)  physicalinvent_KGs
+     , sum(CASE WHEN ITMi.unitid = 'kg' THEN 1
+                WHEN UOMC_kg.UOMConversionFactor IS NOT NULL THEN UOMC_kg.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end) * 0.45359237
+           END * s.picked)          picked_KGs
+     , sum(CASE WHEN ITMi.unitid = 'kg' THEN 1
+                WHEN UOMC_kg.UOMConversionFactor IS NOT NULL THEN UOMC_kg.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end) * 0.45359237
+           END * s.postedqty)       postedqty_KGs
+     , sum(CASE WHEN ITMi.unitid = 'kg' THEN 1
+                WHEN UOMC_kg.UOMConversionFactor IS NOT NULL THEN UOMC_kg.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end) * 0.45359237
+           END * s.received)        received_KGs
+     , sum(CASE WHEN ITMi.unitid = 'kg' THEN 1
+                WHEN UOMC_kg.UOMConversionFactor IS NOT NULL THEN UOMC_kg.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end) * 0.45359237
+           END * s.registered)      registered_KGs
+     , sum(CASE WHEN ITMi.unitid = 'kg' THEN 1
+                WHEN UOMC_kg.UOMConversionFactor IS NOT NULL THEN UOMC_kg.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end) * 0.45359237
+           END * s.reservordered)   reservordered_KGs
+     , sum(CASE WHEN ITMi.unitid = 'kg' THEN 1
+                WHEN UOMC_kg.UOMConversionFactor IS NOT NULL THEN UOMC_kg.UOMConversionFactor
+                ELSE (case when ITMi.unitid = 'lb' then 1 else UOMC_lb.UOMConversionFactor end) * 0.45359237
+           END * s.reservphysical)  reservphysical_KGs
+
 	, it.primaryvendorid
 
 	,'D365FO'		Source
@@ -98,7 +207,12 @@ LEFT JOIN WH_Raw.dbo.vwUnitOfMeasureConversion UOMC_lb
     ON IT.product = UOMC_lb.product
 	    AND ITMi.unitid = UOMC_lb.SYMBOLFROM
 		AND UOMC_lb.SYMBOLTO = 'lb'
-
+ 
+ LEFT JOIN WH_Raw.dbo.vwUnitOfMeasureConversion UOMC_kg
+     ON IT.product = UOMC_kg.product
+         AND ITMi.unitid = UOMC_kg.SYMBOLFROM
+         AND UOMC_kg.SYMBOLTO = 'kg'
+		 
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Product dpc
 	ON s.itemid = dpc.Product_ID
 		AND s.dataareaid = dpc.CMPNY

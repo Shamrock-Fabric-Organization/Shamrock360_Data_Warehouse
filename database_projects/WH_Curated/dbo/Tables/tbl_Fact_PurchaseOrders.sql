@@ -12,6 +12,7 @@ CREATE TABLE [dbo].[tbl_Fact_PurchaseOrders] (
 	[purchunit] varchar(8000) NULL, 
 	[qtyordered] decimal(38,6) NULL, 
 	[QtyOrdered_LBs] decimal(38,6) NULL, 
+	[QtyOrdered_KGs] decimal(38,6) NULL, 
 	[remainpurchphysical] decimal(38,6) NULL, 
 	[remainpurchfinancial] decimal(38,6) NULL, 
 	[OutstandingQTY] decimal(38,6) NULL, 

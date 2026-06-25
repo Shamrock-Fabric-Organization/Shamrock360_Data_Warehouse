@@ -1,6 +1,6 @@
 -- Auto Generated (Do not modify) 8EF74670B29E9571A8CEC39922198C0FF52CDC136B7820F03C39F9908631CB4B
 
-create   view vwExchangeRate
+create or alter  view vwExchangeRate
 as
 select ert.description exchangeratetype
 , ercp.fromcurrencycode 
@@ -8,7 +8,7 @@ select ert.description exchangeratetype
 , er.validfrom 
 , er.validto
 , exchangerate OrigExchangeRate
-, ( 1 / (exchangerate / 100.0)) ExchangeRate
+, (exchangerate / 100.0) ExchangeRate
 , er.exchangeratecurrencypair
 from exchangerate er
 join exchangeratecurrencypair ercp
@@ -24,7 +24,7 @@ select ert.description exchangeratetype
 , er.validfrom 
 , er.validto
 , exchangerate OrigExchangeRate
-, (exchangerate / 100.0) ExchangeRate
+, ( 1 / (exchangerate / 100.0)) ExchangeRate
 , er.exchangeratecurrencypair
 from exchangerate er
 join exchangeratecurrencypair ercp

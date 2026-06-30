@@ -56,7 +56,7 @@ SELECT
 	,SL.salesunit	Volume_UoM
 	,SL.salesprice	Price
 	,SL.currencycode	Currency
-	,SL.lineamount	Amount
+	,SL.lineamount	Amount 
 	,SL.currencycode	Amount_Currency
 	,CASE WHEN SL.salestype_$label = 'ReturnItem' then SL.salesqty else 0 end Returned_Quantity
 	,CASE WHEN SL.salestype_$label = 'ReturnItem' then SL.lineamount else 0 end Returned_Amount

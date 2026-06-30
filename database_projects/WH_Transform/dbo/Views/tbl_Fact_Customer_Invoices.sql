@@ -16,13 +16,37 @@ select  cit.dataareaid CMPNY
 , PAV.COUNTRYREGIONID Country
 , cit.name Invoice_Line_Name
 , cij.invoiceamount InvoiceAmount
+-- Txn basis (FROM cit.currencycode) — converted InvoiceAmount
+, CASE WHEN cit.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * cij.invoiceamount InvoiceAmount_USD
+, CASE WHEN cit.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * cij.invoiceamount InvoiceAmount_EUR
+, CASE WHEN cit.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * cij.invoiceamount InvoiceAmount_CNY
 , cij.invoiceamountmst InvoiceAmountMST
 , mt_freight.calculatedamount Freight 
+-- Txn basis (FROM cit.currencycode) — MarkupTrans.CalculatedAmount = AmountCur = txn ccy
+, CASE WHEN cit.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * mt_freight.calculatedamount Freight_USD
+, CASE WHEN cit.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * mt_freight.calculatedamount Freight_EUR
+, CASE WHEN cit.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * mt_freight.calculatedamount Freight_CNY
 , mt_fuelchg.calculatedamount Fuel_Charge
+-- Txn basis (FROM cit.currencycode) — converted Fuel_Charge
+, CASE WHEN cit.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * mt_fuelchg.calculatedamount Fuel_Charge_USD
+, CASE WHEN cit.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * mt_fuelchg.calculatedamount Fuel_Charge_EUR
+, CASE WHEN cit.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * mt_fuelchg.calculatedamount Fuel_Charge_CNY
 
 , mt_Comms.calculatedamount  Comms
+-- Txn basis (FROM cit.currencycode) — converted Comms
+, CASE WHEN cit.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * mt_Comms.calculatedamount Comms_USD
+, CASE WHEN cit.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * mt_Comms.calculatedamount Comms_EUR
+, CASE WHEN cit.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * mt_Comms.calculatedamount Comms_CNY
 , mt_PLT_Brk_Ch.calculatedamount PLT_Brk_Ch
+-- Txn basis (FROM cit.currencycode) — converted PLT_Brk_Ch
+, CASE WHEN cit.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * mt_PLT_Brk_Ch.calculatedamount PLT_Brk_Ch_USD
+, CASE WHEN cit.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * mt_PLT_Brk_Ch.calculatedamount PLT_Brk_Ch_EUR
+, CASE WHEN cit.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * mt_PLT_Brk_Ch.calculatedamount PLT_Brk_Ch_CNY
 , mt_Tariff_SC.calculatedamount  Tariff_SC
+-- Txn basis (FROM cit.currencycode) — converted Tariff_SC
+, CASE WHEN cit.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * mt_Tariff_SC.calculatedamount Tariff_SC_USD
+, CASE WHEN cit.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * mt_Tariff_SC.calculatedamount Tariff_SC_EUR
+, CASE WHEN cit.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * mt_Tariff_SC.calculatedamount Tariff_SC_CNY
 
 
 , cit.linenum LineNumber
@@ -30,8 +54,12 @@ select  cit.dataareaid CMPNY
 , id.inventsiteid  Site_ID
 , id.inventlocationid Warehouse_ID
 , cit.lineamount LineAmount
+-- Txn basis (FROM cit.currencycode) — converted LineAmount
+, CASE WHEN cit.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * cit.lineamount LineAmount_USD
+, CASE WHEN cit.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * cit.lineamount LineAmount_EUR
+, CASE WHEN cit.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * cit.lineamount LineAmount_CNY
 , cit.lineamountmst LineAmountMST
-, cit.currencycode Current_Code
+, cit.currencycode Currency_Code
 , cit.salesunit 
 --, CASE WHEN left( cit.invoiceid ,2) = 'FT' and cit.qty=1 then cij.qty else cit.qty end Qty
 , cit.qty Qty
@@ -49,9 +77,29 @@ select  cit.dataareaid CMPNY
 --,cit.inventqty
 
 , cit.salesprice SalesPrice
+-- Txn basis (FROM cit.currencycode) — converted SalesPrice
+, CASE WHEN cit.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * cit.salesprice SalesPrice_USD
+, CASE WHEN cit.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * cit.salesprice SalesPrice_EUR
+, CASE WHEN cit.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * cit.salesprice SalesPrice_CNY
 , itcost.costamountposted CostAmount
+-- Cost/MST basis (FROM dle.accountingcurrency) — InventTrans costamountposted = AmountMST
+, CASE WHEN dle.accountingcurrency = 'USD' THEN 1.0 ELSE erCostUSD.ExchangeRate END * itcost.costamountposted CostAmount_USD
+, CASE WHEN dle.accountingcurrency = 'EUR' THEN 1.0 ELSE erCostEUR.ExchangeRate END * itcost.costamountposted CostAmount_EUR
+, CASE WHEN dle.accountingcurrency = 'CNY' THEN 1.0 ELSE erCostCNY.ExchangeRate END * itcost.costamountposted CostAmount_CNY
 , itcost.costamountphysical CostAmountPhysical
+-- Cost/MST basis (FROM dle.accountingcurrency) — InventTrans costamountphysical = AmountMST
+, CASE WHEN dle.accountingcurrency = 'USD' THEN 1.0 ELSE erCostUSD.ExchangeRate END * itcost.costamountphysical CostAmountPhysical_USD
+, CASE WHEN dle.accountingcurrency = 'EUR' THEN 1.0 ELSE erCostEUR.ExchangeRate END * itcost.costamountphysical CostAmountPhysical_EUR
+, CASE WHEN dle.accountingcurrency = 'CNY' THEN 1.0 ELSE erCostCNY.ExchangeRate END * itcost.costamountphysical CostAmountPhysical_CNY
 , cit.lineamount + isnull(itcost.costamountposted,0) Margin  
+-- NOTE: Margin is MIXED-basis (lineamount = txn ccy + costamountposted = MST/accounting ccy).
+-- recompute from converted parts, e.g. USD: LineAmount_USD + ISNULL(CostAmount_USD, 0).  
+, CASE WHEN cit.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * cit.lineamount 
++ ISNULL(CASE WHEN dle.accountingcurrency = 'USD' THEN 1.0 ELSE erCostUSD.ExchangeRate END * itcost.costamountposted, 0) Margin_USD
+, CASE WHEN cit.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * cit.lineamount 
++ ISNULL(CASE WHEN dle.accountingcurrency = 'EUR' THEN 1.0 ELSE erCostEUR.ExchangeRate END * itcost.costamountposted, 0) Margin_EUR
+, CASE WHEN cit.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * cit.lineamount 
++ ISNULL(CASE WHEN dle.accountingcurrency = 'CNY' THEN 1.0 ELSE erCostCNY.ExchangeRate END * itcost.costamountposted, 0) Margin_CNY
 
 , cit.inventtransid InventTransID
 , cit.inventdimid InventDimID
@@ -68,6 +116,21 @@ select  cit.dataareaid CMPNY
 , ISNULL(dmsc.MarketSegmentationKey, -1) MarketSegmentationKey
 , ISNULL(dso.SalesOrderKey, -1) SalesOrderKey
 	, ISNULL(da.AddressKey, -1) DeliveryAddressKey
+
+-- =========================== ADDED: currency-conversion audit columns ===========================
+-- FROM-currency audit columns (one per basis) so converted values are self-documenting.
+, cit.currencycode        AS Txn_Source_Currency      -- FROM currency for all Txn-basis converts
+, dle.accountingcurrency  AS Cost_Source_Currency     -- FROM currency for all Cost/MST-basis converts
+
+-- Rate_Missing flags: 1 when a NON-identity conversion found no matching rate row (else 0).
+-- (Identity convert, e.g. source = target, never needs a rate, so it is never flagged missing.)
+, CASE WHEN cit.currencycode <> 'USD' AND erTxnUSD.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_USD_Rate_Missing
+, CASE WHEN cit.currencycode <> 'EUR' AND erTxnEUR.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_EUR_Rate_Missing
+, CASE WHEN cit.currencycode <> 'CNY' AND erTxnCNY.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_CNY_Rate_Missing
+, CASE WHEN dle.accountingcurrency <> 'USD' AND erCostUSD.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Cost_USD_Rate_Missing
+, CASE WHEN dle.accountingcurrency <> 'EUR' AND erCostEUR.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Cost_EUR_Rate_Missing
+, CASE WHEN dle.accountingcurrency <> 'CNY' AND erCostCNY.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Cost_CNY_Rate_Missing
+-- ================================================================================================
 
 from WH_Raw.dbo.custinvoicetrans cit
 join (select dataareaid , invoiceid  , invoicedate , isnull(salesid, 'none') salesid, min(linenum) min_linenumber
@@ -240,3 +303,41 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_SalesOrder dso
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Address da
 	ON cit.deliverypostaladdress = da.AddressRecID
 		AND dso.RecordStatus=1
+
+-- =========================== ADDED: exchange-rate joins (currency conversion) ===========================
+-- TXN-BASIS joins: fromcurrencycode = cit.currencycode (transaction/document currency).
+-- Shared by InvoiceAmount, LineAmount, SalesPrice, Freight, Fuel_Charge, Comms, PLT_Brk_Ch, Tariff_SC.
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnUSD
+    ON erTxnUSD.fromcurrencycode = cit.currencycode
+   AND erTxnUSD.tocurrencycode   = 'USD'
+   AND convert(date, convert(char(8), cit.invoicedate, 112)) between erTxnUSD.validfrom and erTxnUSD.validto
+   AND erTxnUSD.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
+    ON erTxnEUR.fromcurrencycode = cit.currencycode
+   AND erTxnEUR.tocurrencycode   = 'EUR'
+   AND convert(date, convert(char(8), cit.invoicedate, 112)) between erTxnEUR.validfrom and erTxnEUR.validto
+   AND erTxnEUR.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
+    ON erTxnCNY.fromcurrencycode = cit.currencycode
+   AND erTxnCNY.tocurrencycode   = 'CNY'
+   AND convert(date, convert(char(8), cit.invoicedate, 112)) between erTxnCNY.validfrom and erTxnCNY.validto
+   AND erTxnCNY.exchangeratetype = 'Default global rate'
+
+-- COST/MST-BASIS joins: fromcurrencycode = dle.accountingcurrency (legal-entity accounting ccy).
+-- Shared by CostAmount and CostAmountPhysical (InventTrans AmountMST). Same invoicedate.
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erCostUSD
+    ON erCostUSD.fromcurrencycode = dle.accountingcurrency
+   AND erCostUSD.tocurrencycode   = 'USD'
+   AND convert(date, convert(char(8), cit.invoicedate, 112)) between erCostUSD.validfrom and erCostUSD.validto
+   AND erCostUSD.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erCostEUR
+    ON erCostEUR.fromcurrencycode = dle.accountingcurrency
+   AND erCostEUR.tocurrencycode   = 'EUR'
+   AND convert(date, convert(char(8), cit.invoicedate, 112)) between erCostEUR.validfrom and erCostEUR.validto
+   AND erCostEUR.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erCostCNY
+    ON erCostCNY.fromcurrencycode = dle.accountingcurrency
+   AND erCostCNY.tocurrencycode   = 'CNY'
+   AND convert(date, convert(char(8), cit.invoicedate, 112)) between erCostCNY.validfrom and erCostCNY.validto
+   AND erCostCNY.exchangeratetype = 'Default global rate'
+-- ========================================================================================================

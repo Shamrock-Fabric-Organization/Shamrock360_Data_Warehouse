@@ -90,6 +90,74 @@ SELECT
 	, ISNULL(dmsc.MarketSegmentationKey, -1) MarketSegmentationKey
 	, st.purchorderformnum PurchaseOrderFormNumber
 	, ISNULL(da.AddressKey, -1) DeliveryAddressKey
+
+	/* ============================================================================
+	   ===  ADDED: MULTI-CURRENCY CONVERSION COLUMNS (USD / EUR / CNY)  ===========
+	   ===  ITEM-018 — Brix, SQL Architect — additive; originals untouched   =====
+	   ============================================================================ */
+
+	---- ---- AUDIT: FROM-currency for each basis ---- ----
+	, SL.currencycode               AS Txn_Source_Currency     -- transaction/document currency
+	, dle.accountingcurrency        AS Cost_Source_Currency    -- legal-entity accounting currency
+
+	---- ---- TXN BASIS: Price (FROM SL.currencycode) ---- ----
+	, CASE WHEN SL.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * SL.salesprice   SalesPrice_USD
+	, CASE WHEN SL.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * SL.salesprice   SalesPrice_EUR
+	, CASE WHEN SL.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * SL.salesprice   SalesPrice_CNY
+
+	---- ---- TXN BASIS: Amount (FROM SL.currencycode) ---- ----
+	, CASE WHEN SL.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * SL.lineamount   Amount_USD
+	, CASE WHEN SL.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * SL.lineamount   Amount_EUR
+	, CASE WHEN SL.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * SL.lineamount   Amount_CNY
+
+	---- ---- TXN BASIS: Returned_Amount (FROM SL.currencycode) ---- ----
+	, CASE WHEN SL.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END
+	      * (CASE WHEN SL.salestype_$label = 'ReturnItem' then SL.lineamount else 0 end)         Returned_Amount_USD
+	, CASE WHEN SL.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END
+	      * (CASE WHEN SL.salestype_$label = 'ReturnItem' then SL.lineamount else 0 end)         Returned_Amount_EUR
+	, CASE WHEN SL.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END
+	      * (CASE WHEN SL.salestype_$label = 'ReturnItem' then SL.lineamount else 0 end)         Returned_Amount_CNY
+
+	---- ---- COST/MST BASIS: Total_Direct_Cost_Standard (FROM dle.accountingcurrency) ---- ----
+	, CASE WHEN dle.accountingcurrency = 'USD' THEN 1.0 ELSE erCostUSD.ExchangeRate END
+	      * coalesce(dsc.Total_Direct_Cost_Standard, dsc2.Total_Direct_Cost_Standard)            Total_Direct_Cost_Standard_USD
+	, CASE WHEN dle.accountingcurrency = 'EUR' THEN 1.0 ELSE erCostEUR.ExchangeRate END
+	      * coalesce(dsc.Total_Direct_Cost_Standard, dsc2.Total_Direct_Cost_Standard)            Total_Direct_Cost_Standard_EUR
+	, CASE WHEN dle.accountingcurrency = 'CNY' THEN 1.0 ELSE erCostCNY.ExchangeRate END
+	      * coalesce(dsc.Total_Direct_Cost_Standard, dsc2.Total_Direct_Cost_Standard)            Total_Direct_Cost_Standard_CNY
+
+	---- ---- COST/MST BASIS: Total_Overhead_Cost_Standard (FROM dle.accountingcurrency) ---- ----
+	, CASE WHEN dle.accountingcurrency = 'USD' THEN 1.0 ELSE erCostUSD.ExchangeRate END
+	      * coalesce(dsc.Total_Overhead_Cost_Standard, dsc2.Total_Overhead_Cost_Standard)        Total_Overhead_Cost_Standard_USD
+	, CASE WHEN dle.accountingcurrency = 'EUR' THEN 1.0 ELSE erCostEUR.ExchangeRate END
+	      * coalesce(dsc.Total_Overhead_Cost_Standard, dsc2.Total_Overhead_Cost_Standard)        Total_Overhead_Cost_Standard_EUR
+	, CASE WHEN dle.accountingcurrency = 'CNY' THEN 1.0 ELSE erCostCNY.ExchangeRate END
+	      * coalesce(dsc.Total_Overhead_Cost_Standard, dsc2.Total_Overhead_Cost_Standard)        Total_Overhead_Cost_Standard_CNY
+
+	---- ---- COST/MST BASIS: Packaging_Cost_Standard (FROM dle.accountingcurrency) ---- ----
+	, CASE WHEN dle.accountingcurrency = 'USD' THEN 1.0 ELSE erCostUSD.ExchangeRate END
+	      * coalesce(dsc.Packaging_Cost_Standard, dsc2.Packaging_Cost_Standard)                  Packaging_Cost_Standard_USD
+	, CASE WHEN dle.accountingcurrency = 'EUR' THEN 1.0 ELSE erCostEUR.ExchangeRate END
+	      * coalesce(dsc.Packaging_Cost_Standard, dsc2.Packaging_Cost_Standard)                  Packaging_Cost_Standard_EUR
+	, CASE WHEN dle.accountingcurrency = 'CNY' THEN 1.0 ELSE erCostCNY.ExchangeRate END
+	      * coalesce(dsc.Packaging_Cost_Standard, dsc2.Packaging_Cost_Standard)                  Packaging_Cost_Standard_CNY
+
+	---- ---- COST/MST BASIS: TotalCost (FROM dle.accountingcurrency) ---- ----
+	, CASE WHEN dle.accountingcurrency = 'USD' THEN 1.0 ELSE erCostUSD.ExchangeRate END
+	      * coalesce(dsc.TotalCost, dsc2.TotalCost)                                              TotalCost_USD
+	, CASE WHEN dle.accountingcurrency = 'EUR' THEN 1.0 ELSE erCostEUR.ExchangeRate END
+	      * coalesce(dsc.TotalCost, dsc2.TotalCost)                                              TotalCost_EUR
+	, CASE WHEN dle.accountingcurrency = 'CNY' THEN 1.0 ELSE erCostCNY.ExchangeRate END
+	      * coalesce(dsc.TotalCost, dsc2.TotalCost)                                              TotalCost_CNY
+
+	---- ---- RATE_MISSING FLAGS (1 = real conversion needed but no rate row found) ---- ----
+	, CASE WHEN SL.currencycode      <> 'USD' AND erTxnUSD.ExchangeRate  IS NULL THEN 1 ELSE 0 END  Txn_USD_Rate_Missing
+	, CASE WHEN SL.currencycode      <> 'EUR' AND erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END  Txn_EUR_Rate_Missing
+	, CASE WHEN SL.currencycode      <> 'CNY' AND erTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END  Txn_CNY_Rate_Missing
+	, CASE WHEN dle.accountingcurrency <> 'USD' AND erCostUSD.ExchangeRate IS NULL THEN 1 ELSE 0 END  Cost_USD_Rate_Missing
+	, CASE WHEN dle.accountingcurrency <> 'EUR' AND erCostEUR.ExchangeRate IS NULL THEN 1 ELSE 0 END  Cost_EUR_Rate_Missing
+	, CASE WHEN dle.accountingcurrency <> 'CNY' AND erCostCNY.ExchangeRate IS NULL THEN 1 ELSE 0 END  Cost_CNY_Rate_Missing
+
 FROM WH_Raw.dbo.salestable ST
 JOIN WH_Raw.dbo.SalesLine SL
 	ON ST.salesid = SL.salesid
@@ -257,3 +325,68 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_SalesOrder dso
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Address da
 	ON SL.deliverypostaladdress = da.AddressRecID
 		AND dso.RecordStatus=1
+
+/* ============================================================================
+   ===  ADDED: EXCHANGE-RATE JOINS  ==========================================
+   ----------------------------------------------------------------------------
+   As-of date (BOTH bases): the view's canonical coalesced transaction DATE
+   expression, normalized with convert(date, convert(char(8), <date>, 112)).
+   Txn-basis from-ccy = SL.currencycode; Cost-basis from-ccy = dle.accountingcurrency.
+   exchangeratetype = 'Default global rate'
+   ============================================================================ */
+
+---- ---- TXN-BASIS RATE JOINS (FROM SL.currencycode) ---- ----
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnUSD
+	ON erTxnUSD.fromcurrencycode = SL.currencycode
+		AND erTxnUSD.tocurrencycode   = 'USD'
+		AND erTxnUSD.exchangeratetype = 'Default global rate'
+		AND convert(date, convert(char(8),
+				COALESCE(case when CIT.invoicedate='01/01/1900' then null else CIT.invoicedate end
+						,case when sl.shippingdateconfirmed= '01/01/1900' then sl.shippingdaterequested else sl.shippingdateconfirmed end
+						, ST.createddatetime),112)) between erTxnUSD.validfrom and erTxnUSD.validto
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
+	ON erTxnEUR.fromcurrencycode = SL.currencycode
+		AND erTxnEUR.tocurrencycode   = 'EUR'
+		AND erTxnEUR.exchangeratetype = 'Default global rate'
+		AND convert(date, convert(char(8),
+				COALESCE(case when CIT.invoicedate='01/01/1900' then null else CIT.invoicedate end
+						,case when sl.shippingdateconfirmed= '01/01/1900' then sl.shippingdaterequested else sl.shippingdateconfirmed end
+						, ST.createddatetime),112)) between erTxnEUR.validfrom and erTxnEUR.validto
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
+	ON erTxnCNY.fromcurrencycode = SL.currencycode
+		AND erTxnCNY.tocurrencycode   = 'CNY'
+		AND erTxnCNY.exchangeratetype = 'Default global rate'
+		AND convert(date, convert(char(8),
+				COALESCE(case when CIT.invoicedate='01/01/1900' then null else CIT.invoicedate end
+						,case when sl.shippingdateconfirmed= '01/01/1900' then sl.shippingdaterequested else sl.shippingdateconfirmed end
+						, ST.createddatetime),112)) between erTxnCNY.validfrom and erTxnCNY.validto
+
+---- ---- COST/MST-BASIS RATE JOINS (FROM dle.accountingcurrency) ---- ----
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erCostUSD
+	ON erCostUSD.fromcurrencycode = dle.accountingcurrency
+		AND erCostUSD.tocurrencycode   = 'USD'
+		AND erCostUSD.exchangeratetype = 'Default global rate'
+		AND convert(date, convert(char(8),
+				COALESCE(case when CIT.invoicedate='01/01/1900' then null else CIT.invoicedate end
+						,case when sl.shippingdateconfirmed= '01/01/1900' then sl.shippingdaterequested else sl.shippingdateconfirmed end
+						, ST.createddatetime),112)) between erCostUSD.validfrom and erCostUSD.validto
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erCostEUR
+	ON erCostEUR.fromcurrencycode = dle.accountingcurrency
+		AND erCostEUR.tocurrencycode   = 'EUR'
+		AND erCostEUR.exchangeratetype = 'Default global rate'
+		AND convert(date, convert(char(8),
+				COALESCE(case when CIT.invoicedate='01/01/1900' then null else CIT.invoicedate end
+						,case when sl.shippingdateconfirmed= '01/01/1900' then sl.shippingdaterequested else sl.shippingdateconfirmed end
+						, ST.createddatetime),112)) between erCostEUR.validfrom and erCostEUR.validto
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erCostCNY
+	ON erCostCNY.fromcurrencycode = dle.accountingcurrency
+		AND erCostCNY.tocurrencycode   = 'CNY'
+		AND erCostCNY.exchangeratetype = 'Default global rate'
+		AND convert(date, convert(char(8),
+				COALESCE(case when CIT.invoicedate='01/01/1900' then null else CIT.invoicedate end
+						,case when sl.shippingdateconfirmed= '01/01/1900' then sl.shippingdaterequested else sl.shippingdateconfirmed end
+						, ST.createddatetime),112)) between erCostCNY.validfrom and erCostCNY.validto

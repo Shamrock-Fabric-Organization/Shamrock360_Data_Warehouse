@@ -2,7 +2,7 @@ CREATE TABLE [dbo].[mtbl_EDW_Fact_Sales] (
 
 	[RecordID] bigint NULL, 
 	[CMPNY] varchar(8000) NULL, 
-	[SalesLine_Status] varchar(12) NULL, 
+	[SalesLine_Status] varchar(9) NULL, 
 	[DATE] datetime2(6) NULL, 
 	[DATEKey] int NULL, 
 	[OrderDate] datetime2(6) NULL, 
@@ -20,7 +20,7 @@ CREATE TABLE [dbo].[mtbl_EDW_Fact_Sales] (
 	[InvoiceAccount] varchar(8000) NULL, 
 	[ProductID] varchar(8000) NULL, 
 	[CPCID] varchar(8000) NULL, 
-	[InvoiceNo] varchar(max) NULL, 
+	[InvoiceNo] varchar(8000) NULL, 
 	[Customer_Order_Number] varchar(8000) NULL, 
 	[Quantity] decimal(38,6) NULL, 
 	[Quantity_UoM] varchar(8000) NULL, 
@@ -36,16 +36,20 @@ CREATE TABLE [dbo].[mtbl_EDW_Fact_Sales] (
 	[Returned_Amount] decimal(38,6) NULL, 
 	[SalesLine_Salesman_ID] varchar(8000) NULL, 
 	[Customer_Salesman_ID] varchar(8000) NULL, 
-	[Source] varchar(50) NULL, 
+	[Total_Direct_Cost_Standard] decimal(38,6) NULL, 
+	[Total_Overhead_Cost_Standard] decimal(38,6) NULL, 
+	[Packaging_Cost_Standard] decimal(38,6) NULL, 
+	[TotalCost] decimal(38,6) NULL, 
+	[Source] varchar(6) NOT NULL, 
 	[HistoricCustomerKey] bigint NOT NULL, 
 	[CustomerKey] bigint NOT NULL, 
-	[HistoricProductKey] bigint NULL, 
-	[ProductKey] bigint NULL, 
+	[HistoricProductKey] bigint NOT NULL, 
+	[ProductKey] bigint NOT NULL, 
 	[StandardCostKey] bigint NULL, 
 	[Legal_EntityKey] bigint NOT NULL, 
 	[SiteKey] bigint NOT NULL, 
 	[SalesLine_EmployeeKey] bigint NOT NULL, 
-	[CustAcct_EmployeeKey] bigint NULL, 
+	[CustAcct_EmployeeKey] bigint NOT NULL, 
 	[SalesTaker_EmployeeKey] bigint NOT NULL, 
 	[WarehouseKey] bigint NOT NULL, 
 	[SalesOrderKey] bigint NOT NULL, 
@@ -59,7 +63,48 @@ CREATE TABLE [dbo].[mtbl_EDW_Fact_Sales] (
 	[MarketSegmentationKey] bigint NOT NULL, 
 	[PurchaseOrderFormNumber] varchar(8000) NULL, 
 	[DeliveryAddressKey] bigint NOT NULL, 
+
 	[CPCID2] varchar(8000) NULL, 
 	[ProductID2] varchar(8000) NULL, 
 	[IsPhantom2] varchar(3) NULL
+
+	-- === ADDED: multi-currency conversion columns ===
+	-- Audit: FROM-currency for each conversion basis
+	[Txn_Source_Currency] varchar(8000) NULL, 
+	[Cost_Source_Currency] varchar(8000) NULL, 
+	-- Txn basis: Price (base [Price])
+	[SalesPrice_USD] decimal(38,6) NULL, 
+	[SalesPrice_EUR] decimal(38,6) NULL, 
+	[SalesPrice_CNY] decimal(38,6) NULL, 
+	-- Txn basis: Amount (base [Amount])
+	[Amount_USD] decimal(38,6) NULL, 
+	[Amount_EUR] decimal(38,6) NULL, 
+	[Amount_CNY] decimal(38,6) NULL, 
+	-- Txn basis: Returned_Amount (base [Returned_Amount])
+	[Returned_Amount_USD] decimal(38,6) NULL, 
+	[Returned_Amount_EUR] decimal(38,6) NULL, 
+	[Returned_Amount_CNY] decimal(38,6) NULL, 
+	-- Cost/MST basis: Total_Direct_Cost_Standard (base [Total_Direct_Cost_Standard])
+	[Total_Direct_Cost_Standard_USD] decimal(38,6) NULL, 
+	[Total_Direct_Cost_Standard_EUR] decimal(38,6) NULL, 
+	[Total_Direct_Cost_Standard_CNY] decimal(38,6) NULL, 
+	-- Cost/MST basis: Total_Overhead_Cost_Standard (base [Total_Overhead_Cost_Standard])
+	[Total_Overhead_Cost_Standard_USD] decimal(38,6) NULL, 
+	[Total_Overhead_Cost_Standard_EUR] decimal(38,6) NULL, 
+	[Total_Overhead_Cost_Standard_CNY] decimal(38,6) NULL, 
+	-- Cost/MST basis: Packaging_Cost_Standard (base [Packaging_Cost_Standard])
+	[Packaging_Cost_Standard_USD] decimal(38,6) NULL, 
+	[Packaging_Cost_Standard_EUR] decimal(38,6) NULL, 
+	[Packaging_Cost_Standard_CNY] decimal(38,6) NULL, 
+	-- Cost/MST basis: TotalCost (base [TotalCost])
+	[TotalCost_USD] decimal(38,6) NULL, 
+	[TotalCost_EUR] decimal(38,6) NULL, 
+	[TotalCost_CNY] decimal(38,6) NULL, 
+	-- Rate-missing flags (1 = real conversion needed but no rate row found)
+	[Txn_USD_Rate_Missing] int NULL, 
+	[Txn_EUR_Rate_Missing] int NULL, 
+	[Txn_CNY_Rate_Missing] int NULL, 
+	[Cost_USD_Rate_Missing] int NULL, 
+	[Cost_EUR_Rate_Missing] int NULL, 
+	[Cost_CNY_Rate_Missing] int NULL
 );

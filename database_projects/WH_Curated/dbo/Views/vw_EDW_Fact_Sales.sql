@@ -3,7 +3,7 @@
 
 
 
-CREATE OR ALTER   view [dbo].[vw_EDW_Fact_Sales] as  
+CREATE OR ALTER       view [dbo].[vw_EDW_Fact_Sales] as  
 SELECT f.[RecordID]
 	,f.[CMPNY]
 	,f.[SalesLine_Status]
@@ -23,7 +23,7 @@ SELECT f.[RecordID]
 	,f.[Legal_Entity_ID]
 	,f.[CustomerID]
 	,f.[InvoiceAccount]
-	,f.[ProductID]
+	,TRIM(f.[ProductID]) AS [ProductID]
 
 	,f.[CPCID]
 	,f.[InvoiceNo]
@@ -72,9 +72,50 @@ SELECT f.[RecordID]
 	,f.[DeliveryAddressKey]
 
 	,f.[CPCID]	CPCID2
-	,f.[ProductID]  ProductID2
+	,TRIM(f.[ProductID]) AS [ProductID2]
 
 	, dpc.IsPhantom  IsPhantom2
+
+	-- === ADDED: multi-currency conversion columns  ===
+	-- Audit: FROM-currency for each conversion basis
+	, f.[Txn_Source_Currency]
+	, f.[Cost_Source_Currency]
+	-- Txn basis: Price (base f.[Price])
+	, f.[SalesPrice_USD]
+	, f.[SalesPrice_EUR]
+	, f.[SalesPrice_CNY]
+	-- Txn basis: Amount (base f.[Amount])
+	, f.[Amount_USD]
+	, f.[Amount_EUR]
+	, f.[Amount_CNY]
+	-- Txn basis: Returned_Amount (base f.[Returned_Amount])
+	, f.[Returned_Amount_USD]
+	, f.[Returned_Amount_EUR]
+	, f.[Returned_Amount_CNY]
+	---- Cost/MST basis: Total_Direct_Cost_Standard (base f.[Total_Direct_Cost_Standard])
+	--, f.[Total_Direct_Cost_Standard_USD]
+	--, f.[Total_Direct_Cost_Standard_EUR]
+	--, f.[Total_Direct_Cost_Standard_CNY]
+	---- Cost/MST basis: Total_Overhead_Cost_Standard (base f.[Total_Overhead_Cost_Standard])
+	--, f.[Total_Overhead_Cost_Standard_USD]
+	--, f.[Total_Overhead_Cost_Standard_EUR]
+	--, f.[Total_Overhead_Cost_Standard_CNY]
+	---- Cost/MST basis: Packaging_Cost_Standard (base f.[Packaging_Cost_Standard])
+	--, f.[Packaging_Cost_Standard_USD]
+	--, f.[Packaging_Cost_Standard_EUR]
+	--, f.[Packaging_Cost_Standard_CNY]
+	---- Cost/MST basis: TotalCost (base f.[TotalCost])
+	--, f.[TotalCost_USD]
+	--, f.[TotalCost_EUR]
+	--, f.[TotalCost_CNY]
+	-- Rate-missing flags (1 = real conversion needed but no rate row found)
+	, f.[Txn_USD_Rate_Missing]
+	, f.[Txn_EUR_Rate_Missing]
+	, f.[Txn_CNY_Rate_Missing]
+	, f.[Cost_USD_Rate_Missing]
+	, f.[Cost_EUR_Rate_Missing]
+	, f.[Cost_CNY_Rate_Missing]
+
 
 
 FROM [dbo].[tbl_Fact_Sales]  f
@@ -149,7 +190,7 @@ Union ALL
 	,null AS [Volume]
 	,null as [Volume_UoM]
 	,null as [Price]
-	,null as [Currency]
+	,'USD' as [Currency]
 	,CONVERT(decimal(38,6), [Revenue]) AS [Amount]
 	,null as [Amount_Currency]
 	,null as [Returned_Quantity]
@@ -209,6 +250,47 @@ Union ALL
 			ELSE COALESCE(x.D365_ProductID, s.Product)
 			END as ProductID2
 	, dpc.IsPhantom  IsPhantom2
+
+
+	-- === ADDED: multi-currency conversion columns  ===
+	-- Audit: FROM-currency for each conversion basis
+	, 'USD' [Txn_Source_Currency]
+	, NULL as [Cost_Source_Currency]
+	-- Txn basis: Price (base f.[Price])
+	, null as [SalesPrice_USD]
+	, null as [SalesPrice_EUR]
+	, null as [SalesPrice_CNY]
+	-- Txn basis: Amount (base null as [Amount])
+	, CONVERT(decimal(38,6), [Revenue]) as [Amount_USD]
+	, erTxnEUR.ExchangeRate * CONVERT(decimal(38,6), [Revenue]) as [Amount_EUR]
+	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,6), [Revenue]) as [Amount_CNY]
+	-- Txn basis: Returned_Amount (base null as [Returned_Amount])
+	, null as [Returned_Amount_USD]
+	, null as [Returned_Amount_EUR]
+	, null as [Returned_Amount_CNY]
+	---- Cost/MST basis: Total_Direct_Cost_Standard (base null as [Total_Direct_Cost_Standard])
+	--, null as [Total_Direct_Cost_Standard_USD]
+	--, null as [Total_Direct_Cost_Standard_EUR]
+	--, null as [Total_Direct_Cost_Standard_CNY]
+	---- Cost/MST basis: Total_Overhead_Cost_Standard (base null as [Total_Overhead_Cost_Standard])
+	--, null as [Total_Overhead_Cost_Standard_USD]
+	--, null as [Total_Overhead_Cost_Standard_EUR]
+	--, null as [Total_Overhead_Cost_Standard_CNY]
+	---- Cost/MST basis: Packaging_Cost_Standard (base null as [Packaging_Cost_Standard])
+	--, null as [Packaging_Cost_Standard_USD]
+	--, null as [Packaging_Cost_Standard_EUR]
+	--, null as [Packaging_Cost_Standard_CNY]
+	---- Cost/MST basis: TotalCost (base null as [TotalCost])
+	--, null as [TotalCost_USD]
+	--, null as [TotalCost_EUR]
+	--, null as [TotalCost_CNY]
+	-- Rate-missing flags (1 = real conversion needed but no rate row found)
+	, 0 as [Txn_USD_Rate_Missing]
+	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_EUR_Rate_Missing]
+	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
+	, null as [Cost_USD_Rate_Missing]
+	, null as [Cost_EUR_Rate_Missing]
+	, null as [Cost_CNY_Rate_Missing]
 
 FROM [dbo].[legacy_tbl_Fact_Sales] s
 
@@ -385,6 +467,21 @@ LEFT JOIN (SELECT street
       AND isnull(lda.[Country],'') = da.Country
 
 
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
+	ON erTxnEUR.fromcurrencycode = 'USD'
+		AND erTxnEUR.tocurrencycode   = 'EUR'
+		AND erTxnEUR.exchangeratetype = 'Default global rate'
+		AND isnull(case when [InvoiceDate]<'01/01/1900' then '01/01/1900' else [InvoiceDate] end, '01/01/1900') 
+			between erTxnEUR.validfrom and erTxnEUR.validto
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
+	ON erTxnCNY.fromcurrencycode = 'USD'
+		AND erTxnCNY.tocurrencycode   = 'CNY'
+		AND erTxnCNY.exchangeratetype = 'Default global rate'
+		AND isnull(case when [InvoiceDate]<'01/01/1900' then '01/01/1900' else [InvoiceDate] end, '01/01/1900') 
+			between erTxnCNY.validfrom and erTxnCNY.validto
+
+
 WHERE s.Source NOT IN ('BRILJANT', 'TEDA', 'Imputed Data') --Exclude these sources entirely   --  'tbl_Archive_Fact_Sales'   Corby 1/23
     AND NOT (s.RecordType = 'Open Order' AND s.Source = 'US (Core) RESULTS') --Exclude Open Orders from US Core
 	AND NOT (s.RecordType IN ('Budget 2024','Budget 2025') )
@@ -467,7 +564,7 @@ SELECT  ABS(CAST(CAST(
 	,null AS [Volume]
 	,null as [Volume_UoM]
 	,null as [Price]
-	,null as [Currency]
+	,'USD' as [Currency]
 	,CONVERT(decimal(38,2), Extension) * ddf.Rate as Amount
 	,null as [Amount_Currency]
 	,null as [Returned_Quantity]
@@ -527,6 +624,47 @@ SELECT  ABS(CAST(CAST(
 			ELSE COALESCE(x.D365_ProductID, f.Product)
 			END as ProductID2
 	, dpc.IsPhantom  IsPhantom2
+
+
+	-- === ADDED: multi-currency conversion columns  ===
+	-- Audit: FROM-currency for each conversion basis
+	, 'USD' [Txn_Source_Currency]
+	, NULL as [Cost_Source_Currency]
+	-- Txn basis: Price (base f.[Price])
+	, null as [SalesPrice_USD]
+	, null as [SalesPrice_EUR]
+	, null as [SalesPrice_CNY]
+	-- Txn basis: Amount (base null as [Amount])
+	, CONVERT(decimal(38,2), Extension) * ddf.Rate as [Amount_USD]
+	, erTxnEUR.ExchangeRate * (CONVERT(decimal(38,2), Extension) * ddf.Rate) as [Amount_EUR]
+	, erTxnCNY.ExchangeRate * (CONVERT(decimal(38,2), Extension) * ddf.Rate) as [Amount_CNY]
+	-- Txn basis: Returned_Amount (base null as [Returned_Amount])
+	, null as [Returned_Amount_USD]
+	, null as [Returned_Amount_EUR]
+	, null as [Returned_Amount_CNY]
+	---- Cost/MST basis: Total_Direct_Cost_Standard (base null as [Total_Direct_Cost_Standard])
+	--, null as [Total_Direct_Cost_Standard_USD]
+	--, null as [Total_Direct_Cost_Standard_EUR]
+	--, null as [Total_Direct_Cost_Standard_CNY]
+	---- Cost/MST basis: Total_Overhead_Cost_Standard (base null as [Total_Overhead_Cost_Standard])
+	--, null as [Total_Overhead_Cost_Standard_USD]
+	--, null as [Total_Overhead_Cost_Standard_EUR]
+	--, null as [Total_Overhead_Cost_Standard_CNY]
+	---- Cost/MST basis: Packaging_Cost_Standard (base null as [Packaging_Cost_Standard])
+	--, null as [Packaging_Cost_Standard_USD]
+	--, null as [Packaging_Cost_Standard_EUR]
+	--, null as [Packaging_Cost_Standard_CNY]
+	---- Cost/MST basis: TotalCost (base null as [TotalCost])
+	--, null as [TotalCost_USD]
+	--, null as [TotalCost_EUR]
+	--, null as [TotalCost_CNY]
+	-- Rate-missing flags (1 = real conversion needed but no rate row found)
+	, 0 as [Txn_USD_Rate_Missing]
+	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_EUR_Rate_Missing]
+	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
+	, null as [Cost_USD_Rate_Missing]
+	, null as [Cost_EUR_Rate_Missing]
+	, null as [Cost_CNY_Rate_Missing]
 
 FROM tbl_RESULTSSLSBYYR_BVBA f
 
@@ -702,6 +840,21 @@ LEFT JOIN (SELECT street
       AND isnull(lda.[Country],'') = da.Country
 
 
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
+	ON erTxnEUR.fromcurrencycode = 'USD'
+		AND erTxnEUR.tocurrencycode   = 'EUR'
+		AND erTxnEUR.exchangeratetype = 'Default global rate'
+		AND case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end 
+			between erTxnEUR.validfrom and erTxnEUR.validto
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
+	ON erTxnCNY.fromcurrencycode = 'USD'
+		AND erTxnCNY.tocurrencycode   = 'CNY'
+		AND erTxnCNY.exchangeratetype = 'Default global rate'
+		AND case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end 
+			between erTxnCNY.validfrom and erTxnCNY.validto
+
+
 --LEFT OUTER JOIN vw360_Dim_Account
 --	ON 'A' + f.Cmpny + f.[Customer No] + f.[Ship To No] = vw360_Dim_Account.CustomerID
 --LEFT OUTER JOIN vw360_Dim_Product
@@ -763,7 +916,7 @@ SELECT  ABS(CAST(CAST(
 	,null AS [Volume]
 	,null as [Volume_UoM]
 	,null as [Price]
-	,null as [Currency]
+	,'USD' as [Currency]
 	,CONVERT(decimal(38,6), [Net Amount]) AS [Amount]
 	,null as [Amount_Currency]
 	,null as [Returned_Quantity]
@@ -816,6 +969,47 @@ SELECT  ABS(CAST(CAST(
 			ELSE COALESCE(x.D365_ProductID, f.[Product Name])
 			END as ProductID2
 	, dpc.IsPhantom  IsPhantom2
+
+
+	-- === ADDED: multi-currency conversion columns  ===
+	-- Audit: FROM-currency for each conversion basis
+	, 'USD' [Txn_Source_Currency]
+	, NULL as [Cost_Source_Currency]
+	-- Txn basis: Price (base f.[Price])
+	, null as [SalesPrice_USD]
+	, null as [SalesPrice_EUR]
+	, null as [SalesPrice_CNY]
+	-- Txn basis: Amount (base null as [Amount])
+	, CONVERT(decimal(38,6), [Net Amount]) as [Amount_USD]
+	, erTxnEUR.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [Amount_EUR]
+	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [Amount_CNY]
+	-- Txn basis: Returned_Amount (base null as [Returned_Amount])
+	, null as [Returned_Amount_USD]
+	, null as [Returned_Amount_EUR]
+	, null as [Returned_Amount_CNY]
+	---- Cost/MST basis: Total_Direct_Cost_Standard (base null as [Total_Direct_Cost_Standard])
+	--, null as [Total_Direct_Cost_Standard_USD]
+	--, null as [Total_Direct_Cost_Standard_EUR]
+	--, null as [Total_Direct_Cost_Standard_CNY]
+	---- Cost/MST basis: Total_Overhead_Cost_Standard (base null as [Total_Overhead_Cost_Standard])
+	--, null as [Total_Overhead_Cost_Standard_USD]
+	--, null as [Total_Overhead_Cost_Standard_EUR]
+	--, null as [Total_Overhead_Cost_Standard_CNY]
+	---- Cost/MST basis: Packaging_Cost_Standard (base null as [Packaging_Cost_Standard])
+	--, null as [Packaging_Cost_Standard_USD]
+	--, null as [Packaging_Cost_Standard_EUR]
+	--, null as [Packaging_Cost_Standard_CNY]
+	---- Cost/MST basis: TotalCost (base null as [TotalCost])
+	--, null as [TotalCost_USD]
+	--, null as [TotalCost_EUR]
+	--, null as [TotalCost_CNY]
+	-- Rate-missing flags (1 = real conversion needed but no rate row found)
+	, 0 as [Txn_USD_Rate_Missing]
+	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_EUR_Rate_Missing]
+	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
+	, null as [Cost_USD_Rate_Missing]
+	, null as [Cost_EUR_Rate_Missing]
+	, null as [Cost_CNY_Rate_Missing]
 
 from tbl_RESULTSSLSBYYR_TEDA f
 left join [dbo].[XREF_Product_ID] X 
@@ -922,6 +1116,21 @@ LEFT JOIN (SELECT street
       AND isnull(lda.[ZIP],'')     = da.ZipCode
       AND isnull(lda.[Country],'') = da.Country
 
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
+	ON erTxnEUR.fromcurrencycode = 'USD'
+		AND erTxnEUR.tocurrencycode   = 'EUR'
+		AND erTxnEUR.exchangeratetype = 'Default global rate'
+		AND CONVERT(datetime2(6), f.[Invoice Date] ) 
+			between erTxnEUR.validfrom and erTxnEUR.validto
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
+	ON erTxnCNY.fromcurrencycode = 'USD'
+		AND erTxnCNY.tocurrencycode   = 'CNY'
+		AND erTxnCNY.exchangeratetype = 'Default global rate'
+		AND CONVERT(datetime2(6), f.[Invoice Date] ) 
+			between erTxnCNY.validfrom and erTxnCNY.validto
+
 --left outer join vw360_Dim_Account on
 --'A201'+tbl_RESULTSSLSBYYR_TEDA.[Customer No]+'000000'  = vw360_Dim_Account.CustomerID
 
@@ -1017,7 +1226,7 @@ SELECT  ABS(CAST(CAST(
 	,null AS [Volume]
 	,null as [Volume_UoM]
 	,null as [Price]
-	,null as [Currency]
+	,'USD' as [Currency]
 	,CONVERT(decimal(38,2), Extension) * ddf.Rate as Amount
 	--,CONVERT(decimal(38,2), Extension) * 1.171570000 as Amount
 	,null as [Amount_Currency]
@@ -1078,6 +1287,47 @@ SELECT  ABS(CAST(CAST(
 			ELSE COALESCE(x.D365_ProductID, f.Product)
 			END as ProductID2
 	, dpc.IsPhantom  IsPhantom2
+
+
+	-- === ADDED: multi-currency conversion columns  ===
+	-- Audit: FROM-currency for each conversion basis
+	, 'USD' [Txn_Source_Currency]
+	, NULL as [Cost_Source_Currency]
+	-- Txn basis: Price (base f.[Price])
+	, null as [SalesPrice_USD]
+	, null as [SalesPrice_EUR]
+	, null as [SalesPrice_CNY]
+	-- Txn basis: Amount (base null as [Amount])
+	, CONVERT(decimal(38,2), Extension) * ddf.Rate as [Amount_USD]
+	, erTxnEUR.ExchangeRate * (CONVERT(decimal(38,2), Extension) * ddf.Rate) as [Amount_EUR]
+	, erTxnCNY.ExchangeRate * (CONVERT(decimal(38,2), Extension) * ddf.Rate) as [Amount_CNY]
+	-- Txn basis: Returned_Amount (base null as [Returned_Amount])
+	, null as [Returned_Amount_USD]
+	, null as [Returned_Amount_EUR]
+	, null as [Returned_Amount_CNY]
+	---- Cost/MST basis: Total_Direct_Cost_Standard (base null as [Total_Direct_Cost_Standard])
+	--, null as [Total_Direct_Cost_Standard_USD]
+	--, null as [Total_Direct_Cost_Standard_EUR]
+	--, null as [Total_Direct_Cost_Standard_CNY]
+	---- Cost/MST basis: Total_Overhead_Cost_Standard (base null as [Total_Overhead_Cost_Standard])
+	--, null as [Total_Overhead_Cost_Standard_USD]
+	--, null as [Total_Overhead_Cost_Standard_EUR]
+	--, null as [Total_Overhead_Cost_Standard_CNY]
+	---- Cost/MST basis: Packaging_Cost_Standard (base null as [Packaging_Cost_Standard])
+	--, null as [Packaging_Cost_Standard_USD]
+	--, null as [Packaging_Cost_Standard_EUR]
+	--, null as [Packaging_Cost_Standard_CNY]
+	---- Cost/MST basis: TotalCost (base null as [TotalCost])
+	--, null as [TotalCost_USD]
+	--, null as [TotalCost_EUR]
+	--, null as [TotalCost_CNY]
+	-- Rate-missing flags (1 = real conversion needed but no rate row found)
+	, 0 as [Txn_USD_Rate_Missing]
+	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_EUR_Rate_Missing]
+	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
+	, null as [Cost_USD_Rate_Missing]
+	, null as [Cost_EUR_Rate_Missing]
+	, null as [Cost_CNY_Rate_Missing]
 
 from tbl_RESULTSSLSBYYR_BVBA_Open f
 
@@ -1249,6 +1499,21 @@ LEFT JOIN (SELECT street
       AND isnull(lda.[ZIP],'')     = da.ZipCode
       AND isnull(lda.[Country],'') = da.Country
 
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
+	ON erTxnEUR.fromcurrencycode = 'USD'
+		AND erTxnEUR.tocurrencycode   = 'EUR'
+		AND erTxnEUR.exchangeratetype = 'Default global rate'
+		AND case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end 
+			between erTxnEUR.validfrom and erTxnEUR.validto
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
+	ON erTxnCNY.fromcurrencycode = 'USD'
+		AND erTxnCNY.tocurrencycode   = 'CNY'
+		AND erTxnCNY.exchangeratetype = 'Default global rate'
+		AND case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end
+			between erTxnCNY.validfrom and erTxnCNY.validto
+
 --left outer join vw360_Dim_Account on
 --'A'+tbl_RESULTSSLSBYYR_BVBA_Open.Cmpny+tbl_RESULTSSLSBYYR_BVBA_Open.[Customer No]+tbl_RESULTSSLSBYYR_BVBA_Open.[Ship To No]  = vw360_Dim_Account.CustomerID
 
@@ -1313,7 +1578,7 @@ SELECT  ABS(CAST(CAST(
 	,null AS [Volume]
 	,null as [Volume_UoM]
 	,null as [Price]
-	,null as [Currency]
+	,'USD' as [Currency]
 	,CONVERT(decimal(38,6), [Net Amount]) AS [Amount]
 	,null as [Amount_Currency]
 	,null as [Returned_Quantity]
@@ -1365,6 +1630,47 @@ SELECT  ABS(CAST(CAST(
 			ELSE COALESCE(x.D365_ProductID, f.[Product Name])
 			END as ProductID2
 	, dpc.IsPhantom  IsPhantom2
+
+
+	-- === ADDED: multi-currency conversion columns  ===
+	-- Audit: FROM-currency for each conversion basis
+	, 'USD' [Txn_Source_Currency]
+	, NULL as [Cost_Source_Currency]
+	-- Txn basis: Price (base f.[Price])
+	, null as [SalesPrice_USD]
+	, null as [SalesPrice_EUR]
+	, null as [SalesPrice_CNY]
+	-- Txn basis: Amount (base null as [Amount])
+	, CONVERT(decimal(38,6), [Net Amount]) as [Amount_USD]
+	, erTxnEUR.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [Amount_EUR]
+	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [Amount_CNY]
+	-- Txn basis: Returned_Amount (base null as [Returned_Amount])
+	, null as [Returned_Amount_USD]
+	, null as [Returned_Amount_EUR]
+	, null as [Returned_Amount_CNY]
+	---- Cost/MST basis: Total_Direct_Cost_Standard (base null as [Total_Direct_Cost_Standard])
+	--, null as [Total_Direct_Cost_Standard_USD]
+	--, null as [Total_Direct_Cost_Standard_EUR]
+	--, null as [Total_Direct_Cost_Standard_CNY]
+	---- Cost/MST basis: Total_Overhead_Cost_Standard (base null as [Total_Overhead_Cost_Standard])
+	--, null as [Total_Overhead_Cost_Standard_USD]
+	--, null as [Total_Overhead_Cost_Standard_EUR]
+	--, null as [Total_Overhead_Cost_Standard_CNY]
+	---- Cost/MST basis: Packaging_Cost_Standard (base null as [Packaging_Cost_Standard])
+	--, null as [Packaging_Cost_Standard_USD]
+	--, null as [Packaging_Cost_Standard_EUR]
+	--, null as [Packaging_Cost_Standard_CNY]
+	---- Cost/MST basis: TotalCost (base null as [TotalCost])
+	--, null as [TotalCost_USD]
+	--, null as [TotalCost_EUR]
+	--, null as [TotalCost_CNY]
+	-- Rate-missing flags (1 = real conversion needed but no rate row found)
+	, 0 as [Txn_USD_Rate_Missing]
+	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_EUR_Rate_Missing]
+	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
+	, null as [Cost_USD_Rate_Missing]
+	, null as [Cost_EUR_Rate_Missing]
+	, null as [Cost_CNY_Rate_Missing]
 
 from tbl_RESULTSSLSBYYR_TEDA f
 left join [dbo].[XREF_Product_ID] X 
@@ -1471,6 +1777,21 @@ LEFT JOIN (SELECT street
       AND isnull(lda.[ZIP],'')     = da.ZipCode
       AND isnull(lda.[Country],'') = da.Country
 
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
+	ON erTxnEUR.fromcurrencycode = 'USD'
+		AND erTxnEUR.tocurrencycode   = 'EUR'
+		AND erTxnEUR.exchangeratetype = 'Default global rate'
+		AND CONVERT(datetime2(6), f.[expected Ship Date] )
+			between erTxnEUR.validfrom and erTxnEUR.validto
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
+	ON erTxnCNY.fromcurrencycode = 'USD'
+		AND erTxnCNY.tocurrencycode   = 'CNY'
+		AND erTxnCNY.exchangeratetype = 'Default global rate'
+		AND CONVERT(datetime2(6), f.[expected Ship Date] )
+			between erTxnCNY.validfrom and erTxnCNY.validto
+
 --left outer join vw360_Dim_Account on
 --'A201'+tbl_RESULTSSLSBYYR_TEDA.[Customer No]+'000000'  = vw360_Dim_Account.CustomerID
 
@@ -1535,7 +1856,7 @@ UNION ALL
 	,null AS [Volume]
 	,null as [Volume_UoM]
 	,null as [Price]
-	,null as [Currency]
+	,'USD' as [Currency]
 	,s.[Total_Adjustments] AS [Amount]
 	,null as [Amount_Currency]
 	,null as [Returned_Quantity]
@@ -1571,6 +1892,47 @@ UNION ALL
 	,NULL ProductID2
 	,NULL  IsPhantom2
 
+
+	-- === ADDED: multi-currency conversion columns  ===
+	-- Audit: FROM-currency for each conversion basis
+	, 'USD' [Txn_Source_Currency]
+	, NULL as [Cost_Source_Currency]
+	-- Txn basis: Price (base f.[Price])
+	, null as [SalesPrice_USD]
+	, null as [SalesPrice_EUR]
+	, null as [SalesPrice_CNY]
+	-- Txn basis: Amount (base null as [Amount])
+	, s.[Total_Adjustments] as [Amount_USD]
+	, erTxnEUR.ExchangeRate * s.[Total_Adjustments] as [Amount_EUR]
+	, erTxnCNY.ExchangeRate * s.[Total_Adjustments] as [Amount_CNY]
+	-- Txn basis: Returned_Amount (base null as [Returned_Amount])
+	, null as [Returned_Amount_USD]
+	, null as [Returned_Amount_EUR]
+	, null as [Returned_Amount_CNY]
+	---- Cost/MST basis: Total_Direct_Cost_Standard (base null as [Total_Direct_Cost_Standard])
+	--, null as [Total_Direct_Cost_Standard_USD]
+	--, null as [Total_Direct_Cost_Standard_EUR]
+	--, null as [Total_Direct_Cost_Standard_CNY]
+	---- Cost/MST basis: Total_Overhead_Cost_Standard (base null as [Total_Overhead_Cost_Standard])
+	--, null as [Total_Overhead_Cost_Standard_USD]
+	--, null as [Total_Overhead_Cost_Standard_EUR]
+	--, null as [Total_Overhead_Cost_Standard_CNY]
+	---- Cost/MST basis: Packaging_Cost_Standard (base null as [Packaging_Cost_Standard])
+	--, null as [Packaging_Cost_Standard_USD]
+	--, null as [Packaging_Cost_Standard_EUR]
+	--, null as [Packaging_Cost_Standard_CNY]
+	---- Cost/MST basis: TotalCost (base null as [TotalCost])
+	--, null as [TotalCost_USD]
+	--, null as [TotalCost_EUR]
+	--, null as [TotalCost_CNY]
+	-- Rate-missing flags (1 = real conversion needed but no rate row found)
+	, 0 as [Txn_USD_Rate_Missing]
+	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_EUR_Rate_Missing]
+	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
+	, null as [Cost_USD_Rate_Missing]
+	, null as [Cost_EUR_Rate_Missing]
+	, null as [Cost_CNY_Rate_Missing]
+
 FROM [dbo].[tbl_Reconciliation_Adjustments] s
 left outer join (select [Reconciliation Year], min(date) Date, min(datekey) DateKey FROM [dbo].[tbl_Dim_Date] group by [Reconciliation Year]) d on
 d.[Reconciliation Year] = s.[Reconciliation_Year]
@@ -1582,6 +1944,21 @@ LEFT JOIN mtbl_EDW_DIM_Legal_Entity dle
 		 WHEN s.CMPNY = '999' THEN '301'
 		 else s.Cmpny end = dle.CMPNY  --Changed from 201 to 501 for D365
 		AND dle.RecordStatus=1
+
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
+	ON erTxnEUR.fromcurrencycode = 'USD'
+		AND erTxnEUR.tocurrencycode   = 'EUR'
+		AND erTxnEUR.exchangeratetype = 'Default global rate'
+		AND '01/01/1900'
+			between erTxnEUR.validfrom and erTxnEUR.validto
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
+	ON erTxnCNY.fromcurrencycode = 'USD'
+		AND erTxnCNY.tocurrencycode   = 'CNY'
+		AND erTxnCNY.exchangeratetype = 'Default global rate'
+		AND '01/01/1900'
+			between erTxnCNY.validfrom and erTxnCNY.validto
 
 
 ----------
@@ -1669,7 +2046,7 @@ SELECT  ABS(CAST(CAST(
 	,null AS [Volume]
 	,null as [Volume_UoM]
 	,null as [Price]
-	,null as [Currency]
+	,'USD' as [Currency]
 	,CONVERT(decimal(38,2), Extension) * ddf.Rate as Amount
 	,null as [Amount_Currency]
 	,null as [Returned_Quantity]
@@ -1729,6 +2106,47 @@ SELECT  ABS(CAST(CAST(
 			ELSE COALESCE(x.D365_ProductID, f.Product)
 			END as ProductID2
 	, dpc.IsPhantom  IsPhantom2
+
+
+	-- === ADDED: multi-currency conversion columns  ===
+	-- Audit: FROM-currency for each conversion basis
+	, 'USD' [Txn_Source_Currency]
+	, NULL as [Cost_Source_Currency]
+	-- Txn basis: Price (base f.[Price])
+	, null as [SalesPrice_USD]
+	, null as [SalesPrice_EUR]
+	, null as [SalesPrice_CNY]
+	-- Txn basis: Amount (base null as [Amount])
+	, CONVERT(decimal(38,2), Extension) * ddf.Rate as [Amount_USD]
+	, erTxnEUR.ExchangeRate * (CONVERT(decimal(38,2), Extension) * ddf.Rate) as [Amount_EUR]
+	, erTxnCNY.ExchangeRate * (CONVERT(decimal(38,2), Extension) * ddf.Rate) as [Amount_CNY]
+	-- Txn basis: Returned_Amount (base null as [Returned_Amount])
+	, null as [Returned_Amount_USD]
+	, null as [Returned_Amount_EUR]
+	, null as [Returned_Amount_CNY]
+	---- Cost/MST basis: Total_Direct_Cost_Standard (base null as [Total_Direct_Cost_Standard])
+	--, null as [Total_Direct_Cost_Standard_USD]
+	--, null as [Total_Direct_Cost_Standard_EUR]
+	--, null as [Total_Direct_Cost_Standard_CNY]
+	---- Cost/MST basis: Total_Overhead_Cost_Standard (base null as [Total_Overhead_Cost_Standard])
+	--, null as [Total_Overhead_Cost_Standard_USD]
+	--, null as [Total_Overhead_Cost_Standard_EUR]
+	--, null as [Total_Overhead_Cost_Standard_CNY]
+	---- Cost/MST basis: Packaging_Cost_Standard (base null as [Packaging_Cost_Standard])
+	--, null as [Packaging_Cost_Standard_USD]
+	--, null as [Packaging_Cost_Standard_EUR]
+	--, null as [Packaging_Cost_Standard_CNY]
+	---- Cost/MST basis: TotalCost (base null as [TotalCost])
+	--, null as [TotalCost_USD]
+	--, null as [TotalCost_EUR]
+	--, null as [TotalCost_CNY]
+	-- Rate-missing flags (1 = real conversion needed but no rate row found)
+	, 0 as [Txn_USD_Rate_Missing]
+	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_EUR_Rate_Missing]
+	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
+	, null as [Cost_USD_Rate_Missing]
+	, null as [Cost_EUR_Rate_Missing]
+	, null as [Cost_CNY_Rate_Missing]
 
 FROM tbl_RESULTSSLSBYYR_BVBA_Thru2025 f
 
@@ -1904,6 +2322,21 @@ LEFT JOIN (SELECT street
       AND isnull(lda.[Country],'') = da.Country
 
 
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
+	ON erTxnEUR.fromcurrencycode = 'USD'
+		AND erTxnEUR.tocurrencycode   = 'EUR'
+		AND erTxnEUR.exchangeratetype = 'Default global rate'
+		AND case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end 
+			between erTxnEUR.validfrom and erTxnEUR.validto
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
+	ON erTxnCNY.fromcurrencycode = 'USD'
+		AND erTxnCNY.tocurrencycode   = 'CNY'
+		AND erTxnCNY.exchangeratetype = 'Default global rate'
+		AND case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end 
+			between erTxnCNY.validfrom and erTxnCNY.validto
+
+
 --LEFT OUTER JOIN vw360_Dim_Account
 --	ON 'A' + f.Cmpny + f.[Customer No] + f.[Ship To No] = vw360_Dim_Account.CustomerID
 --LEFT OUTER JOIN vw360_Dim_Product
@@ -1965,7 +2398,7 @@ SELECT  ABS(CAST(CAST(
 	,null AS [Volume]
 	,null as [Volume_UoM]
 	,null as [Price]
-	,null as [Currency]
+	,'USD' as [Currency]
 	,CONVERT(decimal(38,6), [Net Amount]) AS [Amount]
 	,null as [Amount_Currency]
 	,null as [Returned_Quantity]
@@ -2017,6 +2450,47 @@ SELECT  ABS(CAST(CAST(
 			ELSE COALESCE(x.D365_ProductID, f.[Product Name])
 			END as ProductID2
 	, dpc.IsPhantom  IsPhantom2
+
+
+	-- === ADDED: multi-currency conversion columns  ===
+	-- Audit: FROM-currency for each conversion basis
+	, 'USD' [Txn_Source_Currency]
+	, NULL as [Cost_Source_Currency]
+	-- Txn basis: Price (base f.[Price])
+	, null as [SalesPrice_USD]
+	, null as [SalesPrice_EUR]
+	, null as [SalesPrice_CNY]
+	-- Txn basis: Amount (base null as [Amount])
+	, CONVERT(decimal(38,6), [Net Amount]) as [Amount_USD]
+	, erTxnEUR.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [Amount_EUR]
+	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [Amount_CNY]
+	-- Txn basis: Returned_Amount (base null as [Returned_Amount])
+	, null as [Returned_Amount_USD]
+	, null as [Returned_Amount_EUR]
+	, null as [Returned_Amount_CNY]
+	---- Cost/MST basis: Total_Direct_Cost_Standard (base null as [Total_Direct_Cost_Standard])
+	--, null as [Total_Direct_Cost_Standard_USD]
+	--, null as [Total_Direct_Cost_Standard_EUR]
+	--, null as [Total_Direct_Cost_Standard_CNY]
+	---- Cost/MST basis: Total_Overhead_Cost_Standard (base null as [Total_Overhead_Cost_Standard])
+	--, null as [Total_Overhead_Cost_Standard_USD]
+	--, null as [Total_Overhead_Cost_Standard_EUR]
+	--, null as [Total_Overhead_Cost_Standard_CNY]
+	---- Cost/MST basis: Packaging_Cost_Standard (base null as [Packaging_Cost_Standard])
+	--, null as [Packaging_Cost_Standard_USD]
+	--, null as [Packaging_Cost_Standard_EUR]
+	--, null as [Packaging_Cost_Standard_CNY]
+	---- Cost/MST basis: TotalCost (base null as [TotalCost])
+	--, null as [TotalCost_USD]
+	--, null as [TotalCost_EUR]
+	--, null as [TotalCost_CNY]
+	-- Rate-missing flags (1 = real conversion needed but no rate row found)
+	, 0 as [Txn_USD_Rate_Missing]
+	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_EUR_Rate_Missing]
+	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
+	, null as [Cost_USD_Rate_Missing]
+	, null as [Cost_EUR_Rate_Missing]
+	, null as [Cost_CNY_Rate_Missing]
 
 from tbl_RESULTSSLSBYYR_TEDA_Thru2025 f
 left join [dbo].[XREF_Product_ID] X 
@@ -2123,6 +2597,21 @@ LEFT JOIN (SELECT street
       AND isnull(lda.[ZIP],'')     = da.ZipCode
       AND isnull(lda.[Country],'') = da.Country
 
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
+	ON erTxnEUR.fromcurrencycode = 'USD'
+		AND erTxnEUR.tocurrencycode   = 'EUR'
+		AND erTxnEUR.exchangeratetype = 'Default global rate'
+		AND CONVERT(datetime2(6), f.[Invoice Date] ) 
+			between erTxnEUR.validfrom and erTxnEUR.validto
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
+	ON erTxnCNY.fromcurrencycode = 'USD'
+		AND erTxnCNY.tocurrencycode   = 'CNY'
+		AND erTxnCNY.exchangeratetype = 'Default global rate'
+		AND CONVERT(datetime2(6), f.[Invoice Date] ) 
+			between erTxnCNY.validfrom and erTxnCNY.validto
+
 --left outer join vw360_Dim_Account on
 --'A201'+tbl_RESULTSSLSBYYR_TEDA.[Customer No]+'000000'  = vw360_Dim_Account.CustomerID
 
@@ -2137,3 +2626,6 @@ LEFT JOIN (SELECT street
 where 
 [Customer No] not in ('68600F','68700F','69600F','N06044','N08032','N09900','C1E201')
 and isNull([Invoice No],'0')<>'0'
+GO
+
+

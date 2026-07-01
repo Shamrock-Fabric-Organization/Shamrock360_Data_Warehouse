@@ -3,7 +3,7 @@
 /****** Object:  View [dbo].[tbl_Fact_Customer_Invoices]    Script Date: 4/23/2026 2:42:06 PM ******/
 
 
-CREATE OR ALTER                            VIEW [dbo].[tbl_Fact_Customer_Invoices]
+CREATE OR ALTER       VIEW [dbo].[tbl_Fact_Customer_Invoices]
 as
 select  cit.dataareaid CMPNY  
 , cit.invoiceid  Invoice_ID

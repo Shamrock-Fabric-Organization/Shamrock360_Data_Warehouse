@@ -54,7 +54,7 @@
 ============================================================
 */
 
-CREATE     VIEW [dbo].[tbl_Fact_TradeAgreementDetails] as
+CREATE OR ALTER VIEW [dbo].[tbl_Fact_TradeAgreementDetails] as
 WITH
 
 -- ============================================================
@@ -325,6 +325,23 @@ SELECT
     , isnull(dta.TradeAgreementKey, -1) TradeAgreementKey
     , ISNULL(de.EmployeeKey, -1) CustAcct_EmployeeKey
 
+    -- ========================================================================
+    -- ADDED (ITEM-018): MULTI-CURRENCY CONVERSION — TXN BASIS (FROM p.[CURRENCY])
+    -- Date for rate effective period: p.[FROMDATE] (price-effective / ValidFrom).
+    -- Identity guard: when the row currency already equals the target, rate = 1.0.
+    -- ========================================================================
+    , p.[CURRENCY] AS Txn_Source_Currency   -- audit: FROM currency for txn basis
+
+    -- Price (p.[AMOUNT]) -> USD / EUR / CNY
+    , CASE WHEN p.[CURRENCY] = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * p.[AMOUNT] AS Price_USD
+    , CASE WHEN p.[CURRENCY] = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * p.[AMOUNT] AS Price_EUR
+    , CASE WHEN p.[CURRENCY] = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * p.[AMOUNT] AS Price_CNY
+
+    -- Rate-missing flags (1 = no matching rate row and currency differs from target)
+    , CASE WHEN p.[CURRENCY] <> 'USD' AND erTxnUSD.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_USD_Rate_Missing
+    , CASE WHEN p.[CURRENCY] <> 'EUR' AND erTxnEUR.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_EUR_Rate_Missing
+    , CASE WHEN p.[CURRENCY] <> 'CNY' AND erTxnCNY.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_CNY_Rate_Missing
+
 FROM price_lines p
 
 -- Customer-side GUP rule conditions
@@ -376,3 +393,26 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_TradeAgreement dta
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Employee de
     ON  cust.Salesman_ID  = de.Personnel_Number
     AND de.recordstatus = 1
+
+-- ============================================================================
+-- TXN-BASIS EXCHANGE-RATE JOINS (FROM p.[CURRENCY])
+-- One shared set of three joins (USD/EUR/CNY) for the Price money column.
+-- Effective date keyed on p.[FROMDATE] (trade-agreement price-effective date).
+-- ============================================================================
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnUSD
+    ON  erTxnUSD.fromcurrencycode = p.[CURRENCY]
+    AND erTxnUSD.tocurrencycode   = 'USD'
+    AND convert(date, convert(char(8), p.[FROMDATE], 112)) between erTxnUSD.validfrom and erTxnUSD.validto
+    AND erTxnUSD.exchangeratetype = 'Default global rate'
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
+    ON  erTxnEUR.fromcurrencycode = p.[CURRENCY]
+    AND erTxnEUR.tocurrencycode   = 'EUR'
+    AND convert(date, convert(char(8), p.[FROMDATE], 112)) between erTxnEUR.validfrom and erTxnEUR.validto
+    AND erTxnEUR.exchangeratetype = 'Default global rate'
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
+    ON  erTxnCNY.fromcurrencycode = p.[CURRENCY]
+    AND erTxnCNY.tocurrencycode   = 'CNY'
+    AND convert(date, convert(char(8), p.[FROMDATE], 112)) between erTxnCNY.validfrom and erTxnCNY.validto
+    AND erTxnCNY.exchangeratetype = 'Default global rate'

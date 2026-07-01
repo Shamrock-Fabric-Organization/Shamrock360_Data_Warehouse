@@ -20,5 +20,14 @@ CREATE TABLE [dbo].[mtbl_EDW_Fact_TradeAgreementDetails] (
 	[ProductKey] bigint NOT NULL, 
 	[Legal_EntityKey] bigint NOT NULL, 
 	[TradeAgreementKey] bigint NOT NULL, 
-	[CustAcct_EmployeeKey] bigint NOT NULL
+	[CustAcct_EmployeeKey] bigint NOT NULL, 
+
+	-- === ADDED: multi-currency conversion columns ===
+	[Txn_Source_Currency] varchar(8000) NULL, 
+	[Price_USD] decimal(38,6) NULL, 
+	[Price_EUR] decimal(38,6) NULL, 
+	[Price_CNY] decimal(38,6) NULL, 
+	[Txn_USD_Rate_Missing] int NULL, 
+	[Txn_EUR_Rate_Missing] int NULL, 
+	[Txn_CNY_Rate_Missing] int NULL
 );

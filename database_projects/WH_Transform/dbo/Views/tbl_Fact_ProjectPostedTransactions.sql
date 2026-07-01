@@ -2,7 +2,7 @@
 /****** Object:  View [dbo].[tbl_Fact_ProjectPostedTransactions]    Script Date: 3/31/2026 9:00:23 AM ******/
 --USE WH_Transform
 
-CREATE     VIEW [dbo].[tbl_Fact_ProjectPostedTransactions]
+CREATE OR ALTER VIEW [dbo].[tbl_Fact_ProjectPostedTransactions]
 as
 
 /*
@@ -258,9 +258,27 @@ SELECT
     wct.name ResourceName,
     b.ItemId,
     b.TotalSalesAmountCur TotalSalesAmount,
+    -- >>> ADDED (Txn basis, FROM b.currencyid): TotalSalesAmount in USD / EUR / CNY
+    CASE WHEN b.currencyid = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * b.TotalSalesAmountCur  AS TotalSalesAmount_USD,
+    CASE WHEN b.currencyid = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * b.TotalSalesAmountCur  AS TotalSalesAmount_EUR,
+    CASE WHEN b.currencyid = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * b.TotalSalesAmountCur  AS TotalSalesAmount_CNY,
     b.TotalCostAmountCur AmountInTransaction,
+    -- >>> ADDED (Txn basis, FROM b.currencyid): AmountInTransaction in USD / EUR / CNY
+    CASE WHEN b.currencyid = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * b.TotalCostAmountCur  AS AmountInTransaction_USD,
+    CASE WHEN b.currencyid = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * b.TotalCostAmountCur  AS AmountInTransaction_EUR,
+    CASE WHEN b.currencyid = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * b.TotalCostAmountCur  AS AmountInTransaction_CNY,
     --b.TotalCostAmountCur TotalCostAmount,
     CASE WHEN b.currencyid = l.accountingcurrency THEN 1.0 ELSE er.ExchangeRate END * b.TotalCostAmountCur  TotalCostAmount,  --Converted to LegalEntity currency
+    -- >>> ADDED (Cost/MST basis, FROM l.accountingcurrency): TotalCostAmount in USD / EUR / CNY
+    --     TotalCostAmount is already expressed in the legal-entity accounting currency
+    --     (the existing `er` conversion above), so we step it FROM l.accountingcurrency
+    --     onward to each target via the erCost* joins. Identity guard handles e.g. USD->USD.
+    CASE WHEN l.accountingcurrency = 'USD' THEN 1.0 ELSE erCostUSD.ExchangeRate END
+        * (CASE WHEN b.currencyid = l.accountingcurrency THEN 1.0 ELSE er.ExchangeRate END * b.TotalCostAmountCur)  AS TotalCostAmount_USD,
+    CASE WHEN l.accountingcurrency = 'EUR' THEN 1.0 ELSE erCostEUR.ExchangeRate END
+        * (CASE WHEN b.currencyid = l.accountingcurrency THEN 1.0 ELSE er.ExchangeRate END * b.TotalCostAmountCur)  AS TotalCostAmount_EUR,
+    CASE WHEN l.accountingcurrency = 'CNY' THEN 1.0 ELSE erCostCNY.ExchangeRate END
+        * (CASE WHEN b.currencyid = l.accountingcurrency THEN 1.0 ELSE er.ExchangeRate END * b.TotalCostAmountCur)  AS TotalCostAmount_CNY,
     -- =========================================================
     -- InvoiceStatus — full X++ logic in set-based SQL
     -- =========================================================
@@ -344,6 +362,16 @@ SELECT
     b.TransType,
     b.currencyid TransCurrencyCode,
     l.accountingcurrency LegalEntityCurrencyCode,
+    -- >>> ADDED audit columns: explicit FROM-currency per conversion basis
+    b.currencyid          AS Txn_Source_Currency,    -- Txn basis FROM currency
+    l.accountingcurrency  AS Cost_Source_Currency,   -- Cost/MST basis FROM currency
+    -- >>> ADDED Rate_Missing flags (1 = a non-identity conversion had no matching rate)
+    CASE WHEN b.currencyid <> 'USD' AND erTxnUSD.ExchangeRate IS NULL THEN 1 ELSE 0 END  AS Txn_USD_Rate_Missing,
+    CASE WHEN b.currencyid <> 'EUR' AND erTxnEUR.ExchangeRate IS NULL THEN 1 ELSE 0 END  AS Txn_EUR_Rate_Missing,
+    CASE WHEN b.currencyid <> 'CNY' AND erTxnCNY.ExchangeRate IS NULL THEN 1 ELSE 0 END  AS Txn_CNY_Rate_Missing,
+    CASE WHEN l.accountingcurrency <> 'USD' AND erCostUSD.ExchangeRate IS NULL THEN 1 ELSE 0 END  AS Cost_USD_Rate_Missing,
+    CASE WHEN l.accountingcurrency <> 'EUR' AND erCostEUR.ExchangeRate IS NULL THEN 1 ELSE 0 END  AS Cost_EUR_Rate_Missing,
+    CASE WHEN l.accountingcurrency <> 'CNY' AND erCostCNY.ExchangeRate IS NULL THEN 1 ELSE 0 END  AS Cost_CNY_Rate_Missing,
     --b.VendorAccount,
     --b.VendorName,
 
@@ -442,3 +470,48 @@ LEFT JOIN WH_Raw.dbo.vwExchangeRate er
         AND er.tocurrencycode = l.accountingcurrency
         AND convert(date, convert(char(8), b.TransDate, 112)) between er.validfrom and er.validto
         AND er.exchangeratetype = 'Default global rate'
+
+-- =============================================================================
+-- >>> ADDED RATE JOINS (additive) — mirror the canonical `er` join above.
+--     Same date normalization, same exchangeratetype, same vwExchangeRate source.
+--
+--     TXN-BASIS set (fromcurrencycode = b.currencyid): drives TotalSalesAmount_*
+--     and AmountInTransaction_*. Shared by all txn-basis money columns.
+-- =============================================================================
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnUSD
+    ON erTxnUSD.fromcurrencycode = b.currencyid
+        AND erTxnUSD.tocurrencycode = 'USD'
+        AND convert(date, convert(char(8), b.TransDate, 112)) between erTxnUSD.validfrom and erTxnUSD.validto
+        AND erTxnUSD.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
+    ON erTxnEUR.fromcurrencycode = b.currencyid
+        AND erTxnEUR.tocurrencycode = 'EUR'
+        AND convert(date, convert(char(8), b.TransDate, 112)) between erTxnEUR.validfrom and erTxnEUR.validto
+        AND erTxnEUR.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
+    ON erTxnCNY.fromcurrencycode = b.currencyid
+        AND erTxnCNY.tocurrencycode = 'CNY'
+        AND convert(date, convert(char(8), b.TransDate, 112)) between erTxnCNY.validfrom and erTxnCNY.validto
+        AND erTxnCNY.exchangeratetype = 'Default global rate'
+
+-- =============================================================================
+--     COST/MST-BASIS set (fromcurrencycode = l.accountingcurrency): drives
+--     TotalCostAmount_* (cost already converted INTO l.accountingcurrency by `er`).
+--     Shared by all cost-basis money columns.
+-- =============================================================================
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erCostUSD
+    ON erCostUSD.fromcurrencycode = l.accountingcurrency
+        AND erCostUSD.tocurrencycode = 'USD'
+        AND convert(date, convert(char(8), b.TransDate, 112)) between erCostUSD.validfrom and erCostUSD.validto
+        AND erCostUSD.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erCostEUR
+    ON erCostEUR.fromcurrencycode = l.accountingcurrency
+        AND erCostEUR.tocurrencycode = 'EUR'
+        AND convert(date, convert(char(8), b.TransDate, 112)) between erCostEUR.validfrom and erCostEUR.validto
+        AND erCostEUR.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erCostCNY
+    ON erCostCNY.fromcurrencycode = l.accountingcurrency
+        AND erCostCNY.tocurrencycode = 'CNY'
+        AND convert(date, convert(char(8), b.TransDate, 112)) between erCostCNY.validfrom and erCostCNY.validto
+        AND erCostCNY.exchangeratetype = 'Default global rate'
+

@@ -84,6 +84,57 @@ SELECT
 	, ISNULL(dpo.PurchaseOrderKey, -1)  PurchaseOrerKey
 	, ISNULL(db.BatchKey, -1)  BatchKey
 
+-- ============================================================================
+-- MULTI-CURRENCY CONVERSION — TXN BASIS (FROM pl.currencycode)
+-- Date for rate effective period: pl.deliverydate (order/delivery date).
+-- Identity guard: when the row currency already equals the target, rate = 1.0.
+-- All txn-basis money columns share the single erTxnUSD/EUR/CNY join set below.
+-- ============================================================================
+	, pl.currencycode AS Txn_Source_Currency   -- audit: FROM currency for txn basis
+
+	-- lineamount -> USD / EUR / CNY
+	, CASE WHEN pl.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * pl.lineamount AS lineamount_USD
+	, CASE WHEN pl.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * pl.lineamount AS lineamount_EUR
+	, CASE WHEN pl.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * pl.lineamount AS lineamount_CNY
+
+	-- OutstandingLineAmount (derived) -> USD / EUR / CNY (rate applied to the same derived expression)
+	, CASE WHEN pl.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END *
+		(CASE WHEN pl.purchqty = 0 then NULL else 
+			CASE WHEN (pl.remainpurchphysical + pl.remainpurchfinancial) = 0 THEN 0
+			ELSE (((pl.remainpurchphysical + pl.remainpurchfinancial) / pl.purchqty ) * pl.lineamount ) END END) AS OutstandingLineAmount_USD
+	, CASE WHEN pl.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END *
+		(CASE WHEN pl.purchqty = 0 then NULL else 
+			CASE WHEN (pl.remainpurchphysical + pl.remainpurchfinancial) = 0 THEN 0
+			ELSE (((pl.remainpurchphysical + pl.remainpurchfinancial) / pl.purchqty ) * pl.lineamount ) END END) AS OutstandingLineAmount_EUR
+	, CASE WHEN pl.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END *
+		(CASE WHEN pl.purchqty = 0 then NULL else 
+			CASE WHEN (pl.remainpurchphysical + pl.remainpurchfinancial) = 0 THEN 0
+			ELSE (((pl.remainpurchphysical + pl.remainpurchfinancial) / pl.purchqty ) * pl.lineamount ) END END) AS OutstandingLineAmount_CNY
+
+	-- purchprice -> USD / EUR / CNY
+	, CASE WHEN pl.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * pl.purchprice AS purchprice_USD
+	, CASE WHEN pl.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * pl.purchprice AS purchprice_EUR
+	, CASE WHEN pl.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * pl.purchprice AS purchprice_CNY
+
+	-- DiscountPrice (pdt.amount) -> USD / EUR / CNY
+	-- converted FROM pdt.currency (PriceDiscTable.Currency), the
+	-- currency the trade-agreement Amount is actually denominated in — NOT
+	-- pl.currencycode. 
+	, pdt.currency AS Disc_Source_Currency   -- audit: FROM currency for the discount/price basis
+	, CASE WHEN pdt.currency = 'USD' THEN 1.0 ELSE erDiscUSD.ExchangeRate END * pdt.amount AS DiscountPrice_USD
+	, CASE WHEN pdt.currency = 'EUR' THEN 1.0 ELSE erDiscEUR.ExchangeRate END * pdt.amount AS DiscountPrice_EUR
+	, CASE WHEN pdt.currency = 'CNY' THEN 1.0 ELSE erDiscCNY.ExchangeRate END * pdt.amount AS DiscountPrice_CNY
+
+	-- Rate-missing flags (1 = no matching rate row and currency differs from target)
+	, CASE WHEN pl.currencycode <> 'USD' AND erTxnUSD.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_USD_Rate_Missing
+	, CASE WHEN pl.currencycode <> 'EUR' AND erTxnEUR.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_EUR_Rate_Missing
+	, CASE WHEN pl.currencycode <> 'CNY' AND erTxnCNY.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_CNY_Rate_Missing
+
+	-- Discount/price (pdt.amount) rate-missing flags — only meaningful when a trade
+	, CASE WHEN pdt.currency IS NOT NULL AND pdt.currency <> 'USD' AND erDiscUSD.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Disc_USD_Rate_Missing
+	, CASE WHEN pdt.currency IS NOT NULL AND pdt.currency <> 'EUR' AND erDiscEUR.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Disc_EUR_Rate_Missing
+	, CASE WHEN pdt.currency IS NOT NULL AND pdt.currency <> 'CNY' AND erDiscCNY.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Disc_CNY_Rate_Missing
+
 FROM WH_Raw.dbo.purchline pl
 	JOIN WH_Raw.dbo.purchtable pt
 	  ON pl.purchid = pt.purchid
@@ -173,3 +224,53 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_Batch db
 	    AND ID.dataareaid = db.CMPNY
 		AND pl.itemid = db.ProductID
 		AND db.RecordStatus=1
+
+-- ============================================================================
+-- TXN-BASIS EXCHANGE-RATE JOINS (FROM pl.currencycode)
+-- One shared set of three joins (USD/EUR/CNY) for the txn-basis money columns
+-- (lineamount, OutstandingLineAmount, purchprice). DiscountPrice uses its own
+-- erDisc* joins (FROM pdt.currency) — see below.
+-- Effective date keyed on pl.deliverydate.
+-- ============================================================================
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnUSD
+	ON erTxnUSD.fromcurrencycode = pl.currencycode
+		AND erTxnUSD.tocurrencycode = 'USD'
+		AND convert(date, convert(char(8), pl.deliverydate, 112)) between erTxnUSD.validfrom and erTxnUSD.validto
+		AND erTxnUSD.exchangeratetype = 'Default global rate'
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
+	ON erTxnEUR.fromcurrencycode = pl.currencycode
+		AND erTxnEUR.tocurrencycode = 'EUR'
+		AND convert(date, convert(char(8), pl.deliverydate, 112)) between erTxnEUR.validfrom and erTxnEUR.validto
+		AND erTxnEUR.exchangeratetype = 'Default global rate'
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
+	ON erTxnCNY.fromcurrencycode = pl.currencycode
+		AND erTxnCNY.tocurrencycode = 'CNY'
+		AND convert(date, convert(char(8), pl.deliverydate, 112)) between erTxnCNY.validfrom and erTxnCNY.validto
+		AND erTxnCNY.exchangeratetype = 'Default global rate'
+
+-- ============================================================================
+-- DISCOUNT-BASIS EXCHANGE-RATE JOINS (FROM pdt.currency)
+-- For DiscountPrice (pdt.amount), which is denominated in PriceDiscTable.Currency
+-- NOT the purchase-line currency. Same date key (pl.deliverydate)
+-- and 'Default global rate' type as the txn joins. Rows with no matching trade
+-- agreement have pdt.currency = NULL, so these joins no-op and DiscountPrice_* = NULL.
+-- ============================================================================
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erDiscUSD
+	ON erDiscUSD.fromcurrencycode = pdt.currency
+		AND erDiscUSD.tocurrencycode = 'USD'
+		AND convert(date, convert(char(8), pl.deliverydate, 112)) between erDiscUSD.validfrom and erDiscUSD.validto
+		AND erDiscUSD.exchangeratetype = 'Default global rate'
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erDiscEUR
+	ON erDiscEUR.fromcurrencycode = pdt.currency
+		AND erDiscEUR.tocurrencycode = 'EUR'
+		AND convert(date, convert(char(8), pl.deliverydate, 112)) between erDiscEUR.validfrom and erDiscEUR.validto
+		AND erDiscEUR.exchangeratetype = 'Default global rate'
+
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erDiscCNY
+	ON erDiscCNY.fromcurrencycode = pdt.currency
+		AND erDiscCNY.tocurrencycode = 'CNY'
+		AND convert(date, convert(char(8), pl.deliverydate, 112)) between erDiscCNY.validfrom and erDiscCNY.validto
+		AND erDiscCNY.exchangeratetype = 'Default global rate'

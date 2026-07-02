@@ -1,4 +1,4 @@
-CREATE     PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimGL_Account]
+CREATE OR ALTER    PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimGL_Account]
 AS
 BEGIN
 	-- Drop intermediate objects if they exist
@@ -49,6 +49,8 @@ BEGIN
 			OR ISNULL(Target.Account_Type_Description, '') <> ISNULL(Source.Account_Type_Description, '')
 			OR ISNULL(Target.Category_Account_Type, 0) <> ISNULL(Source.Category_Account_Type, 0)
 			OR ISNULL(Target.Category_Account_Type_Description, '') <> ISNULL(Source.Category_Account_Type_Description, '')
+			OR ISNULL(Target.ChartOfAccounts, '') <> ISNULL(Source.ChartOfAccounts, '')
+			OR ISNULL(Target.accountcategorydisplayorder, '') <> ISNULL(Source.accountcategorydisplayorder, '')
 			)
 
 	--Create table with Type1 changes for insert into final table
@@ -63,6 +65,8 @@ BEGIN
 		, Source.Account_Type_Description
 		, Source.Category_Account_Type
 		, Source.Category_Account_Type_Description
+		, Source.ChartOfAccounts
+		, Source.accountcategorydisplayorder
 		,Target.Source
 		,Target.RecordEffectiveStartDate
 		,Target.RecordEffectiveEndDate
@@ -161,6 +165,8 @@ BEGIN
 		, Account_Type_Description
 		, Category_Account_Type
 		, Category_Account_Type_Description
+		, ChartOfAccounts
+		, accountcategorydisplayorder
 		, Source
 		, [RecordEffectiveStartDate]
 		, GETDATE() AS RecordEffectiveEndDate

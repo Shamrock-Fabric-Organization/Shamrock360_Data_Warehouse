@@ -1,7 +1,7 @@
 -- Auto Generated (Do not modify) 175FF77130925FE70B673A4B9684674248B6B4C2C1E9BBBD4104E04D5EDBA0DB
 
 
-CREATE     VIEW [dbo].[vw_stage_NewGL_Account]
+CREATE OR ALTER    VIEW [dbo].[vw_stage_NewGL_Account]
 AS
 SELECT [GL_AccountKey]
 	,[GL_Account_Number]
@@ -13,6 +13,9 @@ SELECT [GL_AccountKey]
 	,[Account_Type_Description]
 	,[Category_Account_Type]
 	,[Category_Account_Type_Description]
+	,[ChartOfAccounts]
+	,[accountcategorydisplayorder]
+
 	,[Source]
 	,CAST('1900-01-01' AS DATETIME2(3)) AS RecordEffectiveStartDate
 	,CAST('2099-12-31 00:00:01.000' AS DATETIME2(3)) AS RecordEffectiveEndDate

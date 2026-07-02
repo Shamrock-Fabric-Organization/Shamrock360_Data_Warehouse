@@ -10,6 +10,8 @@ CREATE TABLE [dbo].[tbl_DIM_GL_Account] (
 	[Account_Type_Description] varchar(13) NULL, 
 	[Category_Account_Type] bigint NULL, 
 	[Category_Account_Type_Description] varchar(8000) NULL, 
+	[ChartOfAccounts] varchar(8000) NULL, 
+	[accountcategorydisplayorder] varchar(8000) NULL, 
 	[Source] varchar(6) NOT NULL, 
 	[RecordEffectiveStartDate] datetime2(3) NULL, 
 	[RecordEffectiveEndDate] datetime2(3) NULL, 

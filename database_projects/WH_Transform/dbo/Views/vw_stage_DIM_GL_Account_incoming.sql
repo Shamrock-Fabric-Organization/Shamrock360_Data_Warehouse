@@ -2,7 +2,7 @@
 /****** Object:  View [dbo].[vw_stage_DIM_GL_Account_incoming]    Script Date: 9/2/2025 1:02:23 PM ******/
 --drop  VIEW dbo.vw_stage_DIM_GL_Account_incoming	
 
-CREATE     VIEW [dbo].[vw_stage_DIM_GL_Account_incoming]			
+CREATE OR ALTER    VIEW [dbo].[vw_stage_DIM_GL_Account_incoming]			
 AS			
 SELECT 			
     ABS(CAST(CAST(
@@ -25,6 +25,8 @@ SELECT
 	, m.type_$label Account_Type_Description
     , c.accounttype  Category_Account_Type    --******************
     , c.accounttype_$label Category_Account_Type_Description    --******************
+    , coa.name ChartOfAccounts
+    , c.accountcategorydisplayorder
 
 	,'D365FO'	 Source
 	,NULL	 RecordEffectiveStartDate
@@ -34,6 +36,8 @@ SELECT
 FROM WH_Raw.dbo.mainaccount m	
   LEFT JOIN WH_Raw.dbo.mainaccountcategory c
     ON m.accountcategoryref = c.accountcategoryref
+  LEFT JOIN WH_Raw.dbo.ledgerchartofaccounts coa
+    ON m.ledgerchartofaccounts = coa.recid
 
 UNION ALL
 
@@ -47,6 +51,9 @@ SELECT -1 [GL_AccountKey]
 , NULL Account_Type_Description
 , NULL Category_Account_Type
 , NULL Category_Account_Type_Description
+, NULL ChartOfAccounts
+, NULL accountcategorydisplayorder
+
 , 'D365FO' [Source]
 , NULL [RecordEffectiveStartDate]
 , NULL [RecordEffectiveEndDate]

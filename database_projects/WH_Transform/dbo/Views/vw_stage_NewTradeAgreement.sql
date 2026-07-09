@@ -4,7 +4,7 @@
 -- Create a view to identify new records not present in the current dimension
 -- Needed because CTAS does not allow the surrogate key logic used in the incoming view
 
-CREATE   VIEW [dbo].[vw_stage_NewTradeAgreement]
+CREATE OR ALTER  VIEW [dbo].[vw_stage_NewTradeAgreement]
 AS
 SELECT
       [TradeAgreementKey]
@@ -24,7 +24,7 @@ FROM [dbo].[vw_stage_DIM_TradeAgreement_incoming] AS Source
 WHERE NOT EXISTS (
     SELECT 1
     FROM [dbo].[tbl_DIM_TradeAgreement] AS Target
-    WHERE Target.AgreementID  = Source.AgreementID
-      AND Target.CMPNY        = Source.CMPNY
+    WHERE ISNULL(Target.AgreementID, '') = ISNULL(Source.AgreementID, '')
+      AND ISNULL(Target.CMPNY, '')       = ISNULL(Source.CMPNY, '')
       AND Target.RecordStatus = 1
     )

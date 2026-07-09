@@ -7,7 +7,7 @@
 /****** Object:  View [dbo].[vw_stage_DIM_Address_incoming] ******/
 --DROP VIEW IF EXISTS [dbo].[vw_stage_DIM_Address_incoming]
 
-CREATE       VIEW [dbo].[vw_stage_DIM_Address_incoming]
+CREATE OR ALTER      VIEW [dbo].[vw_stage_DIM_Address_incoming]
 AS
 WITH legacy_addresses
 AS
@@ -72,7 +72,9 @@ SELECT
     ,a.[LOCATION]                           AS Location
     ,isnull(a.[STREET],'')                             AS Street
     ,isnull(a.[CITY],'')                               AS City
-    ,isnull(a.[STATE],'')                              AS State
+    ,CASE WHEN a.[COUNTRYREGIONID] = 'USA'
+          THEN UPPER(isnull(a.[STATE],''))
+          ELSE isnull(a.[STATE],'') END                AS State
     ,isnull(a.[ZIPCODE],'')                            AS ZipCode
     ,isnull(lacrt.[SHORTNAME],'')                      AS Country
     ,a.[VALIDFROM]                          AS ValidFrom
@@ -124,7 +126,9 @@ SELECT
     ,-2                                   AS Location           --Legacy Address
     ,Street
     ,City
-    ,State
+    ,CASE WHEN Country = 'USA' OR Country LIKE 'United States%'
+          THEN UPPER(State)
+          ELSE State END                      AS State
     ,Zip
     ,Country
     ,NULL                                   AS ValidFrom

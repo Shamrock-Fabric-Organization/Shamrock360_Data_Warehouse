@@ -2,7 +2,7 @@
 /****** Object:  View [dbo].[vw_EDW_Dim_Product]    Script Date: 5/4/2026 12:14:39 PM ******/
 
 
-CREATE             View [dbo].[vw_EDW_Dim_Product] 
+CREATE OR ALTER            View [dbo].[vw_EDW_Dim_Product] 
 	--WITH SCHEMABINDING 
 		as
 
@@ -57,6 +57,13 @@ CREATE             View [dbo].[vw_EDW_Dim_Product]
             , sales_leadtime
             , BaseSalesPrice
             , BaseSalesPricePerLB
+
+            , DefaultPurchaseWarehouse
+            , DefaultPurchaseSiteID
+            , DefaultInventoryWarehouse
+            , DefaultInventorySiteID
+            , DefaultSalesWarehouse
+            , DefaultSalesSiteID
 
           ,[RecordEffectiveStartDate] as Start_Date
           ,[RecordEffectiveEndDate] as End_Date
@@ -126,6 +133,13 @@ SELECT ABS(CAST(CAST(
       ,NULL AS sales_leadtime
       ,NULL AS BaseSalesPrice
       ,NULL AS BaseSalesPricePerLB
+
+    , NULL AS DefaultPurchaseWarehouse
+    , NULL AS DefaultPurchaseSiteID
+    , NULL AS DefaultInventoryWarehouse
+    , NULL AS DefaultInventorySiteID
+    , NULL AS DefaultSalesWarehouse
+    , NULL AS DefaultSalesSiteID
 
       ,l.[RecordEffectiveStartDate] AS Start_Date
       ,l.[RecordEffectiveEndDate]   AS End_Date

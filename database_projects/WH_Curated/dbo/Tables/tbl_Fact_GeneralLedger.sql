@@ -5,7 +5,13 @@ CREATE TABLE [dbo].[tbl_Fact_GeneralLedger] (
 	[accountingdate] datetime2(6) NULL, 
 	[accountingdatekey] int NULL, 
 	[transactioncurrencyamount] decimal(38,6) NULL, 
+	[transactioncurrencyamount_USD] decimal(38,6) NULL, 
+	[transactioncurrencyamount_EUR] decimal(38,6) NULL, 
+	[transactioncurrencyamount_CNY] decimal(38,6) NULL, 
 	[accountingcurrencyamount] decimal(38,6) NULL, 
+	[accountingcurrencyamount_USD] decimal(38,6) NULL, 
+	[accountingcurrencyamount_EUR] decimal(38,6) NULL, 
+	[accountingcurrencyamount_CNY] decimal(38,6) NULL, 
 	[reportingcurrencyamount] decimal(38,6) NULL, 
 	[quantity] decimal(38,6) NULL, 
 	[iscorrection] bigint NULL, 
@@ -50,5 +56,13 @@ CREATE TABLE [dbo].[tbl_Fact_GeneralLedger] (
 	[Product_Line] varchar(8000) NULL, 
 	[Site] varchar(8000) NULL, 
 	[DepartmentKey] bigint NOT NULL, 
-	[SiteKey] bigint NOT NULL
+	[SiteKey] bigint NOT NULL, 
+	[Txn_Source_Currency] varchar(8000) NULL, 
+	[Cost_Source_Currency] varchar(8000) NULL, 
+	[Txn_USD_Rate_Missing] int NULL, 
+	[Txn_EUR_Rate_Missing] int NULL, 
+	[Txn_CNY_Rate_Missing] int NULL, 
+	[Acct_USD_Rate_Missing] int NULL, 
+	[Acct_EUR_Rate_Missing] int NULL, 
+	[Acct_CNY_Rate_Missing] int NULL 
 );

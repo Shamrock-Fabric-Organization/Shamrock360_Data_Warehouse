@@ -73,6 +73,14 @@ SELECT
 		THEN NULL
 		ELSE (ITMs.price / CASE WHEN ITMs.unitid = 'lb' then 1 else UOM_s.UOMConversionFactor end ) 
 		END BaseSalesPricePerLB
+
+	, idp.inventlocationid DefaultPurchaseWarehouse
+	, idp.inventsiteid DefaultPurchaseSiteID
+	, idi.inventlocationid DefaultInventoryWarehouse
+	, idi.inventsiteid DefaultInventorySiteID
+	, ids.inventlocationid DefaultSalesWarehouse
+	, ids.inventsiteid DefaultSalesSiteID
+
 	,CAST(NULL AS DATETIME2(3))	 RecordEffectiveStartDate	 --SCD2 control field
 	,CAST(NULL AS DATETIME2(3))	 RecordEffectiveEndDate	 --SCD2 control field
 	,CAST(NULL AS INT)	 RecordStatus	 --SCD2 control field
@@ -148,6 +156,19 @@ LEFT JOIN WH_Raw.dbo.vwUnitOfMeasureConversion UOM_s
 	ON IT.product = UOM_s.product
 		AND ITMs.unitid = UOM_s.SYMBOLFROM
 		AND UOM_s.SYMBOLTO = 'lb'
+
+LEFT JOIN WH_Raw.[dbo].[inventdim] idp
+    ON iips.InventdimIddefault = idp.Inventdimid
+	    AND iips.dataareaid = idp.DataAreaId
+
+LEFT JOIN WH_Raw.[dbo].[inventdim] idi
+    ON iiis.InventdimIddefault = idi.Inventdimid
+	    AND iiis.dataareaid = idi.DataAreaId
+
+LEFT JOIN WH_Raw.[dbo].[inventdim] ids
+    ON iiss.InventdimIddefault = ids.Inventdimid
+	    AND iiss.dataareaid = ids.DataAreaId
+
 )
 
 SELECT
@@ -197,6 +218,14 @@ SELECT
     ,sales_leadtime
     ,BaseSalesPrice
     ,BaseSalesPricePerLB
+
+	,  DefaultPurchaseSiteID
+	,  DefaultPurchaseWarehouse
+	,  DefaultInventorySiteID
+	,  DefaultInventoryWarehouse
+	,  DefaultSalesSiteID
+	,  DefaultSalesWarehouse
+
     ,RecordEffectiveStartDate
     ,RecordEffectiveEndDate
     ,RecordStatus
@@ -258,6 +287,13 @@ SELECT -1 [ProductKey]
 , NULL sales_leadtime
 , NULL BaseSalesPrice
 , NULL BaseSalesPricePerLB
+
+, NULL DefaultPurchaseWarehouse
+, NULL DefaultPurchaseSiteID
+, NULL DefaultInventoryWarehouse
+, NULL DefaultInventorySiteID
+, NULL DefaultSalesWarehouse
+, NULL DefaultSalesSiteID
 
 , NULL [RecordEffectiveStartDate]
 , NULL [RecordEffectiveEndDate]

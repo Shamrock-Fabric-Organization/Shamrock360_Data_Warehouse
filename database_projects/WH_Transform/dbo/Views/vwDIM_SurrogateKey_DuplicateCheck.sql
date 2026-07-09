@@ -16,7 +16,7 @@
     Status            - PASS (0 duplicates) or FAIL (duplicates found)
 ================================================================================
 */
-CREATE   VIEW vwDIM_SurrogateKey_DuplicateCheck AS
+CREATE OR ALTER  VIEW vwDIM_SurrogateKey_DuplicateCheck AS
 SELECT *
 FROM (
     SELECT
@@ -158,6 +158,12 @@ FROM (
         SELECT 'dbo', 'tbl_DIM_StandardCost', 'StandardCostKey'
             ,COUNT(1), ISNULL(MAX(cnt), 0)
         FROM (SELECT StandardCostKey, COUNT(1) AS cnt FROM dbo.tbl_DIM_StandardCost GROUP BY StandardCostKey HAVING COUNT(1) > 1) x
+
+        UNION ALL
+
+        SELECT 'dbo', 'tbl_DIM_TestGroup', 'TestGroupKey'
+            ,COUNT(1), ISNULL(MAX(cnt), 0)
+        FROM (SELECT TestGroupKey, COUNT(1) AS cnt FROM dbo.tbl_DIM_TestGroup GROUP BY TestGroupKey HAVING COUNT(1) > 1) x
 
         UNION ALL
 

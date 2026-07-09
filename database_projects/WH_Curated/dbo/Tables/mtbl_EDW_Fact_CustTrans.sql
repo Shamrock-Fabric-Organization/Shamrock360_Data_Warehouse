@@ -26,5 +26,37 @@ CREATE TABLE [dbo].[mtbl_EDW_Fact_CustTrans] (
 	[DaysOutstanding] int NULL, 
 	[lastsettledate] datetime2(6) NULL, 
 	[CustomerKey] bigint NOT NULL, 
-	[Legal_EntityKey] bigint NOT NULL
+	[Legal_EntityKey] bigint NOT NULL, 
+
+-- === ADDED: multi-currency conversion columns (ITEM-018) ===
+	[amountcur_USD] decimal(38,6) NULL, 
+	[amountcur_EUR] decimal(38,6) NULL, 
+	[amountcur_CNY] decimal(38,6) NULL, 
+
+-- === ADDED (r2): cost/MST-basis conversion columns (ITEM-018) ===
+-- FROM dle.accountingcurrency: amountmst, custexchadjustmentrealized,
+-- custexchadjustmentunrealized, settleamountmst, derived Amount.
+	[amountmst_USD] decimal(38,6) NULL, 
+	[amountmst_EUR] decimal(38,6) NULL, 
+	[amountmst_CNY] decimal(38,6) NULL, 
+	[custexchadjustmentrealized_USD] decimal(38,6) NULL, 
+	[custexchadjustmentrealized_EUR] decimal(38,6) NULL, 
+	[custexchadjustmentrealized_CNY] decimal(38,6) NULL, 
+	[custexchadjustmentunrealized_USD] decimal(38,6) NULL, 
+	[custexchadjustmentunrealized_EUR] decimal(38,6) NULL, 
+	[custexchadjustmentunrealized_CNY] decimal(38,6) NULL, 
+	[settleamountmst_USD] decimal(38,6) NULL, 
+	[settleamountmst_EUR] decimal(38,6) NULL, 
+	[settleamountmst_CNY] decimal(38,6) NULL, 
+	[Amount_USD] decimal(38,6) NULL, 
+	[Amount_EUR] decimal(38,6) NULL, 
+	[Amount_CNY] decimal(38,6) NULL, 
+	[Txn_Source_Currency] varchar(8000) NULL, 
+	[Cost_Source_Currency] varchar(8000) NULL, 
+	[Txn_USD_Rate_Missing] int NULL, 
+	[Txn_EUR_Rate_Missing] int NULL, 
+	[Txn_CNY_Rate_Missing] int NULL, 
+	[Cost_USD_Rate_Missing] int NULL, 
+	[Cost_EUR_Rate_Missing] int NULL, 
+	[Cost_CNY_Rate_Missing] int NULL
 );

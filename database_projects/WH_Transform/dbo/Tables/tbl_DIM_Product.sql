@@ -46,6 +46,14 @@ CREATE TABLE [dbo].[tbl_DIM_Product] (
 	[sales_leadtime] bigint NULL, 
 	[BaseSalesPrice] decimal(38,6) NULL, 
 	[BaseSalesPricePerLB] decimal(38,6) NULL, 
+
+	[DefaultPurchaseWarehouse] varchar(8000) NULL,
+	[DefaultPurchaseSiteID] varchar(8000) NULL,
+	[DefaultInventoryWarehouse] varchar(8000) NULL,
+	[DefaultInventorySiteID] varchar(8000) NULL,
+	[DefaultSalesWarehouse] varchar(8000) NULL,
+	[DefaultSalesSiteID] varchar(8000) NULL,
+
 	[RecordEffectiveStartDate] datetime2(3) NULL, 
 	[RecordEffectiveEndDate] datetime2(3) NULL, 
 	[RecordStatus] int NULL, 

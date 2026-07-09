@@ -1,4 +1,4 @@
-CREATE       PROCEDURE [dbo].[sp_Execute_SCD_Logic_dimProduct]
+CREATE OR ALTER      PROCEDURE [dbo].[sp_Execute_SCD_Logic_dimProduct]
 AS
 BEGIN
 	-- Drop intermediate objects if they exist
@@ -88,6 +88,14 @@ BEGIN
 			OR ISNULL(Target.sales_leadtime, 0) <> ISNULL(Source.sales_leadtime, 0)
 			OR ISNULL(Target.BaseSalesPrice, 0) <> ISNULL(Source.BaseSalesPrice, 0)
 			OR ISNULL(Target.BaseSalesPricePerLB, 0) <> ISNULL(Source.BaseSalesPricePerLB, 0)
+
+			OR ISNULL(Target.DefaultPurchaseWarehouse, 0) <> ISNULL(Source.DefaultPurchaseWarehouse, 0)
+			OR ISNULL(Target.DefaultPurchaseSiteID, 0) <> ISNULL(Source.DefaultPurchaseSiteID, 0)
+			OR ISNULL(Target.DefaultInventoryWarehouse, 0) <> ISNULL(Source.DefaultInventoryWarehouse, 0)
+			OR ISNULL(Target.DefaultInventorySiteID, 0) <> ISNULL(Source.DefaultInventorySiteID, 0)
+			OR ISNULL(Target.DefaultSalesWarehouse, 0) <> ISNULL(Source.DefaultSalesWarehouse, 0)
+			OR ISNULL(Target.DefaultSalesSiteID, 0) <> ISNULL(Source.DefaultSalesSiteID, 0)
+
 			)
 		AND NOT EXISTS (
 			SELECT 1
@@ -149,6 +157,13 @@ BEGIN
 		, Source.sales_leadtime
 		, Source.BaseSalesPrice
 		, Source.BaseSalesPricePerLB
+
+		, Source.DefaultPurchaseWarehouse
+		, Source.DefaultPurchaseSiteID
+		, Source.DefaultInventoryWarehouse
+		, Source.DefaultInventorySiteID
+		, Source.DefaultSalesWarehouse
+		, Source.DefaultSalesSiteID
 
 		,Target.RecordEffectiveStartDate
 		,Target.RecordEffectiveEndDate
@@ -247,6 +262,13 @@ BEGIN
 		, BaseSalesPrice
 		, BaseSalesPricePerLB
 
+		, DefaultPurchaseWarehouse
+		, DefaultPurchaseSiteID
+		, DefaultInventoryWarehouse
+		, DefaultInventorySiteID
+		, DefaultSalesWarehouse
+		, DefaultSalesSiteID
+
 		, [RecordEffectiveStartDate]
 		, CAST(GETDATE() AS DATETIME2(3)) AS RecordEffectiveEndDate
 		, 0 AS RecordStatus
@@ -308,6 +330,13 @@ BEGIN
 		, s.sales_leadtime
 		, s.BaseSalesPrice
 		, s.BaseSalesPricePerLB
+
+		, s.DefaultPurchaseWarehouse
+		, s.DefaultPurchaseSiteID
+		, s.DefaultInventoryWarehouse
+		, s.DefaultInventorySiteID
+		, s.DefaultSalesWarehouse
+		, s.DefaultSalesSiteID
 
 		,CAST(GETDATE() AS DATETIME2(3)) AS RecordEffectiveStartDate
 		,CAST('2099-12-31 00:00:01.000' AS DATETIME2(3)) AS RecordEffectiveEndDate
@@ -385,6 +414,13 @@ BEGIN
 		, sales_leadtime
 		, BaseSalesPrice
 		, BaseSalesPricePerLB
+
+		, DefaultPurchaseWarehouse
+		, DefaultPurchaseSiteID
+		, DefaultInventoryWarehouse
+		, DefaultInventorySiteID
+		, DefaultSalesWarehouse
+		, DefaultSalesSiteID
 
 		, [RecordEffectiveStartDate]
 		, GETDATE() AS RecordEffectiveEndDate

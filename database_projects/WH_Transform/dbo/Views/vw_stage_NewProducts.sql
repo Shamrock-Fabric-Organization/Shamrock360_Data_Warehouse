@@ -3,7 +3,7 @@
 
 
     -- Create a view to identify new records not present in the current dimension --needed because the CTAS does not allow the logic used
-CREATE       VIEW [dbo].[vw_stage_NewProducts]
+CREATE  OR ALTER      VIEW [dbo].[vw_stage_NewProducts]
 AS
 SELECT 
     ProductKey
@@ -57,6 +57,13 @@ SELECT
 	, sales_leadtime
 	, BaseSalesPrice
 	, BaseSalesPricePerLB
+
+	, DefaultPurchaseWarehouse
+	, DefaultPurchaseSiteID
+	, DefaultInventoryWarehouse
+	, DefaultInventorySiteID
+	, DefaultSalesWarehouse
+	, DefaultSalesSiteID
 
 	,CAST('1900-01-01' AS DATETIME2(3)) AS RecordEffectiveStartDate
 	,CAST('2099-12-31 00:00:01.000' AS DATETIME2(3)) AS RecordEffectiveEndDate

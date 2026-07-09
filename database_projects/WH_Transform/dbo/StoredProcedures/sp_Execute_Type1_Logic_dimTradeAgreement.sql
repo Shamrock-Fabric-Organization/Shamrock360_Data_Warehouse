@@ -1,6 +1,6 @@
 -- USE WH_Transform
 
-CREATE   PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimTradeAgreement]
+CREATE OR ALTER PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimTradeAgreement]
 AS
 BEGIN
     -- Drop intermediate objects if they exist
@@ -22,8 +22,8 @@ BEGIN
     SELECT Target.*
     FROM tbl_DIM_TradeAgreement AS Target
     JOIN vw_stage_DIM_TradeAgreement_incoming AS Source
-        ON  Target.AgreementID = Source.AgreementID
-        AND Target.CMPNY       = Source.CMPNY
+        ON  ISNULL(Target.AgreementID, '') = ISNULL(Source.AgreementID, '')
+        AND ISNULL(Target.CMPNY, '')       = ISNULL(Source.CMPNY, '')
     WHERE Target.RecordStatus = 1
         AND (
             ISNULL(Target.JournalName,      '') <> ISNULL(Source.JournalName,      '')
@@ -50,8 +50,8 @@ BEGIN
         , Target.RecordStatus
     FROM stage_tbl_DIM_TradeAgreement_Type1_UpdatesNeeded AS Target
     JOIN vw_stage_DIM_TradeAgreement_incoming AS Source
-        ON  Target.AgreementID = Source.AgreementID
-        AND Target.CMPNY       = Source.CMPNY;
+        ON  ISNULL(Target.AgreementID, '') = ISNULL(Source.AgreementID, '')
+        AND ISNULL(Target.CMPNY, '')       = ISNULL(Source.CMPNY, '');
 
     -- Step 3: Identify records deleted from source
     CREATE TABLE stage_tbl_DIM_TradeAgreement_Deleted AS
@@ -61,8 +61,8 @@ BEGIN
         AND NOT EXISTS (
             SELECT 1
             FROM vw_stage_DIM_TradeAgreement_incoming AS Source
-            WHERE Target.AgreementID = Source.AgreementID
-              AND Target.CMPNY       = Source.CMPNY
+            WHERE ISNULL(Target.AgreementID, '') = ISNULL(Source.AgreementID, '')
+              AND ISNULL(Target.CMPNY, '')       = ISNULL(Source.CMPNY, '')
             );
 
     -- Step 4: Build final dimension state
@@ -72,10 +72,10 @@ BEGIN
         SELECT *
         FROM tbl_DIM_TradeAgreement
         WHERE RecordStatus = 1
-            AND (CMPNY + '~=~' + AgreementID) NOT IN (
-                SELECT CMPNY + '~=~' + AgreementID FROM stage_tbl_DIM_TradeAgreement_Deleted
+            AND (ISNULL(CMPNY, '') + '~=~' + ISNULL(AgreementID, '')) NOT IN (
+                SELECT ISNULL(CMPNY, '') + '~=~' + ISNULL(AgreementID, '') FROM stage_tbl_DIM_TradeAgreement_Deleted
                 UNION
-                SELECT CMPNY + '~=~' + AgreementID FROM stage_tbl_DIM_TradeAgreement_Type1_UpdatesNeeded
+                SELECT ISNULL(CMPNY, '') + '~=~' + ISNULL(AgreementID, '') FROM stage_tbl_DIM_TradeAgreement_Type1_UpdatesNeeded
                 )
 
     UNION ALL
@@ -115,9 +115,9 @@ BEGIN
     WHERE NOT EXISTS (
         SELECT 1
         FROM stage_tbl_DIM_TradeAgreement_Final AS d
-        WHERE d.AgreementID              = f.AgreementID
-          AND d.CMPNY                    = f.CMPNY
-          AND d.RecordEffectiveStartDate = f.RecordEffectiveStartDate
+        WHERE ISNULL(d.AgreementID, '')       = ISNULL(f.AgreementID, '')
+          AND ISNULL(d.CMPNY, '')             = ISNULL(f.CMPNY, '')
+          AND d.RecordEffectiveStartDate      = f.RecordEffectiveStartDate
         )
 
     UNION ALL

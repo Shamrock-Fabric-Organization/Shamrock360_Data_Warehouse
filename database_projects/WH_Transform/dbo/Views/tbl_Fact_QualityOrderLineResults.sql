@@ -6,7 +6,7 @@
 
 
 -----SON, PON, PBO in inventrefid  , also TON - transfer orders but no dim for that
-CREATE           VIEW [dbo].[tbl_Fact_QualityOrderLineResults] as
+CREATE OR ALTER          VIEW [dbo].[tbl_Fact_QualityOrderLineResults] as
 with iqot as
 (
 
@@ -76,6 +76,8 @@ r.dataareaid CMPNY
 , r.testsequence
 , r.linenum
 , r.testid
+, tt.[DESCRIPTION]                          AS TestDescription
+, tt.testtype_$label                        AS TestType      -- 0=Fraction, 1=Integer, 2=Variable
 , l.qmsskiptest
 , l.qmsskiptest_$label
 , r.testresult
@@ -135,6 +137,11 @@ from WH_Raw.dbo.inventqualityorderlineresults r
   join iqot i
     on r.qualityorderid = i.qualityorderid
       and r.dataareaid = i.dataareaid
+
+	-- Test definition (describes what is being tested)
+	JOIN [WH_Raw].[dbo].[INVENTTESTTABLE] tt
+		ON  tt.[DATAAREAID] = l.[DATAAREAID]
+		AND tt.[TESTID]     = l.[TESTID]
 
 	LEFT join workcenterdata wc
 		ON r.dataareaid = wc.dataareaid

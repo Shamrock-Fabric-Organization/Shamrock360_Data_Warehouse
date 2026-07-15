@@ -95,6 +95,7 @@ BEGIN
 			OR ISNULL(Target.DefaultInventorySiteID, 0) <> ISNULL(Source.DefaultInventorySiteID, 0)
 			OR ISNULL(Target.DefaultSalesWarehouse, 0) <> ISNULL(Source.DefaultSalesWarehouse, 0)
 			OR ISNULL(Target.DefaultSalesSiteID, 0) <> ISNULL(Source.DefaultSalesSiteID, 0)
+			OR ISNULL(Target.testgroupid, 0) <> ISNULL(Source.testgroupid, 0)
 
 			)
 		AND NOT EXISTS (
@@ -164,6 +165,7 @@ BEGIN
 		, Source.DefaultInventorySiteID
 		, Source.DefaultSalesWarehouse
 		, Source.DefaultSalesSiteID
+		, Source.testgroupid
 
 		,Target.RecordEffectiveStartDate
 		,Target.RecordEffectiveEndDate
@@ -268,6 +270,7 @@ BEGIN
 		, DefaultInventorySiteID
 		, DefaultSalesWarehouse
 		, DefaultSalesSiteID
+		, testgroupid
 
 		, [RecordEffectiveStartDate]
 		, CAST(GETDATE() AS DATETIME2(3)) AS RecordEffectiveEndDate
@@ -337,6 +340,7 @@ BEGIN
 		, s.DefaultInventorySiteID
 		, s.DefaultSalesWarehouse
 		, s.DefaultSalesSiteID
+		, s.testgroupid
 
 		,CAST(GETDATE() AS DATETIME2(3)) AS RecordEffectiveStartDate
 		,CAST('2099-12-31 00:00:01.000' AS DATETIME2(3)) AS RecordEffectiveEndDate
@@ -421,6 +425,7 @@ BEGIN
 		, DefaultInventorySiteID
 		, DefaultSalesWarehouse
 		, DefaultSalesSiteID
+		, testgroupid
 
 		, [RecordEffectiveStartDate]
 		, GETDATE() AS RecordEffectiveEndDate

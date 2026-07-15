@@ -81,6 +81,7 @@ SELECT
 	, ids.inventlocationid DefaultSalesWarehouse
 	, ids.inventsiteid DefaultSalesSiteID
 
+	, itat.testgroupid 
 	,CAST(NULL AS DATETIME2(3))	 RecordEffectiveStartDate	 --SCD2 control field
 	,CAST(NULL AS DATETIME2(3))	 RecordEffectiveEndDate	 --SCD2 control field
 	,CAST(NULL AS INT)	 RecordStatus	 --SCD2 control field
@@ -169,6 +170,13 @@ LEFT JOIN WH_Raw.[dbo].[inventdim] ids
     ON iiss.InventdimIddefault = ids.Inventdimid
 	    AND iiss.dataareaid = ids.DataAreaId
 
+LEFT JOIN wh_raw.dbo.inventtestassociationtable  itat
+	ON IT.ItemId = itat.ItemRelation
+	    AND IT.dataareaid = itat.DataAreaId
+		AND itat.ordertype_$label = 'Production' --Production orders only
+		AND itat.itemcode = 0  --specific item match
+
+
 )
 
 SELECT
@@ -225,6 +233,7 @@ SELECT
 	,  DefaultInventoryWarehouse
 	,  DefaultSalesSiteID
 	,  DefaultSalesWarehouse
+	, testgroupid
 
     ,RecordEffectiveStartDate
     ,RecordEffectiveEndDate
@@ -294,6 +303,7 @@ SELECT -1 [ProductKey]
 , NULL DefaultInventorySiteID
 , NULL DefaultSalesWarehouse
 , NULL DefaultSalesSiteID
+, NULL testgroupid
 
 , NULL [RecordEffectiveStartDate]
 , NULL [RecordEffectiveEndDate]

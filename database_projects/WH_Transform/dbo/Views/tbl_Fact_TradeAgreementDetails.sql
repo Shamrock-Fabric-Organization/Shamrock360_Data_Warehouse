@@ -252,12 +252,13 @@ price_lines AS (
       AND pdat.[MODULE]            = 1
       AND pdat.[PRICINGRULEHEADER] IS NOT NULL
       AND pdat.[PRICINGRULEHEADER] <> 0
-)
+),
 
 -- ============================================================
--- MAIN QUERY
+-- MAIN QUERY PRELIM
 -- ============================================================
-SELECT
+prelim as (
+	SELECT
 
      p.[DATAAREAID]                                                  AS Company
     ,p.[AGREEMENT]                                                   AS AgreementId
@@ -284,7 +285,7 @@ SELECT
     --   ISNULL on Currency/Amount collapses NULL + empty into one check.
     -- --------------------------------------------------------
     ,CASE
-        WHEN ISNULL(cust.CustomerKey, -1) = -1
+        WHEN ISNULL(COALESCE(invcust.CustomerKey, cust.CustomerKey), -1) = -1
           OR ISNULL(item.ProductKey,  -1) = -1
           OR p.posteddate                IS NULL
           OR p.[AMOUNT]                  IS NULL
@@ -294,7 +295,7 @@ SELECT
            = MAX(convert(int, convert(char(8), p.posteddate, 112))) OVER (
                  PARTITION BY
                       p.[DATAAREAID]
-                     ,LTRIM(RTRIM(cust_split.[value]))
+                     ,LTRIM(RTRIM(COALESCE(inv_split.[value], cust_split.[value])))
                      ,LTRIM(RTRIM(item_split.[value]))
                      ,p.[AMOUNT]
                      ,p.[CURRENCY]
@@ -303,10 +304,17 @@ SELECT
      END                                                             AS IsRecent
     -- --------------------------------------------------------
     -- Customer  (from customer-side GUP conditions)
-    -- InvoiceAccount used where present; CustomerAccount as fallback.
-    -- Both attributes identify the customer in D365 trade agreement rules.
-    -- cust_split explodes comma-separated lists → one row per account.
+    -- InvoiceAccount and CustomerAccount are surfaced as two separate output
+    -- columns, each based on its own exploded split value (inv_split /
+    -- cust_split) so it lines up 1:1 with the surrogate key resolved from that
+    -- same split. Under the Option A guard the two streams are mutually
+    -- exclusive per row: invoice-present rows populate InvoiceAccount (+
+    -- InvoiceCustomerKey) with CustomerAccount NULL; invoice-absent rows
+    -- populate CustomerAccount (+ CustomerKey) with InvoiceAccount NULL —
+    -- matching the original effective-account behavior.
     -- --------------------------------------------------------
+    ,LTRIM(RTRIM(inv_split.[value]))                                 AS InvoiceAccount
+    ,isnull(invcust.CustomerKey, -1)                                 AS InvoiceCustomerKey
     ,LTRIM(RTRIM(cust_split.[value]))                                AS CustomerAccount
     ,isnull(cust.CustomerKey, -1)                                    AS CustomerKey
     -- --------------------------------------------------------
@@ -355,21 +363,45 @@ LEFT JOIN item_cte iv
     AND iv.[DATAAREAID]   = p.[DATAAREAID]
 
 -- Explode comma-separated customer accounts → one row per account.
--- COALESCE: InvoiceAccount is the dominant attribute in this environment;
--- CustomerAccount is the fallback for rules configured with that attribute.
+-- Split into two independent streams (client request): the InvoiceAccount
+-- list and the CustomerAccount list are each STRING_SPLIT separately so that
+-- every account resolves its own surrogate key.
 -- CompanyChain is intentionally excluded — it is an output column only and
--- must not flow into CustomerAccount or the CustomerKey surrogate key lookup.
--- OUTER APPLY (not CROSS APPLY): rows where both InvoiceAccount and
--- CustomerAccount are NULL (Company chain-only rules) return one row with
--- NULL cust_split.value, preserving the CompanyChain output column.
--- CROSS APPLY would silently drop those rows.
-OUTER APPLY STRING_SPLIT(REPLACE(COALESCE(cv.InvoiceAccount, cv.CustomerAccount), ';', ','), ',') AS cust_split
+-- must not flow into either account stream or its surrogate key lookup.
+-- OUTER APPLY (not CROSS APPLY): rows where the source account is NULL
+-- (e.g. Company chain-only rules, or a rule configured with only the other
+-- account attribute) still return one row with a NULL split value, preserving
+-- the CompanyChain output column. CROSS APPLY would silently drop those rows.
+--
+-- OPTION A CARTESIAN GUARD (client decision): cust_split only yields rows when
+-- InvoiceAccount is NULL/empty. This restores the original single-COALESCE
+-- "one effective stream" behavior — InvoiceAccount is dominant; CustomerAccount
+-- is the fallback used only when no InvoiceAccount is configured. It guarantees
+-- zero cross-product (row counts identical to the original single-COALESCE
+-- version) while still surfacing both account columns and their own keys.
+OUTER APPLY STRING_SPLIT(REPLACE(cv.InvoiceAccount, ';', ','), ',') AS inv_split
+OUTER APPLY (
+    SELECT s.[value]
+    FROM STRING_SPLIT(REPLACE(cv.CustomerAccount, ';', ','), ',') s
+    WHERE cv.InvoiceAccount IS NULL
+       OR LTRIM(RTRIM(cv.InvoiceAccount)) = ''
+) AS cust_split
 
 -- Explode comma-separated item numbers → one row per item.
 -- Same Gate 3 justification as above.
 CROSS APPLY STRING_SPLIT(REPLACE(iv.ItemNumber, ';', ','), ',') AS item_split
 
--- Customer name: join on the split single account value
+-- Invoice-account customer lookup: join the exploded InvoiceAccount value
+-- against the SAME customer dimension / column / grain the CustomerAccount
+-- lookup uses. Invoice accounts are customer account numbers and were already
+-- resolved through this dimension in the prior COALESCE version, so the
+-- dimension provably supports this second lookup.
+LEFT JOIN WH_Transform.dbo.tbl_DIM_Customer invcust
+    ON  invcust.Customer_ID  = LTRIM(RTRIM(inv_split.[value]))
+    AND invcust.CMPNY  = p.[DATAAREAID]
+    AND invcust.recordstatus = 1
+
+-- Customer-account customer lookup: join on the split single account value
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Customer cust
     ON  cust.Customer_ID  = LTRIM(RTRIM(cust_split.[value]))
     AND cust.CMPNY  = p.[DATAAREAID]
@@ -416,3 +448,89 @@ LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
     AND erTxnCNY.tocurrencycode   = 'CNY'
     AND convert(date, convert(char(8), p.[FROMDATE], 112)) between erTxnCNY.validfrom and erTxnCNY.validto
     AND erTxnCNY.exchangeratetype = 'Default global rate'
+)
+
+-- ============================================================
+-- MAIN QUERY 
+-- ============================================================
+
+SELECT p.Company CMPNY
+, p.AgreementId
+, p.Posted
+, p.Price
+, p.Currency
+, p.PriceUnit
+, p.Unit
+, p.ValidFrom
+, p.ValidTo
+, p.QtyFrom
+, p.QtyTo
+, p.PostedDateKey
+, p.IsRecent
+, p.InvoiceAccount InvoiceCustomerAccount
+, p.InvoiceCustomerKey
+--, p.CustomerAccount
+--, p.CustomerKey
+, cust.Customer_ID CustomerAccount
+, cust.CustomerKey
+, p.CompanyChain
+, p.ItemNumber
+, p.ProductKey
+, p.Legal_EntityKey
+, p.TradeAgreementKey
+, p.CustAcct_EmployeeKey
+, p.Txn_Source_Currency
+, p.Price_USD
+, p.Price_EUR
+, p.Price_CNY
+, p.Txn_USD_Rate_Missing
+, p.Txn_EUR_Rate_Missing
+, p.Txn_CNY_Rate_Missing
+
+FROM PRELIM p
+-- Customer-account customer lookup: join on the split single account value
+LEFT JOIN WH_Transform.dbo.tbl_DIM_Customer cust
+    ON  cust.Invoice_Account = p.InvoiceAccount
+    AND cust.CMPNY  = p.Company
+    AND cust.recordstatus = 1
+
+WHERE p.CustomerAccount is null
+
+
+
+UNION
+
+
+SELECT Company
+,  AgreementId
+,  Posted
+,  Price
+,  Currency
+,  PriceUnit
+,  Unit
+,  ValidFrom
+,  ValidTo
+,  QtyFrom
+,  QtyTo
+,  PostedDateKey
+,  IsRecent
+,  InvoiceAccount
+,  InvoiceCustomerKey
+,  CustomerAccount
+,  CustomerKey
+,  CompanyChain
+,  ItemNumber
+,  ProductKey
+,  Legal_EntityKey
+,  TradeAgreementKey
+,  CustAcct_EmployeeKey
+,  Txn_Source_Currency
+,  Price_USD
+,  Price_EUR
+,  Price_CNY
+,  Txn_USD_Rate_Missing
+,  Txn_EUR_Rate_Missing
+,  Txn_CNY_Rate_Missing
+
+FROM PRELIM
+WHERE InvoiceAccount is null

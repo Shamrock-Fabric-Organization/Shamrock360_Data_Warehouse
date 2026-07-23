@@ -1,0 +1,46 @@
+CREATE TABLE [dbo].[tbl_Fact_VendorInvoiceTransactions](
+	[CMPNY] [varchar](8000) NULL,
+	[PurchaseOrder] [varchar](8000) NULL,
+	[VendorAccount] [varchar](8000) NULL,
+	[InvoiceID] [varchar](8000) NULL,
+	[InvoiceAmount] [decimal](38, 6) NULL,
+	[InvoiceDate] [datetime2](6) NULL,
+	[LineNumber] [decimal](38, 16) NULL,
+	[ProductID] [varchar](8000) NULL,
+	[ProcurementCategory] [varchar](8000) NOT NULL,
+	[Description] [varchar](8000) NULL,
+	[Quantity] [decimal](38, 6) NULL,
+	[Quantity_UoM] [varchar](8000) NULL,
+	[Quantity_LBs] [decimal](38, 6) NULL,
+	[Quantity_KGs] [decimal](38, 6) NULL,
+	[UnitPrice] [decimal](38, 6) NULL,
+	[Discount] [decimal](38, 6) NULL,
+	[DiscountPercent] [decimal](38, 6) NULL,
+	[LineAmount] [decimal](38, 6) NULL,
+	[SalesTaxIncluded] [decimal](38, 6) NULL,
+	[Box] [int] NOT NULL,
+	[Amount] [int] NOT NULL,
+	[StateProvince] [varchar](8000) NOT NULL,
+	[StateAmount] [int] NOT NULL,
+	[ReasonCode] [varchar](8000) NOT NULL,
+	[ReasonComment] [varchar](8000) NOT NULL,
+	[FreightCharge] [numeric](38, 6) NULL,
+	[PalletCharge] [numeric](38, 6) NULL,
+	[PetrolCharge] [numeric](38, 6) NULL,
+	[SalesTaxCharge] [numeric](38, 6) NULL,
+	[SetupFeeCharge] [numeric](38, 6) NULL,
+	[ToteDepCharge] [numeric](38, 6) NULL,
+	[OtherCharge] [numeric](38, 6) NULL,
+	[TotalCharge] [numeric](38, 6) NULL,
+	[VendorKey] [bigint] NOT NULL,
+	[ProductKey] [bigint] NOT NULL,
+	[Legal_EntityKey] [bigint] NOT NULL,
+	[PurchaseOrerKey] [bigint] NOT NULL,
+	[InvoiceDateKey] [int] NULL
+) 
+GO
+
+/****** Object:  Index [ClusteredIndex]    Script Date: 7/23/2026 11:33:28 AM ******/
+CREATE CLUSTERED COLUMNSTORE INDEX [ClusteredIndex] ON [dbo].[tbl_Fact_VendorInvoiceTransactions] WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0, DATA_COMPRESSION = COLUMNSTORE) ON [PRIMARY]
+GO
+

@@ -470,14 +470,14 @@ LEFT JOIN (SELECT street
 LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
 	ON erTxnEUR.fromcurrencycode = 'USD'
 		AND erTxnEUR.tocurrencycode   = 'EUR'
-		AND erTxnEUR.exchangeratetype = 'Default global rate'
+		AND erTxnEUR.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
 		AND isnull(case when [InvoiceDate]<'01/01/1900' then '01/01/1900' else [InvoiceDate] end, '01/01/1900') 
 			between erTxnEUR.validfrom and erTxnEUR.validto
 
 LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
 	ON erTxnCNY.fromcurrencycode = 'USD'
 		AND erTxnCNY.tocurrencycode   = 'CNY'
-		AND erTxnCNY.exchangeratetype = 'Default global rate'
+		AND erTxnCNY.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
 		AND isnull(case when [InvoiceDate]<'01/01/1900' then '01/01/1900' else [InvoiceDate] end, '01/01/1900') 
 			between erTxnCNY.validfrom and erTxnCNY.validto
 
@@ -564,8 +564,8 @@ SELECT  ABS(CAST(CAST(
 	,null AS [Volume]
 	,null as [Volume_UoM]
 	,null as [Price]
-	,'USD' as [Currency]
-	,CONVERT(decimal(38,2), Extension) * ddf.Rate as Amount
+	,'EUR' as [Currency]
+	,CONVERT(decimal(38,2), Extension) /*  * ddf.Rate*/ as Amount  --Cmmented the * ddf.Rate so this value is reported in original EUR currency per Kevin Y. 2026-07-22 
 	,null as [Amount_Currency]
 	,null as [Returned_Quantity]
 	,null as [Returned_Amount]
@@ -628,16 +628,16 @@ SELECT  ABS(CAST(CAST(
 
 	-- === ADDED: multi-currency conversion columns  ===
 	-- Audit: FROM-currency for each conversion basis
-	, 'USD' [Txn_Source_Currency]
+	, 'EUR' [Txn_Source_Currency]
 	, NULL as [Cost_Source_Currency]
 	-- Txn basis: Price (base f.[Price])
 	, null as [SalesPrice_USD]
 	, null as [SalesPrice_EUR]
 	, null as [SalesPrice_CNY]
 	-- Txn basis: Amount (base null as [Amount])
-	, CONVERT(decimal(38,2), Extension) * ddf.Rate as [Amount_USD]
-	, erTxnEUR.ExchangeRate * (CONVERT(decimal(38,2), Extension) * ddf.Rate) as [Amount_EUR]
-	, erTxnCNY.ExchangeRate * (CONVERT(decimal(38,2), Extension) * ddf.Rate) as [Amount_CNY]
+	, erTxnUSD.ExchangeRate * CONVERT(decimal(38,2), Extension)   as [Amount_USD]
+	, CONVERT(decimal(38,2), Extension)                           as [Amount_EUR]
+	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,2), Extension)   as [Amount_CNY]
 	-- Txn basis: Returned_Amount (base null as [Returned_Amount])
 	, null as [Returned_Amount_USD]
 	, null as [Returned_Amount_EUR]
@@ -659,9 +659,9 @@ SELECT  ABS(CAST(CAST(
 	--, null as [TotalCost_EUR]
 	--, null as [TotalCost_CNY]
 	-- Rate-missing flags (1 = real conversion needed but no rate row found)
-	, 0 as [Txn_USD_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_EUR_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
+	, CASE WHEN erTxnUSD.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_USD_Rate_Missing]
+	, 0 as [Txn_EUR_Rate_Missing]
+	, CASE WHEN erTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
 	, null as [Cost_USD_Rate_Missing]
 	, null as [Cost_EUR_Rate_Missing]
 	, null as [Cost_CNY_Rate_Missing]
@@ -840,17 +840,17 @@ LEFT JOIN (SELECT street
       AND isnull(lda.[Country],'') = da.Country
 
 
-LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
-	ON erTxnEUR.fromcurrencycode = 'USD'
-		AND erTxnEUR.tocurrencycode   = 'EUR'
-		AND erTxnEUR.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnUSD
+	ON erTxnUSD.fromcurrencycode = 'EUR'
+		AND erTxnUSD.tocurrencycode   = 'USD'
+		AND erTxnUSD.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
 		AND case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end 
-			between erTxnEUR.validfrom and erTxnEUR.validto
+			between erTxnUSD.validfrom and erTxnUSD.validto
 
 LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
-	ON erTxnCNY.fromcurrencycode = 'USD'
+	ON erTxnCNY.fromcurrencycode = 'EUR'
 		AND erTxnCNY.tocurrencycode   = 'CNY'
-		AND erTxnCNY.exchangeratetype = 'Default global rate'
+		AND erTxnCNY.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
 		AND case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end 
 			between erTxnCNY.validfrom and erTxnCNY.validto
 
@@ -1006,7 +1006,7 @@ SELECT  ABS(CAST(CAST(
 	-- Rate-missing flags (1 = real conversion needed but no rate row found)
 	, 0 as [Txn_USD_Rate_Missing]
 	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_EUR_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
+	, CASE WHEN erTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
 	, null as [Cost_USD_Rate_Missing]
 	, null as [Cost_EUR_Rate_Missing]
 	, null as [Cost_CNY_Rate_Missing]
@@ -1120,14 +1120,14 @@ LEFT JOIN (SELECT street
 LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
 	ON erTxnEUR.fromcurrencycode = 'USD'
 		AND erTxnEUR.tocurrencycode   = 'EUR'
-		AND erTxnEUR.exchangeratetype = 'Default global rate'
+		AND erTxnEUR.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
 		AND CONVERT(datetime2(6), f.[Invoice Date] ) 
 			between erTxnEUR.validfrom and erTxnEUR.validto
 
 LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
 	ON erTxnCNY.fromcurrencycode = 'USD'
 		AND erTxnCNY.tocurrencycode   = 'CNY'
-		AND erTxnCNY.exchangeratetype = 'Default global rate'
+		AND erTxnCNY.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
 		AND CONVERT(datetime2(6), f.[Invoice Date] ) 
 			between erTxnCNY.validfrom and erTxnCNY.validto
 
@@ -1226,8 +1226,8 @@ SELECT  ABS(CAST(CAST(
 	,null AS [Volume]
 	,null as [Volume_UoM]
 	,null as [Price]
-	,'USD' as [Currency]
-	,CONVERT(decimal(38,2), Extension) * ddf.Rate as Amount
+	,'EUR' as [Currency]
+	,CONVERT(decimal(38,2), Extension) /* * ddf.Rate*/  as Amount  --Cmmented the * ddf.Rate so this value is reported in original EUR currency per Kevin Y. 2026-07-22 
 	--,CONVERT(decimal(38,2), Extension) * 1.171570000 as Amount
 	,null as [Amount_Currency]
 	,null as [Returned_Quantity]
@@ -1291,16 +1291,16 @@ SELECT  ABS(CAST(CAST(
 
 	-- === ADDED: multi-currency conversion columns  ===
 	-- Audit: FROM-currency for each conversion basis
-	, 'USD' [Txn_Source_Currency]
+	, 'EUR' [Txn_Source_Currency]
 	, NULL as [Cost_Source_Currency]
 	-- Txn basis: Price (base f.[Price])
 	, null as [SalesPrice_USD]
 	, null as [SalesPrice_EUR]
 	, null as [SalesPrice_CNY]
 	-- Txn basis: Amount (base null as [Amount])
-	, CONVERT(decimal(38,2), Extension) * ddf.Rate as [Amount_USD]
-	, erTxnEUR.ExchangeRate * (CONVERT(decimal(38,2), Extension) * ddf.Rate) as [Amount_EUR]
-	, erTxnCNY.ExchangeRate * (CONVERT(decimal(38,2), Extension) * ddf.Rate) as [Amount_CNY]
+	, erTxnUSD.ExchangeRate * CONVERT(decimal(38,2), Extension) as [Amount_USD]
+	, CONVERT(decimal(38,2), Extension) as [Amount_EUR]
+	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,2), Extension) as [Amount_CNY]
 	-- Txn basis: Returned_Amount (base null as [Returned_Amount])
 	, null as [Returned_Amount_USD]
 	, null as [Returned_Amount_EUR]
@@ -1322,9 +1322,9 @@ SELECT  ABS(CAST(CAST(
 	--, null as [TotalCost_EUR]
 	--, null as [TotalCost_CNY]
 	-- Rate-missing flags (1 = real conversion needed but no rate row found)
-	, 0 as [Txn_USD_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_EUR_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
+	, CASE WHEN erTxnUSD.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_USD_Rate_Missing]
+	, 0 as [Txn_EUR_Rate_Missing]
+	, CASE WHEN erTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
 	, null as [Cost_USD_Rate_Missing]
 	, null as [Cost_EUR_Rate_Missing]
 	, null as [Cost_CNY_Rate_Missing]
@@ -1500,17 +1500,17 @@ LEFT JOIN (SELECT street
       AND isnull(lda.[Country],'') = da.Country
 
 
-LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
-	ON erTxnEUR.fromcurrencycode = 'USD'
-		AND erTxnEUR.tocurrencycode   = 'EUR'
-		AND erTxnEUR.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnUSD
+	ON erTxnUSD.fromcurrencycode = 'EUR'
+		AND erTxnUSD.tocurrencycode   = 'USD'
+		AND erTxnUSD.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
 		AND case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end 
-			between erTxnEUR.validfrom and erTxnEUR.validto
+			between erTxnUSD.validfrom and erTxnUSD.validto
 
 LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
-	ON erTxnCNY.fromcurrencycode = 'USD'
+	ON erTxnCNY.fromcurrencycode = 'EUR'
 		AND erTxnCNY.tocurrencycode   = 'CNY'
-		AND erTxnCNY.exchangeratetype = 'Default global rate'
+		AND erTxnCNY.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
 		AND case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end
 			between erTxnCNY.validfrom and erTxnCNY.validto
 
@@ -1667,7 +1667,7 @@ SELECT  ABS(CAST(CAST(
 	-- Rate-missing flags (1 = real conversion needed but no rate row found)
 	, 0 as [Txn_USD_Rate_Missing]
 	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_EUR_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
+	, CASE WHEN erTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
 	, null as [Cost_USD_Rate_Missing]
 	, null as [Cost_EUR_Rate_Missing]
 	, null as [Cost_CNY_Rate_Missing]
@@ -1781,14 +1781,14 @@ LEFT JOIN (SELECT street
 LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
 	ON erTxnEUR.fromcurrencycode = 'USD'
 		AND erTxnEUR.tocurrencycode   = 'EUR'
-		AND erTxnEUR.exchangeratetype = 'Default global rate'
+		AND erTxnEUR.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
 		AND CONVERT(datetime2(6), f.[expected Ship Date] )
 			between erTxnEUR.validfrom and erTxnEUR.validto
 
 LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
 	ON erTxnCNY.fromcurrencycode = 'USD'
 		AND erTxnCNY.tocurrencycode   = 'CNY'
-		AND erTxnCNY.exchangeratetype = 'Default global rate'
+		AND erTxnCNY.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
 		AND CONVERT(datetime2(6), f.[expected Ship Date] )
 			between erTxnCNY.validfrom and erTxnCNY.validto
 
@@ -1928,7 +1928,7 @@ UNION ALL
 	-- Rate-missing flags (1 = real conversion needed but no rate row found)
 	, 0 as [Txn_USD_Rate_Missing]
 	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_EUR_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
+	, CASE WHEN erTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
 	, null as [Cost_USD_Rate_Missing]
 	, null as [Cost_EUR_Rate_Missing]
 	, null as [Cost_CNY_Rate_Missing]
@@ -1949,14 +1949,14 @@ LEFT JOIN mtbl_EDW_DIM_Legal_Entity dle
 LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
 	ON erTxnEUR.fromcurrencycode = 'USD'
 		AND erTxnEUR.tocurrencycode   = 'EUR'
-		AND erTxnEUR.exchangeratetype = 'Default global rate'
+		AND erTxnEUR.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
 		AND '01/01/1900'
 			between erTxnEUR.validfrom and erTxnEUR.validto
 
 LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
 	ON erTxnCNY.fromcurrencycode = 'USD'
 		AND erTxnCNY.tocurrencycode   = 'CNY'
-		AND erTxnCNY.exchangeratetype = 'Default global rate'
+		AND erTxnCNY.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
 		AND '01/01/1900'
 			between erTxnCNY.validfrom and erTxnCNY.validto
 
@@ -2046,8 +2046,8 @@ SELECT  ABS(CAST(CAST(
 	,null AS [Volume]
 	,null as [Volume_UoM]
 	,null as [Price]
-	,'USD' as [Currency]
-	,CONVERT(decimal(38,2), Extension) * ddf.Rate as Amount
+	,'EUR' as [Currency]
+	,CONVERT(decimal(38,2), Extension) /* * ddf.Rate*/ as Amount  --Commented the * ddf.Rate so this value is reported in original EUR currency per Kevin Y. 2026-07-22 
 	,null as [Amount_Currency]
 	,null as [Returned_Quantity]
 	,null as [Returned_Amount]
@@ -2110,16 +2110,16 @@ SELECT  ABS(CAST(CAST(
 
 	-- === ADDED: multi-currency conversion columns  ===
 	-- Audit: FROM-currency for each conversion basis
-	, 'USD' [Txn_Source_Currency]
+	, 'EUR' [Txn_Source_Currency]
 	, NULL as [Cost_Source_Currency]
 	-- Txn basis: Price (base f.[Price])
 	, null as [SalesPrice_USD]
 	, null as [SalesPrice_EUR]
 	, null as [SalesPrice_CNY]
 	-- Txn basis: Amount (base null as [Amount])
-	, CONVERT(decimal(38,2), Extension) * ddf.Rate as [Amount_USD]
-	, erTxnEUR.ExchangeRate * (CONVERT(decimal(38,2), Extension) * ddf.Rate) as [Amount_EUR]
-	, erTxnCNY.ExchangeRate * (CONVERT(decimal(38,2), Extension) * ddf.Rate) as [Amount_CNY]
+	, erTxnUSD.ExchangeRate * CONVERT(decimal(38,2), Extension) as [Amount_USD]
+	, CONVERT(decimal(38,2), Extension) as [Amount_EUR]
+	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,2), Extension) as [Amount_CNY]
 	-- Txn basis: Returned_Amount (base null as [Returned_Amount])
 	, null as [Returned_Amount_USD]
 	, null as [Returned_Amount_EUR]
@@ -2141,9 +2141,9 @@ SELECT  ABS(CAST(CAST(
 	--, null as [TotalCost_EUR]
 	--, null as [TotalCost_CNY]
 	-- Rate-missing flags (1 = real conversion needed but no rate row found)
-	, 0 as [Txn_USD_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_EUR_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
+	, CASE WHEN erTxnUSD.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_USD_Rate_Missing]
+	, 0 as [Txn_EUR_Rate_Missing]
+	, CASE WHEN erTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
 	, null as [Cost_USD_Rate_Missing]
 	, null as [Cost_EUR_Rate_Missing]
 	, null as [Cost_CNY_Rate_Missing]
@@ -2322,17 +2322,17 @@ LEFT JOIN (SELECT street
       AND isnull(lda.[Country],'') = da.Country
 
 
-LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
-	ON erTxnEUR.fromcurrencycode = 'USD'
-		AND erTxnEUR.tocurrencycode   = 'EUR'
-		AND erTxnEUR.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnUSD
+	ON erTxnUSD.fromcurrencycode = 'EUR'
+		AND erTxnUSD.tocurrencycode   = 'USD'
+		AND erTxnUSD.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
 		AND case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end 
-			between erTxnEUR.validfrom and erTxnEUR.validto
+			between erTxnUSD.validfrom and erTxnUSD.validto
 
 LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
-	ON erTxnCNY.fromcurrencycode = 'USD'
+	ON erTxnCNY.fromcurrencycode = 'EUR'
 		AND erTxnCNY.tocurrencycode   = 'CNY'
-		AND erTxnCNY.exchangeratetype = 'Default global rate'
+		AND erTxnCNY.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
 		AND case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end 
 			between erTxnCNY.validfrom and erTxnCNY.validto
 
@@ -2487,7 +2487,7 @@ SELECT  ABS(CAST(CAST(
 	-- Rate-missing flags (1 = real conversion needed but no rate row found)
 	, 0 as [Txn_USD_Rate_Missing]
 	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_EUR_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
+	, CASE WHEN erTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
 	, null as [Cost_USD_Rate_Missing]
 	, null as [Cost_EUR_Rate_Missing]
 	, null as [Cost_CNY_Rate_Missing]
@@ -2601,14 +2601,14 @@ LEFT JOIN (SELECT street
 LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
 	ON erTxnEUR.fromcurrencycode = 'USD'
 		AND erTxnEUR.tocurrencycode   = 'EUR'
-		AND erTxnEUR.exchangeratetype = 'Default global rate'
+		AND erTxnEUR.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
 		AND CONVERT(datetime2(6), f.[Invoice Date] ) 
 			between erTxnEUR.validfrom and erTxnEUR.validto
 
 LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
 	ON erTxnCNY.fromcurrencycode = 'USD'
 		AND erTxnCNY.tocurrencycode   = 'CNY'
-		AND erTxnCNY.exchangeratetype = 'Default global rate'
+		AND erTxnCNY.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
 		AND CONVERT(datetime2(6), f.[Invoice Date] ) 
 			between erTxnCNY.validfrom and erTxnCNY.validto
 

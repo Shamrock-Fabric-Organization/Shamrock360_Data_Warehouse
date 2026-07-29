@@ -80,6 +80,9 @@ SELECT
 	, idi.inventsiteid DefaultInventorySiteID
 	, ids.inventlocationid DefaultSalesWarehouse
 	, ids.inventsiteid DefaultSalesSiteID
+	, it.ProductLifecycleStateID    AS ProductLifecycleState
+	, it.pmfproducttype_$label      AS ProductionType
+	, it.product                    AS BaseItemProduct
 
 	, itat.testgroupid 
 	,CAST(NULL AS DATETIME2(3))	 RecordEffectiveStartDate	 --SCD2 control field
@@ -233,7 +236,10 @@ SELECT
 	,  DefaultInventoryWarehouse
 	,  DefaultSalesSiteID
 	,  DefaultSalesWarehouse
-	, testgroupid
+	, ProductLifecycleState
+	, ProductionType
+	, BaseItemProduct
+, testgroupid
 
     ,RecordEffectiveStartDate
     ,RecordEffectiveEndDate
@@ -303,6 +309,9 @@ SELECT -1 [ProductKey]
 , NULL DefaultInventorySiteID
 , NULL DefaultSalesWarehouse
 , NULL DefaultSalesSiteID
+	, NULL ProductLifecycleState
+	, NULL ProductionType
+	, NULL BaseItemProduct
 , NULL testgroupid
 
 , NULL [RecordEffectiveStartDate]

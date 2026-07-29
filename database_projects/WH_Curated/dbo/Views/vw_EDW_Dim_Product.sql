@@ -64,7 +64,10 @@ CREATE OR ALTER            View [dbo].[vw_EDW_Dim_Product]
             , DefaultInventorySiteID
             , DefaultSalesWarehouse
             , DefaultSalesSiteID
-            , testgroupid
+	, ProductLifecycleState
+	, ProductionType
+	, BaseItemProduct
+                , testgroupid
 
           ,[RecordEffectiveStartDate] as Start_Date
           ,[RecordEffectiveEndDate] as End_Date
@@ -141,6 +144,9 @@ SELECT ABS(CAST(CAST(
     , NULL AS DefaultInventorySiteID
     , NULL AS DefaultSalesWarehouse
     , NULL AS DefaultSalesSiteID
+	, NULL AS ProductLifecycleState
+	, NULL AS ProductionType
+	, NULL AS BaseItemProduct
     , NULL AS testgroupid
 
       ,l.[RecordEffectiveStartDate] AS Start_Date

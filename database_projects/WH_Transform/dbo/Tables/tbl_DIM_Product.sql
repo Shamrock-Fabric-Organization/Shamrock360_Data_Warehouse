@@ -53,6 +53,10 @@ CREATE TABLE [dbo].[tbl_DIM_Product] (
 	[DefaultInventorySiteID] varchar(8000) NULL,
 	[DefaultSalesWarehouse] varchar(8000) NULL,
 	[DefaultSalesSiteID] varchar(8000) NULL,
+	[ProductLifecycleState] varchar(8000) NULL,
+	[ProductionType] varchar(10) NULL,
+	[BaseItemProduct] bigint NULL, 
+
 	[testgroupid] varchar(8000) NULL,
 	
 	[RecordEffectiveStartDate] datetime2(3) NULL, 

@@ -116,6 +116,7 @@ select  cit.dataareaid CMPNY
 , ISNULL(dmsc.MarketSegmentationKey, -1) MarketSegmentationKey
 , ISNULL(dso.SalesOrderKey, -1) SalesOrderKey
 	, ISNULL(da.AddressKey, -1) DeliveryAddressKey
+	, ISNULL(dect.EmployeeKey, -1) CustAcct_EmployeeKey
 
 -- =========================== ADDED: currency-conversion audit columns ===========================
 -- FROM-currency audit columns (one per basis) so converted values are self-documenting.
@@ -303,6 +304,25 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_SalesOrder dso
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Address da
 	ON cit.deliverypostaladdress = da.AddressRecID
 		AND dso.RecordStatus=1
+
+-- =========================== ADDED: Salestable Customer CustomerAccount EmployeeKey =====================
+LEFT JOIN WH_Raw.dbo.salestable ST
+    ON CIT.SALESID = ST.SALESID
+        AND CIT.DATAAREAID = ST.DATAAREAID
+
+LEFT JOIN WH_Raw.dbo.CustTable CT
+	ON ST.custaccount = CT.accountnum
+		AND ST.dataareaid = CT.dataareaid
+
+LEFT JOIN WH_Raw.dbo.hcmworker HCM
+	ON ST.workersalesresponsible = HCM.recid
+
+LEFT JOIN WH_Raw.dbo.hcmworker HCMct
+	ON CT.maincontactworker = HCMct.recid
+
+LEFT JOIN WH_Transform.dbo.tbl_DIM_Employee dect
+	ON coalesce(HCMct.personnelnumber, HCM.personnelnumber) = dect.Personnel_Number
+		AND dect.RecordStatus=1
 
 -- =========================== ADDED: exchange-rate joins (currency conversion) ===========================
 -- TXN-BASIS joins: fromcurrencycode = cit.currencycode (transaction/document currency).

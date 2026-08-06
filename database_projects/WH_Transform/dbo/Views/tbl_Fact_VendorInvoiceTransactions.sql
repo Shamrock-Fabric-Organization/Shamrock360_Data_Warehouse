@@ -13,7 +13,8 @@ charges_raw AS
         j.INTERNALINVOICEID,
         j.DATAAREAID,
         m.MARKUPCODE,
-        m.CALCULATEDAMOUNT
+        m.CALCULATEDAMOUNT,
+        m.CURRENCYCODE
     FROM WH_Raw.[dbo].[MARKUPTRANS] m
         INNER JOIN WH_Raw.[dbo].[VENDINVOICEJOUR] j
             ON  m.TRANSRECID = j.RECID
@@ -30,7 +31,8 @@ charges_raw AS
         t.INTERNALINVOICEID,
         t.DATAAREAID,
         m.MARKUPCODE,
-        m.CALCULATEDAMOUNT
+        m.CALCULATEDAMOUNT,
+        m.CURRENCYCODE
     FROM WH_Raw.[dbo].[MARKUPTRANS] m
         INNER JOIN WH_Raw.[dbo].[VENDINVOICETRANS] t
             ON  m.TRANSRECID = t.RECID
@@ -51,6 +53,7 @@ charges_by_invoice AS
         --------cr.NUMBERSEQUENCEGROUP,
         cr.INTERNALINVOICEID,
         cr.DATAAREAID,
+        cr.CURRENCYCODE,
 
         SUM(CASE WHEN cr.MARKUPCODE = 'Freight'    THEN cr.CALCULATEDAMOUNT ELSE 0 END) AS [Charge: Freight],
         SUM(CASE WHEN cr.MARKUPCODE = 'Pallet'     THEN cr.CALCULATEDAMOUNT ELSE 0 END) AS [Charge: Pallet],
@@ -72,7 +75,8 @@ charges_by_invoice AS
         cr.INVOICEID,
         cr.INVOICEDATE,
         cr.INTERNALINVOICEID,
-        cr.DATAAREAID
+        cr.DATAAREAID,
+        cr.CURRENCYCODE
 ), 
 prelim as
 (
@@ -102,6 +106,7 @@ SELECT
         ELSE (case when vit.PurchUnit = 'lb' then 1 else UOMC_lb.UOMConversionFactor end ) * 0.45359237  -- fallback: convert LBs -> KG
     END * vit.QTY      Quantity_KGs,
 
+    vit.CURRENCYCODE  VIT_CURRENCYCODE,
      CASE
         WHEN vit.PRICEUNIT = 0 THEN vit.PURCHPRICE
         ELSE vit.PURCHPRICE / vit.PRICEUNIT
@@ -120,6 +125,7 @@ SELECT
     -- ---- Misc-charge totals (INVOICE grain, repeated per line) ----------
     -- COALESCE turns the NULL from the LEFT JOIN (invoice with no charges)
     -- into 0. COALESCE is permitted under the Hard SQL Rules.
+    isnull(cbi.CURRENCYCODE,'')       CHG_CURRENCYCODE,
     COALESCE(cbi.[Charge: Freight],    0)           AS [FreightCharge],
     COALESCE(cbi.[Charge: Pallet],     0)           AS [PalletCharge],
     COALESCE(cbi.[Charge: PetrolChrg], 0)           AS [PetrolCharge],
@@ -190,6 +196,10 @@ SELECT p.CMPNY
     ,  p.VendorAccount
     ,  p.InvoiceID
     ,  p.InvoiceAmount
+    -- Txn basis (FROM p.vit_currencycode) 
+    , CASE WHEN p.vit_currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * p.InvoiceAmount InvoiceAmount_USD
+    , CASE WHEN p.vit_currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * p.InvoiceAmount InvoiceAmount_EUR
+    , CASE WHEN p.vit_currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * p.InvoiceAmount InvoiceAmount_CNY
     ,  p.InvoiceDate
     ,  LineNumber
     ,  Item                      AS  ProductID
@@ -199,41 +209,107 @@ SELECT p.CMPNY
     ,  Quantity_UoM
     ,  Quantity_LBs
     ,  Quantity_KGs
+    ,  VIT_CURRENCYCODE
+    ,  CHG_CURRENCYCODE
     ,  UnitPrice
+    -- Txn basis (FROM p.vit_currencycode) 
+    , CASE WHEN p.vit_currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * p.UnitPrice UnitPrice_USD
+    , CASE WHEN p.vit_currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * p.UnitPrice UnitPrice_EUR
+    , CASE WHEN p.vit_currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * p.UnitPrice UnitPrice_CNY
     ,  Discount
+    -- Txn basis (FROM p.vit_currencycode) 
+    , CASE WHEN p.vit_currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * p.Discount Discount_USD
+    , CASE WHEN p.vit_currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * p.Discount Discount_EUR
+    , CASE WHEN p.vit_currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * p.Discount Discount_CNY
     ,  DiscountPercent
     ,  LineAmount
-    ,  SalesTaxIncluded
-    ,  1099Box
-    ,  1099Amount
+     -- Txn basis (FROM p.vit_currencycode) 
+    , CASE WHEN p.vit_currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * p.LineAmount LineAmount_USD
+    , CASE WHEN p.vit_currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * p.LineAmount LineAmount_EUR
+    , CASE WHEN p.vit_currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * p.LineAmount LineAmount_CNY
+   ,  SalesTaxIncluded
+     -- Txn basis (FROM p.vit_currencycode) 
+    , CASE WHEN p.vit_currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * p.SalesTaxIncluded SalesTaxIncluded_USD
+    , CASE WHEN p.vit_currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * p.SalesTaxIncluded SalesTaxIncluded_EUR
+    , CASE WHEN p.vit_currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * p.SalesTaxIncluded SalesTaxIncluded_CNY
+   ,  [1099Box]
+    ,  [1099Amount]
+    -- Txn basis (FROM p.vit_currencycode) 
+    , CASE WHEN p.vit_currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * p.[1099Amount] [1099Amount_USD]
+    , CASE WHEN p.vit_currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * p.[1099Amount] [1099Amount_EUR]
+    , CASE WHEN p.vit_currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * p.[1099Amount] [1099Amount_CNY]
     ,  StateProvince
-    ,  1099StateAmount
+    ,  [1099StateAmount]
+    -- Txn basis (FROM p.vit_currencycode) 
+    , CASE WHEN p.vit_currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * p.[1099StateAmount] [1099StateAmount_USD]
+    , CASE WHEN p.vit_currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * p.[1099StateAmount] [1099StateAmount_EUR]
+    , CASE WHEN p.vit_currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * p.[1099StateAmount] [1099StateAmount_CNY]
     ,  ReasonCode
     ,  ReasonComment
     ,  CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * FreightCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * FreightCharge ) END FreightCharge
-    ,  CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * PalletCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * PalletCharge ) END PalletCharge
-    ,  CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * PetrolCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * PetrolCharge ) END PetrolCharge
-    ,  CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * SalesTaxCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * SalesTaxCharge ) END SalesTaxCharge
-    ,  CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * SetupFeeCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * SetupFeeCharge ) END SetupFeeCharge
-    ,  CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * ToteDepCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * ToteDepCharge ) END ToteDepCharge
-    ,  CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * OtherCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * OtherCharge ) END OtherCharge
-    ,  CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * TotalCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * TotalCharge ) END TotalCharge
+    -- Charge basis (FROM p.chg_currencycode) 
+    , CASE WHEN p.chg_currencycode = 'USD' THEN 1.0 ELSE erCHGUSD.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * FreightCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * FreightCharge ) END FreightCharge_USD
+    , CASE WHEN p.chg_currencycode = 'EUR' THEN 1.0 ELSE erCHGEUR.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * FreightCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * FreightCharge ) END FreightCharge_EUR
+    , CASE WHEN p.chg_currencycode = 'CNY' THEN 1.0 ELSE erCHGCNY.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * FreightCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * FreightCharge ) END FreightCharge_CNY
 
-------    ,'@@@'
-------    ,  FreightCharge
-------,  PalletCharge
-------,  PetrolCharge
-------,  SalesTaxCharge
-------,  SetupFeeCharge
-------,  ToteDepCharge
-------,  OtherCharge
-------,  TotalCharge
+    ,  CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * PalletCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * PalletCharge ) END PalletCharge
+    -- Charge basis (FROM p.chg_currencycode) 
+    , CASE WHEN p.chg_currencycode = 'USD' THEN 1.0 ELSE erCHGUSD.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * PalletCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * PalletCharge ) END PalletCharge_USD
+    , CASE WHEN p.chg_currencycode = 'EUR' THEN 1.0 ELSE erCHGEUR.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * PalletCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * PalletCharge ) END PalletCharge_EUR
+    , CASE WHEN p.chg_currencycode = 'CNY' THEN 1.0 ELSE erCHGCNY.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * PalletCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * PalletCharge ) END PalletCharge_CNY
+
+    ,  CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * PetrolCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * PetrolCharge ) END PetrolCharge
+    -- Charge basis (FROM p.chg_currencycode) 
+    , CASE WHEN p.chg_currencycode = 'USD' THEN 1.0 ELSE erCHGUSD.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * PetrolCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * PetrolCharge ) END PetrolCharge_USD
+    , CASE WHEN p.chg_currencycode = 'EUR' THEN 1.0 ELSE erCHGEUR.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * PetrolCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * PetrolCharge ) END PetrolCharge_EUR
+    , CASE WHEN p.chg_currencycode = 'CNY' THEN 1.0 ELSE erCHGCNY.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * PetrolCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * PetrolCharge ) END PetrolCharge_CNY
+
+    ,  CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * SalesTaxCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * SalesTaxCharge ) END SalesTaxCharge
+    -- Charge basis (FROM p.chg_currencycode) 
+    , CASE WHEN p.chg_currencycode = 'USD' THEN 1.0 ELSE erCHGUSD.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * SalesTaxCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * SalesTaxCharge ) END SalesTaxCharge_USD
+    , CASE WHEN p.chg_currencycode = 'EUR' THEN 1.0 ELSE erCHGEUR.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * SalesTaxCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * SalesTaxCharge ) END SalesTaxCharge_EUR
+    , CASE WHEN p.chg_currencycode = 'CNY' THEN 1.0 ELSE erCHGCNY.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * SalesTaxCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * SalesTaxCharge ) END SalesTaxCharge_CNY
+
+    ,  CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * SetupFeeCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * SetupFeeCharge ) END SetupFeeCharge
+    -- Charge basis (FROM p.chg_currencycode) 
+    , CASE WHEN p.chg_currencycode = 'USD' THEN 1.0 ELSE erCHGUSD.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * SetupFeeCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * SetupFeeCharge ) END SetupFeeCharge_USD
+    , CASE WHEN p.chg_currencycode = 'EUR' THEN 1.0 ELSE erCHGEUR.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * SetupFeeCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * SetupFeeCharge ) END SetupFeeCharge_EUR
+    , CASE WHEN p.chg_currencycode = 'CNY' THEN 1.0 ELSE erCHGCNY.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * SetupFeeCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * SetupFeeCharge ) END SetupFeeCharge_CNY
+
+    ,  CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * ToteDepCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * ToteDepCharge ) END ToteDepCharge
+    -- Charge basis (FROM p.chg_currencycode) 
+    , CASE WHEN p.chg_currencycode = 'USD' THEN 1.0 ELSE erCHGUSD.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * ToteDepCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * ToteDepCharge ) END ToteDepCharge_USD
+    , CASE WHEN p.chg_currencycode = 'EUR' THEN 1.0 ELSE erCHGEUR.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * ToteDepCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * ToteDepCharge ) END ToteDepCharge_EUR
+    , CASE WHEN p.chg_currencycode = 'CNY' THEN 1.0 ELSE erCHGCNY.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * ToteDepCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * ToteDepCharge ) END ToteDepCharge_CNY
+
+    ,  CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * OtherCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * OtherCharge ) END OtherCharge
+    -- Charge basis (FROM p.chg_currencycode) 
+    , CASE WHEN p.chg_currencycode = 'USD' THEN 1.0 ELSE erCHGUSD.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * OtherCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * OtherCharge ) END OtherCharge_USD
+    , CASE WHEN p.chg_currencycode = 'EUR' THEN 1.0 ELSE erCHGEUR.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * OtherCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * OtherCharge ) END OtherCharge_EUR
+    , CASE WHEN p.chg_currencycode = 'CNY' THEN 1.0 ELSE erCHGCNY.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * OtherCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * OtherCharge ) END OtherCharge_CNY
+
+    ,  CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * TotalCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * TotalCharge ) END TotalCharge
+    -- Charge basis (FROM p.chg_currencycode) 
+    , CASE WHEN p.chg_currencycode = 'USD' THEN 1.0 ELSE erCHGUSD.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * TotalCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * TotalCharge ) END TotalCharge_USD
+    , CASE WHEN p.chg_currencycode = 'EUR' THEN 1.0 ELSE erCHGEUR.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * TotalCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * TotalCharge ) END TotalCharge_EUR
+    , CASE WHEN p.chg_currencycode = 'CNY' THEN 1.0 ELSE erCHGCNY.ExchangeRate END * CASE WHEN t.TotalQuantityLBs=0 THEN (((Quantity*1.0) / t.TotQty) * TotalCharge ) else (((Quantity_LBs*1.0) / t.TotalQuantityLBs) * TotalCharge ) END TotalCharge_CNY
 
 	, ISNULL(dv.VendorKey, -1) VendorKey
 	, ISNULL(dp.ProductKey, -1) ProductKey
 	, ISNULL(dle.Legal_EntityKey, -1) Legal_EntityKey
 	, ISNULL(dpo.PurchaseOrderKey, -1)  PurchaseOrerKey
     , CONVERT(int, CONVERT(char(8), InvoiceDate, 112)) InvoiceDateKey
+
+-- =========================== ADDED: currency-conversion audit columns ===========================
+-- Rate_Missing flags: 1 when a NON-identity conversion found no matching rate row (else 0).
+-- (Identity convert, e.g. source = target, never needs a rate, so it is never flagged missing.)
+, CASE WHEN p.vit_currencycode <> 'USD' AND erTxnUSD.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_USD_Rate_Missing
+, CASE WHEN p.vit_currencycode <> 'EUR' AND erTxnEUR.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_EUR_Rate_Missing
+, CASE WHEN p.vit_currencycode <> 'CNY' AND erTxnCNY.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_CNY_Rate_Missing
+, CASE WHEN p.chg_currencycode <> 'USD' AND erCHGUSD.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Cost_USD_Rate_Missing
+, CASE WHEN p.chg_currencycode <> 'EUR' AND erCHGEUR.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Cost_EUR_Rate_Missing
+, CASE WHEN p.chg_currencycode <> 'CNY' AND erCHGCNY.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Cost_CNY_Rate_Missing
+-- ================================================================================================
 
 FROM prelim p
 JOIN qty_totals t
@@ -260,3 +336,41 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_PurchaseOrder dpo
 	  ON p.PurchaseOrder = dpo.PurchaseOrderNumber
 	    AND p.CMPNY = dpo.CMPNY
 		AND dpo.RecordStatus=1
+
+-- =========================== ADDED: exchange-rate joins (currency conversion) ===========================
+-- TXN-BASIS joins: fromcurrencycode = vit_currencycode (transaction/document currency).
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnUSD
+    ON erTxnUSD.fromcurrencycode = p.vit_currencycode
+   AND erTxnUSD.tocurrencycode   = 'USD'
+   AND convert(date, convert(char(8), p.InvoiceDate, 112)) between erTxnUSD.validfrom and erTxnUSD.validto
+   AND erTxnUSD.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
+    ON erTxnEUR.fromcurrencycode = p.vit_currencycode
+   AND erTxnEUR.tocurrencycode   = 'EUR'
+   AND convert(date, convert(char(8), p.InvoiceDate, 112)) between erTxnEUR.validfrom and erTxnEUR.validto
+   AND erTxnEUR.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
+    ON erTxnCNY.fromcurrencycode = p.vit_currencycode
+   AND erTxnCNY.tocurrencycode   = 'CNY'
+   AND convert(date, convert(char(8), p.InvoiceDate, 112)) between erTxnCNY.validfrom and erTxnCNY.validto
+   AND erTxnCNY.exchangeratetype = 'Default global rate'
+
+-- CHARGE-BASIS joins: fromcurrencycode = chg_currencycode (markuptrans charges currency).
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erCHGUSD
+    ON erCHGUSD.fromcurrencycode = p.chg_currencycode
+   AND erCHGUSD.tocurrencycode   = 'USD'
+   AND convert(date, convert(char(8), p.InvoiceDate, 112)) between erCHGUSD.validfrom and erCHGUSD.validto
+   AND erCHGUSD.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erCHGEUR
+    ON erCHGEUR.fromcurrencycode = p.chg_currencycode
+   AND erCHGEUR.tocurrencycode   = 'EUR'
+   AND convert(date, convert(char(8), p.InvoiceDate, 112)) between erCHGEUR.validfrom and erCHGEUR.validto
+   AND erCHGEUR.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erCHGCNY
+    ON erCHGCNY.fromcurrencycode = p.chg_currencycode
+   AND erCHGCNY.tocurrencycode   = 'CNY'
+   AND convert(date, convert(char(8), p.InvoiceDate, 112)) between erCHGCNY.validfrom and erCHGCNY.validto
+   AND erCHGCNY.exchangeratetype = 'Default global rate'
+-- ========================================================================================================
+
+

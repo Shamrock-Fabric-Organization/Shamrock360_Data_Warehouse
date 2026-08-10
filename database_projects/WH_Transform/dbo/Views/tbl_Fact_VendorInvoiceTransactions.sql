@@ -370,7 +370,7 @@ LEFT JOIN WH_Raw.dbo.vwExchangeRate erCHGCNY
     ON erCHGCNY.fromcurrencycode = p.chg_currencycode
    AND erCHGCNY.tocurrencycode   = 'CNY'
    AND convert(date, convert(char(8), p.InvoiceDate, 112)) between erCHGCNY.validfrom and erCHGCNY.validto
-   AND erCHGCNY.exchangeratetype = 'Default global rate'
+   AND erCHGCNY.exchangeratetype = 'Default global rate' 
 -- ========================================================================================================
 
 

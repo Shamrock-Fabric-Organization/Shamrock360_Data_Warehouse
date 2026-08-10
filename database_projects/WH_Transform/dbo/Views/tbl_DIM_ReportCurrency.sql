@@ -1,4 +1,4 @@
-CREATE OR ALTER VIEW [dbo].[tbl_Dim_ReportCurrency]
+CREATE OR ALTER VIEW [dbo].[tbl_Dim_ReportCurrencyHelper]
 AS
 SELECT
       v.Report_Currency_Code

@@ -1,6 +1,6 @@
 
 
-CREATE TABLE dbo.tbl_Dim_ProductionVarianceCostLevel(
+CREATE TABLE dbo.tbl_Dim_ProductionVarianceCostLevelHelper(
 	[Cost_Level] [varchar](6) NOT NULL,
 	[Cost_Level_Key] [int] NOT NULL,
 	[Is_Default] [int] NOT NULL,

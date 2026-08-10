@@ -1,5 +1,5 @@
 
-CREATE OR ALTER VIEW [dbo].[tbl_Dim_ProductionVarianceCostLevel]
+CREATE OR ALTER VIEW [dbo].[tbl_Dim_ProductionVarianceCostLevelHelper]
 AS
 SELECT
       v.Cost_Level                 -- natural key; joins Fact[Cost_Level] verbatim

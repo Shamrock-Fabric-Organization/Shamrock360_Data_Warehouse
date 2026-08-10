@@ -1038,5 +1038,5 @@ LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
     ON erTxnCNY.fromcurrencycode = dle.accountingcurrency
    AND erTxnCNY.tocurrencycode   = 'CNY'
    AND convert(date, convert(char(8), o.FinishedDate, 112)) between erTxnCNY.validfrom and erTxnCNY.validto
-   AND erTxnCNY.exchangeratetype = 'Default global rate'
+   AND erTxnCNY.exchangeratetype = 'Default global rate' 
 

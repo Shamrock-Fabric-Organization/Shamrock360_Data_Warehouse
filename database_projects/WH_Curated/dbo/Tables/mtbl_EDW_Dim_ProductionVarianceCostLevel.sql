@@ -1,5 +1,5 @@
 
-CREATE TABLE dbo.mtbl_EDW_Dim_ProductionVarianceCostLevel(
+CREATE TABLE dbo.mtbl_EDW_Dim_ProductionVarianceCostLevelHelper(
 	[Cost_Level] [varchar](6) NOT NULL,
 	[Cost_Level_Key] [int] NOT NULL,
 	[Is_Default] [int] NOT NULL,

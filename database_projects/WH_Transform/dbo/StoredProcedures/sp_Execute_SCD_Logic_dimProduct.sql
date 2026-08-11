@@ -95,6 +95,11 @@ BEGIN
 			OR ISNULL(Target.DefaultInventorySiteID, 0) <> ISNULL(Source.DefaultInventorySiteID, 0)
 			OR ISNULL(Target.DefaultSalesWarehouse, 0) <> ISNULL(Source.DefaultSalesWarehouse, 0)
 			OR ISNULL(Target.DefaultSalesSiteID, 0) <> ISNULL(Source.DefaultSalesSiteID, 0)
+
+			OR ISNULL(Target.ProductLifecycleState, '') <> ISNULL(Source.ProductLifecycleState, '')
+			OR ISNULL(Target.ProductionType, '') <> ISNULL(Source.ProductionType, '')
+			OR ISNULL(Target.BaseItemProduct, 0) <> ISNULL(Source.BaseItemProduct, 0)
+
 			OR ISNULL(Target.testgroupid, 0) <> ISNULL(Source.testgroupid, 0)
 
 			)
@@ -165,6 +170,9 @@ BEGIN
 		, Source.DefaultInventorySiteID
 		, Source.DefaultSalesWarehouse
 		, Source.DefaultSalesSiteID
+		, Source.ProductLifecycleState
+		, Source.ProductionType
+		, Source.BaseItemProduct
 		, Source.testgroupid
 
 		,Target.RecordEffectiveStartDate
@@ -270,6 +278,9 @@ BEGIN
 		, DefaultInventorySiteID
 		, DefaultSalesWarehouse
 		, DefaultSalesSiteID
+		, ProductLifecycleState
+		, ProductionType
+		, BaseItemProduct
 		, testgroupid
 
 		, [RecordEffectiveStartDate]
@@ -340,6 +351,9 @@ BEGIN
 		, s.DefaultInventorySiteID
 		, s.DefaultSalesWarehouse
 		, s.DefaultSalesSiteID
+		, s.ProductLifecycleState
+		, s.ProductionType
+		, s.BaseItemProduct
 		, s.testgroupid
 
 		,CAST(GETDATE() AS DATETIME2(3)) AS RecordEffectiveStartDate
@@ -425,6 +439,9 @@ BEGIN
 		, DefaultInventorySiteID
 		, DefaultSalesWarehouse
 		, DefaultSalesSiteID
+		, ProductLifecycleState
+		, ProductionType
+		, BaseItemProduct
 		, testgroupid
 
 		, [RecordEffectiveStartDate]

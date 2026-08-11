@@ -481,13 +481,13 @@ from
 union all
 select  3 qry, statusreceipt,statusissue,referencecategory,inventserialid,inventsiteid,inventlocationid,inventbatchid,CMPNY,ProdId,ItemId,JournalId,journalnameid,description,posteddatetime,PostedDateKey,QTYgood,qtyerror,transdate,TransDateKey,voucher,prodfinished,prodfinished_$label,journaltype_$Label,wrkctrid,Legal_EntityKey,ProductKey,ProductionBatchOrderKey,SiteKey,WarehouseKey,BatchKey,RouteKey,WorkCenterKey,SerialNumberKey
 from details_only_adjustments
-where prodid in ('PBO0000228','PBO0005390')
+where prodid in ('PBO0000228')
 --where NOT(prodid in ('PBO0000141', 'PBO0000584','PBO0000682','PBO0001632','PBO0000383','PBO0000599','PBO0001152','PBO0001003','PBO0002699'
 --		,'PBO0000971','PBO0001295','PBO0001785','PBO0002497','PBO0003145','PBO0003628','PBO0003436','PBO0003566') )
 union all
 select  distinct 4 qry, statusreceipt,statusissue,referencecategory,inventserialid,inventsiteid,inventlocationid,inventbatchid,CMPNY,ProdId,ItemId,JournalId,journalnameid,description,posteddatetime,PostedDateKey,QTYgood,qtyerror,transdate,TransDateKey,voucher,prodfinished,prodfinished_$label,journaltype_$Label,wrkctrid,Legal_EntityKey,ProductKey,ProductionBatchOrderKey,SiteKey,WarehouseKey,BatchKey,RouteKey,WorkCenterKey,SerialNumberKey
 from details_only_adjustments
-where NOT(prodid in ('PBO0000228','PBO0002699','PBO0005390'))
+where NOT(prodid in ('PBO0000228','PBO0002699'))
 --where prodid in ('PBO0000141', 'PBO0000584','PBO0000682','PBO0001632','PBO0000383','PBO0000599','PBO0001152','PBO0001003'
 --		,'PBO0000971','PBO0001295','PBO0001785','PBO0002497','PBO0003145','PBO0003628','PBO0003436','PBO0003566')
 union all 

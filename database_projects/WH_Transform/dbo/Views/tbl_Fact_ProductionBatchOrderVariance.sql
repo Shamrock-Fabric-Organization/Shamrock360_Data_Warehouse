@@ -896,16 +896,45 @@ o.Cost_Level
 , o.Cost_Type
 , o.Resource
 , o.Oper_No
+, dle.accountingcurrency
 , o.Net_Realized_Qty
 , o.Net_Realized_Cost
+-- Txn basis (FROM dle.accountingcurrency) 
+, CASE WHEN dle.accountingcurrency = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * o.Net_Realized_Cost   Net_Realized_Cost_USD
+, CASE WHEN dle.accountingcurrency = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * o.Net_Realized_Cost   Net_Realized_Cost_EUR
+, CASE WHEN dle.accountingcurrency = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * o.Net_Realized_Cost   Net_Realized_Cost_CNY
 , o.Allowed_Qty
 , o.Allowed_Cost
+-- Txn basis (FROM dle.accountingcurrency) 
+, CASE WHEN dle.accountingcurrency = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * o.Allowed_Cost   Allowed_Cost_USD
+, CASE WHEN dle.accountingcurrency = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * o.Allowed_Cost   Allowed_Cost_EUR
+, CASE WHEN dle.accountingcurrency = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * o.Allowed_Cost   Allowed_Cost_CNY
 
 , o.Lot_Size_Variance
+-- Txn basis (FROM dle.accountingcurrency) 
+, CASE WHEN dle.accountingcurrency = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * o.Lot_Size_Variance   Lot_Size_Variance_USD
+, CASE WHEN dle.accountingcurrency = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * o.Lot_Size_Variance   Lot_Size_Variance_EUR
+, CASE WHEN dle.accountingcurrency = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * o.Lot_Size_Variance   Lot_Size_Variance_CNY
 , o.Price_Variance
+-- Txn basis (FROM dle.accountingcurrency) 
+, CASE WHEN dle.accountingcurrency = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * o.Price_Variance   Price_Variance_USD
+, CASE WHEN dle.accountingcurrency = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * o.Price_Variance   Price_Variance_EUR
+, CASE WHEN dle.accountingcurrency = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * o.Price_Variance   Price_Variance_CNY
 , o.Quantity_Variance
+-- Txn basis (FROM dle.accountingcurrency) 
+, CASE WHEN dle.accountingcurrency = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * o.Quantity_Variance   Quantity_Variance_USD
+, CASE WHEN dle.accountingcurrency = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * o.Quantity_Variance   Quantity_Variance_EUR
+, CASE WHEN dle.accountingcurrency = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * o.Quantity_Variance   Quantity_Variance_CNY
 , o.Substitution_Variance
+-- Txn basis (FROM dle.accountingcurrency) 
+, CASE WHEN dle.accountingcurrency = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * o.Substitution_Variance   Substitution_Variance_USD
+, CASE WHEN dle.accountingcurrency = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * o.Substitution_Variance   Substitution_Variance_EUR
+, CASE WHEN dle.accountingcurrency = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * o.Substitution_Variance   Substitution_Variance_CNY
 , o.Total_Variance
+-- Txn basis (FROM dle.accountingcurrency) 
+, CASE WHEN dle.accountingcurrency = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * o.Total_Variance   Total_Variance_USD
+, CASE WHEN dle.accountingcurrency = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * o.Total_Variance   Total_Variance_EUR
+, CASE WHEN dle.accountingcurrency = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * o.Total_Variance   Total_Variance_CNY
 
 ----, o.Lot_Size_Variance_Posted
 ----, o.Price_Variance_Posted
@@ -914,6 +943,7 @@ o.Cost_Level
 ----, o.Scrap_Variance_Posted
 ----, o.Other_Variance_Posted
 ----, o.Total_Variance_Posted
+
 , o.FinishedDate
 , o.FinishedDateKey
 , o.Source
@@ -928,6 +958,16 @@ o.Cost_Level
 	, ISNULL(dw.WarehouseKey, -1) WarehouseKey
 
 	, ISNULL(dr.RouteKey, -1) RouteKey
+
+
+-- =========================== ADDED: currency-conversion audit columns ===========================
+-- Rate_Missing flags: 1 when a NON-identity conversion found no matching rate row (else 0).
+-- (Identity convert, e.g. source = target, never needs a rate, so it is never flagged missing.)
+, CASE WHEN dle.accountingcurrency <> 'USD' AND erTxnUSD.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_USD_Rate_Missing
+, CASE WHEN dle.accountingcurrency <> 'EUR' AND erTxnEUR.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_EUR_Rate_Missing
+, CASE WHEN dle.accountingcurrency <> 'CNY' AND erTxnCNY.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_CNY_Rate_Missing
+-- ================================================================================================
+
 FROM output_noSKs  o
 
 JOIN WH_Raw.dbo.prodtable  pt 
@@ -981,3 +1021,22 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_Route dr
 	ON pt.dataareaid = dr.CMPNY
 		AND pt.routeid = dr.RouteID
 		AND dr.RecordStatus=1
+
+-- =========================== ADDED: exchange-rate joins (currency conversion) ===========================
+-- TXN-BASIS joins: fromcurrencycode = vit_currencycode (transaction/document currency).
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnUSD
+    ON erTxnUSD.fromcurrencycode = dle.accountingcurrency
+   AND erTxnUSD.tocurrencycode   = 'USD'
+   AND convert(date, convert(char(8), o.FinishedDate, 112)) between erTxnUSD.validfrom and erTxnUSD.validto
+   AND erTxnUSD.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
+    ON erTxnEUR.fromcurrencycode = dle.accountingcurrency
+   AND erTxnEUR.tocurrencycode   = 'EUR'
+   AND convert(date, convert(char(8), o.FinishedDate, 112)) between erTxnEUR.validfrom and erTxnEUR.validto
+   AND erTxnEUR.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
+    ON erTxnCNY.fromcurrencycode = dle.accountingcurrency
+   AND erTxnCNY.tocurrencycode   = 'CNY'
+   AND convert(date, convert(char(8), o.FinishedDate, 112)) between erTxnCNY.validfrom and erTxnCNY.validto
+   AND erTxnCNY.exchangeratetype = 'Default global rate' 
+

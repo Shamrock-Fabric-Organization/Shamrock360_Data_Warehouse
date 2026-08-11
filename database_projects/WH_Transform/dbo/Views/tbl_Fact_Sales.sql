@@ -69,6 +69,8 @@ SELECT
 	,'D365FO'		Source
 	, ISNULL(dc.CustomerKey, -1) HistoricCustomerKey
 	, ISNULL(dcc.CustomerKey, -1) CustomerKey
+	, ISNULL(dic.CustomerKey, -1) HistoricInvoiceCustomerKey
+	, ISNULL(dicc.CustomerKey, -1) InvoiceCustomerKey
 	, ISNULL(dp.ProductKey, -1) HistoricProductKey
 	, ISNULL(dpc.ProductKey, -1) ProductKey
 	, COALESCE(dsc.StandardCostKey, dsc2.StandardCostKey, -1) StandardCostKey
@@ -206,6 +208,16 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_Customer dcc
 	ON ST.custaccount = dcc.Customer_ID
 		AND ST.dataareaid = dcc.CMPNY
 		AND dcc.RecordStatus=1
+
+LEFT JOIN WH_Transform.dbo.tbl_DIM_Customer dic
+	ON ST.invoiceaccount = dic.Customer_ID
+		AND ST.dataareaid = dic.CMPNY
+		AND ST.createddatetime between dic.RecordEffectiveStartDate and dic.RecordEffectiveEndDate
+
+LEFT JOIN WH_Transform.dbo.tbl_DIM_Customer dicc
+	ON ST.invoiceaccount = dicc.Customer_ID
+		AND ST.dataareaid = dicc.CMPNY
+		AND dicc.RecordStatus=1
 
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Product dp
 	ON SL.itemid = dp.Product_ID

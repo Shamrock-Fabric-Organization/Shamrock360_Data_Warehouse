@@ -49,6 +49,8 @@ SELECT f.[RecordID]
 	,CONVERT(varchar(50), f.[Source]) AS [Source]
 	,f.[HistoricCustomerKey]
 	,f.[CustomerKey]
+	,f.[HistoricInvoiceCustomerKey]
+	,f.[InvoiceCustomerKey]
 	,f.[HistoricProductKey]
 	,f.[ProductKey]
 	,f.[StandardCostKey]
@@ -204,6 +206,8 @@ Union ALL
 	,CONVERT(varchar(50), s.[Source]) AS [Source]
 	, ISNULL(dc.CustomerKey, -1) HistoricCustomerKey
 	, ISNULL(dcc.CustomerKey, -1) CustomerKey
+	, -1 HistoricInvoiceCustomerKey
+	, -1 InvoiceCustomerKey
 	, ISNULL(dp.ProductKey, -1) HistoricProductKey
 	, ISNULL(dpc.ProductKey, -1) ProductKey
 	, ISNULL(dsc.StandardCostKey, -1) as [StandardCostKey]
@@ -578,6 +582,8 @@ SELECT  ABS(CAST(CAST(
 	,CONVERT(varchar(50),'BRILJANT') AS [Source]
 	, ISNULL(dc.CustomerKey, -1) HistoricCustomerKey
 	, ISNULL(dcc.CustomerKey, -1) CustomerKey
+	, -1 HistoricInvoiceCustomerKey
+	, -1 InvoiceCustomerKey
 	, COALESCE(dp.ProductKey, dp2.ProductKey, -1) HistoricProductKey
 	, COALESCE(dpc.ProductKey, dpc2.ProductKey, -1) ProductKey
 	,-1 as [StandardCostKey]
@@ -930,6 +936,8 @@ SELECT  ABS(CAST(CAST(
 	,CONVERT(varchar(50),'TEDA') AS [Source]
 	, ISNULL(dc.CustomerKey, -1) HistoricCustomerKey
 	, ISNULL(dcc.CustomerKey, -1) CustomerKey
+	, -1 HistoricInvoiceCustomerKey
+	, -1 InvoiceCustomerKey
 	, COALESCE(dp.ProductKey, dp2.ProductKey, -1) HistoricProductKey
 	, COALESCE(dpc.ProductKey, dpc2.ProductKey, -1) ProductKey
 	,-1 as [StandardCostKey]
@@ -1241,6 +1249,8 @@ SELECT  ABS(CAST(CAST(
 	,CONVERT(varchar(50),'BRILJANT') AS [Source]
 	, ISNULL(dc.CustomerKey, -1) HistoricCustomerKey
 	, ISNULL(dcc.CustomerKey, -1) CustomerKey
+	, -1 HistoricInvoiceCustomerKey
+	, -1 InvoiceCustomerKey
 	, COALESCE(dp.ProductKey, dp2.ProductKey, -1) HistoricProductKey
 	, COALESCE(dpc.ProductKey, dpc2.ProductKey, -1) ProductKey
 	,-1 as [StandardCostKey]
@@ -1592,6 +1602,8 @@ SELECT  ABS(CAST(CAST(
 	,CONVERT(varchar(50),'TEDA') AS [Source]
 	, ISNULL(dc.CustomerKey, -1) HistoricCustomerKey
 	, ISNULL(dcc.CustomerKey, -1) CustomerKey
+	, -1 HistoricInvoiceCustomerKey
+	, -1 InvoiceCustomerKey
 	, COALESCE(dp.ProductKey, dp2.ProductKey, -1) HistoricProductKey
 	, COALESCE(dpc.ProductKey, dpc2.ProductKey, -1) ProductKey
 	,-1 as [StandardCostKey]
@@ -1864,14 +1876,16 @@ UNION ALL
 	,null as [SalesLine_Salesman_ID]
 	,null as [Customer_Salesman_ID]
 	,'ADJUSTMENTS' AS [Source]
-	,-1 as HistoricCustomerKey
+	, -1 as HistoricCustomerKey
 	, -1 as CustomerKey
-	,-1 as HistoricProductKey
+	, -1 HistoricInvoiceCustomerKey
+	, -1 InvoiceCustomerKey
+	, -1 as HistoricProductKey
 	, -1 as ProductKey
-	,-1 as [StandardCostKey]
+	, -1 as [StandardCostKey]
 	, ISNULL(dle.Legal_EntityKey, -1) as  Legal_EntityKey
-	,-1 as [SiteKey]
-	,-1 as  [SalesLine_EmployeeKey]
+	, -1 as [SiteKey]
+	, -1 as  [SalesLine_EmployeeKey]
 	, -1 as [CustAcct_EmployeeKey]
 	, -1 as [SalesTaker_EmployeeKey]
 	, -1 as WarehouseKey
@@ -1883,7 +1897,7 @@ UNION ALL
 	,null as [SalesOrderLineNumber]
 	,'01/01/1900' as [SalesLineCreatedDate]
 	,19000101 as [SalesLineCreatedDateKey]
-	,-1 as MarketSegmentationKey
+	, -1 as MarketSegmentationKey
 	,NULL [PurchaseOrderFormNumber]
 	, -1 [DeliveryAddressKey]
 
@@ -2060,6 +2074,8 @@ SELECT  ABS(CAST(CAST(
 	,CONVERT(varchar(50),'BRILJANT') AS [Source]
 	, ISNULL(dc.CustomerKey, -1) HistoricCustomerKey
 	, ISNULL(dcc.CustomerKey, -1) CustomerKey
+	, -1 HistoricInvoiceCustomerKey
+	, -1 InvoiceCustomerKey
 	, COALESCE(dp.ProductKey, dp2.ProductKey, -1) HistoricProductKey
 	, COALESCE(dpc.ProductKey, dpc2.ProductKey, -1) ProductKey
 	,-1 as [StandardCostKey]
@@ -2412,6 +2428,8 @@ SELECT  ABS(CAST(CAST(
 	,CONVERT(varchar(50),'TEDA') AS [Source]
 	, ISNULL(dc.CustomerKey, -1) HistoricCustomerKey
 	, ISNULL(dcc.CustomerKey, -1) CustomerKey
+	, -1 HistoricInvoiceCustomerKey
+	, -1 InvoiceCustomerKey
 	, COALESCE(dp.ProductKey, dp2.ProductKey, -1) HistoricProductKey
 	, COALESCE(dpc.ProductKey, dpc2.ProductKey, -1) ProductKey
 	,-1 as [StandardCostKey]

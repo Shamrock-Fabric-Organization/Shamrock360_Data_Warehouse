@@ -1,4 +1,4 @@
-CREATE     PROCEDURE [dbo].[sp_Process_Exploded_BOM_Costing_Snapshot]
+CREATE OR ALTER    PROCEDURE [dbo].[sp_Process_Exploded_BOM_Costing_Snapshot]
 AS
 BEGIN
     -- =====================================================
@@ -367,6 +367,7 @@ BEGIN
             AND bt.inventdimid = IIP.inventdimid
             AND b.pricecalcid = IIP.pricecalcid
             AND IIP.activationdate = IIPa.activationdate    -- v5 Fix 8: pin IIP to the exact activationdate IIPa found; eliminates versionid fan-out when multiple versions share overlapping date ranges
+            AND IIP.pricetype_$label = 'Cost'               -- FIX: without this the join also matches the non-Cost (Sales/Purch) price row for the same item/dim/pricecalcid/activationdate, fanning every line into two rows with different CurrentActiveCost (duplicate surrogate keys downstream). Mirrors IIPa's pricetypedesc='Cost' filter.
     LEFT JOIN (
         SELECT dataareaid, itemid, inventdimid, pricecalcid, versionid
             , activationdate, todate, price, priceunit, PricePerUnit
@@ -378,6 +379,7 @@ BEGIN
                     ORDER BY CurrentActiveCost DESC, activationdate DESC
                 ) AS iip_fb_rn
             FROM WH_Raw.dbo.vwInventItemPrice
+            WHERE pricetype_$label = 'Cost'                 -- FIX: rank only Cost-type prices so the gap-item fallback cannot pick / fan out on a non-Cost pricetype row (consistency with the IIP join filter above)
         ) fb_ranked
         WHERE iip_fb_rn = 1
     ) IIP_fallback

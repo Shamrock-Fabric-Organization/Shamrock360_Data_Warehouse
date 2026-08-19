@@ -954,6 +954,8 @@ o.Cost_Level
     , ISNULL(dpc.ProductKey, -1) ProductKey
     , ISNULL(odp.ProductKey, -1) HistoricalOutputProductKey
     , ISNULL(odpc.ProductKey, -1) OutputProductKey
+    , ISNULL(cpdp.ProductKey, -1) HistoricalCoProductKey
+    , ISNULL(cpdpc.ProductKey, -1) CoProductKey
 	, ISNULL(ds.SiteKey, -1) SiteKey
 	, ISNULL(dw.WarehouseKey, -1) WarehouseKey
 
@@ -1006,6 +1008,18 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_Product odpc
 	ON o.Output_Item = odpc.Product_ID
 		AND o.dataareaid = odpc.CMPNY
 		AND odpc.RecordStatus=1
+
+LEFT JOIN WH_Transform.dbo.tbl_DIM_Product cpdp
+	ON o.Output_Item = cpdp.Product_ID
+		AND o.dataareaid = cpdp.CMPNY
+        AND o.Is_CoProduct = 1
+		AND pt.createddatetime between cpdp.RecordEffectiveStartDate and cpdp.RecordEffectiveEndDate
+
+LEFT JOIN WH_Transform.dbo.tbl_DIM_Product cpdpc
+	ON o.Output_Item = cpdpc.Product_ID
+		AND o.dataareaid = cpdpc.CMPNY
+        AND o.Is_CoProduct = 1
+		AND cpdpc.RecordStatus=1
 
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Site ds
 	ON ID.inventsiteid = ds.Site_ID

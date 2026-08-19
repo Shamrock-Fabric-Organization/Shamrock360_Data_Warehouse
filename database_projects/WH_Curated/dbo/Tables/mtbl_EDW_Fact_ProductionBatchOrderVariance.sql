@@ -1,5 +1,5 @@
 
-CREATE TABLE dbo.mtbl_EDW_Fact_ProductionBatchOrderVariance(
+CREATE TABLE [dbo].[mtbl_EDW_Fact_ProductionBatchOrderVariance](
 	[Cost_Level] [varchar](10) NULL,
 	[CMPNY] [varchar](8000) NULL,
 	[ProductionBatchOrder] [varchar](8000) NULL,
@@ -51,6 +51,8 @@ CREATE TABLE dbo.mtbl_EDW_Fact_ProductionBatchOrderVariance(
 	[ProductKey] [bigint] NOT NULL,
 	[HistoricalOutputProductKey] [bigint] NOT NULL,
 	[OutputProductKey] [bigint] NOT NULL,
+	[HistoricalCoProductKey] [bigint] NOT NULL,
+	[CoProductKey] [bigint] NOT NULL,
 	[SiteKey] [bigint] NOT NULL,
 	[WarehouseKey] [bigint] NOT NULL,
 	[RouteKey] [bigint] NOT NULL,

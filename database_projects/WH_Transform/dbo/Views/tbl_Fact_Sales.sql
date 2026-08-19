@@ -2,8 +2,7 @@
 /****** Object:  View [dbo].[tbl_Fact_Sales]    Script Date: 5/19/2026 4:12:14 PM ******/
 /****** Object:  View [dbo].[tbl_Fact_Sales]    Script Date: 4/23/2026 2:40:48 PM ******/
 
-
-CREATE  OR ALTER                         VIEW [dbo].[tbl_Fact_Sales] AS 		
+CREATE  OR ALTER                         VIEW [dbo].[tbl_Fact_Sales] AS 	
 SELECT 
 	CONVERT(BIGINT, CONVERT(VARBINARY, CONCAT(NEWID(), GETDATE())))	RecordID
 	,ST.dataareaid	CMPNY
@@ -152,6 +151,30 @@ SELECT
 	, CASE WHEN dle.accountingcurrency = 'CNY' THEN 1.0 ELSE erCostCNY.ExchangeRate END
 	      * coalesce(dsc.TotalCost, dsc2.TotalCost)                                              TotalCost_CNY
 
+
+	---- ---- Invoice data from CustInvoiceTrans - potential double counting but testing to be sure, per current business practice they say notpossible but D365 would allow
+	, cit.lineamount InvoiceLineAmount
+	-- Txn basis (FROM cit.currencycode) — converted LineAmount
+	, CASE WHEN cit.currencycode = 'USD' THEN 1.0 ELSE erInvTxnUSD.ExchangeRate END * cit.lineamount InvoiceLineAmount_USD
+	, CASE WHEN cit.currencycode = 'EUR' THEN 1.0 ELSE erInvTxnEUR.ExchangeRate END * cit.lineamount InvoiceLineAmount_EUR
+	, CASE WHEN cit.currencycode = 'CNY' THEN 1.0 ELSE erInvTxnCNY.ExchangeRate END * cit.lineamount InvoiceLineAmount_CNY
+	, cit.lineamountmst InvoiceLineAmountMST
+	, cit.currencycode InvoiceCurrency_Code
+	, cit.salesunit InvoiceSalesUnit
+	--, CASE WHEN left( cit.invoiceid ,2) = 'FT' and cit.qty=1 then cij.qty else cit.qty end Qty
+	, cit.qty InvoiceQty
+		 , CASE
+			 WHEN cit.salesunit = 'lb' THEN 1                                               -- already in LB
+			 WHEN InvUOMC_lb.UOMConversionFactor IS NOT NULL THEN InvUOMC_lb.UOMConversionFactor  -- direct sales-unit -> LB conversion
+			 ELSE (case when cit.salesunit = 'kg' then 1 else InvUOMC_kg.UOMConversionFactor end) * 2.20462262185 -- fallback: convert KG -> LB (1 / 0.45359237)
+		   END * cit.qty      InvoiceQuantity_LBs
+
+		 , CASE
+			 WHEN cit.salesunit = 'kg' THEN 1                                               -- already in KG
+			 WHEN InvUOMC_kg.UOMConversionFactor IS NOT NULL THEN InvUOMC_kg.UOMConversionFactor  -- direct sales-unit -> KG conversion
+			 ELSE (case when cit.salesunit = 'lb' then 1 else InvUOMC_lb.UOMConversionFactor end ) * 0.45359237  -- fallback: convert LBs -> KG
+		   END * cit.qty      InvoiceQuantity_KGs
+
 	---- ---- RATE_MISSING FLAGS (1 = real conversion needed but no rate row found) ---- ----
 	, CASE WHEN SL.currencycode      <> 'USD' AND erTxnUSD.ExchangeRate  IS NULL THEN 1 ELSE 0 END  Txn_USD_Rate_Missing
 	, CASE WHEN SL.currencycode      <> 'EUR' AND erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END  Txn_EUR_Rate_Missing
@@ -159,6 +182,10 @@ SELECT
 	, CASE WHEN dle.accountingcurrency <> 'USD' AND erCostUSD.ExchangeRate IS NULL THEN 1 ELSE 0 END  Cost_USD_Rate_Missing
 	, CASE WHEN dle.accountingcurrency <> 'EUR' AND erCostEUR.ExchangeRate IS NULL THEN 1 ELSE 0 END  Cost_EUR_Rate_Missing
 	, CASE WHEN dle.accountingcurrency <> 'CNY' AND erCostCNY.ExchangeRate IS NULL THEN 1 ELSE 0 END  Cost_CNY_Rate_Missing
+	, CASE WHEN cit.currencycode      <> 'USD' AND erInvTxnUSD.ExchangeRate  IS NULL THEN 1 ELSE 0 END  InvoiceTxn_USD_Rate_Missing
+	, CASE WHEN cit.currencycode      <> 'EUR' AND erInvTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END  InvoiceTxn_EUR_Rate_Missing
+	, CASE WHEN cit.currencycode      <> 'CNY' AND erInvTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END  InvoiceTxn_CNY_Rate_Missing
+
 
 FROM WH_Raw.dbo.salestable ST
 JOIN WH_Raw.dbo.SalesLine SL
@@ -402,3 +429,34 @@ LEFT JOIN WH_Raw.dbo.vwExchangeRate erCostCNY
 				COALESCE(case when CIT.invoicedate='01/01/1900' then null else CIT.invoicedate end
 						,case when sl.shippingdateconfirmed= '01/01/1900' then sl.shippingdaterequested else sl.shippingdateconfirmed end
 						, ST.createddatetime),112)) between erCostCNY.validfrom and erCostCNY.validto
+
+ 
+LEFT JOIN WH_Raw.dbo.vwUnitOfMeasureConversion InvUOMC_lb
+    ON IT.product = InvUOMC_lb.product
+	    AND cit.salesunit = InvUOMC_lb.SYMBOLFROM
+		AND InvUOMC_lb.SYMBOLTO = 'lb'
+ 
+ LEFT JOIN WH_Raw.dbo.vwUnitOfMeasureConversion InvUOMC_kg
+     ON IT.product = InvUOMC_kg.product
+         AND cit.salesunit = InvUOMC_kg.SYMBOLFROM
+         AND InvUOMC_kg.SYMBOLTO = 'kg'
+
+-- =========================== ADDED: exchange-rate joins (currency conversion) ===========================
+-- TXN-BASIS joins: fromcurrencycode = cit.currencycode (transaction/document currency).
+-- Shared by InvoiceAmount, LineAmount, SalesPrice, Freight, Fuel_Charge, Comms, PLT_Brk_Ch, Tariff_SC.
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erInvTxnUSD
+    ON erInvTxnUSD.fromcurrencycode = cit.currencycode
+   AND erInvTxnUSD.tocurrencycode   = 'USD'
+   AND convert(date, convert(char(8), cit.invoicedate, 112)) between erInvTxnUSD.validfrom and erInvTxnUSD.validto
+   AND erInvTxnUSD.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erInvTxnEUR
+    ON erInvTxnEUR.fromcurrencycode = cit.currencycode
+   AND erInvTxnEUR.tocurrencycode   = 'EUR'
+   AND convert(date, convert(char(8), cit.invoicedate, 112)) between erInvTxnEUR.validfrom and erInvTxnEUR.validto
+   AND erInvTxnEUR.exchangeratetype = 'Default global rate'
+LEFT JOIN WH_Raw.dbo.vwExchangeRate erInvTxnCNY
+    ON erInvTxnCNY.fromcurrencycode = cit.currencycode
+   AND erInvTxnCNY.tocurrencycode   = 'CNY'
+   AND convert(date, convert(char(8), cit.invoicedate, 112)) between erInvTxnCNY.validfrom and erInvTxnCNY.validto
+   AND erInvTxnCNY.exchangeratetype = 'Default global rate'
+

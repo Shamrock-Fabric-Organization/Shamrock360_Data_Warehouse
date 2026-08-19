@@ -1,5 +1,5 @@
--- Auto Generated (Do not modify) 39DF2D48BD099D846315F73D8F54EA4849378CA7F4887271C4F25DE3EFA6A483
-/****** Object:  View [dbo].[tbl_Fact_TradeAgreementDetails]    Script Date: 6/2/2026 10:32:06 AM ******/
+
+
 --USE WH_Transform
 
 
@@ -53,27 +53,26 @@
 
 ============================================================
 */
-------======================================================================
-------======================================================================
-------======================================================================
-------======================================================================
-------==== THIS VIEW HAS BEEN SUPERCEDED BY A STORE PROCEDURE ==============
-------==== THE VIEW WAS CAUSING A FABRIC WAREHOUSE SQL ERROR 65000 =========
-------==== WHICH IS A FABRIC WORKLOAD MANAGEMENT REJECTION NOT =============
-------==== BUG IN THE LOGIC, REWRITTEN AS A SP TO USE STAGE TABLES =========
-------======================================================================
-------======================================================================
-------======================================================================
-------======================================================================
-/*
-CREATE OR ALTER VIEW [dbo].[tbl_Fact_TradeAgreementDetails] as
-WITH
+
+
+CREATE OR ALTER PROCEDURE sp_Build_Fact_TradeAgreementDetails 
+as
+BEGIN
+    DROP TABLE IF EXISTS stage_TradeAgreement_customer_rank_cte  ;
+    DROP TABLE IF EXISTS stage_TradeAgreement_customer_cte ;
+    DROP TABLE IF EXISTS stage_TradeAgreement_item_rank_cte ;
+    DROP TABLE IF EXISTS stage_TradeAgreement_item_cte ;
+    DROP TABLE IF EXISTS stage_TradeAgreement_price_lines ;
+    DROP TABLE IF EXISTS stage_TradeAgreement_inv_split;
+    DROP TABLE IF EXISTS stage_TradeAgreement_cust_split;
+    DROP TABLE IF EXISTS stage_TradeAgreement_item_split;
+    DROP TABLE IF EXISTS stage_TradeAgreement_prelim;
 
 -- ============================================================
 -- CUSTOMER SIDE: rank and pivot conditions for Customer Header rules
 -- (joined via PriceDiscTable.pricingruleheader)
 -- ============================================================
-customer_rank_cte AS (
+CREATE TABLE stage_TradeAgreement_customer_rank_cte  AS
     SELECT
          T1.[RECID]                                                  AS PRICINGRULE
         ,T1.[DATAAREAID]                                             AS DATAAREAID
@@ -114,9 +113,8 @@ customer_rank_cte AS (
         AND T2.[DATAAREAID] = T1.[DATAAREAID]
     LEFT JOIN WH_Raw.dbo.[GUPPRICINGATTRIBUTELINK] T3
         ON  T3.[RECID]      = T2.[CONDITIONATTRIBUTE]
-),
 
-customer_cte AS (
+CREATE TABLE stage_TradeAgreement_customer_cte  AS
     SELECT
          T1.[PRICINGRULE]
         ,T1.[DATAAREAID]
@@ -130,15 +128,14 @@ customer_cte AS (
             ,MAX(CASE WHEN T1.[RANK] =  4 THEN ';' + T1.[ATTRIBUTENAME]    ELSE '' END)
             ,MAX(CASE WHEN T1.[RANK] =  5 THEN ';' + T1.[ATTRIBUTENAME]    ELSE '' END)
          ) AS VARCHAR(MAX))                                                  AS COMBINATIONSTRUCTURE
-    FROM customer_rank_cte T1
+    FROM stage_TradeAgreement_customer_rank_cte T1
     GROUP BY T1.[PRICINGRULE], T1.[DATAAREAID]
-),
 
 -- ============================================================
 -- ITEM SIDE: rank and pivot conditions for Item/Category Group rules
 -- (joined via PriceDiscTable.pricingruleline)
 -- ============================================================
-item_rank_cte AS (
+CREATE TABLE stage_TradeAgreement_item_rank_cte  AS
     SELECT
          T1.[RECID]                                                  AS PRICINGRULE
         ,T1.[DATAAREAID]                                             AS DATAAREAID
@@ -179,9 +176,8 @@ item_rank_cte AS (
         AND T2.[DATAAREAID] = T1.[DATAAREAID]
     LEFT JOIN WH_Raw.dbo.[GUPPRICINGATTRIBUTELINK] T3
         ON  T3.[RECID]      = T2.[CONDITIONATTRIBUTE]
-),
 
-item_cte AS (
+CREATE TABLE stage_TradeAgreement_item_cte  AS
     SELECT
          T1.[PRICINGRULE]
         ,T1.[DATAAREAID]
@@ -194,14 +190,13 @@ item_cte AS (
             ,MAX(CASE WHEN T1.[RANK] =  4 THEN ';' + T1.[ATTRIBUTENAME]    ELSE '' END)
             ,MAX(CASE WHEN T1.[RANK] =  5 THEN ';' + T1.[ATTRIBUTENAME]    ELSE '' END)
          ) AS VARCHAR(MAX))                                                  AS COMBINATIONSTRUCTURE
-    FROM item_rank_cte T1
+    FROM stage_TradeAgreement_item_rank_cte T1
     GROUP BY T1.[PRICINGRULE], T1.[DATAAREAID]
-),
 
 -- ============================================================
 -- Price lines: UNION ALL of posted + unposted
 -- ============================================================
-price_lines AS (
+CREATE TABLE stage_TradeAgreement_price_lines  AS
     ----SELECT
     ----     [DATAAREAID]
     ----    ,[RECID]
@@ -264,14 +259,60 @@ price_lines AS (
       AND pdat.[MODULE]            = 1
       AND pdat.[PRICINGRULEHEADER] IS NOT NULL
       AND pdat.[PRICINGRULEHEADER] <> 0
-),
+
+
+
+------------------------------------------------------------------------------
+-- 1) InvoiceAccount explosion  (was: OUTER APPLY inv_split)
+--    Keyed by the customer rule (PRICINGRULE, DATAAREAID) so it can be
+--    LEFT JOINed back to p on p.[PRICINGRULEHEADER].
+--    Null/empty InvoiceAccount -> STRING_SPLIT returns 0 rows -> no stage row
+--    -> LEFT JOIN yields NULL, matching OUTER APPLY's NULL-preservation.
+------------------------------------------------------------------------------
+CREATE TABLE stage_TradeAgreement_inv_split AS
+SELECT
+     cv.[PRICINGRULE]
+    ,cv.[DATAAREAID]
+    ,LTRIM(RTRIM(s.[value]))                                         AS [value]
+FROM stage_TradeAgreement_customer_cte cv
+CROSS APPLY STRING_SPLIT(REPLACE(cv.InvoiceAccount, ';', ','), ',') AS s;
+
+------------------------------------------------------------------------------
+-- 2) CustomerAccount explosion  (was: correlated OUTER APPLY cust_split)
+--    OPTION A GUARD is baked in here as a WHERE clause: only explode the
+--    CustomerAccount list for rules that have NO InvoiceAccount. This keeps
+--    the two account streams mutually exclusive exactly like the original.
+------------------------------------------------------------------------------
+CREATE TABLE stage_TradeAgreement_cust_split AS
+SELECT
+     cv.[PRICINGRULE]
+    ,cv.[DATAAREAID]
+    ,LTRIM(RTRIM(s.[value]))                                         AS [value]
+FROM stage_TradeAgreement_customer_cte cv
+CROSS APPLY STRING_SPLIT(REPLACE(cv.CustomerAccount, ';', ','), ',') AS s
+WHERE cv.InvoiceAccount IS NULL
+   OR LTRIM(RTRIM(cv.InvoiceAccount)) = '';
+
+------------------------------------------------------------------------------
+-- 3) ItemNumber explosion  (was: CROSS APPLY item_split)
+--    Keyed by the item rule (PRICINGRULE, DATAAREAID); LEFT/INNER? -> INNER
+--    in the main query so rows with no item are dropped, same as CROSS APPLY.
+------------------------------------------------------------------------------
+CREATE TABLE stage_TradeAgreement_item_split AS
+SELECT
+     iv.[PRICINGRULE]
+    ,iv.[DATAAREAID]
+    ,LTRIM(RTRIM(s.[value]))                                         AS [value]
+FROM stage_TradeAgreement_item_cte iv
+CROSS APPLY STRING_SPLIT(REPLACE(iv.ItemNumber, ';', ','), ',') AS s;
+
+
 
 -- ============================================================
 -- MAIN QUERY PRELIM
 -- ============================================================
-prelim as (
-	SELECT
-
+ CREATE TABLE stage_TradeAgreement_prelim  AS
+SELECT
      p.[DATAAREAID]                                                  AS Company
     ,p.[AGREEMENT]                                                   AS AgreementId
     ,p.Posted
@@ -288,13 +329,9 @@ prelim as (
     ,convert(int, convert(char(8), p.posteddate,112))                AS PostedDateKey
     -- --------------------------------------------------------
     -- IsRecent: 1 for the row(s) with the maximum PostedDateKey
-    -- within each (Company, CustomerAccount, ItemNumber, Price, Currency)
-    -- combination; 0 for all others.
-    -- Ties at the maximum both receive 1.
-    -- Forced to 0 when any partition column is unknown/null:
-    --   CustomerKey / ProductKey = -1 means the dimension join returned
-    --   the Unknown member (customer or item not found in the dim table).
-    --   ISNULL on Currency/Amount collapses NULL + empty into one check.
+    -- within each (Company, effective account, ItemNumber, Price, Currency)
+    -- combination; 0 for all others. Ties at the max both receive 1.
+    -- Forced to 0 when any partition column is unknown/null.
     -- --------------------------------------------------------
     ,CASE
         WHEN ISNULL(COALESCE(invcust.CustomerKey, cust.CustomerKey), -1) = -1
@@ -315,133 +352,87 @@ prelim as (
         THEN 1 ELSE 0
      END                                                             AS IsRecent
     -- --------------------------------------------------------
-    -- Customer  (from customer-side GUP conditions)
-    -- InvoiceAccount and CustomerAccount are surfaced as two separate output
-    -- columns, each based on its own exploded split value (inv_split /
-    -- cust_split) so it lines up 1:1 with the surrogate key resolved from that
-    -- same split. Under the Option A guard the two streams are mutually
-    -- exclusive per row: invoice-present rows populate InvoiceAccount (+
-    -- InvoiceCustomerKey) with CustomerAccount NULL; invoice-absent rows
-    -- populate CustomerAccount (+ CustomerKey) with InvoiceAccount NULL —
-    -- matching the original effective-account behavior.
+    -- Customer (invoice + customer accounts, each with its own key)
     -- --------------------------------------------------------
     ,LTRIM(RTRIM(inv_split.[value]))                                 AS InvoiceAccount
     ,isnull(invcust.CustomerKey, -1)                                 AS InvoiceCustomerKey
     ,LTRIM(RTRIM(cust_split.[value]))                                AS CustomerAccount
     ,isnull(cust.CustomerKey, -1)                                    AS CustomerKey
-    -- --------------------------------------------------------
-    -- Company chain (from customer-side GUP conditions, if configured)
-    -- NULL when the rule has no Company chain condition.
-    -- --------------------------------------------------------
+    -- Company chain (output-only column, from customer-side rule)
     ,cv.CompanyChain                                                 AS CompanyChain
-    -- --------------------------------------------------------
-    -- Item  (from item-side GUP conditions)
-    -- ItemNumber column pivoted directly by ATTRIBUTENAME = 'Item number'.
-    -- item_split explodes comma-separated lists → one row per item.
-    -- --------------------------------------------------------
+    -- Item
     ,LTRIM(RTRIM(item_split.[value]))                                AS ItemNumber
     ,isnull(item.ProductKey, -1)                                     AS ProductKey
-    , isnull(dle.Legal_EntityKey, -1) Legal_EntityKey
-    , isnull(dta.TradeAgreementKey, -1) TradeAgreementKey
-    , ISNULL(de.EmployeeKey, -1) CustAcct_EmployeeKey
-
+    ,isnull(dle.Legal_EntityKey, -1)                                 AS Legal_EntityKey
+    ,isnull(dta.TradeAgreementKey, -1)                               AS TradeAgreementKey
+    ,ISNULL(de.EmployeeKey, -1)                                      AS CustAcct_EmployeeKey
     -- ========================================================================
-    -- ADDED (ITEM-018): MULTI-CURRENCY CONVERSION — TXN BASIS (FROM p.[CURRENCY])
-    -- Date for rate effective period: p.[FROMDATE] (price-effective / ValidFrom).
-    -- Identity guard: when the row currency already equals the target, rate = 1.0.
+    -- MULTI-CURRENCY CONVERSION — TXN BASIS (FROM p.[CURRENCY])
     -- ========================================================================
-    , p.[CURRENCY] AS Txn_Source_Currency   -- audit: FROM currency for txn basis
+    ,p.[CURRENCY]                                                    AS Txn_Source_Currency
+    ,CASE WHEN p.[CURRENCY] = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * p.[AMOUNT] AS Price_USD
+    ,CASE WHEN p.[CURRENCY] = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * p.[AMOUNT] AS Price_EUR
+    ,CASE WHEN p.[CURRENCY] = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * p.[AMOUNT] AS Price_CNY
+    ,CASE WHEN p.[CURRENCY] <> 'USD' AND erTxnUSD.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_USD_Rate_Missing
+    ,CASE WHEN p.[CURRENCY] <> 'EUR' AND erTxnEUR.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_EUR_Rate_Missing
+    ,CASE WHEN p.[CURRENCY] <> 'CNY' AND erTxnCNY.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_CNY_Rate_Missing
 
-    -- Price (p.[AMOUNT]) -> USD / EUR / CNY
-    , CASE WHEN p.[CURRENCY] = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * p.[AMOUNT] AS Price_USD
-    , CASE WHEN p.[CURRENCY] = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * p.[AMOUNT] AS Price_EUR
-    , CASE WHEN p.[CURRENCY] = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * p.[AMOUNT] AS Price_CNY
+FROM stage_TradeAgreement_price_lines p
 
-    -- Rate-missing flags (1 = no matching rate row and currency differs from target)
-    , CASE WHEN p.[CURRENCY] <> 'USD' AND erTxnUSD.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_USD_Rate_Missing
-    , CASE WHEN p.[CURRENCY] <> 'EUR' AND erTxnEUR.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_EUR_Rate_Missing
-    , CASE WHEN p.[CURRENCY] <> 'CNY' AND erTxnCNY.ExchangeRate IS NULL THEN 1 ELSE 0 END AS Txn_CNY_Rate_Missing
-
-FROM price_lines p
-
--- Customer-side GUP rule conditions
-LEFT JOIN customer_cte cv
+-- Customer-side GUP rule conditions (kept for CompanyChain output column)
+LEFT JOIN stage_TradeAgreement_customer_cte cv
     ON  cv.[PRICINGRULE]  = p.[PRICINGRULEHEADER]
     AND cv.[DATAAREAID]   = p.[DATAAREAID]
 
--- Item-side GUP rule conditions
-LEFT JOIN item_cte iv
-    ON  iv.[PRICINGRULE]  = p.[PRICINGRULELINE]
-    AND iv.[DATAAREAID]   = p.[DATAAREAID]
+-- Exploded InvoiceAccount stream  (was OUTER APPLY inv_split)
+LEFT JOIN stage_TradeAgreement_inv_split inv_split
+    ON  inv_split.[PRICINGRULE] = p.[PRICINGRULEHEADER]
+    AND inv_split.[DATAAREAID]  = p.[DATAAREAID]
 
--- Explode comma-separated customer accounts → one row per account.
--- Split into two independent streams (client request): the InvoiceAccount
--- list and the CustomerAccount list are each STRING_SPLIT separately so that
--- every account resolves its own surrogate key.
--- CompanyChain is intentionally excluded — it is an output column only and
--- must not flow into either account stream or its surrogate key lookup.
--- OUTER APPLY (not CROSS APPLY): rows where the source account is NULL
--- (e.g. Company chain-only rules, or a rule configured with only the other
--- account attribute) still return one row with a NULL split value, preserving
--- the CompanyChain output column. CROSS APPLY would silently drop those rows.
---
--- OPTION A CARTESIAN GUARD (client decision): cust_split only yields rows when
--- InvoiceAccount is NULL/empty. This restores the original single-COALESCE
--- "one effective stream" behavior — InvoiceAccount is dominant; CustomerAccount
--- is the fallback used only when no InvoiceAccount is configured. It guarantees
--- zero cross-product (row counts identical to the original single-COALESCE
--- version) while still surfacing both account columns and their own keys.
-OUTER APPLY STRING_SPLIT(REPLACE(cv.InvoiceAccount, ';', ','), ',') AS inv_split
-OUTER APPLY (
-    SELECT s.[value]
-    FROM STRING_SPLIT(REPLACE(cv.CustomerAccount, ';', ','), ',') s
-    WHERE cv.InvoiceAccount IS NULL
-       OR LTRIM(RTRIM(cv.InvoiceAccount)) = ''
-) AS cust_split
+-- Exploded CustomerAccount stream, Option A guard baked into the stage table
+-- (was correlated OUTER APPLY cust_split)
+LEFT JOIN stage_TradeAgreement_cust_split cust_split
+    ON  cust_split.[PRICINGRULE] = p.[PRICINGRULEHEADER]
+    AND cust_split.[DATAAREAID]  = p.[DATAAREAID]
 
--- Explode comma-separated item numbers → one row per item.
--- Same Gate 3 justification as above.
-CROSS APPLY STRING_SPLIT(REPLACE(iv.ItemNumber, ';', ','), ',') AS item_split
+-- Exploded ItemNumber stream  (was CROSS APPLY item_split -> INNER JOIN)
+INNER JOIN stage_TradeAgreement_item_split item_split
+    ON  item_split.[PRICINGRULE] = p.[PRICINGRULELINE]
+    AND item_split.[DATAAREAID]  = p.[DATAAREAID]
 
--- Invoice-account customer lookup: join the exploded InvoiceAccount value
--- against the SAME customer dimension / column / grain the CustomerAccount
--- lookup uses. Invoice accounts are customer account numbers and were already
--- resolved through this dimension in the prior COALESCE version, so the
--- dimension provably supports this second lookup.
+-- Invoice-account customer lookup
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Customer invcust
     ON  invcust.Customer_ID  = LTRIM(RTRIM(inv_split.[value]))
-    AND invcust.CMPNY  = p.[DATAAREAID]
+    AND invcust.CMPNY        = p.[DATAAREAID]
     AND invcust.recordstatus = 1
 
--- Customer-account customer lookup: join on the split single account value
+-- Customer-account customer lookup
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Customer cust
     ON  cust.Customer_ID  = LTRIM(RTRIM(cust_split.[value]))
-    AND cust.CMPNY  = p.[DATAAREAID]
+    AND cust.CMPNY        = p.[DATAAREAID]
     AND cust.recordstatus = 1
 
--- Item: join on the split single item number value
+-- Item lookup
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Product item
-    ON  item.Product_ID      = LTRIM(RTRIM(item_split.[value]))
-    AND item.CMPNY  = p.[DATAAREAID]
-    and item.recordstatus = 1
+    ON  item.Product_ID   = LTRIM(RTRIM(item_split.[value]))
+    AND item.CMPNY        = p.[DATAAREAID]
+    AND item.recordstatus = 1
 
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Legal_Entity dle
-    ON  dle.CMPNY  = p.[DATAAREAID]
-    and dle.recordstatus = 1
+    ON  dle.CMPNY        = p.[DATAAREAID]
+    AND dle.recordstatus = 1
 
 LEFT JOIN WH_Transform.dbo.tbl_DIM_TradeAgreement dta
-    ON  dta.CMPNY  = p.[DATAAREAID]
-      AND dta.AgreementID = p.[AGREEMENT]
-      AND dta.recordstatus = 1
+    ON  dta.CMPNY        = p.[DATAAREAID]
+    AND dta.AgreementID  = p.[AGREEMENT]
+    AND dta.recordstatus = 1
 
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Employee de
-    ON  cust.Salesman_ID  = de.Personnel_Number
-    AND de.recordstatus = 1
+    ON  cust.Salesman_ID = de.Personnel_Number
+    AND de.recordstatus  = 1
 
 -- ============================================================================
 -- TXN-BASIS EXCHANGE-RATE JOINS (FROM p.[CURRENCY])
--- One shared set of three joins (USD/EUR/CNY) for the Price money column.
--- Effective date keyed on p.[FROMDATE] (trade-agreement price-effective date).
 -- ============================================================================
 LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnUSD
     ON  erTxnUSD.fromcurrencycode = p.[CURRENCY]
@@ -459,13 +450,16 @@ LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
     ON  erTxnCNY.fromcurrencycode = p.[CURRENCY]
     AND erTxnCNY.tocurrencycode   = 'CNY'
     AND convert(date, convert(char(8), p.[FROMDATE], 112)) between erTxnCNY.validfrom and erTxnCNY.validto
-    AND erTxnCNY.exchangeratetype = 'Default global rate'
-)
+    AND erTxnCNY.exchangeratetype = 'Default global rate';
+--)
 
 -- ============================================================
 -- MAIN QUERY 
 -- ============================================================
 
+DROP TABLE IF EXISTS tbl_Fact_TradeAgreementDetails;
+
+CREATE TABLE tbl_Fact_TradeAgreementDetails AS
 SELECT p.Company CMPNY
 , p.AgreementId
 , p.Posted
@@ -499,7 +493,7 @@ SELECT p.Company CMPNY
 , p.Txn_EUR_Rate_Missing
 , p.Txn_CNY_Rate_Missing
 
-FROM PRELIM p
+FROM stage_TradeAgreement_prelim p
 -- Customer-account customer lookup: join on the split single account value
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Customer cust
     ON  cust.Invoice_Account = p.InvoiceAccount
@@ -544,9 +538,21 @@ SELECT Company
 ,  Txn_EUR_Rate_Missing
 ,  Txn_CNY_Rate_Missing
 
-FROM PRELIM
+FROM stage_TradeAgreement_prelim
 WHERE InvoiceAccount is null
-*/
 
-select 'THIS VIEW HAS BEEN SUPERCEDED BY A STORE PROCEDURE'
+
+
+    DROP TABLE IF EXISTS stage_TradeAgreement_customer_rank_cte  ;
+    DROP TABLE IF EXISTS stage_TradeAgreement_customer_cte ;
+    DROP TABLE IF EXISTS stage_TradeAgreement_item_rank_cte ;
+    DROP TABLE IF EXISTS stage_TradeAgreement_item_cte ;
+    DROP TABLE IF EXISTS stage_TradeAgreement_price_lines ;
+    DROP TABLE IF EXISTS stage_TradeAgreement_inv_split;
+    DROP TABLE IF EXISTS stage_TradeAgreement_cust_split;
+    DROP TABLE IF EXISTS stage_TradeAgreement_item_split;
+    DROP TABLE IF EXISTS stage_TradeAgreement_prelim;
+
+END
+
 

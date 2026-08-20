@@ -2,9 +2,13 @@
 /****** Object:  View [dbo].[vw_EDW_Fact_SalesBudget]    Script Date: 2/2/2026 1:21:38 PM ******/
 /****** Object:  View [dbo].[vw_EDW_Fact_SalesBudget]    Script Date: 1/26/2026 9:48:20 AM ******/
 
+DROP VIEW IF EXISTS [dbo].[vw_EDW_Fact_SalesBudget];
+/* This view was moved to the WH_tranform warehouse so that UoM and Exchange rate conversions 
+   could be added and to be ready to merge with the future sales budget data from D365.
+   So this view is no longer needed in the Curated warehouse.
+*/
 
-
-
+/*
 CREATE                view [dbo].[vw_EDW_Fact_SalesBudget] as  
 
 SELECT [CMPNY]
@@ -99,3 +103,4 @@ LEFT JOIN mtbl_EDW_DIM_MarketSegmentation dmsc
 
 
 --order by 1,2,5,6,4
+*/

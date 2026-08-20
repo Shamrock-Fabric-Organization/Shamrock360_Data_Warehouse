@@ -68,6 +68,8 @@ SELECT
 	, ProductionType
 	, BaseItemProduct
 	, testgroupid
+	, routeid
+	, routename
 
 	,CAST('1900-01-01' AS DATETIME2(3)) AS RecordEffectiveStartDate
 	,CAST('2099-12-31 00:00:01.000' AS DATETIME2(3)) AS RecordEffectiveEndDate

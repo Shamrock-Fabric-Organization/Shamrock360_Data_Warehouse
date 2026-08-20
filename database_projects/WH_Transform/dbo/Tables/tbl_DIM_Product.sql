@@ -58,7 +58,9 @@ CREATE TABLE [dbo].[tbl_DIM_Product] (
 	[BaseItemProduct] bigint NULL, 
 
 	[testgroupid] varchar(8000) NULL,
-	
+	[routeid] varchar(8000) NULL,
+	[routename] varchar(8000) NULL,
+
 	[RecordEffectiveStartDate] datetime2(3) NULL, 
 	[RecordEffectiveEndDate] datetime2(3) NULL, 
 	[RecordStatus] int NULL, 

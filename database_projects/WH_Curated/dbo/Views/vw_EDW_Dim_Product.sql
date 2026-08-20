@@ -68,6 +68,8 @@ CREATE OR ALTER            View [dbo].[vw_EDW_Dim_Product]
 	, ProductionType
 	, BaseItemProduct
                 , testgroupid
+                , routeid
+                , routename
 
           ,[RecordEffectiveStartDate] as Start_Date
           ,[RecordEffectiveEndDate] as End_Date
@@ -148,7 +150,9 @@ SELECT ABS(CAST(CAST(
 	, NULL AS ProductionType
 	, NULL AS BaseItemProduct
     , NULL AS testgroupid
-
+    , NULL AS routeid
+    , NULL AS routename
+    
       ,l.[RecordEffectiveStartDate] AS Start_Date
       ,l.[RecordEffectiveEndDate]   AS End_Date
       ,l.[RecordStatus]             AS Record_Status

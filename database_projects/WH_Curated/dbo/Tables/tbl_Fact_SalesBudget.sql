@@ -1,5 +1,5 @@
 
-CREATE TABLE [dbo].[mtbl_EDW_Fact_SalesBudget](
+CREATE TABLE [dbo].[tbl_Fact_SalesBudget](
 	[CMPNY] [varchar](8000) NULL,
 	[SalesLine_Status] [varchar](8000) NULL,
 	[DATE] [datetime2](3) NULL,
@@ -29,9 +29,10 @@ CREATE TABLE [dbo].[mtbl_EDW_Fact_SalesBudget](
 	[Legal_EntityKey] [bigint] NOT NULL,
 	[EmployeeKey] [bigint] NULL,
 	[MarketSegmentationKey] [bigint] NOT NULL
-) 
+)
 GO
 
-/****** Object:  Index [ClusteredIndex]    Script Date: 8/20/2026 9:45:41 AM ******/
-CREATE CLUSTERED COLUMNSTORE INDEX [ClusteredIndex] ON [dbo].[mtbl_EDW_Fact_SalesBudget] WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0, DATA_COMPRESSION = COLUMNSTORE) 
+/****** Object:  Index [ClusteredIndex]    Script Date: 8/20/2026 9:45:28 AM ******/
+CREATE CLUSTERED COLUMNSTORE INDEX [ClusteredIndex] ON [dbo].[tbl_Fact_SalesBudget] WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0, DATA_COMPRESSION = COLUMNSTORE)
 GO
+

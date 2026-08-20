@@ -36,6 +36,8 @@ SELECT b.[CMPNY]
 	, b.[Legal_EntityKey]
 	, b.[EmployeeKey]
 	, b.[MarketSegmentationKey]
+	, COALESCE(dsc.StandardCostKey, -1) StandardCostKey
+
 FROM WH_Curated.dbo.tbl_legacy_budget_data b
 
 ---- ---- TXN-BASIS RATE JOINS (FROM SL.currencycode) ---- ----
@@ -50,6 +52,15 @@ LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
 		AND erTxnCNY.tocurrencycode   = 'CNY'
 		AND erTxnCNY.exchangeratetype = 'Default global rate'
 		AND b.[DATE] between erTxnCNY.validfrom and erTxnCNY.validto
+		
+LEFT JOIN WH_Transform.dbo.tbl_DIM_Product dp
+	ON b.[ProductKey] = dp.ProductKey
+		
+LEFT JOIN WH_Curated.dbo.mtbl_EDW_Dim_StandardCost dsc
+	ON b.[ProductID] = dsc.Product_ID
+		AND b.CMPNY = dsc.CMPNY
+		AND dp.DefaultInventorySiteID = dsc.siteid
+		AND b.[DATE] between dsc.activationdate and dsc.enddate --dsc.RecordEffectiveStartDate and dsc.RecordEffectiveEndDate
 
 
 union all
@@ -95,6 +106,7 @@ SELECT CONVERT(varchar(20), b.CMPNY) CMPNY
 	, ISNULL(dle.Legal_EntityKey, -1) Legal_EntityKey
 	, COALESCE(/*de2.EmployeeKey,*/ de.EmployeeKey, -1) as EmployeeKey
 	, ISNULL(dmsc.MarketSegmentationKey, -1) MarketSegmentationKey
+	, COALESCE(dsc.StandardCostKey, -1) StandardCostKey
 
 FROM WH_Raw.dbo.Budget_2026 b
 
@@ -145,3 +157,9 @@ LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
 		AND erTxnCNY.tocurrencycode   = 'CNY'
 		AND erTxnCNY.exchangeratetype = 'Default global rate'
 		AND CONVERT(datetime2(3),convert(char(8), b.DateKey),112) between erTxnCNY.validfrom and erTxnCNY.validto
+		
+LEFT JOIN WH_Curated.dbo.mtbl_EDW_Dim_StandardCost dsc
+	ON COALESCE(x.D365_ProductID, case when trim(b.ProductID)='NULL' then NULL ELSE b.ProductID  end) = dsc.Product_ID
+		AND CONVERT(varchar(20), b.CMPNY) = dsc.CMPNY
+		AND dpc.DefaultInventorySiteID = dsc.siteid
+		AND CONVERT(datetime2(3),convert(char(8), b.DateKey),112) between dsc.activationdate and dsc.enddate --dsc.RecordEffectiveStartDate and dsc.RecordEffectiveEndDate

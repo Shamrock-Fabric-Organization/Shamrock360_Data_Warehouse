@@ -2,7 +2,7 @@
 
 --USE WH_Transform
 
-CREATE   VIEW tbl_Fact_CustomerPackingSlipTransactions
+CREATE OR ALTER  VIEW tbl_Fact_CustomerPackingSlipTransactions
 AS
 WITH PackingSlipLines AS (
     SELECT
@@ -10,6 +10,7 @@ WITH PackingSlipLines AS (
         cpst.SALESID,
         cpst.ITEMID,
         cpst.LINENUM,
+        cpst.salesunit                                       AS ShippedUnit,
         cpst.QTY                                             AS ShippedQty,
         cpst.PACKINGSLIPID,
         cpsj.DELIVERYDATE                                    AS ActualShipDate,
@@ -53,7 +54,21 @@ SELECT
     ps.inventbatchid,
     ps.ActualShipDate,
     ps.EffectiveShipDate EstimatedDate,
+    ps.ShippedUnit,
     ps.ShippedQty Delivered,
+
+    CASE
+        WHEN ps.ShippedUnit = 'lb' THEN 1                                               -- already in LB
+        WHEN UOMC_lb.UOMConversionFactor IS NOT NULL THEN UOMC_lb.UOMConversionFactor  -- direct sales-unit -> LB conversion
+        ELSE (case when ps.ShippedUnit = 'kg' then 1 else UOMC_kg.UOMConversionFactor end) * 2.20462262185 -- fallback: convert KG -> LB (1 / 0.45359237)
+    END * ps.ShippedQty      Delivered_LBs,
+
+    CASE
+        WHEN ps.ShippedUnit = 'kg' THEN 1                                               -- already in KG
+        WHEN UOMC_kg.UOMConversionFactor IS NOT NULL THEN UOMC_kg.UOMConversionFactor  -- direct sales-unit -> KG conversion
+        ELSE (case when ps.ShippedUnit = 'lb' then 1 else UOMC_lb.UOMConversionFactor end ) * 0.45359237  -- fallback: convert LBs -> KG
+    END * ps.ShippedQty      Delivered_KGs,
+
     DATEDIFF(day, ps.EffectiveShipDate, ps.ActualShipDate)        AS DayVariance
     ,ps.SALESLINESHIPPINGDATECONFIRMED
     ,ps.SALESLINESHIPPINGDATEREQUESTED
@@ -115,6 +130,21 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_CustomerPackingSlip dcps
 	ON ps.PACKINGSLIPID = dcps.CustomerPackingSlipId
 		AND ps.dataareaid = dcps.CMPNY
 		AND dcps.RecordStatus=1
+
+
+JOIN WH_Raw.dbo.InventTable IT
+	ON ps.itemid = IT.itemid
+		AND ps.dataareaid = IT.dataareaid
+
+LEFT JOIN WH_Raw.dbo.vwUnitOfMeasureConversion UOMC_lb
+    ON IT.product = UOMC_lb.product
+	    AND ps.ShippedUnit = UOMC_lb.SYMBOLFROM
+		AND UOMC_lb.SYMBOLTO = 'lb'
+ 
+ LEFT JOIN WH_Raw.dbo.vwUnitOfMeasureConversion UOMC_kg
+     ON IT.product = UOMC_kg.product
+         AND ps.ShippedUnit = UOMC_kg.SYMBOLFROM
+         AND UOMC_kg.SYMBOLTO = 'kg'
 
 
 

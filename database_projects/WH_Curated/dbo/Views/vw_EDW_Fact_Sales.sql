@@ -265,10 +265,10 @@ Union ALL
 				+'-'+ COALESCE(y.D365_CustomerID, s.CustomerID, 'UnknownCustomer')
 				+'-'+ COALESCE(x.D365_ProductID, s.Product, 'UnknownProduct')
 		END CPCID2
-		,case when isnull(dpc.isphantom,'') = 'Yes'	
+		,TRIM(case when isnull(dpc.isphantom,'') = 'Yes'	
 			THEN s.Product   
 			ELSE COALESCE(x.D365_ProductID, s.Product)
-			END as ProductID2
+			END) as ProductID2
 	, dpc.IsPhantom  IsPhantom2
 
 
@@ -658,10 +658,10 @@ SELECT  ABS(CAST(CAST(
 					+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
 					+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 
 		END CPCID2
-		,case when isnull(dpc.isphantom,'') = 'Yes'	
+		,TRIM(case when isnull(dpc.isphantom,'') = 'Yes'	
 			THEN f.Product   
 			ELSE COALESCE(x.D365_ProductID, f.Product)
-			END as ProductID2
+			END) as ProductID2
 	, dpc.IsPhantom  IsPhantom2
 
 
@@ -1021,10 +1021,10 @@ SELECT  ABS(CAST(CAST(
 				+'-'+ COALESCE(Trim(f.[Customer No]) + '000000', 'UnknownCustomer')
 				+'-'+ COALESCE(x.D365_ProductID, Trim(f.[Product Name]), 'UnknownProduct') 
 		END CPCID2
-		,case when isnull(dpc.isphantom,'') = 'Yes'	
+		,TRIM(case when isnull(dpc.isphantom,'') = 'Yes'	
 			THEN f.[Product Name]   
 			ELSE COALESCE(x.D365_ProductID, f.[Product Name])
-			END as ProductID2
+			END) as ProductID2
 	, dpc.IsPhantom  IsPhantom2
 
 
@@ -1357,10 +1357,10 @@ SELECT  ABS(CAST(CAST(
 					+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
 					+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 
 		END CPCID2
-		,case when isnull(dpc.isphantom,'') = 'Yes'	
+		,TRIM(case when isnull(dpc.isphantom,'') = 'Yes'	
 			THEN f.Product   
 			ELSE COALESCE(x.D365_ProductID, f.Product)
-			END as ProductID2
+			END) as ProductID2
 	, dpc.IsPhantom  IsPhantom2
 
 
@@ -1718,10 +1718,10 @@ SELECT  ABS(CAST(CAST(
 				+'-'+ COALESCE(Trim(f.[Customer No]) + '000000', 'UnknownCustomer')
 				+'-'+ COALESCE(x.D365_ProductID, Trim(f.[Product Name]), 'UnknownProduct') 
 		END CPCID2
-		,case when isnull(dpc.isphantom,'') = 'Yes'	
+		,TRIM(case when isnull(dpc.isphantom,'') = 'Yes'	
 			THEN f.[Product Name]   
 			ELSE COALESCE(x.D365_ProductID, f.[Product Name])
-			END as ProductID2
+			END) as ProductID2
 	, dpc.IsPhantom  IsPhantom2
 
 
@@ -2232,10 +2232,10 @@ SELECT  ABS(CAST(CAST(
 					+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
 					+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 
 		END CPCID2
-		,case when isnull(dpc.isphantom,'') = 'Yes'	
+		,TRIM(case when isnull(dpc.isphantom,'') = 'Yes'	
 			THEN f.Product   
 			ELSE COALESCE(x.D365_ProductID, f.Product)
-			END as ProductID2
+			END) as ProductID2
 	, dpc.IsPhantom  IsPhantom2
 
 
@@ -2595,10 +2595,10 @@ SELECT  ABS(CAST(CAST(
 				+'-'+ COALESCE(Trim(f.[Customer No]) + '000000', 'UnknownCustomer')
 				+'-'+ COALESCE(x.D365_ProductID, Trim(f.[Product Name]), 'UnknownProduct') 
 		END CPCID2
-		,case when isnull(dpc.isphantom,'') = 'Yes'	
+		,TRIM(case when isnull(dpc.isphantom,'') = 'Yes'	
 			THEN f.[Product Name]   
 			ELSE COALESCE(x.D365_ProductID, f.[Product Name])
-			END as ProductID2
+			END) as ProductID2
 	, dpc.IsPhantom  IsPhantom2
 
 

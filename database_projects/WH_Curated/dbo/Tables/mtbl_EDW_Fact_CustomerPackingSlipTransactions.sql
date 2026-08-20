@@ -1,29 +1,37 @@
-CREATE TABLE [dbo].[mtbl_EDW_Fact_CustomerPackingSlipTransactions] (
+CREATE TABLE [dbo].[mtbl_EDW_Fact_CustomerPackingSlipTransactions](
+	[CMPNY] [varchar](8000) NULL,
+	[SALESID] [varchar](8000) NULL,
+	[ITEMID] [varchar](8000) NULL,
+	[LINENUM] [decimal](38, 16) NULL,
+	[PACKINGSLIPID] [varchar](8000) NULL,
+	[CustomerId] [varchar](8000) NULL,
+	[SalesCategory] [varchar](8000) NULL,
+	[SiteID] [varchar](8000) NULL,
+	[Warehouse] [varchar](8000) NULL,
+	[inventbatchid] [varchar](8000) NULL,
+	[ActualShipDate] [datetime2](6) NULL,
+	[EstimatedDate] [datetime2](6) NULL,
+	[ShippedUnit] [varchar](8000) NULL,
+	[Delivered] [decimal](38, 6) NULL,
+	[Delivered_LBs] [decimal](38, 6) NULL,
+	[Delivered_KGs] [decimal](38, 6) NULL,
+	[DayVariance] [int] NULL,
+	[SALESLINESHIPPINGDATECONFIRMED] [datetime2](6) NULL,
+	[SALESLINESHIPPINGDATEREQUESTED] [datetime2](6) NULL,
+	[SalesOrderCreatedDateTime] [datetime2](6) NULL,
+	[HistoricCustomerKey] [bigint] NOT NULL,
+	[CustomerKey] [bigint] NOT NULL,
+	[HistoricProductKey] [bigint] NOT NULL,
+	[ProductKey] [bigint] NOT NULL,
+	[Legal_EntityKey] [bigint] NOT NULL,
+	[SiteKey] [bigint] NOT NULL,
+	[WarehouseKey] [bigint] NOT NULL,
+	[SalesOrderKey] [bigint] NOT NULL,
+	[CustomerPackingSlipKey] [bigint] NOT NULL
+)
+GO
 
-	[CMPNY] varchar(8000) NULL, 
-	[SALESID] varchar(8000) NULL, 
-	[ITEMID] varchar(8000) NULL, 
-	[LINENUM] decimal(38,16) NULL, 
-	[PACKINGSLIPID] varchar(8000) NULL, 
-	[CustomerId] varchar(8000) NULL, 
-	[SalesCategory] varchar(8000) NULL, 
-	[SiteID] varchar(8000) NULL, 
-	[Warehouse] varchar(8000) NULL, 
-	[inventbatchid] varchar(8000) NULL, 
-	[ActualShipDate] datetime2(6) NULL, 
-	[EstimatedDate] datetime2(6) NULL, 
-	[Delivered] decimal(38,6) NULL, 
-	[DayVariance] int NULL, 
-	[SALESLINESHIPPINGDATECONFIRMED] datetime2(6) NULL, 
-	[SALESLINESHIPPINGDATEREQUESTED] datetime2(6) NULL, 
-	[SalesOrderCreatedDateTime] datetime2(6) NULL, 
-	[HistoricCustomerKey] bigint NOT NULL, 
-	[CustomerKey] bigint NOT NULL, 
-	[HistoricProductKey] bigint NOT NULL, 
-	[ProductKey] bigint NOT NULL, 
-	[Legal_EntityKey] bigint NOT NULL, 
-	[SiteKey] bigint NOT NULL, 
-	[WarehouseKey] bigint NOT NULL, 
-	[SalesOrderKey] bigint NOT NULL, 
-	[CustomerPackingSlipKey] bigint NOT NULL
-);
+/****** Object:  Index [ClusteredIndex]    Script Date: 8/20/2026 2:50:37 PM ******/
+CREATE CLUSTERED COLUMNSTORE INDEX [ClusteredIndex] ON [dbo].[mtbl_EDW_Fact_CustomerPackingSlipTransactions] WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0, DATA_COMPRESSION = COLUMNSTORE) 
+GO
+

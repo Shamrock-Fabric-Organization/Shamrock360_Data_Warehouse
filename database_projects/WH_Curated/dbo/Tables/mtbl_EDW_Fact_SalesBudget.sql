@@ -28,7 +28,8 @@ CREATE TABLE [dbo].[mtbl_EDW_Fact_SalesBudget](
 	[ProductKey] [bigint] NOT NULL,
 	[Legal_EntityKey] [bigint] NOT NULL,
 	[EmployeeKey] [bigint] NULL,
-	[MarketSegmentationKey] [bigint] NOT NULL
+	[MarketSegmentationKey] [bigint] NOT NULL,
+	[StandardCostKey] [bigint] NOT NULL
 ) 
 GO
 

@@ -59,8 +59,9 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_Product dp
 LEFT JOIN WH_Curated.dbo.mtbl_EDW_Dim_StandardCost dsc
 	ON b.[ProductID] = dsc.Product_ID
 		AND b.CMPNY = dsc.CMPNY
-		AND dp.DefaultInventorySiteID = dsc.siteid
-		AND b.[DATE] between dsc.activationdate and dsc.enddate --dsc.RecordEffectiveStartDate and dsc.RecordEffectiveEndDate
+		--AND dp.DefaultInventorySiteID = dsc.siteid
+		AND dsc.Source <> 'D365FO'
+		--AND b.[DATE] between dsc.activationdate and dsc.enddate --dsc.RecordEffectiveStartDate and dsc.RecordEffectiveEndDate
 
 
 union all

@@ -85,5 +85,7 @@ WHERE
 ----pjt.prodid = 'PBO0001075'
 ----and    
 pjt.journaltype_$Label = 'ReportFinished'
+AND pjt.posted = 1 -- ONLY INCLUDE POSTED JOURNALS
+
 --ORDER BY pjp.ProdId, pjp.JournalId, pt.ItemId
 --ORDER BY pjp.ProdId, pjp.JournalId, pt.ItemId

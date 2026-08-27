@@ -34,7 +34,7 @@ SELECT
     , f.Txn_USD_Rate_Missing
     , f.Txn_EUR_Rate_Missing
     , f.Txn_CNY_Rate_Missing
-FROM tbl_Fact_DemandForecastDetails AS f
+FROM tbl_ForecastSales AS f
 where f.Model = 'Forecast'
 
 UNION ALL

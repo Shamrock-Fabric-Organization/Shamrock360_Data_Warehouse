@@ -2,12 +2,10 @@
 
 
 
-CREATE OR ALTER VIEW [dbo].[tbl_Fact_DemandForecastDetails]
+CREATE OR ALTER VIEW [dbo].[tbl_ForecastSales]
 AS
 SELECT
-	fs.Snapshot_Date
-	, fs.Snapshot_Date_Key
-    , CAST(NULL AS VARCHAR(100)) AS Task_Name          -- display: wbsTaskName() -> ProjWBSEstimatesView (an AOT VIEW, not extracted to the lake). 
+    CAST(NULL AS VARCHAR(100)) AS Task_Name          -- display: wbsTaskName() -> ProjWBSEstimatesView (an AOT VIEW, not extracted to the lake). 
             --NULL for all non-project forecast lines (empty ProjId/ActivityNumber). 
             --Reconstruct from the view definition only if project forecasts are needed.
     , fs.Dataareaid            AS CMPNY
@@ -68,7 +66,7 @@ SELECT
 	, CASE WHEN fs.Currency      <> 'CNY' AND erTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END  Txn_CNY_Rate_Missing
 
 
-FROM WH_Transform.dbo.tbl_forecastsales_snapshot AS fs
+FROM WH_Raw.dbo.forecastsales AS fs
 
 LEFT JOIN WH_Raw.dbo.inventdim AS id
     ON  id.[inventdimid] = fs.[InventDimId]
@@ -166,4 +164,3 @@ LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
 		AND erTxnCNY.tocurrencycode   = 'CNY'
 		AND erTxnCNY.exchangeratetype = 'Default global rate'
 		AND fs.[StartDate] between erTxnCNY.validfrom and erTxnCNY.validto
---WHERE fs.modelid = 'Forecast'

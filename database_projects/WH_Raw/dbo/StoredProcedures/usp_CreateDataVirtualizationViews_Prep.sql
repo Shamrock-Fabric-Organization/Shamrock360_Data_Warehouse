@@ -9,34 +9,7 @@
 /**************************************************************************************************************************************************/
 /**************************************************************************************************************************************************/
 
-
-
-/*************************************************************
-** Proc: [dbo].[usp_CreateDataVirtualizationViews_Prep]
-** Author: David Shaffer
-** Date: May 2025
-** Description: RENAME [ID] TO [SNL_ID] AND [FNO_ID] TO [ID] for EDL to SL for TimeXtender migration compatibility
-**              Create additional views needed for TimeXtender BIA Baseline project
-		This is for TimeXtender migration compatibility ONLY, NOT NEW INSTALLS
-
-** Parameters: 
-	passed parameters
-		@StorageDS - Synapse / dataverse connection
-	returned parameters
-		none
-
-** Revisions:
-Date:   		Author:      		Description:
-------------- 	--------------		---------------------------------------------------------------------------------
-06/06/2025		David Shaffer		created to get around field renames 
-
-** Example: 
-	exec [dbo].[usp_CreateDataVirtualizationViews_Prep] 'dataverse-gferpuat-unqd5e157ade8f5ef11b0157c1e521c7'
-
-**************************************************************/
-
-
-CREATE             PROCEDURE [dbo].[usp_CreateDataVirtualizationViews_Prep] 
+CREATE OR ALTER            PROCEDURE [dbo].[usp_CreateDataVirtualizationViews_Prep] 
 AS
 
 	/***********************************************************************************/

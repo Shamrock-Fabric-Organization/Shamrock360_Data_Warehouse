@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) 4739477A5B6B64821A6155E5522B1A98FDDBE62C6297E17B371E32D3E6AD08C7
 /****** Object:  View [dbo].[vw_stage_NewProducts]    Script Date: 1/21/2026 2:17:26 PM ******/
 
 

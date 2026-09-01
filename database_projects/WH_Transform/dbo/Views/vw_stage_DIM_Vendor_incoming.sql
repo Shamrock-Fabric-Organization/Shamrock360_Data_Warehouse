@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) D71B9F15392AAC8339789EAFFDA318F9F077E42BA9B0F024EECC3820695AA3BA
 
 --drop  VIEW dbo.[vw_stage_DIM_Vendor_incoming]	
 

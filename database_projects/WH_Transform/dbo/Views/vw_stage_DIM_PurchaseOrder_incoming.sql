@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) 394FEC492A053B0436905570A5BF86AA3D1494E16CF48803E26AB42BD262C475
 /****** Object:  View [dbo].[vw_stage_DIM_PurchaseOrder_incoming]    Script Date: 2/3/2026 10:36:37 AM ******/
 
 

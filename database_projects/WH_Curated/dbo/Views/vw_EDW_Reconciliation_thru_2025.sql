@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) 244909CBBF945B52B251692DB9983D3977B1F145454CE8345F87FA1E1C0895EC
 -- ===============================================================
 -- Create View template for Azure Synapse SQL Analytics on-demand
 -- ===============================================================

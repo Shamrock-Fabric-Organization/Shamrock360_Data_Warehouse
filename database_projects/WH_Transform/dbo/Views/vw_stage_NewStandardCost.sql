@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) 03507983082C89750846408A8504EC1F887EFE673070F20B98F2B8BD1F5DABF8
 --use WH_Transform
 
 CREATE     VIEW [dbo].[vw_stage_NewStandardCost]

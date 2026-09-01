@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) 956EB3F164770AFF2585E641535E272B08F234A178C9BCB8EC112A300BF0A966
 /****** Object:  View [dbo].[tbl_Fact_SupplyChain_JobCard]    Script Date: 2/24/2026 12:50:07 PM ******/
 
 

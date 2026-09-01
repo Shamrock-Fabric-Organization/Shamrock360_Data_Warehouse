@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) C38C2737C81A5EBDB9A1A16DA1773F629C3AD30CBFB4D29569FB2FFE215CD907
 /****** Object:  View [dbo].[tbl_Fact_PurchaseOrderItemConsumption]    Script Date: 3/6/2026 1:54:14 PM ******/
 --use WH_Transform
 --go

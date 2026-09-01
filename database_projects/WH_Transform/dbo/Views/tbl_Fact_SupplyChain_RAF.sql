@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) 82A8CF7057E2B93EC396E139771C03279D746CCD2435BD2D3A3D40E60113AF37
 CREATE  OR ALTER     VIEW [dbo].[tbl_Fact_SupplyChain_RAF] 
 AS 
 with workcenterdata as

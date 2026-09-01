@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) D50B48AB6BCB69930CC57E42228DCD753F50C559652F30229F00A3AF2B5AE640
 /****** Object:  View [dbo].[vw_EDW_Dim_Customer]    Script Date: 5/4/2026 10:21:26 AM ******/
 /****** Object:  View [dbo].[vw_EDW_Dim_Customer]    Script Date: 5/1/2026 3:19:43 PM ******/
 

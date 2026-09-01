@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) 73D194995B201602AC0E85D0F089470837DBDF399C118E8FCD67D479CEF2B29A
 /****** Object:  View [dbo].[vw_EDW_Fact_Sales]    Script Date: 6/10/2026 3:15:46 PM ******/
 
 

@@ -1,12 +1,3 @@
-/****** Object:  View [dbo].[vw_EDW_Dim_Customer]    Script Date: 5/4/2026 10:21:26 AM ******/
-/****** Object:  View [dbo].[vw_EDW_Dim_Customer]    Script Date: 5/1/2026 3:19:43 PM ******/
-
-
-/****** Object:  View [dbo].[vw_EDW_Dim_Customer]    Script Date: 12/19/2025 3:08:17 PM ******/
-/****** Object:  View [dbo].[vw_EDW_Dim_Customer]    Script Date: 12/19/2025 2:33:16 PM ******/
-/****** Object:  View [dbo].[vw_EDW_Dim_Customer]    Script Date: 12/19/2025 1:42:03 PM ******/
-
---drop   View [dbo].[vw_EDW_Dim_Customer] 
 
 
 CREATE               View [dbo].[vw_EDW_Dim_Customer] 

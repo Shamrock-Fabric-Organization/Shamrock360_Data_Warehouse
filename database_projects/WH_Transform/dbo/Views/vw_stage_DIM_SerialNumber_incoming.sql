@@ -1,8 +1,3 @@
-/****** Object:  View [dbo].[vw_stage_DIM_SerialNumber_incoming]    Script Date: 4/17/2026 2:31:30 PM ******/
-/****** Object:  View [dbo].[vw_stage_DIM_SerialNumber_incoming]    Script Date: 3/10/2026 9:55:52 AM ******/
-/****** Object:  View [dbo].[vw_stage_DIM_SerialNumber_incoming]    Script Date: 3/9/2026 10:44:31 AM ******/
-/****** Object:  View [dbo].[vw_stage_DIM_SerialNumber_incoming]    Script Date: 9/2/2025 1:02:23 PM ******/
---drop  VIEW dbo.vw_stage_DIM_SerialNumber_incoming	
 
 CREATE           VIEW [dbo].[vw_stage_DIM_SerialNumber_incoming]			
 AS			

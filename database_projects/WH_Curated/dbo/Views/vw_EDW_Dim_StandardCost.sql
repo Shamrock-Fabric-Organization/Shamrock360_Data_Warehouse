@@ -1,7 +1,3 @@
-/****** Object:  View [dbo].[vw_EDW_Dim_StandardCost]    Script Date: 5/28/2026 10:58:48 AM ******/
-/****** Object:  View [dbo].[vw_EDW_Dim_StandardCost]    Script Date: 5/20/2026 11:39:49 AM ******/
-/****** Object:  View [dbo].[vw_EDW_Dim_StandardCost]    Script Date: 4/3/2026 9:03:31 AM ******/
-/****** Object:  View [dbo].[vw_EDW_Dim_StandardCost]    Script Date: 3/13/2026 3:29:38 PM ******/
 
 CREATE           VIEW [dbo].[vw_EDW_Dim_StandardCost]
 AS

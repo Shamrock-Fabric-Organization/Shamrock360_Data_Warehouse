@@ -1,4 +1,3 @@
-/****** Object:  View [dbo].[vw_stage_DIM_QualityOrder_incoming]    Script Date: 5/27/2026 8:28:07 AM ******/
 
 CREATE       VIEW [dbo].[vw_stage_DIM_QualityOrder_incoming]			
 AS			

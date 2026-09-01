@@ -1,5 +1,3 @@
-/****** Object:  View [dbo].[vw_EDW_Dim_Product]    Script Date: 5/4/2026 12:14:39 PM ******/
-
 
 CREATE OR ALTER            View [dbo].[vw_EDW_Dim_Product] 
 	--WITH SCHEMABINDING 

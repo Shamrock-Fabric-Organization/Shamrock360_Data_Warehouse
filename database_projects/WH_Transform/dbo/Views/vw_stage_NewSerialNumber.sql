@@ -1,6 +1,3 @@
-/****** Object:  View [dbo].[vw_stage_NewSerialNumber]    Script Date: 4/17/2026 2:31:40 PM ******/
-/****** Object:  View [dbo].[vw_stage_NewSerialNumber]    Script Date: 3/10/2026 10:14:57 AM ******/
-
 
 CREATE         VIEW [dbo].[vw_stage_NewSerialNumber]
 AS

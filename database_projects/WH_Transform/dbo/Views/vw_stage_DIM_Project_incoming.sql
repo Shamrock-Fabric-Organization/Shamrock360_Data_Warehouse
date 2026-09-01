@@ -1,8 +1,5 @@
 --use WH_Transform
 
-/****** Object:  View [dbo].[vw_stage_DIM_Project_incoming]    Script Date: 3/30/2026 ******/
---drop  VIEW dbo.[vw_stage_DIM_Project_incoming]
-
 CREATE     VIEW [dbo].[vw_stage_DIM_Project_incoming]
 AS
 SELECT

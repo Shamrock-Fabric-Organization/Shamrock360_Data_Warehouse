@@ -1,4 +1,4 @@
-/****** Object:  View [dbo].[tbl_Fact_TradeAgreementDetails]    Script Date: 6/2/2026 10:32:06 AM ******/
+
 --USE WH_Transform
 
 

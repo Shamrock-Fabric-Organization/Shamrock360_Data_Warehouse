@@ -1,5 +1,3 @@
-/****** Object:  View [dbo].[vw_stage_NewVendor]    Script Date: 1/21/2026 12:07:18 PM ******/
-
 
     -- Create a view to identify new records not present in the current dimension --needed because the CTAS does not allow the logic used
 CREATE       VIEW [dbo].[vw_stage_NewVendor]

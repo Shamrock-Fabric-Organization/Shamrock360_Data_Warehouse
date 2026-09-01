@@ -1,11 +1,3 @@
-/****** Object:  View [dbo].[vw_stage_DIM_Employee_incoming]    Script Date: 5/21/2026 12:47:30 PM ******/
-
-
---select * from [vw_stage_DIM_Employee_incoming]
---order by 2
-
-
---drop  VIEW dbo.[vw_stage_DIM_Employee_incoming]	
 
 CREATE         VIEW [dbo].[vw_stage_DIM_Employee_incoming]			
 AS			

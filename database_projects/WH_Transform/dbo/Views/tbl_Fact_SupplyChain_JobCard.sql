@@ -1,7 +1,3 @@
-/****** Object:  View [dbo].[tbl_Fact_SupplyChain_JobCard]    Script Date: 2/24/2026 12:50:07 PM ******/
-
-
-
 
 
 CREATE      VIEW [dbo].[tbl_Fact_SupplyChain_JobCard] 

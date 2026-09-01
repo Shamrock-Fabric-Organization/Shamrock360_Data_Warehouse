@@ -1,5 +1,3 @@
-/****** Object:  View [dbo].[vw_EDW_Fact_Sales]    Script Date: 6/10/2026 3:15:46 PM ******/
-
 
 
 CREATE OR ALTER       view [dbo].[vw_EDW_Fact_Sales] as  

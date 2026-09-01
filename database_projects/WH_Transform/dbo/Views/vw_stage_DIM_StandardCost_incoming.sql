@@ -1,21 +1,3 @@
-/****** Object:  View [dbo].[vw_stage_DIM_StandardCost_incoming]    Script Date: 5/19/2026 4:04:15 PM ******/
--- =============================================================================
--- vw_stage_DIM_StandardCost_incoming v10
--- Object:  View [dbo].[vw_stage_DIM_StandardCost_incoming]
--- Changes from v9:
---   1. expBOM_data: removed Snapshot_Date_Key = today filter — ALL activation
---      dates are now included (delta guard is in the snapshot proc, not here).
---      Added ACTIVATIONDATE to GROUP BY, SELECT, and HASHBYTES input.
---   2. IIP path: replaced BasePrice + LatestActivation CTEs with
---      vwInventItemPriceAgg (already deduplicated by MAX(createddatetime)).
---      All activation dates included — LatestActivation restriction removed.
---      Added ActivationDate to SELECT.
---   3. IIP_only_costs EXCEPT: uses CMPNY + Product_ID + ActivationDate.
---      SiteID intentionally excluded — IIP fallback applies when there is no
---      BOM data for that CMPNY + Product_ID + ActivationDate regardless of site.
---   4. Unknown/default row: NULL ActivationDate added to maintain column parity.
--- Natural key downstream: CMPNY + Product_ID + SiteID + ActivationDate
--- =============================================================================
 
 CREATE     VIEW [dbo].[vw_stage_DIM_StandardCost_incoming]
 AS

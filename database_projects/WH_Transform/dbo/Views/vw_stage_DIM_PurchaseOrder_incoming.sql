@@ -1,8 +1,3 @@
-/****** Object:  View [dbo].[vw_stage_DIM_PurchaseOrder_incoming]    Script Date: 2/3/2026 10:36:37 AM ******/
-
-
-
---drop  VIEW dbo.[vw_stage_DIM_PurchaseOrder_incoming]	
 
 CREATE        VIEW [dbo].[vw_stage_DIM_PurchaseOrder_incoming]
 as

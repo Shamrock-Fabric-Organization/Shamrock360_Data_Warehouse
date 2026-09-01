@@ -1,12 +1,3 @@
-/****** Object:  View [dbo].[vw360_Dim_Product]    Script Date: 5/4/2026 12:14:12 PM ******/
-/****** Object:  View [dbo].[vw360_Dim_Product]    Script Date: 5/1/2026 2:49:26 PM ******/
-
-
-
-/****** Object:  View [dbo].[vw360_Dim_Product]    Script Date: 1/21/2026 2:51:49 PM ******/
-
---drop view [vw360_Dim_Product]
-
 
 
 CREATE            View [dbo].[vw360_Dim_Product] 

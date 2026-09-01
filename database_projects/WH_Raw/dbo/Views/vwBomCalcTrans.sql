@@ -1,4 +1,3 @@
-/****** Object:  View [dbo].[vwBomCalcTrans]    Script Date: 3/23/2026 12:49:56 PM ******/
 
 
 CREATE     view [dbo].[vwBomCalcTrans]

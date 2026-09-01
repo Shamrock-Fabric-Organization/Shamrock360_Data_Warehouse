@@ -1,13 +1,5 @@
 
 
-
-
-
-
-
-
-
-/****** Object:  View [dbo].[vw360_Fact_Sales]    Script Date: 9/14/2025 5:35:25 PM ******/
 CREATE      view [dbo].[vw360_Fact_Sales] as
 --------------------------------------------------------------------------------
 -- Section 0: Impute Zero Sales US/Tolling/BVBA/TEDA [ Closed Order]

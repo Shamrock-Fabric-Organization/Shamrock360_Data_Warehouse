@@ -1,5 +1,3 @@
-/****** Object:  View [dbo].[tbl_Fact_SupplyChain_PickList]    Script Date: 2/24/2026 12:50:18 PM ******/
-/****** Object:  View [dbo].[tbl_Fact_SupplyChain_PickList]    Script Date: 1/28/2026 1:41:25 PM ******/
 
 ----PickList Data
 CREATE        VIEW [dbo].[tbl_Fact_SupplyChain_PickList] 

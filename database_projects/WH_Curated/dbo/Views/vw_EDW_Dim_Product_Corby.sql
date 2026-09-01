@@ -1,14 +1,3 @@
-/****** Object:  View [dbo].[vw_EDW_Dim_Product_Corby]    Script Date: 5/4/2026 12:13:21 PM ******/
-/****** Object:  View [dbo].[vw_EDW_Dim_Product_Corby]    Script Date: 5/1/2026 2:49:51 PM ******/
-/****** Object:  View [dbo].[vw_EDW_Dim_Product_Corby]    Script Date: 3/6/2026 1:42:56 PM ******/
-
-
-
-/****** Object:  View [dbo].[vw_EDW_Dim_Product_Corby]    Script Date: 1/21/2026 2:51:33 PM ******/
-
-
---drop view [vw_EDW_Dim_Product_Corby]
-
 
 CREATE            View [dbo].[vw_EDW_Dim_Product_Corby] 
 	--WITH SCHEMABINDING 

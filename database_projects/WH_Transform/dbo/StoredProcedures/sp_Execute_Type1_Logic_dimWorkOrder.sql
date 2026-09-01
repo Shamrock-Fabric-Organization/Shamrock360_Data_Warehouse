@@ -1,7 +1,5 @@
 --use WH_Transform
 
-/****** Object:  StoredProcedure [dbo].[sp_Execute_Type1_Logic_dimWorkOrder]    Script Date: 2026-06-11 ******/
-
 CREATE OR ALTER  PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimWorkOrder]
 AS
 BEGIN

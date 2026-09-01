@@ -1,5 +1,3 @@
-/****** Object:  View [dbo].[tbl_Fact_SupplyChain_RAF]    Script Date: 3/11/2026 8:38:02 AM ******/
-/****** Object:  View [dbo].[tbl_Fact_SupplyChain_RAF]    Script Date: 2/24/2026 12:50:27 PM ******/
 
 --RAF data
 CREATE OR ALTER       VIEW [dbo].[tbl_Fact_SupplyChain_RAF_no_serialnumbers_for_validation] 

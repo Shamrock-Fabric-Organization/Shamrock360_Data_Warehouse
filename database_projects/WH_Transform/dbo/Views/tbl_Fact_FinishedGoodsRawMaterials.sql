@@ -1,5 +1,3 @@
-/****** Object:  View [dbo].[tbl_Fact_FinishedGoodsRawMaterials]    Script Date: 5/27/2026 2:12:04 PM ******/
-/****** Object:  View [dbo].[tbl_Fact_FinishedGoodsRawMaterials]    Script Date: 5/1/2026 9:10:30 AM ******/
 
 
 CREATE        VIEW [dbo].[tbl_Fact_FinishedGoodsRawMaterials] as

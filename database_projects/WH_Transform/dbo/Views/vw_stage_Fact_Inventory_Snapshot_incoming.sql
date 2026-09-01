@@ -1,10 +1,3 @@
-/****** Object:  View [dbo].[vw_stage_Fact_Inventory_Snapshot_incoming]    Script Date: 5/19/2026 4:18:30 PM ******/
-/****** Object:  View [dbo].[vw_stage_Fact_Inventory_Snapshot_incoming]    Script Date: 4/14/2026 9:39:36 AM ******/
-/****** Object:  View [dbo].[vw_stage_Fact_Inventory_Snapshot_incoming]    Script Date: 3/6/2026 1:56:23 PM ******/
-
-
-
-
 
 
 CREATE  OR ALTER         VIEW [dbo].[vw_stage_Fact_Inventory_Snapshot_incoming] AS 		

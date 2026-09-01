@@ -1,10 +1,3 @@
-/****** Object:  View [dbo].[tbl_Fact_Production_Batch_Orders]    Script Date: 2/24/2026 2:44:02 PM ******/
-
-/****** Object:  View [dbo].[vw_stage_DIM_ProductionBatchOrder_incoming]    Script Date: 2/11/2026 2:37:20 PM ******/
-/****** Object:  View [dbo].[vw_stage_DIM_Customer_incoming]    Script Date: 9/2/2025 1:02:23 PM ******/
---drop  VIEW dbo.[[tbl_Fact_Production_Batch_Orders]]	
-
-
 
 
 --Fact Production Orders

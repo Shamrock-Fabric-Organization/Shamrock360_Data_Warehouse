@@ -1,10 +1,8 @@
-/****** Object:  View [dbo].[vw_EDW_Dim_Account]    Script Date: 5/04/2026 10:20:39 AM ******/
-/****** Object:  View [dbo].[vw_EDW_Dim_Account]    Script Date: 5/01/2026 3:19:05 PM ******/
+
 /****** Adjustment: Included global legacy customer Script Date: 6/12/2026            ******/
---drop view [vw_EDW_Dim_Account]
 
 
-CREATE                          View [dbo].[vw_EDW_Dim_Account] 
+CREATE OR ALTER                        View [dbo].[vw_EDW_Dim_Account] 
 	--WITH SCHEMABINDING 
 		as
 

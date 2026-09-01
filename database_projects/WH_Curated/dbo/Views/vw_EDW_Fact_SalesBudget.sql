@@ -1,5 +1,3 @@
-/****** Object:  View [dbo].[vw_EDW_Fact_SalesBudget]    Script Date: 2/2/2026 1:21:38 PM ******/
-/****** Object:  View [dbo].[vw_EDW_Fact_SalesBudget]    Script Date: 1/26/2026 9:48:20 AM ******/
 
 DROP VIEW IF EXISTS [dbo].[vw_EDW_Fact_SalesBudget];
 /* This view was moved to the WH_tranform warehouse so that UoM and Exchange rate conversions 

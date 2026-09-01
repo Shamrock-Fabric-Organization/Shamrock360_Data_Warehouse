@@ -1,4 +1,4 @@
-/****** Object:  View [dbo].[tbl_Fact_PurchaseOrderItemConsumption]    Script Date: 3/6/2026 1:54:14 PM ******/
+
 --use WH_Transform
 --go
 

@@ -1,5 +1,3 @@
-/****** Object:  StoredProcedure [dbo].[sp_Execute_Type1_Logic_dimBudgetModel]    Script Date: 4/30/2026 ******/
-
 
 --USE WH_transform
 

@@ -1,7 +1,7 @@
 
 
 
-CREATE PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimForecastModel]
+CREATE OR ALTER PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimForecastModel]
 AS
 BEGIN
 	-- -- Drop intermediate objects --------------------------------------------
@@ -133,6 +133,9 @@ BEGIN
 	-- =========================================================================
 	-- Step 5: replace the DIM with the merged set
 	-- =========================================================================
+	BEGIN TRY
+	BEGIN TRAN;
+
 	DROP TABLE IF EXISTS tbl_DIM_ForecastModel;
 	
 	CREATE TABLE tbl_DIM_ForecastModel AS
@@ -147,6 +150,13 @@ BEGIN
 		,[RecordEffectiveEndDate]
 		,[RecordStatus]
 	FROM stage_tbl_DIM_ForecastModel_Final;
+		
+	COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+		THROW;
+	END CATCH
 
 	-- =========================================================================
 	-- Step 6: cleanup

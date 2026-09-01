@@ -1,4 +1,4 @@
-CREATE     PROCEDURE [dbo].[sp_Execute_SCD_Logic_dimPhantomProduct]
+CREATE OR ALTER    PROCEDURE [dbo].[sp_Execute_SCD_Logic_dimPhantomProduct]
 AS
 BEGIN
 	-- Drop intermediate objects if they exist
@@ -219,6 +219,8 @@ BEGIN
 		,recordeffectivestartdate
 
 	-- Step 7: Replace the DIM table with the updated records
+	BEGIN TRY
+    BEGIN TRAN;
 	-- Drop the original dimension table to replace with the updated one
 	DROP TABLE IF EXISTS tbl_dim_PhantomProduct;
 
@@ -226,7 +228,14 @@ BEGIN
 	CREATE TABLE tbl_dim_PhantomProduct AS
 	SELECT *
 	FROM stage_tbl_dim_PhantomProduct_Append;
-
+			
+    COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+		THROW;
+	END CATCH
+	
 	-- Step 8: Clean up intermediate objects used
 	-- Drop intermediate tables if they exist
 	DROP TABLE IF EXISTS stage_tbl_dim_PhantomProduct_New;

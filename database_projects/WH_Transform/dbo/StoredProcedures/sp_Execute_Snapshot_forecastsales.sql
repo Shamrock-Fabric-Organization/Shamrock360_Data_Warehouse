@@ -26,6 +26,9 @@ BEGIN
 		,*
 		FROM WH_Raw.dbo.forecastsales
 
+		BEGIN TRY
+		BEGIN TRAN;
+
 		-- Drop the original snapshot table to replace with the updated one
 		DROP TABLE IF EXISTS [tbl_forecastsales_Snapshot];
 
@@ -33,6 +36,13 @@ BEGIN
 		CREATE TABLE tbl_forecastsales_Snapshot AS
 		SELECT *
 		FROM stage_tbl_forecastsales_Snapshot_append;
+		
+		COMMIT TRAN;
+		END TRY
+		BEGIN CATCH
+			IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+			THROW;
+		END CATCH
 
 	END
 

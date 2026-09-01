@@ -82,7 +82,7 @@
 
 ================================================================================
 */
-CREATE     PROCEDURE [dbo].[sp_Build_ExplodedFormula_ByVersion]
+CREATE OR ALTER    PROCEDURE [dbo].[sp_Build_ExplodedFormula_ByVersion]
     @RunMode VARCHAR(20) = 'FULL'  --'INCREMENTAL'
 AS
 BEGIN
@@ -1227,6 +1227,9 @@ BEGIN
     -- current state of approved formula versions).
     -- LastChangedUtc: v1.0 sets to run timestamp on every refresh.
     -- =========================================================================
+	BEGIN TRY
+	BEGIN TRAN;
+
     TRUNCATE TABLE [dbo].[tbl_FormulaHash_Tracker];
 
     INSERT INTO [dbo].[tbl_FormulaHash_Tracker] (
@@ -1244,6 +1247,13 @@ BEGIN
         , CAST(GETUTCDATE() AS DATETIME2(3))
         , CAST(GETUTCDATE() AS DATETIME2(3))
     FROM stage_fml_current_hashes ch;
+		
+	COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+		THROW;
+	END CATCH
 
     -- =========================================================================
     -- CLEANUP — drop all stage tables (target table and tracker preserved)

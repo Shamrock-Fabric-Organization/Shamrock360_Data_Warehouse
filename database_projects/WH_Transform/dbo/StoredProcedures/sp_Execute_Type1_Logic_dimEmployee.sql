@@ -1,4 +1,4 @@
-CREATE   PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimEmployee]
+CREATE OR ALTER  PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimEmployee]
 AS
 BEGIN
     -- Drop intermediate objects if they exist
@@ -179,11 +179,21 @@ BEGIN
     -- --------------------------------------------------------
     -- Step 7: Replace DIM table with updated records
     -- --------------------------------------------------------
+	BEGIN TRY
+	BEGIN TRAN;
+
     DROP TABLE IF EXISTS tbl_DIM_Employee;
 
     CREATE TABLE tbl_DIM_Employee AS
     SELECT *
     FROM stage_tbl_DIM_Employee_Append
+		
+	COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+		THROW;
+	END CATCH
 
     -- --------------------------------------------------------
     -- Step 8: Clean up intermediate tables

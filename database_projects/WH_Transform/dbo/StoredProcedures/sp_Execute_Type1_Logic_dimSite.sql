@@ -1,4 +1,4 @@
-CREATE     PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimSite]
+CREATE OR ALTER    PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimSite]
 AS
 BEGIN
 	-- Drop intermediate objects if they exist
@@ -212,6 +212,9 @@ BEGIN
 		,recordeffectivestartdate
 
 	-- Step 7: Replace the DIM table with the updated records
+	BEGIN TRY
+	BEGIN TRAN;
+
 	-- Drop the original dimension table to replace with the updated one
 	DROP TABLE IF EXISTS tbl_DIM_Site;
 
@@ -219,6 +222,13 @@ BEGIN
 	CREATE TABLE tbl_DIM_Site AS
 	SELECT *
 	FROM stage_tbl_DIM_Site_Append;
+		
+	COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+		THROW;
+	END CATCH
 
 	-- Step 8: Clean up intermediate objects used
 	-- Drop intermediate tables if they exist

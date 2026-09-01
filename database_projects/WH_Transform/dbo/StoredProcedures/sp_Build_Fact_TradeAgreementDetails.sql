@@ -457,6 +457,9 @@ LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
 -- MAIN QUERY 
 -- ============================================================
 
+BEGIN TRY
+BEGIN TRAN;
+
 DROP TABLE IF EXISTS tbl_Fact_TradeAgreementDetails;
 
 CREATE TABLE tbl_Fact_TradeAgreementDetails AS
@@ -540,8 +543,13 @@ SELECT Company
 
 FROM stage_TradeAgreement_prelim
 WHERE InvoiceAccount is null
-
-
+		
+COMMIT TRAN;
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+    THROW;
+END CATCH
 
     DROP TABLE IF EXISTS stage_TradeAgreement_customer_rank_cte  ;
     DROP TABLE IF EXISTS stage_TradeAgreement_customer_cte ;

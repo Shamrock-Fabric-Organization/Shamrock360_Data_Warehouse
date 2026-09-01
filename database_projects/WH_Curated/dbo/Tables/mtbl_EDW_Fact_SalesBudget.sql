@@ -32,7 +32,3 @@ CREATE TABLE [dbo].[mtbl_EDW_Fact_SalesBudget](
 	[StandardCostKey] [bigint] NOT NULL
 ) 
 GO
-
-/****** Object:  Index [ClusteredIndex]    Script Date: 8/20/2026 9:45:41 AM ******/
-CREATE CLUSTERED COLUMNSTORE INDEX [ClusteredIndex] ON [dbo].[mtbl_EDW_Fact_SalesBudget] WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0, DATA_COMPRESSION = COLUMNSTORE) 
-GO

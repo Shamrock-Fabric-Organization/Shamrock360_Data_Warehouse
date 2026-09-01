@@ -33,7 +33,5 @@ CREATE TABLE [dbo].[tbl_Fact_SalesBudget](
 )
 GO
 
-/****** Object:  Index [ClusteredIndex]    Script Date: 8/20/2026 9:45:28 AM ******/
-CREATE CLUSTERED COLUMNSTORE INDEX [ClusteredIndex] ON [dbo].[tbl_Fact_SalesBudget] WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0, DATA_COMPRESSION = COLUMNSTORE)
-GO
+
 

@@ -1,23 +1,3 @@
--- Auto Generated (Do not modify) 642A1DDAA044535EFEA08BDFEBA4F04B764FA767010B43F20CE649288F1E45D9
-/****** Object:  View [dbo].[tbl_Fact_PurchaseOrderItemConsumptionSummary]    Script Date: 3/6/2026 1:54:46 PM ******/
-
-/*
-Select f.*
-from 
-tbl_Fact_PurchaseOrders f
-join tbl_Dim_Product_All p
-  on f.AllProductKey = p.ProductKey
-where itemgroupid is not null
---and f.batchkey = -1
-*/
-/*
-
-----Full Line level detail for inventory consumption
-Select f.*
-from 
-fact_PurchaseOrderItemConsumption f
-order by 1,2,3,4
-*/
 
 
 ----Summary Purchase Order Level consumption

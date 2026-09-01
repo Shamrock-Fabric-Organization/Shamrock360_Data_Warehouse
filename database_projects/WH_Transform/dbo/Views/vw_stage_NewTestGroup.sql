@@ -1,7 +1,3 @@
---use WH_Transform
-
-/****** Object:  View [dbo].[vw_stage_NewTestGroup]    Script Date: 2026-06-10 ******/
---drop VIEW dbo.[vw_stage_NewTestGroup]
 
 CREATE   VIEW [dbo].[vw_stage_NewTestGroup]
 AS

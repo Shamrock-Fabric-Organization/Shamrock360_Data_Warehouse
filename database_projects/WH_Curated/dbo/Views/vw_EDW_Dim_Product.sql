@@ -1,5 +1,4 @@
--- Auto Generated (Do not modify) 4942AC80E165C4B818CE256FA81F40C736C264D524B40C0A69D42A8B317015A6
-/****** Object:  View [dbo].[vw_EDW_Dim_Product]    Script Date: 5/4/2026 12:14:39 PM ******/
+
 
 
 CREATE OR ALTER            View [dbo].[vw_EDW_Dim_Product] 

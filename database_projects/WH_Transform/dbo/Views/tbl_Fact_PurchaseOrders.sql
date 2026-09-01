@@ -1,11 +1,3 @@
--- Auto Generated (Do not modify) EE3009FA922F6F5FBD3472B468E42D18EB3F4252683756C1D3A889A37A797CAF
-
-/****** Object:  View [dbo].[tbl_Fact_PurchaseOrders]    Script Date: 4/13/2026 2:40:36 PM ******/
-/****** Object:  View [dbo].[tbl_Fact_PurchaseOrders]    Script Date: 3/6/2026 1:55:34 PM ******/
-/****** Object:  View [dbo].[tbl_Fact_PurchaseOrders]    Script Date: 2/12/2026 11:23:26 AM ******/
-/****** Object:  View [dbo].[tbl_Fact_PurchaseOrders]    Script Date: 2/10/2026 12:30:36 PM ******/
-/****** Object:  View [dbo].[tbl_Fact_PurchaseOrders]    Script Date: 2/2/2026 3:47:12 PM ******/
-
 
 
 CREATE  OR ALTER                   VIEW [dbo].[tbl_Fact_PurchaseOrders] AS 		

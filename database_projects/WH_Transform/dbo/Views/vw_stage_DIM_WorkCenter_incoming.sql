@@ -1,11 +1,3 @@
--- Auto Generated (Do not modify) 8E9CE925924DF3D33D72223E7CBB94F83260593748FC0730146DC71FDEAF942E
---use WH_transform
---go
-
-
-
-/****** Object:  View [dbo].[vw_stage_DIM_Customer_incoming]    Script Date: 9/2/2025 1:02:23 PM ******/
-----drop  VIEW dbo.[vw_stage_DIM_WorkCenter_incoming]	
 
 CREATE       VIEW [dbo].[vw_stage_DIM_WorkCenter_incoming]			
 AS			

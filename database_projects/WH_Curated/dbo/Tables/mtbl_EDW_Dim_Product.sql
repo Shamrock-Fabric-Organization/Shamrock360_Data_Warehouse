@@ -65,7 +65,4 @@ CREATE TABLE [dbo].[mtbl_EDW_Dim_Product](
 ) 
 GO
 
-/****** Object:  Index [ClusteredIndex]    Script Date: 8/20/2026 12:23:50 PM ******/
-CREATE CLUSTERED COLUMNSTORE INDEX [ClusteredIndex] ON [dbo].[mtbl_EDW_Dim_Product] WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0, DATA_COMPRESSION = COLUMNSTORE) 
-GO
 

@@ -63,7 +63,3 @@ CREATE TABLE [dbo].[tbl_DIM_Product](
 	[Source] [varchar](6) NOT NULL
 ) 
 GO
-
-/****** Object:  Index [ClusteredIndex]    Script Date: 8/20/2026 12:24:08 PM ******/
-CREATE CLUSTERED COLUMNSTORE INDEX [ClusteredIndex] ON [dbo].[tbl_DIM_Product] WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0, DATA_COMPRESSION = COLUMNSTORE) 
-GO

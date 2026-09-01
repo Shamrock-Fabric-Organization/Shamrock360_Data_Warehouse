@@ -1,6 +1,3 @@
--- Auto Generated (Do not modify) 098CF9686B92F884E69EF9A4116F2804CE230602546E79B67A5BBA7DF2400E41
-/****** Object:  View [dbo].[vw_EDW_Fact_SalesBudget]    Script Date: 2/2/2026 1:21:38 PM ******/
-/****** Object:  View [dbo].[vw_EDW_Fact_SalesBudget]    Script Date: 1/26/2026 9:48:20 AM ******/
 
 DROP VIEW IF EXISTS [dbo].[vw_EDW_Fact_SalesBudget];
 /* This view was moved to the WH_tranform warehouse so that UoM and Exchange rate conversions 

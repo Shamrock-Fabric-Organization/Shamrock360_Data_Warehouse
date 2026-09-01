@@ -34,8 +34,5 @@ CREATE TABLE [dbo].[tbl_Fact_TradeAgreementDetails](
 )
 GO
 
-/****** Object:  Index [ClusteredIndex]    Script Date: 8/17/2026 12:24:27 PM ******/
-CREATE CLUSTERED COLUMNSTORE INDEX [ClusteredIndex] ON [dbo].[tbl_Fact_TradeAgreementDetails] WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0, DATA_COMPRESSION = COLUMNSTORE) 
-GO
 
 

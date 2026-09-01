@@ -1,11 +1,3 @@
--- Auto Generated (Do not modify) 918D09B14DE89A64A917CC35FBE604093D910CDE2A076072F7E4F3C94488DD11
-/****** Object:  View [dbo].[vw_stage_DIM_Address_incoming]    Script Date: 5/11/2026 4:02:13 PM ******/
-/****** Object:  View [dbo].[vw_stage_DIM_Address_incoming]    Script Date: 4/27/2026 3:52:33 PM ******/
-
---use WH_Transform
-
-/****** Object:  View [dbo].[vw_stage_DIM_Address_incoming] ******/
---DROP VIEW IF EXISTS [dbo].[vw_stage_DIM_Address_incoming]
 
 CREATE OR ALTER      VIEW [dbo].[vw_stage_DIM_Address_incoming]
 AS

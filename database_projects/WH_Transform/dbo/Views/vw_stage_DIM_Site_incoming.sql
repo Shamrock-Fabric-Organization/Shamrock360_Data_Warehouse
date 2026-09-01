@@ -1,9 +1,3 @@
--- Auto Generated (Do not modify) AF4CABC8655942F0927E017334587BF9E477C5B0D66B6BE417DAB23E6FA28B5E
-
-
-
-/****** Object:  View [dbo].[vw_stage_DIM_Customer_incoming]    Script Date: 9/2/2025 1:02:23 PM ******/
-----drop  VIEW dbo.[vw_stage_DIM_Site_incoming]	
 
 CREATE       VIEW [dbo].[vw_stage_DIM_Site_incoming]			
 AS			

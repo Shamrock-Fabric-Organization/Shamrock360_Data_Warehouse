@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) A9F2AB55BBE1A8542D11BADB390747C527D0E2C3AEF86E6870E94B4DC702020A
 
 
     -- Create a view to identify new records not present in the current dimension --needed because the CTAS does not allow the logic used

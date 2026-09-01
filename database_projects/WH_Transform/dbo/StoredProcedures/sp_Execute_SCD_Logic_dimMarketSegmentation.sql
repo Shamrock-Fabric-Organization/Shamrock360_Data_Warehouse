@@ -1,4 +1,4 @@
-CREATE   PROCEDURE [dbo].[sp_Execute_SCD_Logic_dimMarketSegmentation]
+CREATE OR ALTER  PROCEDURE [dbo].[sp_Execute_SCD_Logic_dimMarketSegmentation]
 AS
 BEGIN
     -- Drop intermediate objects if they exist
@@ -225,13 +225,22 @@ BEGIN
     -- ============================================================
     -- Step 7: Replace DIM table with updated records
     -- ============================================================
-    DROP TABLE IF EXISTS tbl_DIM_MarketSegmentation;
+    BEGIN TRY
+    BEGIN TRAN;
+        
+        DROP TABLE IF EXISTS tbl_DIM_MarketSegmentation;
 
-    CREATE TABLE tbl_DIM_MarketSegmentation AS
-    SELECT *
-    FROM stage_tbl_DIM_MarketSegmentation_Append;
-
-    -- ============================================================
+        CREATE TABLE tbl_DIM_MarketSegmentation AS
+        SELECT *
+        FROM stage_tbl_DIM_MarketSegmentation_Append;
+    	
+    COMMIT TRAN;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+        THROW;
+    END CATCH
+        -- ============================================================
     -- Step 7b: Rebuild ForUpdates table (flag-controlled override pattern)
     --
     -- Three goals:
@@ -263,6 +272,10 @@ BEGIN
     WHERE IndustryIsOverride    = 1
        OR SubIndustryIsOverride = 1;
 
+    BEGIN TRY
+    BEGIN TRAN;
+
+
     DROP TABLE IF EXISTS tbl_APP_MarketSegmentationDataForUpdates;
 
     CREATE TABLE tbl_APP_MarketSegmentationDataForUpdates AS
@@ -284,6 +297,13 @@ BEGIN
         AND f.ProductID   = p.ProductID
     WHERE f.RecordStatus      = 1
       AND f.MarketSegmentationKey <> -1;
+		
+	COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+		THROW;
+	END CATCH
 
     -- ============================================================
     -- Step 8: Clean up all intermediate staging tables

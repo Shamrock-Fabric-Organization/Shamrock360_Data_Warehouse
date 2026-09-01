@@ -3,7 +3,7 @@
 
 --USE WH_transform
 
-CREATE   PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimBudgetModel]
+CREATE OR ALTER  PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimBudgetModel]
 AS
 BEGIN
 	-- Drop intermediate objects if they exist
@@ -182,6 +182,9 @@ BEGIN
 		, RecordEffectiveStartDate
 
 	-- Step 7: Replace the DIM table with the updated records
+	BEGIN TRY
+	BEGIN TRAN;
+		
 	-- Drop the original dimension table to replace with the updated one
 	DROP TABLE IF EXISTS tbl_DIM_BudgetModel;
 
@@ -189,6 +192,14 @@ BEGIN
 	CREATE TABLE tbl_DIM_BudgetModel AS
 	SELECT *
 	FROM stage_tbl_DIM_BudgetModel_Append;
+		
+	COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+		THROW;
+	END CATCH
+
 
 	-- Step 8: Clean up intermediate objects used
 	-- Drop intermediate tables if they exist

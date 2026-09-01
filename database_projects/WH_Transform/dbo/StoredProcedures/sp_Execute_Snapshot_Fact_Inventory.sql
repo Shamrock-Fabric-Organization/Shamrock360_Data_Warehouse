@@ -1,4 +1,4 @@
-CREATE               PROCEDURE [dbo].[sp_Execute_Snapshot_Fact_Inventory]
+CREATE OR ALTER              PROCEDURE [dbo].[sp_Execute_Snapshot_Fact_Inventory]
 AS
 BEGIN
 	--Declare variables
@@ -25,6 +25,9 @@ BEGIN
 		SELECT *
 		FROM vw_stage_Fact_Inventory_Snapshot_incoming AS f
 
+		BEGIN TRY
+		BEGIN TRAN;
+
 		-- Drop the original snapshot table to replace with the updated one
 		DROP TABLE IF EXISTS tbl_Fact_Inventory_Snapshot;
 
@@ -32,7 +35,13 @@ BEGIN
 		CREATE TABLE tbl_Fact_Inventory_Snapshot AS
 		SELECT *
 		FROM stage_tbl_Fact_Inventory_Snapshot_Append;
-
+		
+		COMMIT TRAN;
+		END TRY
+		BEGIN CATCH
+			IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+			THROW;
+		END CATCH
 
 		--****************************************************************
 		-- Create a new extended append table by merging existing and new snapshot records
@@ -45,6 +54,9 @@ BEGIN
 		SELECT *
 		FROM vw_stage_Fact_Inventory_Snapshot_Extended_incoming AS f
 
+		BEGIN TRY
+		BEGIN TRAN;
+
 		-- Drop the original snapshot table to replace with the updated one
 		DROP TABLE IF EXISTS tbl_Fact_Inventory_Snapshot_Extended;
 
@@ -52,6 +64,13 @@ BEGIN
 		CREATE TABLE tbl_Fact_Inventory_Snapshot_Extended AS
 		SELECT *
 		FROM stage_tbl_Fact_Inventory_Snapshot_Extended_Append;
+		
+		COMMIT TRAN;
+		END TRY
+		BEGIN CATCH
+			IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+			THROW;
+		END CATCH
 
 		--****************************************************************
 		--Snapshot the entire InventSum table not just the aggregated data
@@ -66,6 +85,9 @@ BEGIN
 		,*
 		FROM WH_Raw.dbo.inventsum
 
+		BEGIN TRY
+		BEGIN TRAN;
+
 		-- Drop the original snapshot table to replace with the updated one
 		DROP TABLE IF EXISTS tbl_InventSum_Snapshot;
 
@@ -73,6 +95,13 @@ BEGIN
 		CREATE TABLE tbl_InventSum_Snapshot AS
 		SELECT *
 		FROM stage_tbl_InventSum_Snapshot_append;
+		
+		COMMIT TRAN;
+		END TRY
+		BEGIN CATCH
+			IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+			THROW;
+		END CATCH
 
 	END
 

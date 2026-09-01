@@ -486,13 +486,22 @@ BEGIN
 		,recordeffectivestartdate
 
 	-- Step 7: Replace the DIM table with the updated records
-	-- Drop the original dimension table to replace with the updated one
+	BEGIN TRY
+    BEGIN TRAN;
+		-- Drop the original dimension table to replace with the updated one
 	DROP TABLE IF EXISTS tbl_DIM_Product;
 
 	-- Recreate the dimension table with the updated records from the append table
 	CREATE TABLE tbl_DIM_Product AS
 	SELECT *
 	FROM stage_tbl_DIM_Product_Append;
+	
+	COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+		THROW;
+	END CATCH
 
 	-- Step 8: Clean up intermediate objects used
 	-- Drop intermediate tables if they exist

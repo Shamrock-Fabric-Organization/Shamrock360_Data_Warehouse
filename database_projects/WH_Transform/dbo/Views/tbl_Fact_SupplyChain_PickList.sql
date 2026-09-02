@@ -1,6 +1,3 @@
--- Auto Generated (Do not modify) 77A59CEC9D9C1DEFFE1CB7800F7C65EFD308226A077203B3E7D61C4F88E1537A
-/****** Object:  View [dbo].[tbl_Fact_SupplyChain_PickList]    Script Date: 2/24/2026 12:50:18 PM ******/
-/****** Object:  View [dbo].[tbl_Fact_SupplyChain_PickList]    Script Date: 1/28/2026 1:41:25 PM ******/
 
 ----PickList Data
 CREATE        VIEW [dbo].[tbl_Fact_SupplyChain_PickList] 

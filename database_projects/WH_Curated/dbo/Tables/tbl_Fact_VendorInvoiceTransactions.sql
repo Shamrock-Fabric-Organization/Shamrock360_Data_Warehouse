@@ -93,7 +93,4 @@ CREATE TABLE [dbo].[tbl_Fact_VendorInvoiceTransactions](
 ) 
 GO
 
-/****** Object:  Index [ClusteredIndex]    Script Date: 7/23/2026 11:33:28 AM ******/
-CREATE CLUSTERED COLUMNSTORE INDEX [ClusteredIndex] ON [dbo].[tbl_Fact_VendorInvoiceTransactions] WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0, DATA_COMPRESSION = COLUMNSTORE) ON [PRIMARY]
-GO
 

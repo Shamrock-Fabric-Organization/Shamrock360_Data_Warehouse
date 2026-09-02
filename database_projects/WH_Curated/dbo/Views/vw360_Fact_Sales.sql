@@ -1,14 +1,5 @@
--- Auto Generated (Do not modify) 25CA1AA6082BE5A932333A1B714D273BB6EFC04F7B6E4A6C822F236016C888A5
 
 
-
-
-
-
-
-
-
-/****** Object:  View [dbo].[vw360_Fact_Sales]    Script Date: 9/14/2025 5:35:25 PM ******/
 CREATE      view [dbo].[vw360_Fact_Sales] as
 --------------------------------------------------------------------------------
 -- Section 0: Impute Zero Sales US/Tolling/BVBA/TEDA [ Closed Order]

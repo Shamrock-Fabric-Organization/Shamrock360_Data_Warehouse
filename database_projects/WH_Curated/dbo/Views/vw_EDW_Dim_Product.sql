@@ -1,6 +1,3 @@
--- Auto Generated (Do not modify) 4942AC80E165C4B818CE256FA81F40C736C264D524B40C0A69D42A8B317015A6
-/****** Object:  View [dbo].[vw_EDW_Dim_Product]    Script Date: 5/4/2026 12:14:39 PM ******/
-
 
 CREATE OR ALTER            View [dbo].[vw_EDW_Dim_Product] 
 	--WITH SCHEMABINDING 
@@ -68,6 +65,8 @@ CREATE OR ALTER            View [dbo].[vw_EDW_Dim_Product]
 	, ProductionType
 	, BaseItemProduct
                 , testgroupid
+                , routeid
+                , routename
 
           ,[RecordEffectiveStartDate] as Start_Date
           ,[RecordEffectiveEndDate] as End_Date
@@ -148,7 +147,9 @@ SELECT ABS(CAST(CAST(
 	, NULL AS ProductionType
 	, NULL AS BaseItemProduct
     , NULL AS testgroupid
-
+    , NULL AS routeid
+    , NULL AS routename
+    
       ,l.[RecordEffectiveStartDate] AS Start_Date
       ,l.[RecordEffectiveEndDate]   AS End_Date
       ,l.[RecordStatus]             AS Record_Status

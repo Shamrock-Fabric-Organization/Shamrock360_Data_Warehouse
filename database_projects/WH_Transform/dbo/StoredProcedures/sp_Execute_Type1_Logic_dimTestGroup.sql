@@ -1,8 +1,6 @@
 --use WH_Transform
 
-/****** Object:  StoredProcedure [dbo].[sp_Execute_Type1_Logic_dimTestGroup]    Script Date: 2026-06-10 ******/
-
-CREATE   PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimTestGroup]
+CREATE OR ALTER  PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimTestGroup]
 AS
 BEGIN
     -- Drop intermediate objects if they exist
@@ -160,11 +158,21 @@ BEGIN
             ,RecordEffectiveStartDate;
 
     -- Step 7: Replace dimension table
+	BEGIN TRY
+	BEGIN TRAN;
+
     DROP TABLE IF EXISTS tbl_DIM_TestGroup;
 
     CREATE TABLE tbl_DIM_TestGroup AS
     SELECT *
     FROM stage_tbl_DIM_TestGroup_Append;
+		
+	COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+		THROW;
+	END CATCH
 
     -- Step 8: Clean up staging tables
     DROP TABLE IF EXISTS stage_tbl_DIM_TestGroup_New;

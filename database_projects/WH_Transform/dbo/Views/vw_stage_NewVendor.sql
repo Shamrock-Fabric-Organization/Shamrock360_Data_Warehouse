@@ -1,6 +1,3 @@
--- Auto Generated (Do not modify) D71B9F15392AAC8339789EAFFDA318F9F077E42BA9B0F024EECC3820695AA3BA
-/****** Object:  View [dbo].[vw_stage_NewVendor]    Script Date: 1/21/2026 12:07:18 PM ******/
-
 
     -- Create a view to identify new records not present in the current dimension --needed because the CTAS does not allow the logic used
 CREATE       VIEW [dbo].[vw_stage_NewVendor]

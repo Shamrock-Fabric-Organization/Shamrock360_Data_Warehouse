@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) 8EF74670B29E9571A8CEC39922198C0FF52CDC136B7820F03C39F9908631CB4B
 
 create or alter  view vwExchangeRate
 as

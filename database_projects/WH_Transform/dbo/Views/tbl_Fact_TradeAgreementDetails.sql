@@ -1,5 +1,4 @@
--- Auto Generated (Do not modify) 39DF2D48BD099D846315F73D8F54EA4849378CA7F4887271C4F25DE3EFA6A483
-/****** Object:  View [dbo].[tbl_Fact_TradeAgreementDetails]    Script Date: 6/2/2026 10:32:06 AM ******/
+
 --USE WH_Transform
 
 
@@ -53,7 +52,19 @@
 
 ============================================================
 */
-
+------======================================================================
+------======================================================================
+------======================================================================
+------======================================================================
+------==== THIS VIEW HAS BEEN SUPERCEDED BY A STORE PROCEDURE ==============
+------==== THE VIEW WAS CAUSING A FABRIC WAREHOUSE SQL ERROR 65000 =========
+------==== WHICH IS A FABRIC WORKLOAD MANAGEMENT REJECTION NOT =============
+------==== BUG IN THE LOGIC, REWRITTEN AS A SP TO USE STAGE TABLES =========
+------======================================================================
+------======================================================================
+------======================================================================
+------======================================================================
+/*
 CREATE OR ALTER VIEW [dbo].[tbl_Fact_TradeAgreementDetails] as
 WITH
 
@@ -534,3 +545,7 @@ SELECT Company
 
 FROM PRELIM
 WHERE InvoiceAccount is null
+*/
+
+select 'THIS VIEW HAS BEEN SUPERCEDED BY A STORE PROCEDURE'
+

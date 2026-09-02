@@ -1,6 +1,3 @@
--- Auto Generated (Do not modify) 4739477A5B6B64821A6155E5522B1A98FDDBE62C6297E17B371E32D3E6AD08C7
-/****** Object:  View [dbo].[vw_stage_NewProducts]    Script Date: 1/21/2026 2:17:26 PM ******/
-
 
     -- Create a view to identify new records not present in the current dimension --needed because the CTAS does not allow the logic used
 CREATE  OR ALTER      VIEW [dbo].[vw_stage_NewProducts]
@@ -68,6 +65,8 @@ SELECT
 	, ProductionType
 	, BaseItemProduct
 	, testgroupid
+	, routeid
+	, routename
 
 	,CAST('1900-01-01' AS DATETIME2(3)) AS RecordEffectiveStartDate
 	,CAST('2099-12-31 00:00:01.000' AS DATETIME2(3)) AS RecordEffectiveEndDate

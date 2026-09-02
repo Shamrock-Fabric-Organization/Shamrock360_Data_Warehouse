@@ -32,7 +32,10 @@ BEGIN
 			OR ISNULL(Target.Technology, '') <> ISNULL(Source.Technology, '')
 			OR ISNULL(Target.Material, '') <> ISNULL(Source.Material, '')
 			OR ISNULL(Target.MiscRevenue, '') <> ISNULL(Source.MiscRevenue, '')
+			OR ISNULL(Target.routeid, '') <> ISNULL(Source.routeid, '')
+			OR ISNULL(Target.routename, '') <> ISNULL(Source.routename, '')
 			);
+
 
 	-- Step 3: Identify records with Type 1-only changes
 	CREATE TABLE stage_tbl_DIM_Product_Type1_UpdatesNeeded AS
@@ -174,6 +177,8 @@ BEGIN
 		, Source.ProductionType
 		, Source.BaseItemProduct
 		, Source.testgroupid
+		, Target.routeid
+		, Target.routename
 
 		,Target.RecordEffectiveStartDate
 		,Target.RecordEffectiveEndDate
@@ -282,6 +287,8 @@ BEGIN
 		, ProductionType
 		, BaseItemProduct
 		, testgroupid
+		, routeid
+		, routename
 
 		, [RecordEffectiveStartDate]
 		, CAST(GETDATE() AS DATETIME2(3)) AS RecordEffectiveEndDate
@@ -355,6 +362,8 @@ BEGIN
 		, s.ProductionType
 		, s.BaseItemProduct
 		, s.testgroupid
+		, s.routeid
+		, s.routename
 
 		,CAST(GETDATE() AS DATETIME2(3)) AS RecordEffectiveStartDate
 		,CAST('2099-12-31 00:00:01.000' AS DATETIME2(3)) AS RecordEffectiveEndDate
@@ -443,6 +452,8 @@ BEGIN
 		, ProductionType
 		, BaseItemProduct
 		, testgroupid
+		, routeid
+		, routename
 
 		, [RecordEffectiveStartDate]
 		, GETDATE() AS RecordEffectiveEndDate
@@ -475,13 +486,22 @@ BEGIN
 		,recordeffectivestartdate
 
 	-- Step 7: Replace the DIM table with the updated records
-	-- Drop the original dimension table to replace with the updated one
+	BEGIN TRY
+    BEGIN TRAN;
+		-- Drop the original dimension table to replace with the updated one
 	DROP TABLE IF EXISTS tbl_DIM_Product;
 
 	-- Recreate the dimension table with the updated records from the append table
 	CREATE TABLE tbl_DIM_Product AS
 	SELECT *
 	FROM stage_tbl_DIM_Product_Append;
+	
+	COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+		THROW;
+	END CATCH
 
 	-- Step 8: Clean up intermediate objects used
 	-- Drop intermediate tables if they exist
@@ -497,3 +517,6 @@ BEGIN
 	---- Drop the staging/source table after processing is complete -- not needed using a view for incoming data
 	--DROP TABLE IF EXISTS vw_stage_DIM_Product_incoming;
 END;
+
+
+

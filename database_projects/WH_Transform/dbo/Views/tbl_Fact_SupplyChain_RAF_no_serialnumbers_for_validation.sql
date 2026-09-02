@@ -1,9 +1,6 @@
--- Auto Generated (Do not modify) 895D47B0B49C0E0678B61C5FEADD015C13BEC3D33114F00E024D181BB61D227A
-/****** Object:  View [dbo].[tbl_Fact_SupplyChain_RAF]    Script Date: 3/11/2026 8:38:02 AM ******/
-/****** Object:  View [dbo].[tbl_Fact_SupplyChain_RAF]    Script Date: 2/24/2026 12:50:27 PM ******/
 
 --RAF data
-CREATE        VIEW [dbo].[tbl_Fact_SupplyChain_RAF_no_serialnumbers_for_validation] 
+CREATE OR ALTER       VIEW [dbo].[tbl_Fact_SupplyChain_RAF_no_serialnumbers_for_validation] 
 AS 
 SELECT 
     pjp.dataareaid CMPNY,
@@ -56,6 +53,7 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_Site ds
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Batch db
 	ON ID.inventbatchid = db.BatchID
 		AND pt.dataareaid = db.CMPNY
+        AND pt.itemid = db.ProductID
 		AND db.RecordStatus=1
 
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Route dr
@@ -84,5 +82,7 @@ WHERE
 ----pjt.prodid = 'PBO0001075'
 ----and    
 pjt.journaltype_$Label = 'ReportFinished'
+AND pjt.posted = 1 -- ONLY INCLUDE POSTED JOURNALS
+
 --ORDER BY pjp.ProdId, pjp.JournalId, pt.ItemId
 --ORDER BY pjp.ProdId, pjp.JournalId, pt.ItemId

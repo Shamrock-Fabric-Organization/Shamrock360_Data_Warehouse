@@ -1,8 +1,4 @@
-/****** Object:  View [dbo].[vw_stage_DIM_WorkOrder_incoming]    Script Date: 6/12/2026 10:04:05 AM ******/
 --use WH_Transform
-
-/****** Object:  View [dbo].[vw_stage_DIM_WorkOrder_incoming]    Script Date: 2026-06-11 ******/
---drop VIEW dbo.[vw_stage_DIM_WorkOrder_incoming]
 
 CREATE     VIEW [dbo].[vw_stage_DIM_WorkOrder_incoming]
 AS

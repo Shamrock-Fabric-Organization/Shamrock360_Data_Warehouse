@@ -1,8 +1,3 @@
--- Auto Generated (Do not modify) 9FA19A5F8860EDB89C506076733D6091104B873DA7D13EB11461CA19B1589376
-/****** Object:  View [dbo].[tbl_Fact_QualityOrderLineResults]    Script Date: 6/12/2026 10:26:39 AM ******/
-/****** Object:  View [dbo].[tbl_Fact_QualityOrderLineResults]    Script Date: 6/3/2026 9:42:50 AM ******/
-/****** Object:  View [dbo].[tbl_Fact_QualityOrderLineResults]    Script Date: 5/15/2026 9:49:51 AM ******/
-
 
 
 -----SON, PON, PBO in inventrefid  , also TON - transfer orders but no dim for that

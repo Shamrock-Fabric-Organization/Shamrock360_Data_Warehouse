@@ -1,9 +1,0 @@
-role 'Jonatan Vera'
-	modelPermission: read
-
-	tablePermission BIDataSet_Opportunity = [Manager] == "JVERA"
-
-	tablePermission Dim_Employee = [Personnel_Number] IN {"1166"}
-
-	annotation PBI_Id = ad5084dcaaf7449a9d35b974af2ff832
-

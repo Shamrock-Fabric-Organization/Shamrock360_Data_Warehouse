@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) C8DE3A012C6BB6345627075CE62E444ACE5B7C02CA1EA0B7A3AB66C59945511A
 
 --drop view [vw_stage_NewProductionBatchOrder]
 

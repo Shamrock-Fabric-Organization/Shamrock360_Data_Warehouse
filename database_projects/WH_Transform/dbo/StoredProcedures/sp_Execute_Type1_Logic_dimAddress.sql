@@ -1,6 +1,6 @@
 --USE WH_Transform
 
-CREATE   PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimAddress]
+CREATE Or ALTER  PROCEDURE [dbo].[sp_Execute_Type1_Logic_dimAddress]
 AS
 BEGIN
 
@@ -219,11 +219,22 @@ BEGIN
     -- --------------------------------------------------------
     -- Step 7: Replace dimension table
     -- --------------------------------------------------------
+    BEGIN TRY
+    BEGIN TRAN;
+	
     DROP TABLE IF EXISTS tbl_DIM_Address;
 
     CREATE TABLE tbl_DIM_Address AS
     SELECT *
     FROM stage_tbl_DIM_Address_Append;
+		
+    COMMIT TRAN;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+        THROW;
+    END CATCH
+
 
 
     -- --------------------------------------------------------

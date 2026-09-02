@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) 7DBABE904831139B9D574FAF2D106C3EC1FA42743ECD01AE7B7BCF71C143CD97
 
 CREATE    view [dbo].[vw360_Dim_CPC_BusinessUnit_Indicator] as
 select 

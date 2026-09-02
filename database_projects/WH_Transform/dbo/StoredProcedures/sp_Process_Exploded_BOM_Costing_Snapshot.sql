@@ -2557,6 +2557,9 @@ BEGIN
     -- INSERT INTO SNAPSHOT TABLE
     -- =====================================================
     -- v4: TRUNCATE before INSERT — full rerun mode.
+	BEGIN TRY
+	BEGIN TRAN;
+
     TRUNCATE TABLE [dbo].[tbl_ExplodedBOM_StandardCost_Snapshot];
 
     -- ── v5 Change 3 ───────────────────────────────────────────────────────────
@@ -2574,6 +2577,13 @@ BEGIN
             AND f.ITEMID = ed.ITEMID
             AND f.InventSiteID = ed.InventSiteID
             AND f.ACTIVATIONDATE = ed.ACTIVATIONDATE;
+		
+	COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+		THROW;
+	END CATCH
     -- ─────────────────────────────────────────────────────────────────────────
 
     -- =====================================================

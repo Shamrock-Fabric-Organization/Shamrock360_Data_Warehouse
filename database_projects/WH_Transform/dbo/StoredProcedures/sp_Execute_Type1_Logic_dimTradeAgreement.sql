@@ -127,11 +127,21 @@ BEGIN
     ORDER BY CMPNY, AgreementID, RecordEffectiveStartDate;
 
     -- Step 6: Replace dimension table
+	BEGIN TRY
+	BEGIN TRAN;
+
     DROP TABLE IF EXISTS tbl_DIM_TradeAgreement;
 
     CREATE TABLE tbl_DIM_TradeAgreement AS
     SELECT *
     FROM stage_tbl_DIM_TradeAgreement_Append;
+		
+	COMMIT TRAN;
+	END TRY
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+		THROW;
+	END CATCH
 
     -- Step 7: Clean up intermediates
     DROP TABLE IF EXISTS stage_tbl_DIM_TradeAgreement_New;

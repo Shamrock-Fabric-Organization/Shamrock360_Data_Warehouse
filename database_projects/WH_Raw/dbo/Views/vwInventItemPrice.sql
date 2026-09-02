@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) A2DC4E6286CE0B832EF34A3AE6BCAE38E24B9EDCA8D4B25A3629A85CB5F53827
 /*
 ============================================================
   vwInventItemPrice

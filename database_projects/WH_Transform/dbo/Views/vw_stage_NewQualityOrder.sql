@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) 0FD57BFDB1F87BEB3962977E1C2B8726D59B63D1B6447B2F5DA17398B5897D4D
 
 
 CREATE     VIEW [dbo].[vw_stage_NewQualityOrder]

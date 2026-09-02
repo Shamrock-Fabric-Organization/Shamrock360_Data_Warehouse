@@ -1,4 +1,4 @@
-CREATE     PROCEDURE [dbo].[sp_Execute_SCD_Logic_dimStandardCost]
+CREATE OR ALTER     PROCEDURE [dbo].[sp_Execute_SCD_Logic_dimStandardCost]
 AS
 BEGIN
 
@@ -387,12 +387,23 @@ BEGIN
     -- =========================================================================
     -- Step 7: Replace the DIM table with the updated Append
     -- =========================================================================
+    BEGIN TRY
+    BEGIN TRAN;
+
     DROP TABLE IF EXISTS tbl_DIM_StandardCost;
 
     CREATE TABLE tbl_DIM_StandardCost AS
     SELECT *
     FROM stage_tbl_DIM_StandardCost_Append_Extended
     order by 2,3,4
+    		
+    COMMIT TRAN;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+        THROW;
+    END CATCH
+
     -- =========================================================================
     -- Step 8: Cleanup
     -- =========================================================================

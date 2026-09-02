@@ -1,11 +1,5 @@
--- Auto Generated (Do not modify) 20DC4FC676531B659E27CD4DFA22B07560F82FEE364B6A4900320BA7D46D1482
-/****** Object:  View [dbo].[vw_stage_DIM_Customer_incoming]    Script Date: 4/6/2026 2:44:02 PM ******/
 
-
-/****** Object:  View [dbo].[vw_stage_DIM_Customer_incoming]    Script Date: 9/2/2025 1:02:23 PM ******/
---drop  VIEW dbo.vw_stage_DIM_Customer_incoming	
-
-CREATE       VIEW [dbo].[vw_stage_DIM_Customer_incoming]			
+CREATE OR ALTER      VIEW [dbo].[vw_stage_DIM_Customer_incoming]			
 AS			
 with emails as
 (
@@ -109,7 +103,7 @@ SELECT 	DISTINCT	C.dataareaid	 CMPNY
 	,NULL	 GMAccountNo				--leave null for now
 	,NULL	 GMRecID					--leave null for now
 	,DPT.Name	 CustomerName
-	,coalesce(C.companychainID, DPT.Name +' - not harmonized')	 Harmonized_Name
+	,case when ISNULL(C.companychainID,'X') = 'X' then DPT.Name +' - not harmonized' else C.companychainID end	 Harmonized_Name
 	--,COALESCE(AV.StreetAddress, AV2.StreetAddress)	 Address
 	--,COALESCE(AV.city, AV2.city) 	City
 	--,COALESCE(AV.STATE, AV2.STATE) 	State

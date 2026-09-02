@@ -1,23 +1,4 @@
--- Auto Generated (Do not modify) 56ECE0F12C7EE1C6638DB86B2AF06D00019622FD802E58776C52D599612493FD
 
-
-
-
-/****** Object:  View [dbo].[vw_EDW_Fact_Sales]    Script Date: 4/1/2026 10:33:39 AM ******/
-/****** Object:  View [dbo].[vw_EDW_Fact_Sales]    Script Date: 4/1/2026 9:06:49 AM ******/
-
-
-/****** Object:  View [dbo].[vw_EDW_Fact_Sales]    Script Date: 3/30/2026 9:26:11 AM ******/
-
-/****** Object:  View [dbo].[vw_EDW_Fact_Sales]    Script Date: 3/11/2026 4:19:02 PM ******/
-
-
-
-/****** Object:  View [dbo].[vw_EDW_Fact_Sales]    Script Date: 2/24/2026 12:56:24 PM ******/
-/****** Object:  View [dbo].[vw_EDW_Fact_Sales]    Script Date: 2/24/2026 12:34:07 PM ******/
-
-/****** Object:  View [dbo].[vw_EDW_Fact_Sales]    Script Date: 2/5/2026 9:39:22 AM ******/
-/****** Object:  View [dbo].[vw_EDW_Fact_Sales]    Script Date: 2/2/2026 12:32:26 PM ******/
 
 --select distinct SalesLine_Status
 --from [vw_EDW_Fact_Sales]

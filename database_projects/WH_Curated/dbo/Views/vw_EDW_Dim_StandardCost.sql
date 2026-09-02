@@ -1,8 +1,3 @@
--- Auto Generated (Do not modify) 484D308AC6D79AD044C66BFD198EC8BB8F39AAF4AF26E8B13931E18001E04D8B
-/****** Object:  View [dbo].[vw_EDW_Dim_StandardCost]    Script Date: 5/28/2026 10:58:48 AM ******/
-/****** Object:  View [dbo].[vw_EDW_Dim_StandardCost]    Script Date: 5/20/2026 11:39:49 AM ******/
-/****** Object:  View [dbo].[vw_EDW_Dim_StandardCost]    Script Date: 4/3/2026 9:03:31 AM ******/
-/****** Object:  View [dbo].[vw_EDW_Dim_StandardCost]    Script Date: 3/13/2026 3:29:38 PM ******/
 
 CREATE           VIEW [dbo].[vw_EDW_Dim_StandardCost]
 AS

@@ -1,0 +1,35 @@
+
+CREATE TABLE [dbo].[tbl_Fact_SalesBudget](
+	[CMPNY] [varchar](8000) NULL,
+	[SalesLine_Status] [varchar](8000) NULL,
+	[DATE] [datetime2](3) NULL,
+	[DATEKey] [int] NULL,
+	[CustomerID] [varchar](8000) NULL,
+	[ProductID] [varchar](8000) NULL,
+	[CPCID] [varchar](8000) NULL,
+	[CPCID_Legacy] [varchar](8000) NULL,
+	[Quantity_UoM] [varchar](2) NOT NULL,
+	[Quantity] [decimal](38, 6) NULL,
+	[Quantity_LBs] [decimal](38, 6) NULL,
+	[Quantity_KGs] [numeric](38, 6) NULL,
+	[Currency] [varchar](3) NOT NULL,
+	[Amount] [decimal](38, 6) NULL,
+	[Amount_USD] [decimal](38, 6) NULL,
+	[Amount_EUR] [numeric](38, 6) NULL,
+	[Amount_CNY] [numeric](38, 6) NULL,
+	[Txn_USD_Rate_Missing] [int] NOT NULL,
+	[Txn_EUR_Rate_Missing] [int] NOT NULL,
+	[Txn_CNY_Rate_Missing] [int] NOT NULL,
+	[LegalEntityTranslatedToD365] [varchar](8000) NOT NULL,
+	[AccountTranslatedToD365] [varchar](8000) NOT NULL,
+	[ProductTranslatedToD365] [varchar](8000) NOT NULL,
+	[Source] [varchar](8000) NULL,
+	[CustomerKey] [bigint] NOT NULL,
+	[ProductKey] [bigint] NOT NULL,
+	[Legal_EntityKey] [bigint] NOT NULL,
+	[EmployeeKey] [bigint] NULL,
+	[MarketSegmentationKey] [bigint] NOT NULL,
+	[StandardCostKey] [bigint] NOT NULL
+)
+GO
+

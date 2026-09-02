@@ -92,7 +92,3 @@ CREATE TABLE [dbo].[mtbl_EDW_Fact_VendorInvoiceTransactions](
 	[Cost_CNY_Rate_Missing] [int] NOT NULL
 ) 
 GO
-
-/****** Object:  Index [ClusteredIndex]    Script Date: 7/23/2026 11:33:12 AM ******/
-CREATE CLUSTERED COLUMNSTORE INDEX [ClusteredIndex] ON [dbo].[mtbl_EDW_Fact_VendorInvoiceTransactions] WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0, DATA_COMPRESSION = COLUMNSTORE) ON [PRIMARY]
-GO

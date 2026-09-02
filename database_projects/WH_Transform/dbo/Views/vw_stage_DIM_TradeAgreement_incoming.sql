@@ -1,4 +1,3 @@
--- Auto Generated (Do not modify) 01B7CB55691D55E4DCC17C7A10A13BFB717FFDD51F253F675EF9A87A4B54BADE
 -- USE WH_Transform
 
 /****** Object:  View [dbo].[vw_stage_DIM_TradeAgreement_incoming] ******/

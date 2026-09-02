@@ -1,10 +1,3 @@
--- Auto Generated (Do not modify) 539D1665A7D3F104202CBA822A0B802CE024B26DDCE63991663FEBA625F88B88
-/****** Object:  View [dbo].[vw_stage_DIM_Product_incoming]    Script Date: 6/17/2026 9:12:46 AM ******/
-
-/****** Object:  View [dbo].[vw_stage_DIM_Product_incoming]    Script Date: 1/21/2026 2:17:03 PM ******/
-
-
-----select * from vw_stage_DIM_Product_incoming
 
 CREATE OR ALTER        VIEW [dbo].[vw_stage_DIM_Product_incoming]			
 AS			
@@ -85,7 +78,10 @@ SELECT
 	, it.product                    AS BaseItemProduct
 
 	, itat.testgroupid 
-	,CAST(NULL AS DATETIME2(3))	 RecordEffectiveStartDate	 --SCD2 control field
+	, r.routeid
+	, r.name   RouteName
+
+,CAST(NULL AS DATETIME2(3))	 RecordEffectiveStartDate	 --SCD2 control field
 	,CAST(NULL AS DATETIME2(3))	 RecordEffectiveEndDate	 --SCD2 control field
 	,CAST(NULL AS INT)	 RecordStatus	 --SCD2 control field
 	,'D365FO'	 Source
@@ -179,6 +175,30 @@ LEFT JOIN wh_raw.dbo.inventtestassociationtable  itat
 		AND itat.ordertype_$label = 'Production' --Production orders only
 		AND itat.itemcode = 0  --specific item match
 
+LEFT JOIN (
+		SELECT
+			-- ---- Route Version header only ----
+			  rv.[dataareaid]  
+			, rv.[itemid]      
+			, rv.[routeid]     
+			, rv.[name]        
+			, idv.[inventsiteid] 
+			, rv.[fromdate]      
+			, case when rv.ToDate='01/01/1900' then '12/31/2199' else rv.ToDate end             AS ToDate
+			, rv.[fromqty]            AS From_Qty
+			, rv.[active_$label]      AS Active
+			, rv.[approved_$label]    AS Approved
+		FROM WH_Raw.dbo.routeversion AS rv
+		LEFT JOIN WH_Raw.dbo.inventdim AS idv
+			ON  idv.[inventdimid] = rv.[inventdimid]
+			AND idv.[dataareaid]  = rv.[dataareaid]
+		WHERE rv.[active_$label] = 'YES'
+		and GETDATE() between rv.FromDate and case when rv.ToDate='01/01/1900' then '12/31/2199' else rv.ToDate end
+		) r
+	ON IT.itemid = r.itemid
+		AND IT.dataareaid = r.dataareaid
+		AND idi.inventsiteid = r.inventsiteid
+
 
 )
 
@@ -240,6 +260,8 @@ SELECT
 	, ProductionType
 	, BaseItemProduct
 , testgroupid
+, routeid
+, routename
 
     ,RecordEffectiveStartDate
     ,RecordEffectiveEndDate
@@ -313,6 +335,8 @@ SELECT -1 [ProductKey]
 	, NULL ProductionType
 	, NULL BaseItemProduct
 , NULL testgroupid
+, NULL routeid
+, NULL routename
 
 , NULL [RecordEffectiveStartDate]
 , NULL [RecordEffectiveEndDate]

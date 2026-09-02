@@ -1,9 +1,0 @@
-role 'Alecia Haqq'
-	modelPermission: read
-
-	tablePermission BIDataSet_Opportunity = [Manager] IN {"AHAQQ","JOES"}
-
-	tablePermission Dim_Employee = [Personnel_Number] IN {"1168","1161"}
-
-	annotation PBI_Id = b3d8902db546405a9ba023d0a46f255a
-

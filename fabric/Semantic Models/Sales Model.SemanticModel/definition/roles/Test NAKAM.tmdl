@@ -1,7 +1,0 @@
-role 'Test NAKAM'
-	modelPermission: read
-
-	tablePermission Dim_Account = [Invoice_Account] IN {"C000505"}
-
-	annotation PBI_Id = eb4c9fa34b934f0f9087b8b3ffd8d1e1
-

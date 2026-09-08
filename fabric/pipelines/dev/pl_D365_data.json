@@ -1,0 +1,89 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "name": "Load Dims",
+        "description": "Runs the pl_dimension_logic pipeline to update the dimensional data",
+        "type": "InvokePipeline",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.4:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "waitOnCompletion": true,
+          "operationType": "InvokeFabricPipeline",
+          "pipelineId": "9df9a208-2e0e-4d24-9f3e-f364b2e1055f",
+          "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795",
+          "parameters": {}
+        },
+        "externalReferences": {
+          "connection": "0e76a90a-657f-45e3-899b-51d8862e9159"
+        }
+      },
+      {
+        "name": "Load Facts",
+        "description": "Runs the pl_fact_table_data pipeline to update the fact data",
+        "type": "InvokePipeline",
+        "dependsOn": [
+          {
+            "activity": "Load Dims",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.4:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "waitOnCompletion": true,
+          "operationType": "InvokeFabricPipeline",
+          "pipelineId": "374a8389-76b5-41e7-a858-858596730933",
+          "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795",
+          "parameters": {}
+        },
+        "externalReferences": {
+          "connection": "0e76a90a-657f-45e3-899b-51d8862e9159"
+        }
+      },
+      {
+        "name": "Load Manged Tables",
+        "description": "Runs the pl_managed_table_data pipeline to update the managed tables in the curated warehouse",
+        "type": "InvokePipeline",
+        "dependsOn": [
+          {
+            "activity": "Load Facts",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.4:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "waitOnCompletion": true,
+          "operationType": "InvokeFabricPipeline",
+          "pipelineId": "a3e5626e-d703-463b-ad14-8a19128e81d4",
+          "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795",
+          "parameters": {}
+        },
+        "externalReferences": {
+          "connection": "0e76a90a-657f-45e3-899b-51d8862e9159"
+        }
+      }
+    ]
+  }
+}

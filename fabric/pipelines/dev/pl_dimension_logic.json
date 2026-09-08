@@ -1,0 +1,1239 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "name": "Lookup Dim Tables to Load",
+        "description": "This lookup gets the list of dimension tables that need to be processed, table is active, refresh frequency elapsed, and a stored procedure is needed to process the data.",
+        "type": "Lookup",
+        "state": "Active",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.4:00:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "FabricSqlDatabaseSource",
+            "sqlReaderQuery": "select m.*, e.SuccessEMails, e.FailureEMails\nfrom ingestion_metadata m\n  join load_emails e\n     on m.DataSource = e.DataSource\nwhere m.Active=1\nand (DATEDIFF(MINUTE, isnull(m.LastLoadDateTime, '01/01/1900'), GETDATE()) / 60.0) >= m.RefreshFrequencyHours\nand m.ProcessingStoredProcedure is not null\n",
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
+          },
+          "firstRowOnly": false,
+          "datasetSettings": {
+            "annotations": [],
+            "connectionSettings": {
+              "name": "WH_Metadata",
+              "properties": {
+                "annotations": [],
+                "type": "FabricSqlDatabase",
+                "typeProperties": {
+                  "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795",
+                  "artifactId": "a50d7dee-853f-4780-a6ea-3ab163cad17e"
+                },
+                "externalReferences": {
+                  "connection": "e7b4e8b4-bdca-4fac-a60a-6ba925e51986"
+                }
+              }
+            },
+            "type": "FabricSqlDatabaseTable",
+            "schema": [],
+            "typeProperties": {}
+          }
+        }
+      },
+      {
+        "name": "ForEach table to load",
+        "description": "This loop processes each of the identified dimension tables.",
+        "type": "ForEach",
+        "state": "Active",
+        "dependsOn": [
+          {
+            "activity": "Lookup Dim Tables to Load",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "items": {
+            "value": "@activity('Lookup Dim Tables to Load').output.value",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "name": "Run Processing Stored procedure",
+              "description": "Executes the processing stored procedure.",
+              "type": "SqlServerStoredProcedure",
+              "state": "Active",
+              "dependsOn": [
+                {
+                  "activity": "Start Load",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.4:00:00",
+                "retry": 3,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "storedProcedureName": {
+                  "value": "@item().ProcessingStoredProcedure",
+                  "type": "Expression"
+                }
+              },
+              "linkedService": {
+                "name": "WH_Transform",
+                "properties": {
+                  "annotations": [],
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-uqz36rnpmmsetmasru36rmwxsu.datawarehouse.fabric.microsoft.com",
+                    "artifactId": "aba2a0bb-eb41-4334-ac69-e857e6cd30b6",
+                    "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795"
+                  }
+                }
+              }
+            },
+            {
+              "name": "Copy data From Transform to Curated",
+              "description": "Copies the updated dimension data from the transform layer to the curated.",
+              "type": "Copy",
+              "state": "Active",
+              "dependsOn": [
+                {
+                  "activity": "Truncate Table in Curated",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.4:00:00",
+                "retry": 3,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "source": {
+                  "type": "DataWarehouseSource",
+                  "queryTimeout": "02:00:00",
+                  "partitionOption": "None",
+                  "datasetSettings": {
+                    "annotations": [],
+                    "linkedService": {
+                      "name": "WH_Transform",
+                      "properties": {
+                        "annotations": [],
+                        "type": "DataWarehouse",
+                        "typeProperties": {
+                          "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-uqz36rnpmmsetmasru36rmwxsu.datawarehouse.fabric.microsoft.com",
+                          "artifactId": "aba2a0bb-eb41-4334-ac69-e857e6cd30b6",
+                          "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795"
+                        }
+                      }
+                    },
+                    "type": "DataWarehouseTable",
+                    "schema": [],
+                    "typeProperties": {
+                      "schema": {
+                        "value": "@item().SourceTableSchema",
+                        "type": "Expression"
+                      },
+                      "table": {
+                        "value": "@item().SourceTableName",
+                        "type": "Expression"
+                      }
+                    }
+                  }
+                },
+                "sink": {
+                  "type": "DataWarehouseSink",
+                  "allowCopyCommand": true,
+                  "copyCommandSettings": {},
+                  "writeBehavior": "Insert",
+                  "tableOption": "autoCreate",
+                  "datasetSettings": {
+                    "annotations": [],
+                    "linkedService": {
+                      "name": "WH_Curated",
+                      "properties": {
+                        "annotations": [],
+                        "type": "DataWarehouse",
+                        "typeProperties": {
+                          "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-uqz36rnpmmsetmasru36rmwxsu.datawarehouse.fabric.microsoft.com",
+                          "artifactId": "f13c4241-81e3-4a92-a891-4dacfcf9161b",
+                          "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795"
+                        }
+                      }
+                    },
+                    "type": "DataWarehouseTable",
+                    "schema": [],
+                    "typeProperties": {
+                      "schema": {
+                        "value": "@item().TargetTableSchema",
+                        "type": "Expression"
+                      },
+                      "table": {
+                        "value": "@item().TargetTableName",
+                        "type": "Expression"
+                      }
+                    }
+                  }
+                },
+                "enableStaging": true,
+                "translator": {
+                  "type": "TabularTranslator",
+                  "typeConversion": true,
+                  "typeConversionSettings": {
+                    "allowDataTruncation": true,
+                    "treatBooleanAsNumber": false
+                  }
+                }
+              }
+            },
+            {
+              "name": "Error Email from Stored Proc",
+              "description": "Send failure email if the stored procedure errors.",
+              "type": "Office365Outlook",
+              "state": "Inactive",
+              "onInactiveMarkAs": "Succeeded",
+              "dependsOn": [
+                {
+                  "activity": "Run Processing Stored procedure",
+                  "dependencyConditions": [
+                    "Failed"
+                  ]
+                }
+              ],
+              "typeProperties": {
+                "inputs": {
+                  "method": "post",
+                  "path": "/v2/Mail",
+                  "body": {
+                    "To": "@activity('Lookup Dim Tables to Load').output.value[0].FailureEMails",
+                    "Subject": "Type 2 Dim Load Failure",
+                    "Body": "<p>Type 2 Dim Load Failure - stored proc</p>",
+                    "Sensitivity": "",
+                    "Importance": "Normal"
+                  }
+                }
+              }
+            },
+            {
+              "name": "Error Email from Copy",
+              "description": "Send failure email if the copy errors.",
+              "type": "Office365Outlook",
+              "state": "Inactive",
+              "onInactiveMarkAs": "Succeeded",
+              "dependsOn": [
+                {
+                  "activity": "Copy data From Transform to Curated",
+                  "dependencyConditions": [
+                    "Failed"
+                  ]
+                }
+              ],
+              "typeProperties": {
+                "inputs": {
+                  "method": "post",
+                  "path": "/v2/Mail",
+                  "body": {
+                    "To": "@activity('Lookup Dim Tables to Load').output.value[0].FailureEMails",
+                    "Subject": "Type 2 Dim Load Failure",
+                    "Body": "<p>Type 2 Dim Load Failure - copy to curated</p>",
+                    "Sensitivity": "",
+                    "Importance": "Normal"
+                  }
+                }
+              }
+            },
+            {
+              "name": "Start Load",
+              "description": "Updates the Metadata ingestion table with the start of the table processing.",
+              "type": "SqlServerStoredProcedure",
+              "state": "Active",
+              "dependsOn": [],
+              "policy": {
+                "timeout": "0.4:00:00",
+                "retry": 3,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "storedProcedureName": "[dbo].[usp_StartLoad]",
+                "storedProcedureParameters": {
+                  "DatabaseName": {
+                    "value": {
+                      "value": "@item().DatabaseName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "DataSource": {
+                    "value": {
+                      "value": "@item().DataSource",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "SourceTableName": {
+                    "value": {
+                      "value": "@item().SourceTableName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "SourceTableSchema": {
+                    "value": {
+                      "value": "@item().SourceTableSchema",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  }
+                }
+              },
+              "connectionSettings": {
+                "name": "WH_Metadata",
+                "properties": {
+                  "annotations": [],
+                  "type": "FabricSqlDatabase",
+                  "typeProperties": {
+                    "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795",
+                    "artifactId": "a50d7dee-853f-4780-a6ea-3ab163cad17e"
+                  },
+                  "externalReferences": {
+                    "connection": "e7b4e8b4-bdca-4fac-a60a-6ba925e51986"
+                  }
+                }
+              }
+            },
+            {
+              "name": "End Load Success",
+              "description": "Updates the Metadata ingestion table with the processing success.",
+              "type": "SqlServerStoredProcedure",
+              "state": "Active",
+              "dependsOn": [
+                {
+                  "activity": "Copy data From Transform to Curated",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.4:00:00",
+                "retry": 2,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "storedProcedureName": "[dbo].[usp_EndLoadSuccess]",
+                "storedProcedureParameters": {
+                  "DatabaseName": {
+                    "value": {
+                      "value": "@item().DatabaseName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "DataSource": {
+                    "value": {
+                      "value": "@item().DataSource",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "SourceTableName": {
+                    "value": {
+                      "value": "@item().SourceTableName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "SourceTableSchema": {
+                    "value": {
+                      "value": "@item().SourceTableSchema",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  }
+                }
+              },
+              "connectionSettings": {
+                "name": "WH_Metadata",
+                "properties": {
+                  "annotations": [],
+                  "type": "FabricSqlDatabase",
+                  "typeProperties": {
+                    "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795",
+                    "artifactId": "a50d7dee-853f-4780-a6ea-3ab163cad17e"
+                  },
+                  "externalReferences": {
+                    "connection": "e7b4e8b4-bdca-4fac-a60a-6ba925e51986"
+                  }
+                }
+              }
+            },
+            {
+              "name": "End Load Failure",
+              "description": "Updates the Metadata ingestion table with the processing failure.",
+              "type": "SqlServerStoredProcedure",
+              "state": "Active",
+              "dependsOn": [
+                {
+                  "activity": "Run Processing Stored procedure",
+                  "dependencyConditions": [
+                    "Failed"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.4:00:00",
+                "retry": 2,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "storedProcedureName": "[dbo].[usp_EndLoadFailure]",
+                "storedProcedureParameters": {
+                  "DatabaseName": {
+                    "value": {
+                      "value": "@item().DatabaseName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "DataSource": {
+                    "value": {
+                      "value": "@item().DataSource",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "SourceTableName": {
+                    "value": {
+                      "value": "@item().SourceTableName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "SourceTableSchema": {
+                    "value": {
+                      "value": "@item().SourceTableSchema",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  }
+                }
+              },
+              "connectionSettings": {
+                "name": "WH_Metadata",
+                "properties": {
+                  "annotations": [],
+                  "type": "FabricSqlDatabase",
+                  "typeProperties": {
+                    "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795",
+                    "artifactId": "a50d7dee-853f-4780-a6ea-3ab163cad17e"
+                  },
+                  "externalReferences": {
+                    "connection": "e7b4e8b4-bdca-4fac-a60a-6ba925e51986"
+                  }
+                }
+              }
+            },
+            {
+              "name": "End Load Failure_copy1",
+              "description": "Updates the Metadata ingestion table with the copy failure.",
+              "type": "SqlServerStoredProcedure",
+              "state": "Active",
+              "dependsOn": [
+                {
+                  "activity": "Copy data From Transform to Curated",
+                  "dependencyConditions": [
+                    "Failed"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.4:00:00",
+                "retry": 2,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "storedProcedureName": "[dbo].[usp_EndLoadFailure]",
+                "storedProcedureParameters": {
+                  "DatabaseName": {
+                    "value": {
+                      "value": "@item().DatabaseName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "DataSource": {
+                    "value": {
+                      "value": "@item().DataSource",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "SourceTableName": {
+                    "value": {
+                      "value": "@item().SourceTableName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "SourceTableSchema": {
+                    "value": {
+                      "value": "@item().SourceTableSchema",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  }
+                }
+              },
+              "connectionSettings": {
+                "name": "WH_Metadata",
+                "properties": {
+                  "annotations": [],
+                  "type": "FabricSqlDatabase",
+                  "typeProperties": {
+                    "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795",
+                    "artifactId": "a50d7dee-853f-4780-a6ea-3ab163cad17e"
+                  },
+                  "externalReferences": {
+                    "connection": "e7b4e8b4-bdca-4fac-a60a-6ba925e51986"
+                  }
+                }
+              }
+            },
+            {
+              "name": "Truncate Table in Curated",
+              "description": "Truncates the target table prior to the copy.",
+              "type": "Script",
+              "dependsOn": [
+                {
+                  "activity": "Run Processing Stored procedure",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.4:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "connectionSettings": {
+                "name": "WH_Curated",
+                "properties": {
+                  "annotations": [],
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-uqz36rnpmmsetmasru36rmwxsu.datawarehouse.fabric.microsoft.com",
+                    "artifactId": "f13c4241-81e3-4a92-a891-4dacfcf9161b",
+                    "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795"
+                  },
+                  "externalReferences": {
+                    "connection": "f4bd464f-4b45-4667-9f87-32b462bafd93"
+                  }
+                }
+              },
+              "typeProperties": {
+                "scripts": [
+                  {
+                    "type": "Query",
+                    "text": {
+                      "value": "TRUNCATE TABLE @{item().TargetTableSchema}.@{item().TargetTableName}",
+                      "type": "Expression"
+                    }
+                  }
+                ],
+                "scriptBlockExecutionTimeout": "02:00:00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Success Email",
+        "description": "Send success email.",
+        "type": "Office365Outlook",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [
+          {
+            "activity": "Check for FailedDim Duplicate SK Checks",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "inputs": {
+            "method": "post",
+            "path": "/v2/Mail",
+            "body": {
+              "To": "@activity('Lookup Dim Tables to Load').output.value[0].SuccessEMails",
+              "Subject": "Dim Load Successful",
+              "Body": "<p>Dim Load Successful</p>",
+              "Sensitivity": "",
+              "Importance": "Normal"
+            }
+          }
+        }
+      },
+      {
+        "name": "Error Email from ForEach",
+        "description": "Send failure email if the loop ends with any errors.",
+        "type": "Office365Outlook",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [
+          {
+            "activity": "ForEach table to load",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "inputs": {
+            "method": "post",
+            "path": "/v2/Mail",
+            "body": {
+              "To": "@activity('Lookup Dim Tables to Load').output.value[0].FailureEMails",
+              "Subject": "Dim Load Failure",
+              "Body": "<p>Dim Load Failure - ForEach loop</p>",
+              "Sensitivity": "",
+              "Importance": "Normal"
+            }
+          }
+        }
+      },
+      {
+        "name": "Check to Ensure no Duplicate SKs",
+        "description": "Check for duplicate surrogate key values in the dimension tables prior to moving on to fact processing.",
+        "type": "Lookup",
+        "state": "Active",
+        "dependsOn": [
+          {
+            "activity": "ForEach table to load No SP",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.4:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "DataWarehouseSource",
+            "sqlReaderQuery": "SELECT COUNT(1) FailedDims FROM vwDIM_SurrogateKey_DuplicateCheck",
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
+          },
+          "firstRowOnly": true,
+          "datasetSettings": {
+            "annotations": [],
+            "linkedService": {
+              "name": "WH_Transform",
+              "properties": {
+                "annotations": [],
+                "type": "DataWarehouse",
+                "typeProperties": {
+                  "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-uqz36rnpmmsetmasru36rmwxsu.datawarehouse.fabric.microsoft.com",
+                  "artifactId": "aba2a0bb-eb41-4334-ac69-e857e6cd30b6",
+                  "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795"
+                }
+              }
+            },
+            "type": "DataWarehouseTable",
+            "schema": [],
+            "typeProperties": {}
+          }
+        }
+      },
+      {
+        "name": "Check for FailedDim Duplicate SK Checks",
+        "description": "If condition checking for duplicate surrogate keys",
+        "type": "IfCondition",
+        "state": "Active",
+        "dependsOn": [
+          {
+            "activity": "Check to Ensure no Duplicate SKs",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "expression": {
+            "value": "@equals(coalesce(activity('Check to Ensure no Duplicate SKs').output.firstRow.FailedDims, 0), 0)",
+            "type": "Expression"
+          },
+          "ifFalseActivities": [
+            {
+              "name": "Duplicate SKs found in Dim table load",
+              "description": "Raise error if there are duplicates in the surrogate keys.",
+              "type": "Fail",
+              "state": "Active",
+              "dependsOn": [],
+              "typeProperties": {
+                "message": "Duplicate SKs found in Dim table load.",
+                "errorCode": "500"
+              }
+            }
+          ],
+          "ifTrueActivities": []
+        }
+      },
+      {
+        "name": "Failure Email Duplicate SKs",
+        "description": "Send failure email if there are duplicate surrogate keys.",
+        "type": "Office365Outlook",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [
+          {
+            "activity": "Check for FailedDim Duplicate SK Checks",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "inputs": {
+            "method": "post",
+            "path": "/v2/Mail",
+            "body": {
+              "To": "@activity('Lookup Dim Tables to Load').output.value[0].FailureEMails",
+              "Subject": "Dim Load Failure - Duplicate SKs",
+              "Body": "<p>Dim Load Failure - Duplicate SKs</p>\n<p>Run the following query to determine offending dimensions:</p>\n<p>SELECT * FROM WH_transform.dbo.vwDIM_SurrogateKey_DuplicateCheck</p>\n<p><br></p>",
+              "Sensitivity": "",
+              "Importance": "Normal"
+            }
+          }
+        }
+      },
+      {
+        "name": "Duplicate SKs found in Dim table load_copy1",
+        "description": "Raise error to calling environment if duplicate surrogate keys.",
+        "type": "Fail",
+        "state": "Active",
+        "dependsOn": [
+          {
+            "activity": "Failure Email Duplicate SKs",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "message": "Duplicate SKs found in Dim table load.",
+          "errorCode": "500"
+        }
+      },
+      {
+        "name": "Lookup Dim Tables to Load No SP",
+        "description": "This lookup gets the list of dimension tables that need to be processed, table is active, refresh frequency elapsed, and NO stored procedure is needed to process the data.",
+        "type": "Lookup",
+        "state": "Active",
+        "dependsOn": [
+          {
+            "activity": "ForEach table to load",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.4:00:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "source": {
+            "type": "FabricSqlDatabaseSource",
+            "sqlReaderQuery": "select m.*, e.SuccessEMails, e.FailureEMails\nfrom ingestion_metadata m\n  join load_emails e\n     on m.DataSource = e.DataSource\nwhere m.Active=1\nand m.DataSource = 'WH_Raw'\nand (DATEDIFF(MINUTE, isnull(m.LastLoadDateTime, '01/01/1900'), GETDATE()) / 60.0) >= m.RefreshFrequencyHours\nand m.ProcessingStoredProcedure is null\n",
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
+          },
+          "firstRowOnly": false,
+          "datasetSettings": {
+            "annotations": [],
+            "connectionSettings": {
+              "name": "WH_Metadata",
+              "properties": {
+                "annotations": [],
+                "type": "FabricSqlDatabase",
+                "typeProperties": {
+                  "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795",
+                  "artifactId": "a50d7dee-853f-4780-a6ea-3ab163cad17e"
+                },
+                "externalReferences": {
+                  "connection": "e7b4e8b4-bdca-4fac-a60a-6ba925e51986"
+                }
+              }
+            },
+            "type": "FabricSqlDatabaseTable",
+            "schema": [],
+            "typeProperties": {}
+          }
+        }
+      },
+      {
+        "name": "ForEach table to load No SP",
+        "description": "This loop processes each of the identified dimension tables with no stored procedure.",
+        "type": "ForEach",
+        "state": "Active",
+        "dependsOn": [
+          {
+            "activity": "Lookup Dim Tables to Load No SP",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "items": {
+            "value": "@activity('Lookup Dim Tables to Load No SP').output.value",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "name": "Copy data From Transform to Curated No SP",
+              "description": "Copies the updated dimension data from the transform layer to the curated.",
+              "type": "Copy",
+              "state": "Active",
+              "dependsOn": [
+                {
+                  "activity": "Truncate Table in Curated No SP",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.4:00:00",
+                "retry": 3,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "source": {
+                  "type": "DataWarehouseSource",
+                  "queryTimeout": "02:00:00",
+                  "partitionOption": "None",
+                  "datasetSettings": {
+                    "annotations": [],
+                    "linkedService": {
+                      "name": "WH_Transform",
+                      "properties": {
+                        "annotations": [],
+                        "type": "DataWarehouse",
+                        "typeProperties": {
+                          "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-uqz36rnpmmsetmasru36rmwxsu.datawarehouse.fabric.microsoft.com",
+                          "artifactId": "aba2a0bb-eb41-4334-ac69-e857e6cd30b6",
+                          "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795"
+                        }
+                      }
+                    },
+                    "type": "DataWarehouseTable",
+                    "schema": [],
+                    "typeProperties": {
+                      "schema": {
+                        "value": "@item().SourceTableSchema",
+                        "type": "Expression"
+                      },
+                      "table": {
+                        "value": "@item().SourceTableName",
+                        "type": "Expression"
+                      }
+                    }
+                  }
+                },
+                "sink": {
+                  "type": "DataWarehouseSink",
+                  "allowCopyCommand": true,
+                  "copyCommandSettings": {},
+                  "writeBehavior": "Insert",
+                  "tableOption": "autoCreate",
+                  "datasetSettings": {
+                    "annotations": [],
+                    "linkedService": {
+                      "name": "WH_Curated",
+                      "properties": {
+                        "annotations": [],
+                        "type": "DataWarehouse",
+                        "typeProperties": {
+                          "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-uqz36rnpmmsetmasru36rmwxsu.datawarehouse.fabric.microsoft.com",
+                          "artifactId": "f13c4241-81e3-4a92-a891-4dacfcf9161b",
+                          "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795"
+                        }
+                      }
+                    },
+                    "type": "DataWarehouseTable",
+                    "schema": [],
+                    "typeProperties": {
+                      "schema": {
+                        "value": "@item().TargetTableSchema",
+                        "type": "Expression"
+                      },
+                      "table": {
+                        "value": "@item().TargetTableName",
+                        "type": "Expression"
+                      }
+                    }
+                  }
+                },
+                "enableStaging": true,
+                "translator": {
+                  "type": "TabularTranslator",
+                  "typeConversion": true,
+                  "typeConversionSettings": {
+                    "allowDataTruncation": true,
+                    "treatBooleanAsNumber": false
+                  }
+                }
+              }
+            },
+            {
+              "name": "Error Email from Copy No SP",
+              "description": "Send failure email if the copy errors.",
+              "type": "Office365Outlook",
+              "state": "Inactive",
+              "onInactiveMarkAs": "Succeeded",
+              "dependsOn": [
+                {
+                  "activity": "Copy data From Transform to Curated No SP",
+                  "dependencyConditions": [
+                    "Failed"
+                  ]
+                }
+              ],
+              "typeProperties": {
+                "inputs": {
+                  "method": "post",
+                  "path": "/v2/Mail",
+                  "body": {
+                    "To": "@activity('Lookup Dim Tables to Load').output.value[0].FailureEMails",
+                    "Subject": "Type 2 Dim Load Failure",
+                    "Body": "<p>Type 2 Dim Load Failure - copy to curated</p>",
+                    "Sensitivity": "",
+                    "Importance": "Normal"
+                  }
+                }
+              }
+            },
+            {
+              "name": "Start Load No SP",
+              "description": "Updates the Metadata ingestion table with the start of the table processing.",
+              "type": "SqlServerStoredProcedure",
+              "state": "Active",
+              "dependsOn": [],
+              "policy": {
+                "timeout": "0.4:00:00",
+                "retry": 3,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "storedProcedureName": "[dbo].[usp_StartLoad]",
+                "storedProcedureParameters": {
+                  "DatabaseName": {
+                    "value": {
+                      "value": "@item().DatabaseName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "DataSource": {
+                    "value": {
+                      "value": "@item().DataSource",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "SourceTableName": {
+                    "value": {
+                      "value": "@item().SourceTableName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "SourceTableSchema": {
+                    "value": {
+                      "value": "@item().SourceTableSchema",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  }
+                }
+              },
+              "connectionSettings": {
+                "name": "WH_Metadata",
+                "properties": {
+                  "annotations": [],
+                  "type": "FabricSqlDatabase",
+                  "typeProperties": {
+                    "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795",
+                    "artifactId": "a50d7dee-853f-4780-a6ea-3ab163cad17e"
+                  },
+                  "externalReferences": {
+                    "connection": "e7b4e8b4-bdca-4fac-a60a-6ba925e51986"
+                  }
+                }
+              }
+            },
+            {
+              "name": "End Load Success No SP",
+              "description": "Updates the Metadata ingestion table with the processing success.",
+              "type": "SqlServerStoredProcedure",
+              "state": "Active",
+              "dependsOn": [
+                {
+                  "activity": "Copy data From Transform to Curated No SP",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.4:00:00",
+                "retry": 2,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "storedProcedureName": "[dbo].[usp_EndLoadSuccess]",
+                "storedProcedureParameters": {
+                  "DatabaseName": {
+                    "value": {
+                      "value": "@item().DatabaseName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "DataSource": {
+                    "value": {
+                      "value": "@item().DataSource",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "SourceTableName": {
+                    "value": {
+                      "value": "@item().SourceTableName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "SourceTableSchema": {
+                    "value": {
+                      "value": "@item().SourceTableSchema",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  }
+                }
+              },
+              "connectionSettings": {
+                "name": "WH_Metadata",
+                "properties": {
+                  "annotations": [],
+                  "type": "FabricSqlDatabase",
+                  "typeProperties": {
+                    "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795",
+                    "artifactId": "a50d7dee-853f-4780-a6ea-3ab163cad17e"
+                  },
+                  "externalReferences": {
+                    "connection": "e7b4e8b4-bdca-4fac-a60a-6ba925e51986"
+                  }
+                }
+              }
+            },
+            {
+              "name": "End Load Failure No SP",
+              "description": "Updates the Metadata ingestion table with the copy failure.",
+              "type": "SqlServerStoredProcedure",
+              "state": "Active",
+              "dependsOn": [
+                {
+                  "activity": "Copy data From Transform to Curated No SP",
+                  "dependencyConditions": [
+                    "Failed"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.4:00:00",
+                "retry": 2,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "typeProperties": {
+                "storedProcedureName": "[dbo].[usp_EndLoadFailure]",
+                "storedProcedureParameters": {
+                  "DatabaseName": {
+                    "value": {
+                      "value": "@item().DatabaseName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "DataSource": {
+                    "value": {
+                      "value": "@item().DataSource",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "SourceTableName": {
+                    "value": {
+                      "value": "@item().SourceTableName",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  },
+                  "SourceTableSchema": {
+                    "value": {
+                      "value": "@item().SourceTableSchema",
+                      "type": "Expression"
+                    },
+                    "type": "String"
+                  }
+                }
+              },
+              "connectionSettings": {
+                "name": "WH_Metadata",
+                "properties": {
+                  "annotations": [],
+                  "type": "FabricSqlDatabase",
+                  "typeProperties": {
+                    "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795",
+                    "artifactId": "a50d7dee-853f-4780-a6ea-3ab163cad17e"
+                  },
+                  "externalReferences": {
+                    "connection": "e7b4e8b4-bdca-4fac-a60a-6ba925e51986"
+                  }
+                }
+              }
+            },
+            {
+              "name": "Truncate Table in Curated No SP",
+              "description": "Truncates the target table prior to the copy.",
+              "type": "Script",
+              "dependsOn": [
+                {
+                  "activity": "Start Load No SP",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ],
+              "policy": {
+                "timeout": "0.4:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureOutput": false,
+                "secureInput": false
+              },
+              "connectionSettings": {
+                "name": "WH_Curated",
+                "properties": {
+                  "annotations": [],
+                  "type": "DataWarehouse",
+                  "typeProperties": {
+                    "endpoint": "efrhfadk6eru3b7hpy4j3xs2eu-uqz36rnpmmsetmasru36rmwxsu.datawarehouse.fabric.microsoft.com",
+                    "artifactId": "f13c4241-81e3-4a92-a891-4dacfcf9161b",
+                    "workspaceId": "45bf33a4-63af-4924-b012-8d37e8b2d795"
+                  },
+                  "externalReferences": {
+                    "connection": "f4bd464f-4b45-4667-9f87-32b462bafd93"
+                  }
+                }
+              },
+              "typeProperties": {
+                "scripts": [
+                  {
+                    "type": "Query",
+                    "text": {
+                      "value": "TRUNCATE TABLE @{item().TargetTableSchema}.@{item().TargetTableName}",
+                      "type": "Expression"
+                    }
+                  }
+                ],
+                "scriptBlockExecutionTimeout": "02:00:00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Error Email from ForEach No SP",
+        "description": "Send failure email if the no stored proc  loop ends with any errors.",
+        "type": "Office365Outlook",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [
+          {
+            "activity": "ForEach table to load No SP",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "inputs": {
+            "method": "post",
+            "path": "/v2/Mail",
+            "body": {
+              "To": "@activity('Lookup Dim Tables to Load').output.value[0].FailureEMails",
+              "Subject": "Dim Load Failure",
+              "Body": "<p>Dim Load Failure - ForEach loop No SP</p>",
+              "Sensitivity": "",
+              "Importance": "Normal"
+            }
+          }
+        }
+      }
+    ],
+    "logicAppsConnectionPayload": {
+      "id": "/subscriptions/df9d8663-bb9c-4fc2-a535-ec3381742d67/resourceGroups/connections-45bf33a4-63af-4924-b012-8d37e8b2d795/providers/Microsoft.Web/connections/1_9df9a208-2e0e-4d24-9f3e-f364b2e1055f_e3fc949c-284b-47cb-9bc9-8e748efbd2d1",
+      "properties": {
+        "api": {
+          "name": "office365",
+          "id": "/subscriptions/df9d8663-bb9c-4fc2-a535-ec3381742d67/providers/Microsoft.Web/locations/eastus2/managedApis/office365"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "name": "DEV Supply Chain and Mfg Semantic model refresh",
+        "type": "PBISemanticModelRefresh",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "method": "POST",
+          "operationType": "SemanticModelRefresh",
+          "groupId": "45bf33a4-63af-4924-b012-8d37e8b2d795",
+          "datasetId": "0a6296eb-3cbe-462b-a01b-b45849fe5bf1",
+          "waitOnCompletion": true,
+          "commitMode": "Transactional"
+        },
+        "externalReferences": {
+          "connection": "7cdf6d75-9542-4c1c-b7be-e8aa9da23e43"
+        }
+      },
+      {
+        "name": "DEV Semantic Model Refresh Success",
+        "description": "Email Semantic Model Success",
+        "type": "Office365Email",
+        "dependsOn": [
+          {
+            "activity": "DEV Supply Chain and Mfg Semantic model refresh",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "to": "kyoung@shamrocktechnologies.com",
+          "subject": "Dev Semantic Model Refresh Succeeded",
+          "body": "<p>The scheduled refresh of the DEV Semantic Models completed successfully.</p>"
+        },
+        "externalReferences": {
+          "connection": "4a766a31-4ddd-4a1c-9a25-d71381387168"
+        }
+      },
+      {
+        "name": "DEV Supply Chain and Mtg Semantic Model Refresh Failure",
+        "description": "Email Prod Supply Chain and Mfg Semantic Model Failure",
+        "type": "Office365Email",
+        "dependsOn": [
+          {
+            "activity": "DEV Supply Chain and Mfg Semantic model refresh",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "to": "kyoung@shamrocktechnologies.com",
+          "subject": "***FAILURE*** Dev Semantic Model Refresh",
+          "body": "<p>The scheduled refresh of the DEV Semantic Models failed.</p>"
+        },
+        "externalReferences": {
+          "connection": "4a766a31-4ddd-4a1c-9a25-d71381387168"
+        }
+      }
+    ]
+  }
+}

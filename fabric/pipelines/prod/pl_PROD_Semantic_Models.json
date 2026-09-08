@@ -1,0 +1,515 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "name": "Finance Semantic model refresh",
+        "description": "Refresh the Finance Semantic model.",
+        "type": "PBISemanticModelRefresh",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "method": "POST",
+          "operationType": "SemanticModelRefresh",
+          "groupId": "2b09b481-244a-470e-9797-6743fd25ca05",
+          "datasetId": "3cc07db1-b0c3-421c-8105-d2f211b45a45",
+          "waitOnCompletion": true,
+          "retryCount": 0,
+          "semanticModelRefreshTimeout": "01:00:00",
+          "commitMode": "Transactional"
+        },
+        "externalReferences": {
+          "connection": "bb40f509-ac1e-491d-a570-ffd5909c2626"
+        }
+      },
+      {
+        "name": "Global Sales Pivot Semantic model refresh",
+        "description": "Refresh the Global Sales Pivot Semantic model.",
+        "type": "PBISemanticModelRefresh",
+        "dependsOn": [
+          {
+            "activity": "Finance Semantic model refresh",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "method": "POST",
+          "operationType": "SemanticModelRefresh",
+          "groupId": "2b09b481-244a-470e-9797-6743fd25ca05",
+          "datasetId": "6034ee8f-aed0-410f-99ab-2de9157c4ae1",
+          "waitOnCompletion": true,
+          "retryCount": 0,
+          "semanticModelRefreshTimeout": "01:00:00",
+          "commitMode": "Transactional"
+        },
+        "externalReferences": {
+          "connection": "bb40f509-ac1e-491d-a570-ffd5909c2626"
+        }
+      },
+      {
+        "name": "Monster Pivot Semantic model refresh",
+        "description": "Refresh the Monster Pivot Semantic model.",
+        "type": "PBISemanticModelRefresh",
+        "dependsOn": [
+          {
+            "activity": "Global Sales Pivot Semantic model refresh",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "method": "POST",
+          "operationType": "SemanticModelRefresh",
+          "groupId": "2b09b481-244a-470e-9797-6743fd25ca05",
+          "datasetId": "64608063-13ed-46b5-b91f-7ce5bcee7256",
+          "waitOnCompletion": true,
+          "retryCount": 0,
+          "semanticModelRefreshTimeout": "01:00:00",
+          "commitMode": "Transactional"
+        },
+        "externalReferences": {
+          "connection": "bb40f509-ac1e-491d-a570-ffd5909c2626"
+        }
+      },
+      {
+        "name": "NJATP Semantic model refresh",
+        "description": "Refresh the NJATP Semantic model.",
+        "type": "PBISemanticModelRefresh",
+        "dependsOn": [
+          {
+            "activity": "Monster Pivot Semantic model refresh",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "method": "POST",
+          "operationType": "SemanticModelRefresh",
+          "groupId": "2b09b481-244a-470e-9797-6743fd25ca05",
+          "datasetId": "88f8a2db-d5d4-4439-9cc9-536ce1fbe5f0",
+          "waitOnCompletion": true,
+          "retryCount": 0,
+          "semanticModelRefreshTimeout": "01:00:00",
+          "commitMode": "Transactional"
+        },
+        "externalReferences": {
+          "connection": "bb40f509-ac1e-491d-a570-ffd5909c2626"
+        }
+      },
+      {
+        "name": "Procurement Semantic model refresh",
+        "description": "Refresh the Procurement Semantic model.",
+        "type": "PBISemanticModelRefresh",
+        "dependsOn": [
+          {
+            "activity": "NJATP Semantic model refresh",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "method": "POST",
+          "operationType": "SemanticModelRefresh",
+          "groupId": "2b09b481-244a-470e-9797-6743fd25ca05",
+          "datasetId": "d76b229d-7bcf-41d4-b36f-0cb2fadcc0ad",
+          "waitOnCompletion": true,
+          "retryCount": 0,
+          "semanticModelRefreshTimeout": "01:00:00",
+          "commitMode": "Transactional"
+        },
+        "externalReferences": {
+          "connection": "bb40f509-ac1e-491d-a570-ffd5909c2626"
+        }
+      },
+      {
+        "name": "Quality Control Semantic model refresh",
+        "description": "Refresh the Quality Control Semantic model.",
+        "type": "PBISemanticModelRefresh",
+        "dependsOn": [
+          {
+            "activity": "Procurement Semantic model refresh",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "method": "POST",
+          "operationType": "SemanticModelRefresh",
+          "groupId": "2b09b481-244a-470e-9797-6743fd25ca05",
+          "datasetId": "2529e154-7ff9-4e88-9d13-0850e622df89",
+          "waitOnCompletion": true,
+          "retryCount": 0,
+          "semanticModelRefreshTimeout": "01:00:00",
+          "commitMode": "Transactional"
+        },
+        "externalReferences": {
+          "connection": "bb40f509-ac1e-491d-a570-ffd5909c2626"
+        }
+      },
+      {
+        "name": "Sales Semantic model refresh",
+        "description": "Refresh the Sales Semantic model.",
+        "type": "PBISemanticModelRefresh",
+        "dependsOn": [
+          {
+            "activity": "Quality Control Semantic model refresh",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "method": "POST",
+          "operationType": "SemanticModelRefresh",
+          "groupId": "2b09b481-244a-470e-9797-6743fd25ca05",
+          "datasetId": "fca252de-ef0c-49e1-8247-316b8f8d13a6",
+          "waitOnCompletion": true,
+          "retryCount": 0,
+          "semanticModelRefreshTimeout": "01:00:00",
+          "commitMode": "Transactional"
+        },
+        "externalReferences": {
+          "connection": "bb40f509-ac1e-491d-a570-ffd5909c2626"
+        }
+      },
+      {
+        "name": "Supply Chain and Mfg Semantic model refresh",
+        "description": "Refresh the Supply Chain and Mfg Semantic model.",
+        "type": "PBISemanticModelRefresh",
+        "dependsOn": [
+          {
+            "activity": "Sales Semantic model refresh",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "method": "POST",
+          "operationType": "SemanticModelRefresh",
+          "groupId": "2b09b481-244a-470e-9797-6743fd25ca05",
+          "datasetId": "4b622345-287d-4d1a-9923-0dda424fdb72",
+          "waitOnCompletion": true,
+          "retryCount": 0,
+          "semanticModelRefreshTimeout": "01:00:00",
+          "commitMode": "Transactional"
+        },
+        "externalReferences": {
+          "connection": "bb40f509-ac1e-491d-a570-ffd5909c2626"
+        }
+      },
+      {
+        "name": "Prod Finance Semantic Model Failure",
+        "description": "Email Finance Semantic Model Failure",
+        "type": "Office365Email",
+        "dependsOn": [
+          {
+            "activity": "Finance Semantic model refresh",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "to": "kyoung@shamrocktechnologies.com;keith.chafin@alithya.com",
+          "subject": "***FAILURE*** PROD Finance Model Refresh",
+          "body": "<p>Failure of the PRODUCTION Finance Semantic Model refresh.</p>"
+        },
+        "externalReferences": {
+          "connection": "4a766a31-4ddd-4a1c-9a25-d71381387168"
+        }
+      },
+      {
+        "name": "Prod Global Sales Pivot Semantic Model Failure",
+        "description": "Email Global Sales Pivot Semantic Model Failure",
+        "type": "Office365Email",
+        "dependsOn": [
+          {
+            "activity": "Global Sales Pivot Semantic model refresh",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "to": "kyoung@shamrocktechnologies.com;keith.chafin@alithya.com",
+          "subject": "***FAILURE*** PROD Global Sales Pivot Model Refresh",
+          "body": "<p>Failure of the PRODUCTION Global Sales Pivot Semantic Model refresh.</p>"
+        },
+        "externalReferences": {
+          "connection": "4a766a31-4ddd-4a1c-9a25-d71381387168"
+        }
+      },
+      {
+        "name": "Prod Monster Pivot Semantic Model Failure",
+        "description": "Email Monster Pivot Semantic Model Failure",
+        "type": "Office365Email",
+        "dependsOn": [
+          {
+            "activity": "Monster Pivot Semantic model refresh",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "to": "kyoung@shamrocktechnologies.com;keith.chafin@alithya.com",
+          "subject": "***FAILURE*** PROD Monster Pivot Model Refresh",
+          "body": "<p>Failure of the PRODUCTION Monster Pivot Semantic Model refresh.</p>"
+        },
+        "externalReferences": {
+          "connection": "4a766a31-4ddd-4a1c-9a25-d71381387168"
+        }
+      },
+      {
+        "name": "Prod NJATP Semantic Model Failure",
+        "description": "Email NJATP Semantic Model Failure",
+        "type": "Office365Email",
+        "dependsOn": [
+          {
+            "activity": "NJATP Semantic model refresh",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "to": "kyoung@shamrocktechnologies.com;keith.chafin@alithya.com",
+          "subject": "***FAILURE*** PROD NJATP Model Refresh",
+          "body": "<p>Failure of the PRODUCTION NJATP Semantic Model refresh.</p>"
+        },
+        "externalReferences": {
+          "connection": "4a766a31-4ddd-4a1c-9a25-d71381387168"
+        }
+      },
+      {
+        "name": "Prod Procurement Semantic Model Failure",
+        "description": "Email Procurement Semantic Model Failure",
+        "type": "Office365Email",
+        "dependsOn": [
+          {
+            "activity": "Procurement Semantic model refresh",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "to": "kyoung@shamrocktechnologies.com;keith.chafin@alithya.com",
+          "subject": "***FAILURE*** PROD Procurement Model Refresh",
+          "body": "<p>Failure of the PRODUCTION Procurement Semantic Model refresh.</p>"
+        },
+        "externalReferences": {
+          "connection": "4a766a31-4ddd-4a1c-9a25-d71381387168"
+        }
+      },
+      {
+        "name": "Prod Quality Control Semantic Model Failure",
+        "description": "Email Quality Control Semantic Model Failure",
+        "type": "Office365Email",
+        "dependsOn": [
+          {
+            "activity": "Quality Control Semantic model refresh",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "to": "kyoung@shamrocktechnologies.com;keith.chafin@alithya.com",
+          "subject": "***FAILURE*** PROD Quality Control Model Refresh",
+          "body": "<p>Failure of the PRODUCTION Quality Control Semantic Model refresh.</p>"
+        },
+        "externalReferences": {
+          "connection": "4a766a31-4ddd-4a1c-9a25-d71381387168"
+        }
+      },
+      {
+        "name": "Prod Sales Semantic Model Failure",
+        "description": "Email Sales Semantic Model Failure",
+        "type": "Office365Email",
+        "dependsOn": [
+          {
+            "activity": "Sales Semantic model refresh",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "to": "kyoung@shamrocktechnologies.com;keith.chafin@alithya.com",
+          "subject": "***FAILURE*** PROD Sales Model Refresh",
+          "body": "<p>Failure of the PRODUCTION Sales Semantic Model refresh.</p>"
+        },
+        "externalReferences": {
+          "connection": "4a766a31-4ddd-4a1c-9a25-d71381387168"
+        }
+      },
+      {
+        "name": "Prod Supply Chain and Mfg Semantic Model Failure",
+        "description": "Email Prod Supply Chain and Mfg Semantic Model Failure",
+        "type": "Office365Email",
+        "dependsOn": [
+          {
+            "activity": "Supply Chain and Mfg Semantic model refresh",
+            "dependencyConditions": [
+              "Failed"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "to": "kyoung@shamrocktechnologies.com;keith.chafin@alithya.com",
+          "subject": "***FAILURE*** PROD Supply Chain and Mfg Model Refresh",
+          "body": "<p>Failure of the PRODUCTION Supply Chain and Mfg Semantic Model refresh.</p>"
+        },
+        "externalReferences": {
+          "connection": "4a766a31-4ddd-4a1c-9a25-d71381387168"
+        }
+      },
+      {
+        "name": "Prod Semantic Model Success",
+        "description": "Email Semantic Model Success",
+        "type": "Office365Email",
+        "dependsOn": [
+          {
+            "activity": "Supply Chain and Mfg Semantic model refresh",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.1:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "to": "kyoung@shamrocktechnologies.com;keith.chafin@alithya.com",
+          "subject": "Success PROD Semantic Model Refresh",
+          "body": "<p>The PRODUCTION Semantic Model refresh completed successfully.</p>"
+        },
+        "externalReferences": {
+          "connection": "4a766a31-4ddd-4a1c-9a25-d71381387168"
+        }
+      }
+    ]
+  }
+}

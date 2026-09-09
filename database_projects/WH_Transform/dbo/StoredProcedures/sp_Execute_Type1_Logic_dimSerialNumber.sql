@@ -41,7 +41,7 @@ BEGIN
 	FROM tbl_DIM_SerialNumber AS Target
 	JOIN vw_stage_DIM_SerialNumber_incoming AS Source
 		ON Target.[SerialNumber] = Source.[SerialNumber]
-			--AND Target.[ProductID] = Source.[ProductID]
+			AND Target.[ProductID] = Source.[ProductID]
 			AND Target.[CMPNY] = Source.[CMPNY]
 	WHERE Target.RecordStatus = 1
 		AND (
@@ -59,7 +59,7 @@ BEGIN
 	SELECT Target.SerialNumberKey
 		, Target.CMPNY
 		, Target.SerialNumber
-		--, Target.ProductID
+		, Target.ProductID
 
 		, Source.proddate
 		, Source.description
@@ -75,7 +75,7 @@ BEGIN
 	FROM stage_tbl_DIM_SerialNumber_Type1_UpdatesNeeded AS Target
 	JOIN vw_stage_DIM_SerialNumber_incoming AS Source
 		ON Target.[SerialNumber] = Source.[SerialNumber]
-			--AND Target.[ProductID] = Source.[ProductID]
+			AND Target.[ProductID] = Source.[ProductID]
 			AND Target.[CMPNY] = Source.[CMPNY]
 
 
@@ -89,7 +89,7 @@ BEGIN
 			SELECT 1
 			FROM vw_stage_DIM_SerialNumber_incoming AS Source
 			WHERE Target.[SerialNumber] = Source.[SerialNumber]
-				--AND Target.[ProductID] = Source.[ProductID]
+				AND Target.[ProductID] = Source.[ProductID]
 				AND Target.[CMPNY] = Source.[CMPNY]
 			);
 
@@ -100,15 +100,15 @@ BEGIN
 	SELECT *
 	FROM tbl_DIM_SerialNumber
 	WHERE RecordStatus = 1
-		AND (CMPNY +'='+ SerialNumber /*+'='+ ProductID*/) NOT IN 
+		AND (CMPNY +'='+ SerialNumber +'='+ ProductID) NOT IN 
 			(
 			--SELECT SerialNumber_Number
 			--FROM stage_tbl_DIM_SerialNumber_Expired
 			--UNION
-			SELECT CMPNY +'='+ SerialNumber /*+'='+ ProductID*/
+			SELECT CMPNY +'='+ SerialNumber +'='+ ProductID
 			FROM stage_tbl_DIM_SerialNumber_Deleted
 			UNION
-			SELECT CMPNY +'='+ SerialNumber /*+'='+ ProductID*/
+			SELECT CMPNY +'='+ SerialNumber +'='+ ProductID
 			FROM stage_tbl_DIM_SerialNumber_Type1_UpdatesNeeded
 			)
 	
@@ -164,8 +164,7 @@ BEGIN
 	SELECT SerialNumberKey
 		, CMPNY
 		, SerialNumber
-
-		--, ProductID
+		, ProductID
 		, proddate
 		, description
 		, rfidtagid
@@ -191,7 +190,7 @@ BEGIN
 			SELECT 1
 			FROM stage_tbl_DIM_SerialNumber_Final AS d
 			WHERE d.SerialNumber = f.SerialNumber
-				--AND d.ProductID = f.ProductID
+				AND d.ProductID = f.ProductID
 				AND d.CMPNY = f.CMPNY
 				AND d.RecordEffectiveStartDate = f.RecordEffectiveStartDate
 			)

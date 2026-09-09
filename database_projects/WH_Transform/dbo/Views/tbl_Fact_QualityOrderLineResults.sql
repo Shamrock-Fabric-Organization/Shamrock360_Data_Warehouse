@@ -118,7 +118,7 @@ r.dataareaid CMPNY
 		,ISNULL(dw.WarehouseKey, -1) WarehouseKey
 		,ISNULL(db.BatchKey, -1) BatchKey
 
-		,ISNULL(dsn.SerialNumberKey, -1) SerialNumberKey
+		, COALESCE(dsn.SerialNumberKey, dsnu.SerialNumberKey, -1) SerialNumberKey
 		,ISNULL(dv.VendorKey, -1) VendorKey
 		,ISNULL(dc.CustomerKey, -1) CustomerKey
 		,ISNULL(dwc.WorkCenterKey, -1) WorkCenterKey
@@ -180,7 +180,12 @@ from WH_Raw.dbo.inventqualityorderlineresults r
 	LEFT JOIN WH_Transform.dbo.tbl_DIM_SerialNumber dsn
 		ON i.inventserialid = dsn.SerialNumber
 			AND i.dataareaid = dsn.CMPNY
+			AND i.itemid = dsn.ProductID
 			AND dsn.RecordStatus=1
+
+	LEFT JOIN WH_Transform.dbo.vw_DIM_SerialNumber_Unambiguous dsnu
+		ON i.inventserialid = dsnu.SerialNumber
+			AND i.dataareaid = dsnu.CMPNY
 	LEFT JOIN WH_Transform.dbo.tbl_DIM_Vendor dv
 		ON i.accountrelation = dv.Vendor_ID
 			AND i.dataareaid = dv.CMPNY

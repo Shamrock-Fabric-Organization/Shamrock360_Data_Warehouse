@@ -63,8 +63,8 @@ SELECT
 	, ISNULL(ds.SiteKey, -1) SiteKey
 	, ISNULL(dw.WarehouseKey, -1) WarehouseKey
 	, ISNULL(db.BatchKey, -1) BatchKey
-	, ISNULL(dsn.SerialNumberKey, -1) SerialNumberKey
-	, COALESCE(dsc.StandardCostKey, dsc2.StandardCostKey, -1) StandardCostKey
+	, COALESCE(dsn.SerialNumberKey, dsnu.SerialNumberKey, -1) SerialNumberKey
+    , COALESCE(dsc.StandardCostKey, dsc2.StandardCostKey, -1) StandardCostKey
 
     ,CONVERT(INT, CONVERT(CHAR(8), wt.[WORKCANCELLEDUTCDATETIME],112))           AS WorkCancelledUTCDateKey
     ,CONVERT(INT, CONVERT(CHAR(8), wt.[WORKINPROCESSUTCDATETIME],112))           AS WorkStartedUTCDateKey
@@ -143,7 +143,12 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_Batch db
 LEFT JOIN WH_Transform.dbo.tbl_DIM_SerialNumber dsn
 	ON id.inventserialid = dsn.SerialNumber
 		AND wt.dataareaid = dsn.CMPNY
+		AND wlcc.itemid = dsn.ProductID
 		AND dsn.RecordStatus=1
+
+LEFT JOIN WH_Transform.dbo.vw_DIM_SerialNumber_Unambiguous dsnu
+	ON id.inventserialid = dsnu.SerialNumber
+		AND wt.dataareaid = dsnu.CMPNY
 
 
 LEFT JOIN WH_Transform.dbo.tbl_DIM_StandardCost dsc

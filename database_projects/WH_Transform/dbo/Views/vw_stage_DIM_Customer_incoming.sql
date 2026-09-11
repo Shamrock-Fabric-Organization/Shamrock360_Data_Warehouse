@@ -217,6 +217,70 @@ LEFT JOIN emails e_inv
 
 ) c
 
+UNION ALL   --Legacy Goldmine data 
+
+  SELECT 
+        ABS(CAST(CAST(
+        HASHBYTES('SHA2_256', 
+            CONCAT(
+                CAST(NEWID() AS VARCHAR(36)), '|'
+                ,CAST(SYSDATETIME() AS VARCHAR(30)), '|'
+                ,CAST(NEWID() AS VARCHAR(36)), '|'
+                -- Add row-specific data for extra uniqueness
+                ,CAST([CustomerID] AS VARCHAR(100))
+            )
+        ) AS BINARY(8)) AS BIGINT)) AS CustomerKey
+
+      --, CASE WHEN Cmpny='001' then '101' else Cmpny end  CMPNY
+      , CASE WHEN Cmpny in ('001','002') then '101' 
+		 WHEN Cmpny = '101' THEN '301'  
+		 WHEN Cmpny = '201' THEN '501'
+		 WHEN CMPNY = '999' THEN '301'
+		 else Cmpny end  CMPNY
+      ,CustomerID
+      ,'' as Invoice_Account
+      ,0                  [Legacy_Customer_ID]
+      ,0                  [GMAccountNo]
+      ,0                  [GMRecID] 
+
+      ,[CustomerName]
+      ,[GlobalName]
+      ,COALESCE(Address1 + ' ', '') + 
+       COALESCE(Address2 + ' ', '') + 
+       COALESCE(Address3, '') +
+       COALESCE(Address4, '')  AS Address_1
+      ,[City]
+      ,[State]
+      ,[ZIP]
+      ,[Country]
+       ----,COALESCE([City], 'No City') + ', ' + COALESCE([State], 'No State') CityState
+     ,'' as Territory_ID
+      ,[Salesman]
+      ,[Sales Channel]
+      ,[Industry]
+      ,[Bus Unit]
+      ,'' as Status
+      , EffectiveCountry        
+      ,[Tier]      [Account_Tier]
+      ,convert(decimal(38,10), [Longitude]) [Longitude]
+      ,convert(decimal(38,10), [Latitude]) [Latitude]
+	  ,NULL as PaymentTerms
+	  ,Phone as PhoneNumber
+	  ,NULL as [PurchasingEmail]
+      ,NULL as [InvoicingEmail]
+      , CASE WHEN Cmpny = '002' THEN '800'
+            WHEN UPPER([CustomerName]) like '%SHAMROCK%' THEN '999'
+            ELSE '100' END as [customergroup]
+      ,'USD' as [customer_currency]
+      ,'legacy' as Source
+      ,[RecordEffectiveStartDate]
+      ,[RecordEffectiveEndDate]
+      ,[RecordStatus]
+  FROM WH_Raw.[dbo].[tbl_DIM_Accounts]
+where 
+isNull(CustomerID,'') not in ('A201','A101','AEurope','')
+and NOT(isNull(CustomerID,'') in (select [Apollo_CustomerID] from WH_Curated.[dbo].[XREF_Customer_ID]))
+
 UNION ALL
 
 SELECT -1 [CustomerKey]

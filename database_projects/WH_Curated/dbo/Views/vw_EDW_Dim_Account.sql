@@ -42,7 +42,8 @@ SELECT [CustomerKey]
       ,[RecordEffectiveEndDate]
       ,[RecordStatus]
     FROM [dbo].[tbl_Dim_CUstomer]
-
+/*  --Removed when the Legacy Goldmine data was moved to the transform layer and not in Curated
+  where
   Union All
   
   SELECT 
@@ -110,3 +111,4 @@ isNull(CustomerID,'') not in ('A201','A101','AEurope','')
 and NOT(CustomerID in (select [Apollo_CustomerID] from [dbo].[XREF_Customer_ID]))
 --and RecordStatus=1
 --and RecordStatus=1
+*/

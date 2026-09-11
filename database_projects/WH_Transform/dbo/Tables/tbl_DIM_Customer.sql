@@ -20,7 +20,7 @@ CREATE TABLE [dbo].[tbl_DIM_Customer] (
 	[Industry_Segment] varchar(8000) NULL, 
 	[Subsegment] varchar(8000) NULL, 
 	[Status] int NULL, 
-	[EffectiveCountry] int NULL, 
+	[EffectiveCountry] varchar(8000) NULL, 
 	[Account_Tier] int NULL, 
 	[Longitude] decimal(38,10) NULL, 
 	[Latitude] decimal(38,10) NULL, 

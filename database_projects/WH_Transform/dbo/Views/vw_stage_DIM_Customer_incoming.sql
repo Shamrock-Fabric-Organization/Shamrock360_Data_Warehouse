@@ -280,6 +280,7 @@ UNION ALL   --Legacy Goldmine data
 where 
 isNull(CustomerID,'') not in ('A201','A101','AEurope','')
 and NOT(isNull(CustomerID,'') in (select [Apollo_CustomerID] from WH_Curated.[dbo].[XREF_Customer_ID]))
+and LTRIM(RTRIM(ISNULL(CMPNY,''))) <> ''  --Only include records with a company code
 
 UNION ALL
 

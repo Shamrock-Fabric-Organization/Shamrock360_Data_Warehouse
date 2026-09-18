@@ -16,10 +16,17 @@ WITH src AS (
     FROM WH_Raw.dbo.forecastmodel AS fm
 )
 SELECT
-      ABS(CAST(CAST(
-        HASHBYTES('SHA2_256',
-            CONCAT(CAST(s.CMPNY AS VARCHAR(20)), '|', CAST(s.ModelId AS VARCHAR(50)))
-        ) AS BINARY(8)) AS BIGINT))                              AS ForecastModelKey   -- deterministic surrogate
+    ABS(CAST(CAST(
+    HASHBYTES('SHA2_256', 
+        CONCAT(
+            CAST(NEWID() AS VARCHAR(36)), '|'
+            ,CAST(SYSDATETIME() AS VARCHAR(30)), '|'
+            ,CAST(NEWID() AS VARCHAR(36)), '|'
+            -- Add row-specific data for extra uniqueness
+            ,CONCAT(CAST(s.CMPNY AS VARCHAR(20)), '|', CAST(s.ModelId AS VARCHAR(50)))
+
+     ) ) AS BINARY(8)) AS BIGINT))     AS ForecastModelKey
+
     , s.CMPNY
     , s.ModelId
     , s.Model_Description

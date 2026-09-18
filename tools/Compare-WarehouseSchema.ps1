@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Compares the SQL schema of two Fabric Warehouse environments.
 
@@ -32,6 +32,43 @@
                   already in this repository
 
       ordering    a column that moved position, which changes SELECT * and INSERT
+
+    ⛔ A ROUTINE'S VERDICT COMES FROM THE WHITESPACE-NORMALIZED HASH, NOT THE RAW ONE.
+
+    The raw hash covers every space, tab, blank line and CRLF in the body, and SHA-256 is
+    case-sensitive. In a warehouse rebuilt BY HAND that made a tab-for-spaces reindent, or
+    a file saved with LF where the other side has CRLF, read as "the bodies differ" - a
+    full finding for a change that cannot alter what the code does. The client's own
+    words: "I'm not really sure what telling me that they have different character lengths
+    really tells me. I'm more concerned if the logic is different or the code is different."
+
+    So Export-WarehouseSchema.ps1 now stores a second hash of the same body with line
+    endings, tabs, repeated spaces, trailing spaces and blank lines normalized away, and
+    that is the one this comparison judges on:
+
+      normalized differs                 a finding, exactly as before
+      normalized matches, raw differs    NOT a finding. The bodies are logically identical
+                                         and differ only in whitespace. Named, counted and
+                                         summarized at the end; no effect on the verdict
+                                         or the exit code
+      normalized matches, raw matches    identical, exactly as before
+
+    ⛔ CASE IS NOT NORMALIZED. Select against SELECT stays a finding. Nobody asked for it
+    to be hidden and in a hand-rebuilt environment it is worth seeing.
+
+    ⛔ AND ONE THING THIS DOES HIDE: WHITESPACE INSIDE A STRING LITERAL. 'a  b' against
+    'a b' in a message or a delimiter is a behavioral difference, and collapsing runs of
+    spaces makes the two normalized hashes match. Nothing vanishes - the raw hash still
+    differs, so the routine is still named in the report - but "logically identical" is
+    exactly that strong and no stronger, and the report says so where it says it.
+
+    ⛔ AN EXPORT TAKEN BEFORE 2026-09-18 CARRIES NO NORMALIZED HASH. Where either side
+    lacks it the comparison falls back to the raw hash - and SAYS SO, loudly, per
+    warehouse. A run that quietly reverted to a byte comparison while the reader believed
+    whitespace was normalized would be worse than not having the feature at all.
+
+    The raw hash is kept and still compared. It is the witness: it is what makes a
+    normalized match a whitespace match rather than a hash that stopped covering the body.
 
     DEFINITION_LENGTH IS compared, alongside the hash. It was previously excluded on the
     grounds that any length change already changes the hash - which is true, and which is
@@ -419,6 +456,14 @@ function Format-Count {
     return ("{0} {1}" -f $N, $Plural)
 }
 
+function Format-Were {
+    # ⛔ "1 difference were detected" MAKES A REPORT WHOSE WHOLE CLAIM IS ARITHMETIC
+    # LOOK LIKE IT CANNOT COUNT. The number and the verb that agrees with it are decided
+    # in one place, so they can never disagree at any count.
+    param([int] $N, [string] $Singular, [string] $Plural)
+    return ("{0} {1}" -f (Format-Count $N $Singular $Plural), $(if ($N -eq 1) { 'was' } else { 'were' }))
+}
+
 function Format-Value {
     <#
         ⛔ A NULL AND AN EMPTY STRING ARE DIFFERENT FACTS, so they print differently.
@@ -476,15 +521,18 @@ function Format-Difference {
 
 function Format-Side {
     <#
-        ⛔ WHICH ENVIRONMENT HAS WHAT, WITHOUT INFERENCE. "MISSING IN PROD" is a verdict
-        about prod that leaves the reader to deduce the dev half of it. Every one-sided
-        finding now names BOTH sides in the same phrase, and it is worded identically in
-        every section so the reader learns it once.
+        ⛔ WHICH ENVIRONMENT HAS WHAT, WITHOUT INFERENCE AND WITHOUT SAYING IT TWICE.
+        "MISSING IN PROD" is a verdict about prod that leaves the reader to deduce the dev
+        half of it - and "in prod only - EXTRA IN PROD" then stated that one fact twice on
+        one line, the second time in capitals. ONE plain phrase names both sides, worded
+        identically in every section so the reader learns it once. MISSING IN PROD and
+        EXTRA IN PROD stay as the internal tokens the comparison keys on; they are not
+        what the reader is shown.
     #>
     param([string] $Change)
     switch ($Change) {
-        'MISSING IN PROD' { return 'in dev only - MISSING IN PROD' }
-        'EXTRA IN PROD'   { return 'in prod only - EXTRA IN PROD' }
+        'MISSING IN PROD' { return 'in dev only, not in prod' }
+        'EXTRA IN PROD'   { return 'in prod only, not in dev' }
         default           { return $Change }
     }
 }
@@ -842,6 +890,52 @@ function Get-FirstDifferingLine {
     return $null
 }
 
+# The label a whitespace-only routine difference is tolerated under. One constant, because
+# it is both the grouping key in the summary and the word the reader sees.
+$script:WhitespaceToleratedBy = 'whitespace only'
+
+function Test-NormalizedHashExport {
+    <#
+        Whether an export carries DEFINITION_NORMALIZED_HASH on every routine it holds.
+
+        ⛔ AN EXPORT WRITTEN BEFORE 2026-09-18 DOES NOT, AND THE FALLBACK MUST BE LOUD.
+        Without the field there is nothing to judge whitespace on, so the comparison
+        reverts to the raw byte hash - which is the old behaviour and is correct, but a
+        reader who believes whitespace was normalized will read a reindent as a code
+        change. Silently reverting is the one outcome this function exists to prevent;
+        the caller prints the fallback against the warehouse it applies to.
+
+        An export holding no routines at all answers true, vacuously: there is nothing
+        for the fallback to be about.
+    #>
+    param($Export)
+    foreach ($r in @($Export.routines)) {
+        if (-not (Test-JsonProperty $r 'DEFINITION_NORMALIZED_HASH')) { return $false }
+    }
+    return $true
+}
+
+function Test-WhitespaceOnlyFinding {
+    <#
+        Whether one finding is part of a routine whose bodies differ ONLY in whitespace.
+
+        The hash finding and the length finding are two witnesses to one reindent, so both
+        travel together - tolerating the hash while still listing "prod is 12 characters
+        shorter" would report the exact difference the normalization was built to stop
+        reporting.
+
+        ⛔ THE KEY SET IS BUILT FROM RAW-HASH FINDINGS ONLY, WHICH IS WHAT KEEPS THE
+        TRUNCATED-EXPORT CHECK ALIVE. A LENGTH that differs under an IDENTICAL raw hash is
+        impossible for two genuine bodies and is the loudest finding this report has. That
+        routine has no raw-hash finding, so it never enters the key set and is never
+        tolerated here.
+    #>
+    param($Finding, [hashtable] $Keys)
+    return ($Finding.Section -eq 'routine' -and $Finding.Change -eq 'DIFFERS' -and
+            ($Finding.Field -eq 'DEFINITION_HASH' -or $Finding.Field -eq 'DEFINITION_LENGTH') -and
+            $Keys.ContainsKey($Finding.Key))
+}
+
 function Test-RoutineDefinitionsAvailable {
     # Whether -ShowRoutineDiff has anything to work from. It needs the TEXT, and the
     # text is only in a .full export - of BOTH sides.
@@ -866,7 +960,7 @@ function Show-RoutineDiff {
     if (-not $diff) {
         # The hashes differ but no line does. Say so - silence here reads as a tool that
         # failed rather than a real and quite specific finding.
-        Write-Host '        the hashes differ but no LINE does: trailing whitespace, line endings, or a character that renders the same'
+        Write-Host '        the two bodies hash differently but no line differs: trailing whitespace, line endings, or a character that renders the same'
         return
     }
     Write-Host ("        first differs at line {0}" -f $diff.Line)
@@ -876,7 +970,7 @@ function Show-RoutineDiff {
         # Row-specific: the two lengths are this routine's own numbers. What that MEANS
         # - trimmed for display, so the difference is whitespace and the logic may well
         # be identical - is stated once under the section heading.
-        Write-Host ("        those two lines are trimmed for display and read the same: WHITESPACE ONLY, dev line {0} characters, prod line {1} characters" -f
+        Write-Host ("        those two lines are trimmed for display and read the same, so the difference is whitespace only - dev line {0} characters, prod line {1} characters" -f
                     $diff.DevLength, $diff.ProdLength)
     }
 }
@@ -976,8 +1070,12 @@ function Format-ColumnList {
     #>
     param([string[]] $Names, [int] $Width = 96)
 
-    $lead   = '        columns: '
-    $indent = ' ' * $lead.Length
+    # ⛔ NO "columns:" LABEL ON THE LIST. The entry line directly above already says how
+    # many columns there are and what happened to them, so a label here states a fact the
+    # reader has just read. The names sit immediately under the count, which is the only
+    # place they could be.
+    $lead   = '        '
+    $indent = $lead
     $lines  = @()
     $current = $lead
     $first = $true
@@ -1003,10 +1101,13 @@ function Write-Group {
     # every sentence that would read identically under every row of this section goes. It
     # is printed once, directly under the heading, ahead of the first finding. Anything
     # that changes from row to row stays on the row.
+    #
+    # ⛔ AND "5 object(s)" MAKES THE READER DO THE GRAMMAR. The heading knows whether it
+    # is one or many, so it says which - the rule Format-Count already exists for.
     param([string] $Title, $Items, [string] $Noun = 'finding', [string[]] $Notes = @())
     if (@($Items).Count -eq 0) { return }
     Write-Host ''
-    Write-Host ("  {0} - {1} {2}(s)" -f $Title, @($Items).Count, $Noun) -ForegroundColor Cyan
+    Write-Host ("  {0} - {1}" -f $Title, (Format-Count @($Items).Count $Noun ($Noun + 's'))) -ForegroundColor Cyan
     foreach ($n in @($Notes)) {
         if ($n) { Write-Host ("    {0}" -f $n) -ForegroundColor DarkGray }
     }
@@ -1049,8 +1150,8 @@ if ($Folder) {
     if ($unusable.Count -gt 0) {
         # An -Endpoint export is labeled 'custom' and so can never pair by prefix.
         # It used to be invisible here: exported successfully, then silently ignored.
-        Add-Note ("  {0} export(s) carry neither a dev- nor a prod- prefix and cannot be paired" -f
-                  $unusable.Count)
+        Add-Note ("  {0} neither a dev- nor a prod- prefix and cannot be paired" -f
+                  $(if ($unusable.Count -eq 1) { '1 export carries' } else { "$($unusable.Count) exports carry" }))
         foreach ($f in ($unusable | Sort-Object Name)) { Add-Note ("    {0}" -f $f.Name) }
         Add-Note '    An -Endpoint export is labeled custom-. Compare one explicitly with' 'Gray'
         Add-Note '    -DevFile and -ProdFile, or re-export it with -Environment dev|prod.' 'Gray'
@@ -1080,14 +1181,14 @@ if ($Folder) {
                                          DevName = $d.Name; ProdName = $p.Name; Stem = $stem }
         }
         elseif ($d) {
-            Add-Note ("  {0} has NO PRODUCTION COUNTERPART - NOT COMPARED" -f $d.Name)
+            Add-Note ("  {0} has no production counterpart and was not compared" -f $d.Name)
             Add-Note  '    Either it was never deployed to production, or the production export was not taken.' 'Gray'
             $unpaired++
         }
         else {
             # The direction that was missing entirely.
-            Add-Note ("  {0} has NO DEVELOPMENT COUNTERPART - NOT COMPARED" -f $p.Name)
-            Add-Note  '    A warehouse exists in PRODUCTION that development does not have. That is a' 'Gray'
+            Add-Note ("  {0} has no development counterpart and was not compared" -f $p.Name)
+            Add-Note  '    A warehouse exists in production that development does not have. That is a' 'Gray'
             Add-Note  '    finding in its own right, not a missing export to shrug at.' 'Gray'
             $unpaired++
         }
@@ -1119,11 +1220,40 @@ $totalFolded = 0
 # hundred of them spread over four warehouses is still a dozen pairings.
 $totalTolerated = 0
 $toleratedRuns = @()
+# Routines whose bodies differ in whitespace only. Kept apart from the type tolerances
+# above because they are a different KIND of tolerated material and get their own summary -
+# a type pairing says nothing about a reindent, and Format-TypeDeclaration has no meaning
+# on a routine row. They are added to the same totals, so the arithmetic still closes.
+$whitespaceRuns = @()
 
 foreach ($pair in $pairs) {
     $dev = Read-Schema $pair.Dev
     $prod = Read-Schema $pair.Prod
     $db = $dev.database
+
+    # ⛔ THE NORMALIZED ROUTINE HASH, READ BEFORE ANYTHING IS COMPARED. Whether it is
+    # there decides how a routine body is judged on this warehouse - on its logic when
+    # both exports carry it, byte for byte when either does not - and the report has to
+    # be able to say which happened before it prints a single routine finding.
+    $normReady = (Test-NormalizedHashExport $dev) -and (Test-NormalizedHashExport $prod)
+
+    # The routines of each side, keyed the same way Compare-Part keys them, so a verdict
+    # taken here lands on the same finding the comparison produces.
+    $devRt  = @{}
+    foreach ($r in @($dev.routines))  { $devRt[(Get-Key $r @('ROUTINE_SCHEMA','ROUTINE_NAME'))]  = $r }
+    $prodRt = @{}
+    foreach ($r in @($prod.routines)) { $prodRt[(Get-Key $r @('ROUTINE_SCHEMA','ROUTINE_NAME'))] = $r }
+
+    # Per routine present on BOTH sides: 'same', 'differs', or absent from the map where
+    # either export carries no normalized hash for it and there is nothing to judge.
+    $normState = @{}
+    foreach ($k in @($devRt.Keys)) {
+        if (-not $prodRt.ContainsKey($k)) { continue }
+        $na = Get-JsonProperty $devRt[$k]  'DEFINITION_NORMALIZED_HASH' $null
+        $nb = Get-JsonProperty $prodRt[$k] 'DEFINITION_NORMALIZED_HASH' $null
+        if ($null -eq $na -or $null -eq $nb) { continue }
+        $normState[$k] = if (([string]$na) -eq ([string]$nb)) { 'same' } else { 'differs' }
+    }
 
     # ⛔ WHAT "dev" AND "prod" WERE ON THIS RUN, taken from the export files themselves.
     # The reader was being told two sides differ without being told what the two sides
@@ -1143,6 +1273,10 @@ foreach ($pair in $pairs) {
         ProdDb       = [string](Get-JsonProperty $prod 'database'    '(not recorded)')
         DevFull      = [bool](Get-JsonProperty $dev  'definitionsIncluded' $false)
         ProdFull     = [bool](Get-JsonProperty $prod 'definitionsIncluded' $false)
+        # Whether routine bodies could be judged on logic rather than on bytes. Recorded
+        # here because this is the block that says what the two exports ARE, and a
+        # fallback to the raw hash is a fact about the exports, not about the schema.
+        NormalizedReady = $normReady
     }
 
     $f = @()
@@ -1156,7 +1290,53 @@ foreach ($pair in $pairs) {
             -KeyFields ROUTINE_SCHEMA, ROUTINE_NAME `
             -CompareFields ROUTINE_TYPE, DEFINITION_HASH, DEFINITION_LENGTH -What 'routine'
 
+    # ⛔ THE SECOND IMPOSSIBLE COMBINATION, ALONGSIDE THE LENGTH ONE THIS REPORT ALREADY
+    # CATCHES. Normalizing is a function of the raw text, so two bodies with the SAME raw
+    # hash cannot normalize to different ones. If that pair ever appears, one of the two
+    # hashes did not cover the body it claims to - the same class of broken export the
+    # length check exists for, and the same treatment. It cannot fire on genuine data,
+    # which is exactly why it is worth having.
+    foreach ($k in @($normState.Keys)) {
+        if ($normState[$k] -ne 'differs') { continue }
+        $ra = [string](Get-JsonProperty $devRt[$k]  'DEFINITION_HASH' '')
+        $rb = [string](Get-JsonProperty $prodRt[$k] 'DEFINITION_HASH' '')
+        if ($ra -ne $rb) { continue }
+        $f += New-Finding 'routine' 'DIFFERS' 'DEFINITION_NORMALIZED_HASH' $k $devRt[$k] '' 2 $prodRt[$k]
+    }
+
     $split = Resolve-Restatement $f
+
+    # ⛔ WHITESPACE TOLERANCE IS APPLIED BEFORE THE HASH/LENGTH MERGE BELOW, AND THAT
+    # ORDER IS LOAD-BEARING. The merge folds a routine's LENGTH difference onto its hash
+    # finding and counts it as explained by that finding. Tolerating the hash afterwards
+    # would leave the length counted under a line that is no longer printed, and the
+    # report would owe the reader a parent it never showed them.
+    #
+    # A key qualifies only when its RAW hash differs while its NORMALIZED hash matches.
+    # That is the whole definition of "the bodies are laid out differently and say the
+    # same thing", and building the set from raw-hash findings is also what keeps the
+    # length-differs-hash-identical check untouched - see Test-WhitespaceOnlyFinding.
+    $wsKeys = @{}
+    foreach ($x in @($split.Reported)) {
+        if ($x.Section -eq 'routine' -and $x.Change -eq 'DIFFERS' -and $x.Field -eq 'DEFINITION_HASH' -and
+            $normState.ContainsKey($x.Key) -and $normState[$x.Key] -eq 'same') {
+            $wsKeys[$x.Key] = $true
+        }
+    }
+    $wsTolerated = @($split.Reported | Where-Object { Test-WhitespaceOnlyFinding $_ $wsKeys })
+    $afterWs     = @($split.Reported | Where-Object { -not (Test-WhitespaceOnlyFinding $_ $wsKeys) })
+    foreach ($x in $wsTolerated) { $x.ToleratedBy = $script:WhitespaceToleratedBy }
+    if ($wsTolerated.Count -gt 0) {
+        $whitespaceRuns += [pscustomobject]@{
+            Database = $db
+            Count    = $wsTolerated.Count
+            # One name per ROUTINE, taken from the hash findings, because a routine that
+            # also changed length contributes two findings and is still one routine.
+            Routines = @(@($wsTolerated | Where-Object { $_.Field -eq 'DEFINITION_HASH' } |
+                           ForEach-Object { Format-Key $_.Key }) | Sort-Object)
+            Findings = $wsTolerated
+        }
+    }
 
     # A routine whose body changed produces BOTH a hash finding and a length finding.
     # They are two witnesses to one event, so they are shown on ONE line - the length
@@ -1164,15 +1344,15 @@ foreach ($pair in $pairs) {
     # The pair is still detected, and the hash-same-length-differs case is still its
     # own loud finding, because that combination means a broken export.
     $hashKeys = @{}
-    foreach ($x in $split.Reported) {
+    foreach ($x in $afterWs) {
         if ($x.Section -eq 'routine' -and $x.Field -eq 'DEFINITION_HASH') { $hashKeys[$x.Key] = $true }
     }
-    $merged = @($split.Reported | Where-Object {
+    $merged = @($afterWs | Where-Object {
         $_.Section -eq 'routine' -and $_.Field -eq 'DEFINITION_LENGTH' -and $hashKeys.ContainsKey($_.Key)
     })
     $mergedByKey = @{}
     foreach ($m in $merged) { $mergedByKey[$m.Key] = $m.Extra }
-    $printable = @($split.Reported | Where-Object {
+    $printable = @($afterWs | Where-Object {
         -not ($_.Section -eq 'routine' -and $_.Field -eq 'DEFINITION_LENGTH' -and $hashKeys.ContainsKey($_.Key))
     })
 
@@ -1200,11 +1380,17 @@ foreach ($pair in $pairs) {
     $tolWhole   = @($tolerated | Where-Object { -not $listedKeys.ContainsKey($_.Key) })
     $tolPartial = @($tolerated | Where-Object {      $listedKeys.ContainsKey($_.Key) })
 
+    # Both kinds of tolerated material count as tolerated. They are summarized under
+    # separate headings because a type pairing and a reindent are different things to
+    # judge, but a difference that did not reach the verdict is a difference that did not
+    # reach the verdict, and the run's arithmetic has one term for that.
+    $toleratedHere = $tolerated.Count + $wsTolerated.Count
+
     $folded = @($split.Restated).Count + $merged.Count
     $totalDetected  += $f.Count
     $totalListed    += $printable.Count
     $totalFolded    += $folded
-    $totalTolerated += $tolerated.Count
+    $totalTolerated += $toleratedHere
     if ($tolerated.Count -gt 0) {
         $toleratedRuns += [pscustomobject]@{
             Database     = $db
@@ -1224,9 +1410,12 @@ foreach ($pair in $pairs) {
     # turned on to retire. It matches, AND it says how many were tolerated to get there.
     $status = if ($f.Count -eq 0) { 'match' }
               elseif ($printable.Count -eq 0 -and $folded -eq 0) { 'match' }
-              else { "DIFFERS - $($printable.Count) finding(s) listed" }
-    if ($folded -gt 0) { $status += ", $folded folded" }
-    if ($tolerated.Count -gt 0) { $status += ", $($tolerated.Count) tolerated" }
+              else { ("differs - {0} listed" -f (Format-Count $printable.Count 'finding' 'findings')) }
+    # ⛔ "folded" IS THIS SCRIPT'S OWN WORD FOR WHAT IT DID, NOT AN ANSWER TO THE
+    # READER'S QUESTION. What they want to know is where those differences went, and the
+    # answer is that they are counted under a finding that is already listed.
+    if ($folded -gt 0) { $status += ", $folded counted under them" }
+    if ($toleratedHere -gt 0) { $status += ", $toleratedHere tolerated" }
 
     # ⛔ BOTH SIDES' COUNTS, AND LABELED AS SUCH. This row used to print the DEV export's
     # counts with no side named at all, so "3 tables" beside a warehouse whose production
@@ -1251,6 +1440,9 @@ foreach ($pair in $pairs) {
         $problems++
         $details += [pscustomobject]@{
             Database       = $db; Dev = $dev; Prod = $prod
+            # How routine bodies were judged on THIS warehouse. The routine section words
+            # its findings differently depending on it, so it travels with the findings.
+            NormalizedReady = $normReady
             Detected       = $f.Count
             Printable      = $printable
             Restated       = @($split.Restated)
@@ -1258,7 +1450,7 @@ foreach ($pair in $pairs) {
             MergedByKey    = $mergedByKey
             Merged         = $merged
             MergedCount    = $merged.Count
-            ToleratedCount = $tolerated.Count
+            ToleratedCount = $toleratedHere
         }
     }
 }
@@ -1278,7 +1470,7 @@ Write-Host '  There is nothing here that legitimately differs, so every finding 
 # and the tolerated ones are summarized under their own heading at the end.
 if ($IgnoreCompatibleTypes -or $IgnoreLengthAndPrecision) {
     Write-Host ''
-    Write-Host '  TOLERANCES WERE IN FORCE ON THIS RUN:' -ForegroundColor DarkCyan
+    Write-Host '  Tolerances in force on this run:' -ForegroundColor DarkCyan
     if ($IgnoreCompatibleTypes) {
         Write-Host '    -IgnoreCompatibleTypes     two types of the SAME family compare as equal -'
         Write-Host '                               char/varchar/nchar/nvarchar, tinyint/smallint/int/bigint,'
@@ -1317,6 +1509,16 @@ if ($holdsUniform -and $holdsSet.Count -gt 0) {
     Write-Host ("  Every export read in this run holds {0}." -f $holdsSet[0]) -ForegroundColor DarkGray
 }
 
+# ⛔ HOW A ROUTINE BODY WAS JUDGED IS A FACT ABOUT THE EXPORTS, SO IT IS SAID HERE.
+# The good case is one line for the run - it is true of every warehouse and repeating it
+# per file is the defect the block above already fixed. The FALLBACK is said against the
+# warehouse it applies to, in red, below: it is the one thing a reader must not miss.
+if (@($provenance | Where-Object { $_.NormalizedReady }).Count -eq @($provenance).Count -and
+    @($provenance).Count -gt 0) {
+    Write-Host '  Routine bodies are compared with whitespace normalized - line endings, tabs, repeated' -ForegroundColor DarkGray
+    Write-Host '  spaces, trailing whitespace and blank lines are not differences. Case still is.' -ForegroundColor DarkGray
+}
+
 foreach ($pv in $provenance) {
     Write-Host ("  {0}" -f $pv.Database)
     foreach ($side in @(
@@ -1328,6 +1530,17 @@ foreach ($pv in $provenance) {
             $holds = if ($side.Full) { 'full definition text' } else { 'definition hashes only' }
             Write-Host ("          this file holds {0}" -f $holds) -ForegroundColor DarkGray
         }
+    }
+
+    # ⛔ THE SILENT REVERT TO A BYTE COMPARISON, MADE IMPOSSIBLE. Without the normalized
+    # hash on both sides there is nothing to judge whitespace on, so this warehouse's
+    # routines were compared byte for byte - which is correct, and is NOT what a reader
+    # who has been told whitespace is normalized will assume they are looking at.
+    if (-not $pv.NormalizedReady) {
+        Write-Host '    WARNING: one or both of these exports predates the normalized routine hash, so' -ForegroundColor Red
+        Write-Host '             routine bodies were compared BYTE FOR BYTE on this warehouse. A reindent,' -ForegroundColor Red
+        Write-Host '             a tab against spaces, or CRLF against LF is reported below as a body that' -ForegroundColor Red
+        Write-Host '             differs. Re-export BOTH sides to compare on logic instead.' -ForegroundColor Red
     }
 
     # ⛔ THE MISLABELED-FILE TRAP, MADE VISIBLE. -Endpoint decides which warehouse is
@@ -1380,8 +1593,8 @@ foreach ($d in $details) {
     # detail block restates its own - which is a fact about THIS warehouse, not a
     # sentence repeated from somewhere else.
     $recapFolded = @($d.Restated).Count + $d.MergedCount
-    $recap = ("  {0} finding(s) listed below" -f @($p).Count)
-    if ($recapFolded -gt 0) { $recap += (", {0} folded into them" -f $recapFolded) }
+    $recap = ("  {0} listed below" -f (Format-Count @($p).Count 'finding' 'findings'))
+    if ($recapFolded -gt 0) { $recap += (", {0} more counted under them" -f $recapFolded) }
     # Named here and counted here, but not LISTED here: they are summarized by kind at the
     # end of the report, so a reader inside this block still knows how many there were and
     # where they went.
@@ -1402,11 +1615,15 @@ foreach ($d in $details) {
         if ($d.ByParent.ContainsKey($x.Key)) {
             $c = $d.ByParent[$x.Key]
             $bits = @()
-            if ($c['columns']  -gt 0) { $bits += ("its {0} column(s)" -f $c['columns']) }
+            if ($c['columns']  -gt 0) { $bits += ("its {0}" -f (Format-Count $c['columns'] 'column' 'columns')) }
             if ($c['routines'] -gt 0) { $bits += 'its definition row in sys.sql_modules' }
-            Write-Host ("        {0} not listed separately" -f ($bits -join ' and '))
+            # The verb agrees with the subject this line just built: "its 1 column IS counted
+            # here", "its 3 columns and its definition row ARE".
+            $manyFolded = ($bits.Count -gt 1) -or ($c['columns'] -gt 1)
+            Write-Host ("        {0} {1} counted here, not listed again" -f ($bits -join ' and '),
+                        $(if ($manyFolded) { 'are' } else { 'is' }))
         } else {
-            Write-Host '        the export holds no columns for this object, so nothing was folded'
+            Write-Host '        the export holds no columns for this object, so nothing was counted under it'
         }
     }
 
@@ -1421,7 +1638,8 @@ foreach ($d in $details) {
         if ($d.ByParent.ContainsKey($x.Key)) {
             $c = $d.ByParent[$x.Key]
             if ($c['routines'] -gt 0) {
-                Write-Host ("        its sys.sql_modules row not listed separately ({0} difference)" -f $c['routines'])
+                Write-Host ("        its sys.sql_modules row is counted here, not listed again - {0}" -f
+                            (Format-Count $c['routines'] 'difference' 'differences'))
             }
         }
     }
@@ -1471,17 +1689,19 @@ foreach ($d in $details) {
         # ⛔ THE FOLD IS STATED, WITH ITS THREE NUMBERS, BEFORE THE FIRST ENTRY. A reader
         # who cannot see that grouping happened cannot tell this report from one that
         # found less, which is the failure this whole family of scripts exists to stop.
-        $columnNotes += ("The {0} below affect {1}, shown as {2}. Each column is named once, with" -f
+        $columnNotes += ("The {0} below {1} {2}, shown as {3}. Each column is named once, with" -f
                          (Format-Count @($columns).Count 'difference' 'differences'),
+                         $(if (@($columns).Count -eq 1) { 'affects' } else { 'affect' }),
                          (Format-Count (@($columnEntries | ForEach-Object { $_.Columns.Count } |
                                           Measure-Object -Sum).Sum) 'column' 'columns'),
                          (Format-Count @($columnEntries).Count 'entry' 'entries'))
         $columnNotes += 'everything that differs about it listed beneath it.'
         if ($groupedEntries.Count -gt 0) {
-            $columnNotes += 'Columns of one table that differ in EXACTLY the same way - same fields, same dev values,'
-            $columnNotes += 'same prod values - are named together under that table, and every one of their names is'
-            $columnNotes += 'listed: a long list wraps and is never cut short. A column that differs in any other way is'
-            $columnNotes += 'listed on its own, never inside a group. -Verbose prints every difference ungrouped.'
+            $columnNotes += 'Columns of one table that changed in exactly the same way - same fields, same dev values,'
+            $columnNotes += 'same prod values - are named together under that table: the change is stated once and every'
+            $columnNotes += 'one of their names is listed, wrapped across lines and never cut short. A column that'
+            $columnNotes += 'changed in any other way is listed on its own, never inside a group. -Verbose prints every'
+            $columnNotes += 'difference on its own line.'
         }
     }
 
@@ -1502,23 +1722,48 @@ foreach ($d in $details) {
         }
     }
     else {
+        # The two phrases Format-Side produces, read back out of the function itself so
+        # this test can never drift from the wording it is testing for.
+        $sidePhrases = @((Format-Side 'MISSING IN PROD'), (Format-Side 'EXTRA IN PROD'))
         foreach ($g in $columnEntries) {
+            # ⛔ "16 columns differ identically" WAS A CONTRADICTION ON ITS FACE, and it
+            # was read as one: if they differ, they are not identical. It was reaching for
+            # "these 16 differences are all of one kind" - and the kind was then stated
+            # TWICE MORE on the line below it, so one fact was said three times before the
+            # reader reached a single column name.
+            #
+            # Where a group has exactly one difference and that difference is which
+            # environment its columns are in, the entry line SAYS it, and nothing repeats it:
+            #
+            #     dbo.vw_DIM_Date - 16 columns in prod only, not in dev
+            #         BVBA_Working_Day, Day, Day_#, ...
+            $sideOnly = ((@($g.Attributes).Count -eq 1) -and ($sidePhrases -contains $g.Attributes[0]))
             if ($g.Columns.Count -eq 1) {
-                Write-Host ("    {0}" -f (Format-Key $g.Keys[0])) -ForegroundColor Yellow
-            } else {
-                # ⛔ THE COUNT IS ON THE ENTRY BECAUSE THE ENTRY IS NOW THE FINDING.
-                # The table name on its own would understate a change that reached
-                # twelve columns exactly as badly as twelve repeated lines overstated
-                # it - and the reader has to know the size to judge it.
-                Write-Host ("    {0} - {1} differ identically" -f
-                            (Format-Key $g.ObjectKey),
-                            (Format-Count $g.Columns.Count 'column' 'columns')) -ForegroundColor Yellow
+                $head = Format-Key $g.Keys[0]
+                if ($sideOnly) { $head += (" - {0}" -f $g.Attributes[0]) }
             }
-            foreach ($a in $g.Attributes) {
-                Write-Host ("        {0}" -f $a) -ForegroundColor Yellow
+            elseif ($sideOnly) {
+                $head = "{0} - {1} {2}" -f (Format-Key $g.ObjectKey),
+                        (Format-Count $g.Columns.Count 'column' 'columns'), $g.Attributes[0]
             }
+            else {
+                # ⛔ THE COUNT STAYS ON THE ENTRY BECAUSE THE ENTRY IS THE FINDING. The
+                # table name on its own would understate a change that reached twelve
+                # columns exactly as badly as twelve repeated lines overstated it - and the
+                # reader has to know the size to judge it.
+                $head = "{0} - {1}, all changed the same way" -f (Format-Key $g.ObjectKey),
+                        (Format-Count $g.Columns.Count 'column' 'columns')
+            }
+            Write-Host ("    {0}" -f $head) -ForegroundColor Yellow
+            # Names first, directly under the count that just promised them, then what
+            # differs about them. A reader asks "which columns?" before "how?".
             if ($g.Columns.Count -gt 1) {
                 foreach ($line in (Format-ColumnList $g.Columns)) { Write-Host $line }
+            }
+            if (-not $sideOnly) {
+                foreach ($a in $g.Attributes) {
+                    Write-Host ("        {0}" -f $a) -ForegroundColor Yellow
+                }
             }
         }
     }
@@ -1545,10 +1790,21 @@ foreach ($d in $details) {
     # of that routine alone: its name, that the bodies differ, and its own two numbers.
     $rdHashes  = @($routineDiff | Where-Object { $_.Field -eq 'DEFINITION_HASH' })
     $rdImposs  = @($routineDiff | Where-Object { $_.Field -eq 'DEFINITION_LENGTH' })
+    $rdNormBad = @($routineDiff | Where-Object { $_.Field -eq 'DEFINITION_NORMALIZED_HASH' })
     $rdHaveDefs = Test-RoutineDefinitionsAvailable $d
 
     $routineNotes = @()
     if ($rdHashes.Count -gt 0) {
+        # ⛔ WHAT "DIFFER" MEANS HERE DEPENDS ON WHICH HASH DECIDED IT, so the section says
+        # which before the first finding. Without this a reader cannot tell a body that
+        # changed from a body that was reindented, and those are not the same news.
+        if ($d.NormalizedReady) {
+            $routineNotes += 'Every body below differs with whitespace normalized away, so the difference is not a reindent'
+            $routineNotes += 'or a line-ending change. Case is not normalized, so a Select against a SELECT is one of these.'
+        } else {
+            $routineNotes += 'These bodies were compared BYTE FOR BYTE - see the warning under EXPORTS COMPARED. A reindent,'
+            $routineNotes += 'a tab against spaces or CRLF against LF is listed here as a body that differs.'
+        }
         $routineNotes += $script:FieldNote['DEFINITION_LENGTH']
         $routineNotes += 'A routine with no LENGTH line below has bodies of identical length - the change did not alter the size of the text.'
         if (-not $ShowRoutineDiff) {
@@ -1569,10 +1825,17 @@ foreach ($d in $details) {
         $routineNotes += 'A LENGTH difference with an IDENTICAL hash is impossible for two genuine bodies. Suspect a'
         $routineNotes += 'truncated or partial export and re-export both sides.'
     }
+    if ($rdNormBad.Count -gt 0) {
+        $routineNotes += 'A NORMALIZED hash difference under an IDENTICAL raw hash is impossible: normalizing is a'
+        $routineNotes += 'function of the raw text, so one text cannot normalize two ways. Suspect a truncated or'
+        $routineNotes += 'partial export and re-export both sides.'
+    }
     Write-Group 'ROUTINE DEFINITIONS THAT DIFFER' $routineDiff 'difference' $routineNotes
 
     foreach ($x in $routineDiff) {
         if ($x.Field -eq 'DEFINITION_HASH') {
+            # Which hash reached this verdict is stated once at the heading, so the row
+            # carries only the routine and the verdict itself.
             Write-Host ("    {0,-44} the dev and prod bodies differ (SHA-256)" -f
                         (Format-Key $x.Detail)) -ForegroundColor Yellow
             if ($d.MergedByKey.ContainsKey($x.Key)) {
@@ -1590,6 +1853,13 @@ foreach ($d in $details) {
             Write-Host ("    {0,-44} LENGTH differs but the HASH does not: {1}" -f
                         (Format-Key $x.Detail), $x.Extra) -ForegroundColor Red
         }
+        elseif ($x.Field -eq 'DEFINITION_NORMALIZED_HASH') {
+            # The other impossible pair. The same raw text cannot normalize two ways, so
+            # one of the two hashes did not cover the body it is named after. Why it is
+            # impossible is stated once at the heading; the row names the routine.
+            Write-Host ("    {0,-44} the NORMALIZED bodies differ but the raw SHA-256 does not" -f
+                        (Format-Key $x.Detail)) -ForegroundColor Red
+        }
         else {
             Write-Host (("    {0,-44} {1,-22} {2}" -f (Format-Key $x.Detail), $x.Field, $x.Extra).TrimEnd()) -ForegroundColor Yellow
         }
@@ -1600,11 +1870,19 @@ foreach ($d in $details) {
     $foldedHere = @($d.Restated).Count + $d.MergedCount
     if ($foldedHere -gt 0) {
         Write-Host ''
-        Write-Host ("  NOT LISTED SEPARATELY - {0} difference(s)" -f $foldedHere) -ForegroundColor DarkCyan
-        Write-Host ("    {0} raw difference(s) were detected in {1}." -f $d.Detected, $d.Database)
-        Write-Host ("    {0} are listed above. {1} {2} each restate one of them and carry no" -f
-                    @($p).Count, $(if ($d.ToleratedCount -gt 0) { 'A further' } else { 'The other' }), $foldedHere)
-        Write-Host '    information of their own:'
+        Write-Host ("  COUNTED ABOVE, NOT LISTED SEPARATELY - {0}" -f
+                    (Format-Count $foldedHere 'difference' 'differences')) -ForegroundColor DarkCyan
+        Write-Host ("    {0} detected in {1}." -f
+                    (Format-Were $d.Detected 'difference' 'differences'), $d.Database)
+        # Every word that has to agree with a count is chosen from the count itself. One
+        # folded difference RESTATES one finding and CARRIES no information of ITS own;
+        # two EACH RESTATE one and CARRY none of THEIR own.
+        Write-Host ("    {0} {1} listed above. {2} {3} {4} one of them and {5} no" -f
+                    @($p).Count, $(if (@($p).Count -eq 1) { 'is' } else { 'are' }),
+                    $(if ($d.ToleratedCount -gt 0) { 'A further' } else { 'The other' }), $foldedHere,
+                    $(if ($foldedHere -eq 1) { 'restates' } else { 'each restate' }),
+                    $(if ($foldedHere -eq 1) { 'carries' } else { 'carry' }))
+        Write-Host ("    information of {0} own:" -f $(if ($foldedHere -eq 1) { 'its' } else { 'their' }))
         foreach ($g in (@($d.Restated) | Group-Object RestatementOf | Sort-Object Name)) {
             # ⛔ EACH REASON NAMES THE FINDING IT WAS FOLDED INTO, so the reader can walk
             # back up to the line that already told them which environment is involved.
@@ -1625,7 +1903,8 @@ foreach ($d in $details) {
         # would be the same as having no equation at all.
         $eq = "    {0} listed" -f @($p).Count
         if ($d.ToleratedCount -gt 0) { $eq += (" + {0} tolerated" -f $d.ToleratedCount) }
-        $eq += (" + {0} folded = {1} detected difference(s). Nothing was dropped." -f $foldedHere, $d.Detected)
+        $eq += (" + {0} counted above = {1} detected. Nothing was dropped." -f
+                $foldedHere, (Format-Count $d.Detected 'difference' 'differences'))
         Write-Host $eq
         if ($ListRestated) {
             # Every folded difference, the merged length lines included, so the count
@@ -1729,27 +2008,21 @@ if ($toleratedRuns.Count -gt 0) {
         # tolerated in full - but a count that vanished would be the very thing the whole
         # block exists to prevent.
         if ($summaryRows.Count -gt 0) { Write-Host '' }
-        Write-Host ("  A further {0} tolerated difference(s) sit on {1} column(s) already LISTED ABOVE as" -f
-                    $tolPartials, $tolPartCols)
-        Write-Host '  differing in another way. They are counted here and named there, rather than given a'
-        Write-Host '  pairing of their own - a pairing is only true of a column tolerated in full.'
-    }
-
-    # The run's arithmetic, stated here when nothing was folded. Where differences WERE
-    # folded the same equation is printed in the closing summary below, with all three
-    # terms in it, and printing it twice would be the repetition this report is written
-    # against.
-    if ($totalFolded -eq 0) {
-        Write-Host ''
-        Write-Host ("  {0} listed + {1} tolerated = {2} detected difference(s). Nothing was dropped." -f
-                    $totalListed, $totalTolerated, $totalDetected)
+        Write-Host ("  A further {0} {1} on {2} already listed above as" -f
+                    (Format-Count $tolPartials 'tolerated difference' 'tolerated differences'),
+                    $(if ($tolPartials -eq 1) { 'sits' } else { 'sit' }),
+                    (Format-Count $tolPartCols 'column' 'columns'))
+        Write-Host ("  differing in another way. {0} counted here and named there, rather than given a" -f
+                    $(if ($tolPartials -eq 1) { 'It is' } else { 'They are' }))
+        Write-Host ("  pairing of {0} own - a pairing is only true of a column tolerated in full." -f
+                    $(if ($tolPartials -eq 1) { 'its' } else { 'their' }))
     }
 
     if ($ListRestated) {
         # Every tolerated difference on its own line, so the summary above can be audited
         # against the raw findings rather than trusted. Same channel as the folded ones.
         Write-Host ''
-        Write-Host '  EVERY TOLERATED DIFFERENCE INDIVIDUALLY' -ForegroundColor DarkGray
+        Write-Host '  Every tolerated difference, one per line' -ForegroundColor DarkGray
         # ⛔ THE WAREHOUSE AND THE SWITCH ARE SUB-HEADINGS, NOT TWO MORE COLUMNS ON EVERY
         # ROW. Carried per row they added forty characters to a line that already runs to
         # the width of the main report's own verbose dump, and pushed it off the right edge
@@ -1769,13 +2042,96 @@ if ($toleratedRuns.Count -gt 0) {
     Write-Host ''
 }
 
+# ---------------------------------------------------------------------------
+# ⛔ ROUTINES THAT DIFFER IN WHITESPACE ONLY. ITS OWN BLOCK, NOT A ROW IN THE ONE ABOVE.
+#
+# It is tolerated material and it belongs at the end with the rest of it, but a type
+# PAIRING is the wrong shape for a reindent - there are no two types to name - and a
+# routine has no table or column to be counted in. So it gets a heading of its own and
+# the thing a reader can actually judge: WHICH routines, by name.
+#
+# ⛔ AND EVERY ONE OF THEM IS NAMED, NEVER AGGREGATED AWAY. The type block summarizes by
+# kind because four hundred columns cannot be read; routines number in the dozens, and
+# the name is the only thing that lets somebody check the string-literal caveat below
+# against the routines it could actually apply to. A count on its own could not.
+if ($whitespaceRuns.Count -gt 0) {
+    $wsRoutines = [int](@($whitespaceRuns | ForEach-Object { $_.Routines.Count } | Measure-Object -Sum).Sum)
+    $wsDiffs    = [int](@($whitespaceRuns | ForEach-Object { $_.Count }          | Measure-Object -Sum).Sum)
+
+    Write-Host ''
+    Write-Host ('=' * 78)
+    Write-Host ("ROUTINE BODIES THAT DIFFER IN WHITESPACE ONLY - {0}" -f
+                (Format-Count $wsRoutines 'routine' 'routines')) -ForegroundColor DarkCyan
+    Write-Host ('=' * 78)
+    Write-Host '  Their raw SHA-256 hashes differ and their normalized ones match: with line endings,'
+    Write-Host '  tabs, repeated spaces, trailing whitespace and blank lines normalized away, the two'
+    Write-Host '  bodies are the same text. That is a reindent or a file saved with different line'
+    Write-Host '  endings - which a hand rebuild produces - and not a change to what the code does, so'
+    Write-Host '  it did not affect the verdict or the exit code.'
+    Write-Host '  Case is NOT normalized. A Select against a SELECT is a real finding, never one of'
+    Write-Host '  these.'
+    Write-Host ''
+    # ⛔ THE ONE THING THIS TOLERANCE CAN HIDE, PRINTED WHERE IT IS BEING RELIED ON.
+    # "Logically identical" is exactly this strong and no stronger, and a reader who takes
+    # it further is the reason the routines are named rather than counted.
+    Write-Host '  WARNING: this also normalizes whitespace INSIDE a string literal. Two spaces against' -ForegroundColor Yellow
+    Write-Host "           one in a message or a delimiter - 'a  b' against 'a b' - is a behavioral" -ForegroundColor Yellow
+    Write-Host '           difference and its normalized hashes match. Nothing was hidden: the raw hash' -ForegroundColor Yellow
+    Write-Host '           still differs, which is why every routine is named below. Read any of them' -ForegroundColor Yellow
+    Write-Host '           that builds text out of spaces before accepting the tolerance.' -ForegroundColor Yellow
+    Write-Host ''
+    foreach ($wr in ($whitespaceRuns | Sort-Object Database)) {
+        Write-Host ("  {0}" -f $wr.Database)
+        foreach ($name in $wr.Routines) { Write-Host ("    {0}" -f $name) -ForegroundColor DarkGray }
+    }
+    if ($wsDiffs -ne $wsRoutines) {
+        # The heading counts routines and the arithmetic counts differences, so the two
+        # numbers differ and the report says why rather than leaving it to be noticed.
+        Write-Host ''
+        Write-Host ("  Counted as {0} in the arithmetic below: a reindent that also" -f
+                    (Format-Count $wsDiffs 'difference' 'differences'))
+        Write-Host '  changed the LENGTH is two witnesses to one event, and both were detected.'
+    }
+    if ($ListRestated) {
+        # Same audit channel as the other two folds: every finding on its own line, so the
+        # names above can be checked against the raw findings rather than trusted.
+        Write-Host ''
+        Write-Host '  Every whitespace-only difference, one per line' -ForegroundColor DarkGray
+        foreach ($wr in ($whitespaceRuns | Sort-Object Database)) {
+            Write-Host ("    {0}" -f $wr.Database) -ForegroundColor DarkGray
+            foreach ($x in (@($wr.Findings) | Sort-Object Detail, Field)) {
+                Write-Host (("      {0,-44} {1,-26} {2}" -f
+                             (Format-Key $x.Detail), $x.Field, $x.Extra).TrimEnd()) -ForegroundColor DarkGray
+            }
+        }
+    }
+    Write-Host ''
+}
+
+# The run's arithmetic, stated once when nothing was folded. Where differences WERE folded
+# the same equation is printed in the closing summary below, with all three terms in it,
+# and printing it twice would be the repetition this report is written against. It sits
+# after BOTH tolerated blocks because its tolerated term counts both of them.
+if ($totalTolerated -gt 0 -and $totalFolded -eq 0) {
+    Write-Host ("  {0} listed + {1} tolerated = {2} detected. Nothing was dropped." -f
+                $totalListed, $totalTolerated,
+                (Format-Count $totalDetected 'difference' 'differences'))
+}
+
+# The tolerated summaries this run actually printed, named so the closing verdict can
+# point a reader at them without claiming a block that is not there.
+$tolHeadings = @()
+if ($toleratedRuns.Count  -gt 0) { $tolHeadings += 'TOLERATED TYPE DIFFERENCES' }
+if ($whitespaceRuns.Count -gt 0) { $tolHeadings += 'ROUTINE BODIES THAT DIFFER IN WHITESPACE ONLY' }
+
 Write-Host ''
 if ($unpaired -gt 0) {
     # ⛔ AN UNPAIRED WAREHOUSE IS A FAILURE, NOT A WARNING. It used to print a yellow line
     # and let the run exit 0, so "the two environments match" could be said about a folder
     # in which a whole warehouse was never compared.
-    Write-Host ("{0} warehouse(s) exist on ONE SIDE ONLY and were not compared." -f
-                $unpaired) -ForegroundColor Yellow
+    Write-Host ("{0} on one side only and {1} not compared." -f
+                (Format-Count $unpaired 'warehouse exists' 'warehouses exist'),
+                $(if ($unpaired -eq 1) { 'was' } else { 'were' })) -ForegroundColor Yellow
 }
 if ($problems -eq 0 -and $unpaired -eq 0) {
     # The two environments are named in the EXPORTS COMPARED block at the top, endpoint
@@ -1785,36 +2141,47 @@ if ($problems -eq 0 -and $unpaired -eq 0) {
     # line somebody quotes out of this report, and "the two environments match" on its own,
     # after a switch relaxed the comparison, is the sentence that would later be wrong.
     if ($totalTolerated -gt 0) {
-        Write-Host ("The two environments match across {0} warehouse(s), apart from {1} tolerated type" -f
-                    @($pairs).Count, $totalTolerated) -ForegroundColor Green
-        Write-Host 'difference(s) summarized above under TOLERATED TYPE DIFFERENCES - see EXPORTS COMPARED' -ForegroundColor Green
-        Write-Host 'at the top for which two environments those were.' -ForegroundColor Green
+        Write-Host ("The two environments match across {0}, apart from {1}" -f
+                    (Format-Count @($pairs).Count 'warehouse' 'warehouses'),
+                    (Format-Count $totalTolerated 'tolerated difference' 'tolerated differences')) -ForegroundColor Green
+        Write-Host 'summarized above under:' -ForegroundColor Green
+        foreach ($h in $tolHeadings) { Write-Host ("  {0}" -f $h) -ForegroundColor Green }
+        Write-Host 'See EXPORTS COMPARED at the top for which two environments those were.' -ForegroundColor Green
     } else {
-        Write-Host ("The two environments match across {0} warehouse(s) - see EXPORTS COMPARED above for which two." -f
-                    @($pairs).Count) -ForegroundColor Green
+        Write-Host ("The two environments match across {0} - see EXPORTS COMPARED above for which two." -f
+                    (Format-Count @($pairs).Count 'warehouse' 'warehouses')) -ForegroundColor Green
     }
 }
 elseif ($problems -gt 0) {
     # ⛔ THE HEADLINE NUMBER IS THE ONE A PERSON HAS TO ACT ON. It used to be the raw
     # difference count, which counted forty restatements of one absent table as forty
     # things to look at.
-    Write-Host ("{0} warehouse(s) differ: {1} finding(s) listed." -f $problems, $totalListed) -ForegroundColor Yellow
+    Write-Host ("{0}: {1} listed." -f
+                (Format-Count $problems 'warehouse differs' 'warehouses differ'),
+                (Format-Count $totalListed 'finding' 'findings')) -ForegroundColor Yellow
     if ($totalTolerated -gt 0) {
-        Write-Host ("  A further {0} difference(s) were TOLERATED by a switch on this run and did not" -f $totalTolerated)
-        Write-Host '  affect this verdict. They are summarized by kind under TOLERATED TYPE DIFFERENCES.'
+        Write-Host ("  A further {0} tolerated on this run and did not affect this" -f
+                    (Format-Were $totalTolerated 'difference' 'differences'))
+        Write-Host ("  verdict. {0} summarized under {1}." -f
+                    $(if ($totalTolerated -eq 1) { 'It is' } else { 'They are' }),
+                    ($tolHeadings -join ' and '))
     }
     if ($totalFolded -gt 0) {
-        Write-Host ("  A further {0} difference(s) were detected and folded into the finding that" -f $totalFolded)
-        Write-Host '  already explains them. They were counted, not skipped:'
+        Write-Host ("  A further {0} detected and counted under the finding that already" -f
+                    (Format-Were $totalFolded 'difference' 'differences'))
+        Write-Host ("  explains {0}. {1} counted, not skipped:" -f
+                    $(if ($totalFolded -eq 1) { 'it' } else { 'them' }),
+                    $(if ($totalFolded -eq 1) { 'It was' } else { 'They were' }))
         $geq = "  {0} listed" -f $totalListed
         if ($totalTolerated -gt 0) { $geq += (" + {0} tolerated" -f $totalTolerated) }
-        $geq += (" + {0} folded = {1} detected difference(s)." -f $totalFolded, $totalDetected)
+        $geq += (" + {0} counted above = {1} detected." -f
+                 $totalFolded, (Format-Count $totalDetected 'difference' 'differences'))
         Write-Host $geq
         if (-not $ListRestated) {
-            Write-Host '  Re-run with -Verbose to see every folded difference individually.'
+            Write-Host '  Re-run with -Verbose to see each of them on its own line.'
         }
     }
-    Write-Host '  NOTHING HERE IS EXPECTED TO DIFFER. Each finding is a script that reached one'
+    Write-Host '  Nothing here is expected to differ. Each finding is a script that reached one'
     Write-Host '  environment and not the other, or an object changed in place.'
 }
 Write-Host ''

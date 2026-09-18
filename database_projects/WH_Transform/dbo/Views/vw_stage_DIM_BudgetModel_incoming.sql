@@ -2,12 +2,20 @@
 --use WH_Transform
 
 
-CREATE   VIEW [dbo].[vw_stage_DIM_BudgetModel_incoming] AS
+CREATE OR ALTER  VIEW [dbo].[vw_stage_DIM_BudgetModel_incoming] AS
 
 SELECT
-     ABS(CAST(CAST(HASHBYTES('SHA2_256'
+    ABS(CAST(CAST(
+    HASHBYTES('SHA2_256', 
+        CONCAT(
+            CAST(NEWID() AS VARCHAR(36)), '|'
+            ,CAST(SYSDATETIME() AS VARCHAR(30)), '|'
+            ,CAST(NEWID() AS VARCHAR(36)), '|'
+            -- Add row-specific data for extra uniqueness
         , CONCAT(bm.[dataareaid], '|', bm.[modelid])
-     ) AS BINARY(8)) AS BIGINT))     AS BudgetModelKey
+
+     )) AS BINARY(8)) AS BIGINT))     AS BudgetModelKey
+
     ,CAST(bm.[dataareaid]  AS VARCHAR(8000)) AS CMPNY
     ,CAST(bm.[modelid]     AS VARCHAR(8000)) AS BudgetModel
     ,CAST(bm.[submodelid]  AS VARCHAR(8000)) AS BudgetSubmodel

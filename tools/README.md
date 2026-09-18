@@ -100,9 +100,9 @@ Run from the repository root. It finds `fabric/` by itself.
 **Export a whole environment in one command** — this is the normal way to use it:
 
 ```powershell
-.	ools\Export-FabricItemDefinition.ps1 -TenantId <guid> -WorkspaceName '<dev workspace>'  -ItemType DataPipeline -OutFolder fabric\pipelines\dev
-.	ools\Export-FabricItemDefinition.ps1 -TenantId <guid> -WorkspaceName '<prod workspace>' -ItemType DataPipeline -OutFolder fabric\pipelines\prod
-.	ools\Compare-FabricEnvironment.ps1
+.\tools\Export-FabricItemDefinition.ps1 -TenantId <guid> -WorkspaceName '<dev workspace>'  -ItemType DataPipeline -OutFolder fabric\pipelines\dev
+.\tools\Export-FabricItemDefinition.ps1 -TenantId <guid> -WorkspaceName '<prod workspace>' -ItemType DataPipeline -OutFolder fabric\pipelines\prod
+.\tools\Compare-FabricEnvironment.ps1
 ```
 
 `-ItemType` is what makes it a deliberate choice — `DataPipeline`, `Notebook`, `SemanticModel`,
@@ -116,10 +116,42 @@ time against an unfamiliar workspace.
 dataflow is `mashup.pq` plus `queryMetadata.json`, and a semantic model is a set of TMDL files.
 Without it only the first part is written. The script warns when it sees more than one part.
 
+### Semantic models
+
+```powershell
+.\tools\Export-FabricItemDefinition.ps1 -TenantId <guid> -WorkspaceId <guid> -ItemType SemanticModel -AllParts -OutFolder fabric\semantic-models\dev
+```
+
+**They take a different route through the API, and the script now handles it.** A pipeline answers
+`getDefinition` with `200 OK` and the definition in the body. A semantic model answers **`202
+Accepted` with an empty body** — Microsoft documents `getDefinition` as a long-running operation —
+and the definition is collected from a separate operation endpoint once the operation reports
+`Succeeded`. Before this was handled the export failed with *"The property 'definition' cannot be
+found on this object"*, which read like a permissions or item-type problem when it was neither.
+
+- **Polling honors the server's `Retry-After`** (20 seconds in practice), with a **600-second
+  ceiling** per item. A stuck operation gives the session back rather than hanging; the message says
+  the operation may still complete and to re-run that item.
+- **A failed operation reports the API's own `errorCode` and `message`**, rather than just "failed".
+- **Nothing that returns 200 goes near this code.** Pipelines and dataflows are untouched.
+- ⛔ **PowerShell 7 is required for these item types.** Windows PowerShell 5.1 cannot read a
+  response status code, so it cannot see the 202 at all. The script detects this and says so
+  instead of failing obscurely. Pipelines still work on 5.1.
+
+⛔ **The `<display name>.json` file is not the model.** A semantic model's first part is
+`definition.pbism`, a four-line settings file. **The model itself is the TMDL set in
+`<display name>.parts\definition\`** — `model.tmdl`, `relationships.tmdl`, `expressions.tmdl` and
+one file per table. So `-AllParts` is not optional here in any practical sense, and the file the
+comparison pairs on carries none of the content.
+
+⛔ **Exporting by `-ItemType SemanticModel` also picks up the default models Fabric creates for each
+warehouse** — `WH_Raw`, `WH_Transform`, `WH_Curated`, `WH_Metadata`. They export cleanly and are
+near-empty. Name the models you want with `-ItemName` if you would rather not carry them.
+
 **Named items only:**
 
 ```powershell
-.	ools\Export-FabricItemDefinition.ps1 -WorkspaceName '<prod workspace>' -ItemName pl_dimension_logic, pl_fact_table_data -OutFolder fabric\pipelines\prod
+.\tools\Export-FabricItemDefinition.ps1 -WorkspaceName '<prod workspace>' -ItemName pl_dimension_logic, pl_fact_table_data -OutFolder fabric\pipelines\prod
 ```
 
 ⛔ **A name that is not found stops the run.** Exporting four of five requested pipelines and
@@ -284,7 +316,13 @@ copies it set aside. Each child is compared properly from its own export, which 
 not duplicated.
 
 ⛔ **An embedded child with no export of its own is reported as `NOT CHECKED`**, not skipped
-quietly. `-IncludeEmbedded` compares everything if you want the old behavior.
+quietly.
+
+⛔ **There is no switch that turns the old behavior back on.** `-IncludeEmbedded` exists only as an
+internal parameter of a function inside `FabricDefinition.psm1`. **Neither `Compare-FabricEnvironment.ps1`
+nor `Compare-FabricDefinition.ps1` accepts it**, and passing it fails immediately with a
+parameter-binding error. Nothing is lost by its absence: every embedded child is compared from its
+own export, and one with no export of its own is reported rather than skipped.
 
 ---
 
@@ -298,10 +336,15 @@ were found, and nothing was reported on the parts that had not changed.
 folder, a file present only in development, and a file present only in production. All three are
 reported rather than skipped.
 
-⛔ **`Export-FabricItemDefinition.ps1` has NOT been run against a live tenant.** It is written
-against Microsoft's documented API. **The token acquisition is the part to confirm first** — the
-script handles both the old and new `Get-AzAccessToken` return shapes, but that has not been proven
-against a real sign-in.
+**`Export-FabricItemDefinition.ps1` has been run against a live tenant.** This note used to read
+"has NOT been run against a live tenant", and that is no longer true. As of **2026-09-08** the
+exported pipeline definitions for both workspaces were produced by this script and committed to the
+warehouse repository, and it has been run repeatedly against both since. **Sign-in and token
+acquisition are therefore proven rather than inferred** — the script handles both the old and the
+new `Get-AzAccessToken` return shapes, and one of them worked against a real sign-in.
+
+⛔ **That is what was reported, not what was watched.** Nobody maintaining this file was at the
+keyboard for those runs; the evidence is the runs themselves and the exports they produced.
 
 ---
 
@@ -323,5 +366,13 @@ better. It entered public preview in March 2026 and still requires a `?beta=true
 these scripts use the per-item endpoint, which is generally available.
 
 **Semantic models and notebooks export through the same endpoint** and the export script handles
-them. CHECK 1's activity comparison is pipeline-shaped, so for those item types the script reports
-what it can and the definition comparison is the useful half.
+them — semantic models by way of the long-running-operation path described above. CHECK 1's activity
+comparison is pipeline-shaped, so for those item types the script reports what it can and the
+definition comparison is the useful half.
+
+⛔ **A semantic model can be EXPORTED but cannot usefully be COMPARED today.**
+`Compare-FabricEnvironment.ps1` pairs on `<display name>.json` and walks pipeline `activities`. For a
+semantic model that file is `definition.pbism`, a settings stub, and there are no activities to walk —
+so it is reported as an error, the same way a dataflow is. **Capture is solved; comparison is not.**
+Meaningfully diffing two models means comparing the TMDL set — tables, measures, relationships — which
+is new per-type logic, not a parameter. Nothing about that was in scope for the export fix.

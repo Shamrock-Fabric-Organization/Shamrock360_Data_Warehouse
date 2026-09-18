@@ -1,0 +1,615 @@
+table Dim_Product
+	lineageTag: 8df6efe3-f3be-40de-8949-4fbf0b5b7b1e
+	sourceLineageTag: [dbo].[mtbl_EDW_Dim_Product]
+
+	column ProductKey
+		dataType: int64
+		formatString: 0
+		lineageTag: a4b63b3b-579c-4b0d-9633-b21d83b16ce0
+		sourceLineageTag: ProductKey
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		lineageTag: c9e1bdfb-9ae4-4e9e-abbb-ee256fd8477c
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_ID
+		dataType: string
+		lineageTag: 0730a7dc-96e0-4f99-a388-98e0e5ad12e8
+		sourceLineageTag: Product_ID
+		summarizeBy: none
+		sourceColumn: Product_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_Name
+		dataType: string
+		lineageTag: b6327c77-65bd-4cf5-b930-2466908fce15
+		sourceLineageTag: Product_Name
+		summarizeBy: none
+		sourceColumn: Product_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Search_Name
+		dataType: string
+		lineageTag: 780b8e91-f0a7-413f-b83d-27ff28af1a91
+		sourceLineageTag: Search_Name
+		summarizeBy: none
+		sourceColumn: Search_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Commercial_Name
+		dataType: string
+		lineageTag: 1898f42b-5c24-4744-9a40-8f9ac033d97f
+		sourceLineageTag: Commercial_Name
+		summarizeBy: none
+		sourceColumn: Commercial_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Technology
+		dataType: string
+		lineageTag: ff30c9e9-9052-4345-a5da-e5ee6aec74c3
+		sourceLineageTag: Technology
+		summarizeBy: none
+		sourceColumn: Technology
+
+		annotation SummarizationSetBy = Automatic
+
+	column Material
+		dataType: string
+		lineageTag: 00b8858e-5c69-413f-9696-5d051de66ee6
+		sourceLineageTag: Material
+		summarizeBy: none
+		sourceColumn: Material
+
+		annotation SummarizationSetBy = Automatic
+
+	column Business_Line
+		dataType: string
+		lineageTag: eef1109b-5b87-462c-8da7-dcb1f28c5bf4
+		sourceLineageTag: Business_Line
+		summarizeBy: none
+		sourceColumn: Business_Line
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_Line
+		dataType: string
+		lineageTag: ea7303d6-8536-4ed1-a494-b69a7c3cbd5c
+		sourceLineageTag: Product_Line
+		summarizeBy: none
+		sourceColumn: Product_Line
+
+		annotation SummarizationSetBy = Automatic
+
+	column MiscRevenue
+		dataType: string
+		lineageTag: 6598905c-57b2-48d1-8700-1d6e6b57263c
+		sourceLineageTag: MiscRevenue
+		summarizeBy: none
+		sourceColumn: MiscRevenue
+
+		annotation SummarizationSetBy = Automatic
+
+	column Lifecycle
+		dataType: int64
+		formatString: 0
+		lineageTag: 60cb40b2-99f2-4cb7-872b-2d4cef78fa4f
+		sourceLineageTag: Lifecycle
+		summarizeBy: none
+		sourceColumn: Lifecycle
+
+		annotation SummarizationSetBy = Automatic
+
+	column Inventory_UoM
+		dataType: string
+		lineageTag: 5a18d93a-0ea7-4fb7-b4eb-0e20fe40c8e3
+		sourceLineageTag: Inventory_UoM
+		summarizeBy: none
+		sourceColumn: Inventory_UoM
+
+		annotation SummarizationSetBy = Automatic
+
+	column Purchasing_UoM
+		dataType: string
+		lineageTag: 6805fc2a-7a09-4b04-b751-e6416f0f37f9
+		sourceLineageTag: Purchasing_UoM
+		summarizeBy: none
+		sourceColumn: Purchasing_UoM
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sales_UoM
+		dataType: string
+		lineageTag: 03b61de0-416a-42fe-99a0-74dd63f535fe
+		sourceLineageTag: Sales_UoM
+		summarizeBy: none
+		sourceColumn: Sales_UoM
+
+		annotation SummarizationSetBy = Automatic
+
+	column Item_Type
+		dataType: string
+		lineageTag: b34338a0-f2d4-4e60-9b3b-f6a7d34015e9
+		sourceLineageTag: Item_Type
+		summarizeBy: none
+		sourceColumn: Item_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column PTFE_Flag
+		dataType: int64
+		formatString: 0
+		lineageTag: 0ca53294-4d21-4b9d-82a4-6900ba2f32fb
+		sourceLineageTag: PTFE_Flag
+		summarizeBy: none
+		sourceColumn: PTFE_Flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column Reorder_Point
+		dataType: double
+		lineageTag: d6b9c2e3-a8ad-4060-bc76-3b845094f785
+		sourceLineageTag: Reorder_Point
+		summarizeBy: none
+		sourceColumn: Reorder_Point
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column itemmodelgroupid
+		dataType: string
+		lineageTag: be66e573-d8e6-4cff-8a3c-054546994e69
+		sourceLineageTag: itemmodelgroupid
+		summarizeBy: none
+		sourceColumn: itemmodelgroupid
+
+		annotation SummarizationSetBy = Automatic
+
+	column producttype
+		dataType: int64
+		formatString: 0
+		lineageTag: a5457a41-6507-48c1-b063-b40d5cab7638
+		sourceLineageTag: producttype
+		summarizeBy: none
+		sourceColumn: producttype
+
+		annotation SummarizationSetBy = Automatic
+
+	column producttype_desc
+		dataType: string
+		lineageTag: 4d4eb757-1d21-4ddd-810f-55c83d36bb10
+		sourceLineageTag: producttype_desc
+		summarizeBy: none
+		sourceColumn: producttype_desc
+
+		annotation SummarizationSetBy = Automatic
+
+	column itemgroupid
+		dataType: string
+		lineageTag: 31ab7494-ef96-4489-a276-46aa14aa9c07
+		sourceLineageTag: itemgroupid
+		summarizeBy: none
+		sourceColumn: itemgroupid
+
+		annotation SummarizationSetBy = Automatic
+
+	column ItemGroupName
+		dataType: string
+		lineageTag: a1ff3615-5817-4e02-8e58-4d9d299b7c28
+		sourceLineageTag: ItemGroupName
+		summarizeBy: none
+		sourceColumn: ItemGroupName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ItemGroupType
+		dataType: int64
+		formatString: 0
+		lineageTag: 7331d5af-881c-4ab5-9b92-6c9a05d71828
+		sourceLineageTag: ItemGroupType
+		summarizeBy: none
+		sourceColumn: ItemGroupType
+
+		annotation SummarizationSetBy = Automatic
+
+	column ItemGroupTypeName
+		dataType: string
+		lineageTag: 8112db8a-6fca-445e-9db0-de09a5efc5f4
+		sourceLineageTag: ItemGroupTypeName
+		summarizeBy: none
+		sourceColumn: ItemGroupTypeName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ItemBuyerGroupID
+		dataType: string
+		lineageTag: a46864bb-d94a-4d25-9093-11f4afbf4257
+		sourceLineageTag: ItemBuyerGroupID
+		summarizeBy: none
+		sourceColumn: ItemBuyerGroupID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ItemBuyerGroupDesc
+		dataType: string
+		lineageTag: ff0d919c-7814-4e87-aeef-67298d0ef50d
+		sourceLineageTag: ItemBuyerGroupDesc
+		summarizeBy: none
+		sourceColumn: ItemBuyerGroupDesc
+
+		annotation SummarizationSetBy = Automatic
+
+	column Phantom
+		dataType: int64
+		formatString: 0
+		lineageTag: d6332b70-2d04-427c-8302-ee02e22331b9
+		sourceLineageTag: Phantom
+		summarizeBy: none
+		sourceColumn: Phantom
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsPhantom
+		dataType: string
+		lineageTag: b784a12e-ec11-4126-83c4-13e5b7a65431
+		sourceLineageTag: IsPhantom
+		summarizeBy: none
+		sourceColumn: IsPhantom
+
+		annotation SummarizationSetBy = Automatic
+
+	column min_purchase_qty
+		dataType: double
+		lineageTag: 7705e387-2af0-4bec-ad10-6e422f24b455
+		sourceLineageTag: min_purchase_qty
+		summarizeBy: none
+		sourceColumn: min_purchase_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column multiple_purchase_qty
+		dataType: double
+		lineageTag: 2df55b29-baa5-4e20-901a-56af1e8937e2
+		sourceLineageTag: multiple_purchase_qty
+		summarizeBy: none
+		sourceColumn: multiple_purchase_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column std_purchase_order_qty
+		dataType: double
+		lineageTag: c7349a87-ab23-49ce-876e-5afdfba9c1c5
+		sourceLineageTag: std_purchase_order_qty
+		summarizeBy: none
+		sourceColumn: std_purchase_order_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column max_purchase_order_qty
+		dataType: double
+		lineageTag: 494f65e2-6a23-4510-a5c4-1ccd1e550195
+		sourceLineageTag: max_purchase_order_qty
+		summarizeBy: none
+		sourceColumn: max_purchase_order_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column purchase_leadtime
+		dataType: int64
+		formatString: 0
+		lineageTag: 1b06f912-bee0-4a5e-951b-c0dc43bfdc58
+		sourceLineageTag: purchase_leadtime
+		summarizeBy: none
+		sourceColumn: purchase_leadtime
+
+		annotation SummarizationSetBy = Automatic
+
+	column min_inventory_qty
+		dataType: double
+		lineageTag: 363632a5-9b2a-4f61-8a04-ee8c4960a95b
+		sourceLineageTag: min_inventory_qty
+		summarizeBy: none
+		sourceColumn: min_inventory_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column multiple_inventory_qty
+		dataType: double
+		lineageTag: a4aca3b6-bd93-4d35-90e5-47c863271c06
+		sourceLineageTag: multiple_inventory_qty
+		summarizeBy: none
+		sourceColumn: multiple_inventory_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column std_inventory_order_qty
+		dataType: double
+		lineageTag: a74e6a56-f61c-4216-af22-d0c8d67fa580
+		sourceLineageTag: std_inventory_order_qty
+		summarizeBy: none
+		sourceColumn: std_inventory_order_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column max_inventory_order_qty
+		dataType: double
+		lineageTag: 8cced9a0-c489-4cf3-badc-38d9598df6d5
+		sourceLineageTag: max_inventory_order_qty
+		summarizeBy: none
+		sourceColumn: max_inventory_order_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column inventory_leadtime
+		dataType: int64
+		formatString: 0
+		lineageTag: a4db6600-8f2e-4fea-acac-b671016ce0e1
+		sourceLineageTag: inventory_leadtime
+		summarizeBy: none
+		sourceColumn: inventory_leadtime
+
+		annotation SummarizationSetBy = Automatic
+
+	column min_sales_qty
+		dataType: double
+		lineageTag: c75b96fb-e927-4dce-b442-680b5c749fea
+		sourceLineageTag: min_sales_qty
+		summarizeBy: none
+		sourceColumn: min_sales_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column multiple_sales_qty
+		dataType: double
+		lineageTag: 2ac383f9-175a-4163-8c1a-973aa25b456f
+		sourceLineageTag: multiple_sales_qty
+		summarizeBy: none
+		sourceColumn: multiple_sales_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column std_sales_order_qty
+		dataType: double
+		lineageTag: be86d9c1-26df-4016-a65b-a1b99de3e2fc
+		sourceLineageTag: std_sales_order_qty
+		summarizeBy: none
+		sourceColumn: std_sales_order_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column max_sales_order_qty
+		dataType: double
+		lineageTag: 1cc867e5-6796-47cf-ab31-00f17bc86d65
+		sourceLineageTag: max_sales_order_qty
+		summarizeBy: none
+		sourceColumn: max_sales_order_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column sales_leadtime
+		dataType: int64
+		formatString: 0
+		lineageTag: 8cb7091f-6d9b-46b7-b910-e2b3dfd5c113
+		sourceLineageTag: sales_leadtime
+		summarizeBy: none
+		sourceColumn: sales_leadtime
+
+		annotation SummarizationSetBy = Automatic
+
+	column BaseSalesPrice
+		dataType: double
+		lineageTag: 6abb0c81-41c9-4b16-b58b-de10f6cef612
+		sourceLineageTag: BaseSalesPrice
+		summarizeBy: none
+		sourceColumn: BaseSalesPrice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column BaseSalesPricePerLB
+		dataType: double
+		lineageTag: 87a0f6fb-91cd-4d99-b21f-0c02592c11ab
+		sourceLineageTag: BaseSalesPricePerLB
+		summarizeBy: none
+		sourceColumn: BaseSalesPricePerLB
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Start_Date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: eb238889-fb9c-48ea-a994-3bcba67886ee
+		sourceLineageTag: Start_Date
+		summarizeBy: none
+		sourceColumn: Start_Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column End_Date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 5c6603a6-b908-431c-99b8-93441268a921
+		sourceLineageTag: End_Date
+		summarizeBy: none
+		sourceColumn: End_Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Record_Status
+		dataType: int64
+		formatString: 0
+		lineageTag: 1d4fdd63-7cd4-4818-a5a0-a8c9e84d2393
+		sourceLineageTag: Record_Status
+		summarizeBy: none
+		sourceColumn: Record_Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		lineageTag: d9cbd031-8db5-4857-a0bf-e238081a3979
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column DefaultPurchaseWarehouse
+		dataType: string
+		lineageTag: 19138e8d-434d-4b98-bedf-b240df1434ec
+		sourceLineageTag: DefaultPurchaseWarehouse
+		summarizeBy: none
+		sourceColumn: DefaultPurchaseWarehouse
+
+		annotation SummarizationSetBy = Automatic
+
+	column DefaultPurchaseSiteID
+		dataType: string
+		lineageTag: fc2abeaa-305b-49c5-9e6c-596dd9c119af
+		sourceLineageTag: DefaultPurchaseSiteID
+		summarizeBy: none
+		sourceColumn: DefaultPurchaseSiteID
+
+		annotation SummarizationSetBy = Automatic
+
+	column DefaultInventoryWarehouse
+		dataType: string
+		lineageTag: 2a813d75-2104-4d1a-afdd-5fea639d6fc1
+		sourceLineageTag: DefaultInventoryWarehouse
+		summarizeBy: none
+		sourceColumn: DefaultInventoryWarehouse
+
+		annotation SummarizationSetBy = Automatic
+
+	column DefaultInventorySiteID
+		dataType: string
+		lineageTag: 07aa8fdb-7a01-42ad-bcd3-9ad34757b4de
+		sourceLineageTag: DefaultInventorySiteID
+		summarizeBy: none
+		sourceColumn: DefaultInventorySiteID
+
+		annotation SummarizationSetBy = Automatic
+
+	column DefaultSalesWarehouse
+		dataType: string
+		lineageTag: 827039aa-c186-4461-af28-441a6ca36bbb
+		sourceLineageTag: DefaultSalesWarehouse
+		summarizeBy: none
+		sourceColumn: DefaultSalesWarehouse
+
+		annotation SummarizationSetBy = Automatic
+
+	column DefaultSalesSiteID
+		dataType: string
+		lineageTag: 00b84e53-ca3c-43b9-9849-9c8e1ba61271
+		sourceLineageTag: DefaultSalesSiteID
+		summarizeBy: none
+		sourceColumn: DefaultSalesSiteID
+
+		annotation SummarizationSetBy = Automatic
+
+	column testgroupid
+		dataType: string
+		lineageTag: dbfe2259-c63b-40e3-8fce-1218c8c56d0e
+		sourceLineageTag: testgroupid
+		summarizeBy: none
+		sourceColumn: testgroupid
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductLifecycleState
+		dataType: string
+		lineageTag: 5ee69d8c-3701-4a73-8eae-28057cd503aa
+		sourceLineageTag: ProductLifecycleState
+		summarizeBy: none
+		sourceColumn: ProductLifecycleState
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductionType
+		dataType: string
+		lineageTag: c3b80a82-c296-46df-bb64-7bb0a81c975e
+		sourceLineageTag: ProductionType
+		summarizeBy: none
+		sourceColumn: ProductionType
+
+		annotation SummarizationSetBy = Automatic
+
+	column BaseItemProduct
+		dataType: int64
+		formatString: 0
+		lineageTag: 45cfb848-04c2-4c80-a417-1a0226aef573
+		sourceLineageTag: BaseItemProduct
+		summarizeBy: none
+		sourceColumn: BaseItemProduct
+
+		annotation SummarizationSetBy = Automatic
+
+	column routeid
+		dataType: string
+		lineageTag: f129f64c-c25a-49a4-a088-c06fa988c850
+		sourceLineageTag: routeid
+		summarizeBy: none
+		sourceColumn: routeid
+
+		annotation SummarizationSetBy = Automatic
+
+	column routename
+		dataType: string
+		lineageTag: 2b9d7438-f3ec-489c-ace6-6e0d2ddb84b2
+		sourceLineageTag: routename
+		summarizeBy: none
+		sourceColumn: routename
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Product = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Dim_Product
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+
+

@@ -1,0 +1,674 @@
+table 'Procurement Measures'
+	lineageTag: c4a3d1e2-c9b6-4ab0-a698-335ea6b2a7b1
+
+	measure 'SF - Actual Demand Quantity LBs' =
+			
+			VAR TodayDate =
+			    TODAY ()
+			
+			RETURN
+			    COALESCE (
+			        CALCULATE (
+			            SUM (
+			                'Fact_SalesAndForecastData'[Sales_Quantity_LBs]
+			            ),
+			            FILTER (
+			                ALL (
+			                    'Fact_SalesAndForecastData'[ModelID]
+			                ),
+			                'Fact_SalesAndForecastData'[ModelID]
+			                    = "SalesActual"
+			            ),
+			            KEEPFILTERS (
+			                'Dim_Date'[Date] <= TodayDate
+			            )
+			        ),
+			        0
+			    )
+		lineageTag: ead0e577-e16c-4516-a878-d9eb8192e4a5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - Forecast Demand Quantity LBs' =
+			
+			VAR ForecastStartDate =
+			    EOMONTH ( TODAY (), 0 ) + 1
+			
+			RETURN
+			    COALESCE (
+			        CALCULATE (
+			            SUM (
+			                'Fact_SalesAndForecastData'[Sales_Quantity_LBs]
+			            ),
+			            FILTER (
+			                ALL (
+			                    'Fact_SalesAndForecastData'[ModelID]
+			                ),
+			                'Fact_SalesAndForecastData'[ModelID]
+			                    = "Forecast"
+			            ),
+			            KEEPFILTERS (
+			                'Dim_Date'[Date] >= ForecastStartDate
+			            )
+			        ),
+			        0
+			    )
+		lineageTag: cecf5cb1-d70b-4335-a661-6809066630c8
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - Demand Quantity LBs' =
+			
+			[SF - Actual Demand Quantity LBs]
+			    + [SF - Forecast Demand Quantity LBs]
+		lineageTag: 0b615be5-d8fe-4844-84f9-df9c0abbb4f8
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - Actual Demand Amount USD' =
+			
+			VAR TodayDate =
+			    TODAY ()
+			
+			RETURN
+			    COALESCE (
+			        CALCULATE (
+			            SUM (
+			                'Fact_SalesAndForecastData'[Amount_USD]
+			            ),
+			            FILTER (
+			                ALL (
+			                    'Fact_SalesAndForecastData'[ModelID]
+			                ),
+			                'Fact_SalesAndForecastData'[ModelID]
+			                    = "SalesActual"
+			            ),
+			            KEEPFILTERS (
+			                'Dim_Date'[Date] <= TodayDate
+			            )
+			        ),
+			        0
+			    )
+		lineageTag: 6d950338-5af6-4294-8e99-fb7c0f019925
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - Forecast Demand Amount USD' =
+			
+			VAR ForecastStartDate =
+			    EOMONTH ( TODAY (), 0 ) + 1
+			
+			RETURN
+			    COALESCE (
+			        CALCULATE (
+			            SUM (
+			                'Fact_SalesAndForecastData'[Amount_USD]
+			            ),
+			            FILTER (
+			                ALL (
+			                    'Fact_SalesAndForecastData'[ModelID]
+			                ),
+			                'Fact_SalesAndForecastData'[ModelID]
+			                    = "Forecast"
+			            ),
+			            KEEPFILTERS (
+			                'Dim_Date'[Date] >= ForecastStartDate
+			            )
+			        ),
+			        0
+			    )
+		lineageTag: 0b200f11-c313-4d0b-b5b1-a506d322915e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - Demand Amount USD' =
+			
+			[SF - Actual Demand Amount USD]
+			    + [SF - Forecast Demand Amount USD]
+		lineageTag: 8613b687-9fc4-42a8-a179-5ee800da5acf
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - Demand Horizon Days' =
+			
+			VAR TodayDate =
+			    TODAY ()
+			
+			VAR ForecastStartDate =
+			    EOMONTH ( TodayDate, 0 ) + 1
+			
+			VAR SelectedDates =
+			    ALLSELECTED ( 'Dim_Date'[Date] )
+			
+			VAR EligibleDates =
+			    FILTER (
+			        SelectedDates,
+			        'Dim_Date'[Date] <= TodayDate
+			            || 'Dim_Date'[Date] >= ForecastStartDate
+			    )
+			
+			RETURN
+			    COUNTROWS ( EligibleDates )
+		formatString: 0
+		lineageTag: e3b00426-2347-4b8c-b9a5-9eb6dc4e4602
+
+	measure 'SF - RM Demand LBs' =
+			
+			VAR RawMaterialKeys =
+			    VALUES ( 'Dim_Product'[ProductKey] )
+			
+			VAR ValidFormulaSites =
+			    FILTER (
+			        ALL (
+			            'Fact_FinishedGoodsRawMaterials'[RmSiteId]
+			        ),
+			        'Fact_FinishedGoodsRawMaterials'[RmSiteId]
+			            <> "90"
+			    )
+			
+			VAR FormulaRows =
+			    CALCULATETABLE (
+			        SUMMARIZE (
+			            'Fact_FinishedGoodsRawMaterials',
+			            'Fact_FinishedGoodsRawMaterials'[FinishedGoodProductKey],
+			            "RMPerLbFG",
+			                SUM (
+			                    'Fact_FinishedGoodsRawMaterials'[RawMaterialAmtPerLbFG]
+			                )
+			        ),
+			        REMOVEFILTERS (
+			            'Fact_FinishedGoodsRawMaterials'
+			        ),
+			        REMOVEFILTERS ( 'DIM_Site' ),
+			        TREATAS (
+			            RawMaterialKeys,
+			            'Fact_FinishedGoodsRawMaterials'[RawMaterialProductKey]
+			        ),
+			        ValidFormulaSites
+			    )
+			
+			VAR Result =
+			    SUMX (
+			        FormulaRows,
+			        VAR FinishedGoodKey =
+			            'Fact_FinishedGoodsRawMaterials'[FinishedGoodProductKey]
+			
+			        VAR RMPerLbFG =
+			            [RMPerLbFG]
+			
+			        VAR FinishedGoodDemandLbs =
+			            CALCULATE (
+			                [SF - Demand Quantity LBs],
+			                REMOVEFILTERS ( 'Dim_Product' ),
+			                TREATAS (
+			                    { FinishedGoodKey },
+			                    'Dim_Product'[ProductKey]
+			                )
+			            )
+			
+			        RETURN
+			            FinishedGoodDemandLbs * RMPerLbFG
+			    )
+			
+			RETURN
+			    COALESCE ( Result, 0 )
+		lineageTag: 9ae23292-0d01-4c05-92cf-771562750a74
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - Latest Inventory Snapshot Date' =
+			
+			CALCULATE (
+			    MAX (
+			        'Fact_Inventory_Snapshot'[Snapshot_Date]
+			    ),
+			    REMOVEFILTERS ( 'Dim_Date' ),
+			    REMOVEFILTERS ( 'Dim_Product' ),
+			    REMOVEFILTERS (
+			        'Fact_FinishedGoodsRawMaterials'
+			    ),
+			    REMOVEFILTERS (
+			        'Fact_Inventory_Snapshot'[Snapshot_Date]
+			    )
+			)
+		formatString: General Date
+		lineageTag: 23c9de97-dc79-4d58-bd53-cde83f97bb9a
+
+	measure 'SF - RM On-Hand LBs' =
+			
+			VAR SnapshotDate =
+			    [SF - Latest Inventory Snapshot Date]
+			
+			VAR Result =
+			    CALCULATE (
+			        SUM (
+			            'Fact_Inventory_Snapshot'[physicalinvent_LBs]
+			        ),
+			        REMOVEFILTERS ( 'Dim_Date' ),
+			        REMOVEFILTERS (
+			            'Fact_Inventory_Snapshot'[Snapshot_Date]
+			        ),
+			        'Fact_Inventory_Snapshot'[Snapshot_Date]
+			            = SnapshotDate
+			    )
+			
+			RETURN
+			    COALESCE ( Result, 0 )
+		lineageTag: 40b1b664-00d3-4fe8-bf8b-c6ca80332283
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - RM Reserved LBs' =
+			
+			VAR SnapshotDate =
+			    [SF - Latest Inventory Snapshot Date]
+			
+			VAR ValidWarehouses =
+			    FILTER (
+			        VALUES ( 'DIM_Warehouse'[Warehouse_ID] ),
+			        LEFT (
+			            TRIM ( 'DIM_Warehouse'[Warehouse_ID] ),
+			            1
+			        ) <> "T"
+			    )
+			
+			VAR Result =
+			    CALCULATE (
+			        SUM (
+			            'Fact_Inventory_Snapshot'[reservphysical_LBs]
+			        ),
+			        REMOVEFILTERS ( 'Dim_Date' ),
+			        REMOVEFILTERS (
+			            'Fact_Inventory_Snapshot'[Snapshot_Date]
+			        ),
+			        'Fact_Inventory_Snapshot'[Snapshot_Date]
+			            = SnapshotDate,
+			        KEEPFILTERS ( ValidWarehouses )
+			    )
+			
+			RETURN
+			    COALESCE ( Result, 0 )
+		lineageTag: a7277c73-c34c-40c0-9e30-f815e08772d4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - Supply incl. Open PO LBs' =
+			
+			[SF - RM On-Hand LBs]
+			    + [Open PO Lbs]
+		lineageTag: c0fb3a89-c29e-44b0-8553-723c2c4e6711
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - On-Hand Surplus Shortfall LBs' =
+			
+			[SF - RM On-Hand LBs]
+			    - [SF - RM Demand LBs]
+		lineageTag: 5dddc2b0-87d0-4319-9f4b-ac02f0ca9ad3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - RM Coverage %' =
+			
+			DIVIDE (
+			    [SF - RM On-Hand LBs],
+			    [SF - RM Demand LBs]
+			)
+		lineageTag: f2cbddde-ad29-4d55-ba62-cc511201e171
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - Avg Daily RM Demand LBs' =
+			
+			DIVIDE (
+			    [SF - RM Demand LBs],
+			    [SF - Demand Horizon Days]
+			)
+		lineageTag: 86a80d15-75a1-4049-9779-a6c7b1dbac50
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - RM Days on Hand' =
+			
+			DIVIDE (
+			    [SF - RM On-Hand LBs],
+			    [SF - Avg Daily RM Demand LBs]
+			)
+		lineageTag: a38af993-d36c-4a3a-ac07-40183fc573be
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - Days Supply incl. Open POs' =
+			
+			DIVIDE (
+			    [SF - Supply incl. Open PO LBs],
+			    [SF - Avg Daily RM Demand LBs]
+			)
+		lineageTag: 49d26876-d98c-4649-8131-b12bf94e41f0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - FG Demand LBs' =
+			
+			VAR ValidFormulaSites =
+			    FILTER (
+			        ALL (
+			            'Fact_FinishedGoodsRawMaterials'[RmSiteId]
+			        ),
+			        'Fact_FinishedGoodsRawMaterials'[RmSiteId]
+			            <> "90"
+			    )
+			
+			VAR FinishedGoodKeys =
+			    CALCULATETABLE (
+			        VALUES (
+			            'Fact_FinishedGoodsRawMaterials'[FinishedGoodProductKey]
+			        ),
+			        REMOVEFILTERS ( 'DIM_Site' ),
+			        ValidFormulaSites
+			    )
+			
+			RETURN
+			    IF (
+			        [RMHT - Show FG Detail] = 1
+			            && COUNTROWS ( FinishedGoodKeys ) > 0,
+			        CALCULATE (
+			            [SF - Demand Quantity LBs],
+			            REMOVEFILTERS ( 'Dim_Product' ),
+			            TREATAS (
+			                FinishedGoodKeys,
+			                'Dim_Product'[ProductKey]
+			            )
+			        )
+			    )
+		lineageTag: 0a9d8666-a2f2-463d-be01-3c5b02a668d5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - FG Demand Amount USD' =
+			
+			VAR ValidFormulaSites =
+			    FILTER (
+			        ALL (
+			            'Fact_FinishedGoodsRawMaterials'[RmSiteId]
+			        ),
+			        'Fact_FinishedGoodsRawMaterials'[RmSiteId]
+			            <> "90"
+			    )
+			
+			VAR FinishedGoodKeys =
+			    CALCULATETABLE (
+			        VALUES (
+			            'Fact_FinishedGoodsRawMaterials'[FinishedGoodProductKey]
+			        ),
+			        REMOVEFILTERS ( 'DIM_Site' ),
+			        ValidFormulaSites
+			    )
+			
+			RETURN
+			    IF (
+			        [RMHT - Show FG Detail] = 1
+			            && COUNTROWS ( FinishedGoodKeys ) > 0,
+			        CALCULATE (
+			            [SF - Demand Amount USD],
+			            REMOVEFILTERS ( 'Dim_Product' ),
+			            TREATAS (
+			                FinishedGoodKeys,
+			                'Dim_Product'[ProductKey]
+			            )
+			        )
+			    )
+		lineageTag: d99edcf6-7b84-4065-a371-5ba5174d58c2
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - RM Demand by FG LBs' =
+			
+			VAR ShowDetail =
+			    [RMHT - Show FG Detail] = 1
+			
+			VAR ValidFormulaSites =
+			    FILTER (
+			        ALL (
+			            'Fact_FinishedGoodsRawMaterials'[RmSiteId]
+			        ),
+			        'Fact_FinishedGoodsRawMaterials'[RmSiteId]
+			            <> "90"
+			    )
+			
+			VAR FormulaRows =
+			    CALCULATETABLE (
+			        SUMMARIZE (
+			            'Fact_FinishedGoodsRawMaterials',
+			            'Fact_FinishedGoodsRawMaterials'[FinishedGoodProductKey],
+			            "RMPerLbFG",
+			                SUM (
+			                    'Fact_FinishedGoodsRawMaterials'[RawMaterialAmtPerLbFG]
+			                )
+			        ),
+			        REMOVEFILTERS ( 'DIM_Site' ),
+			        ValidFormulaSites
+			    )
+			
+			VAR Result =
+			    SUMX (
+			        FormulaRows,
+			        VAR FinishedGoodKey =
+			            'Fact_FinishedGoodsRawMaterials'[FinishedGoodProductKey]
+			
+			        VAR RMPerLbFG =
+			            [RMPerLbFG]
+			
+			        VAR FinishedGoodDemandLbs =
+			            CALCULATE (
+			                [SF - Demand Quantity LBs],
+			                REMOVEFILTERS ( 'Dim_Product' ),
+			                TREATAS (
+			                    { FinishedGoodKey },
+			                    'Dim_Product'[ProductKey]
+			                )
+			            )
+			
+			        RETURN
+			            FinishedGoodDemandLbs * RMPerLbFG
+			    )
+			
+			RETURN
+			    IF (
+			        ShowDetail,
+			        Result
+			    )
+		lineageTag: 930f15df-70f2-4173-9466-ad59f54151fa
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - RM Lbs per FG Lb' =
+			
+			DIVIDE (
+			    [SF - RM Demand by FG LBs],
+			    [SF - FG Demand LBs]
+			)
+		lineageTag: f7c81ac2-81ea-4770-9dda-28ac928c609d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - RM Demand Share %' =
+			
+			DIVIDE (
+			    [SF - RM Demand by FG LBs],
+			    [SF - RM Demand LBs]
+			)
+		lineageTag: b76e472a-66ab-4061-86fa-5b8ee8c01c23
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - FG On-Hand LBs' =
+			
+			VAR ShowDetail =
+			    [RMHT - Show FG Detail] = 1
+			
+			VAR SnapshotDate =
+			    [SF - Latest Inventory Snapshot Date]
+			
+			VAR ValidFormulaSites =
+			    FILTER (
+			        ALL (
+			            'Fact_FinishedGoodsRawMaterials'[RmSiteId]
+			        ),
+			        'Fact_FinishedGoodsRawMaterials'[RmSiteId]
+			            <> "90"
+			    )
+			
+			VAR FinishedGoodKeys =
+			    CALCULATETABLE (
+			        VALUES (
+			            'Fact_FinishedGoodsRawMaterials'[FinishedGoodProductKey]
+			        ),
+			        REMOVEFILTERS ( 'DIM_Site' ),
+			        ValidFormulaSites
+			    )
+			
+			VAR Result =
+			    CALCULATE (
+			        SUM (
+			            'Fact_Inventory_Snapshot'[physicalinvent_LBs]
+			        ),
+			        REMOVEFILTERS ( 'Dim_Product' ),
+			        REMOVEFILTERS ( 'Dim_Date' ),
+			        REMOVEFILTERS (
+			            'Fact_Inventory_Snapshot'[Snapshot_Date]
+			        ),
+			        'Fact_Inventory_Snapshot'[Snapshot_Date]
+			            = SnapshotDate,
+			        TREATAS (
+			            FinishedGoodKeys,
+			            'Fact_Inventory_Snapshot'[ProductKey]
+			        )
+			    )
+			
+			RETURN
+			    IF (
+			        ShowDetail
+			            && COUNTROWS ( FinishedGoodKeys ) > 0,
+			        COALESCE ( Result, 0 )
+			    )
+		lineageTag: a3d58da9-b2f8-4241-8ca1-be58cb940083
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - FG Days on Hand' =
+			
+			VAR FinishedGoodDemandLbs =
+			    [SF - FG Demand LBs]
+			
+			RETURN
+			    IF (
+			        [RMHT - Show FG Detail] = 1
+			            && FinishedGoodDemandLbs > 0,
+			        DIVIDE (
+			            [SF - FG On-Hand LBs]
+			                * [SF - Demand Horizon Days],
+			            FinishedGoodDemandLbs
+			        )
+			    )
+		lineageTag: e81e96cb-0644-408d-916a-02ba6a6c3f5c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - Selected RM Demand Trend Lbs' =
+			
+			IF (
+			    [RMHT - Show FG Detail] = 1,
+			    VAR DemandLbs =
+			        [SF - RM Demand LBs]
+			    RETURN
+			        IF (
+			            DemandLbs <> 0,
+			            DemandLbs
+			        )
+			)
+		lineageTag: f46e525d-74c2-4abb-a467-0f9be310df68
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - Page Title' =
+			
+			VAR TodayDate =
+			    TODAY ()
+			
+			VAR ForecastStartDate =
+			    EOMONTH ( TodayDate, 0 ) + 1
+			
+			VAR SelectedDates =
+			    ALLSELECTED ( 'Dim_Date'[Date] )
+			
+			VAR HasActualDates =
+			    COUNTROWS (
+			        FILTER (
+			            SelectedDates,
+			            'Dim_Date'[Date] <= TodayDate
+			        )
+			    ) > 0
+			
+			VAR HasForecastDates =
+			    COUNTROWS (
+			        FILTER (
+			            SelectedDates,
+			            'Dim_Date'[Date] >= ForecastStartDate
+			        )
+			    ) > 0
+			
+			VAR HasCurrentMonthFutureGap =
+			    COUNTROWS (
+			        FILTER (
+			            SelectedDates,
+			            'Dim_Date'[Date] > TodayDate
+			                && 'Dim_Date'[Date] < ForecastStartDate
+			        )
+			    ) > 0
+			
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			
+			        HasActualDates
+			            && HasForecastDates,
+			            "Blended Sales & Forecast-Implied RM Demand",
+			
+			        HasForecastDates,
+			            "Forecast-Implied RM Demand",
+			
+			        HasActualDates
+			            && HasCurrentMonthFutureGap,
+			            "Sales-Implied RM Demand | Actuals Through Today",
+			
+			        HasActualDates,
+			            "Sales-Implied RM Demand",
+			
+			        "RM Demand | Current-Month Forecast Not Included"
+			    )
+		lineageTag: 62c2c5f8-6df9-4f5d-bb5e-a50d151436eb
+
+	column 'Measure Group'
+		isHidden
+		lineageTag: a7357ea5-1b85-42d0-b99a-9208139ff42d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Measure Group]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Procurement Measures' = calculated
+		mode: import
+		source =
+				
+				DATATABLE (
+				    "Measure Group", STRING,
+				    {
+				        { "Procurement Measures" }
+				    }
+				)
+
+	annotation PBI_Id = 1d3a5a90379442169ea242221cc3724e
+
+

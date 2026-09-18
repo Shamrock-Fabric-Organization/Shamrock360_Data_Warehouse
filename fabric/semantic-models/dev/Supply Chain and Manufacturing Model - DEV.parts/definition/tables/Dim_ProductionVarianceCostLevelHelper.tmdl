@@ -1,0 +1,62 @@
+table Dim_ProductionVarianceCostLevelHelper
+	lineageTag: 5aa838b3-d114-4677-ae48-aba214e806d9
+	sourceLineageTag: [dbo].[mtbl_EDW_Dim_ProductionVarianceCostLevelHelper]
+
+	column Cost_Level
+		dataType: string
+		lineageTag: f8d30b25-4530-4b2b-aa0d-b8734c850775
+		sourceLineageTag: Cost_Level
+		summarizeBy: none
+		sourceColumn: Cost_Level
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cost_Level_Key
+		dataType: int64
+		formatString: 0
+		lineageTag: 4fd1d74b-96fa-4292-8ecb-36b5565d4e22
+		sourceLineageTag: Cost_Level_Key
+		summarizeBy: none
+		sourceColumn: Cost_Level_Key
+
+		annotation SummarizationSetBy = Automatic
+
+	column Is_Default
+		dataType: int64
+		formatString: 0
+		lineageTag: 534cc654-7381-479b-b509-4d7d921672c1
+		sourceLineageTag: Is_Default
+		summarizeBy: none
+		sourceColumn: Is_Default
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sort_Order
+		dataType: int64
+		formatString: 0
+		lineageTag: 2cd664e3-4ebe-489d-918b-82080e0ba003
+		sourceLineageTag: Sort_Order
+		summarizeBy: none
+		sourceColumn: Sort_Order
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cost_Level_Description
+		dataType: string
+		lineageTag: 9d52ba61-eb1e-4732-9275-a04eb65d392d
+		sourceLineageTag: Cost_Level_Description
+		summarizeBy: none
+		sourceColumn: Cost_Level_Description
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_ProductionVarianceCostLevelHelper = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Dim_ProductionVarianceCostLevelHelper
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+
+

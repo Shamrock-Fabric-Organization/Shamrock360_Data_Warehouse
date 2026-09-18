@@ -1,0 +1,28 @@
+role 'Chris NA'
+	modelPermission: read
+
+	tablePermission 'Account Table' =
+			NOT 'Account Table'[Customer Group] IN {"800","999"}
+			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Date Table' =
+			-- Date table RLS
+			'Date Table'[Fiscal Year] >= 2023
+			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Employee Table' = ```
+			'Employee Table'[Salesperson] IN {"Alecia Haqq","Jarrod Paddock","Joe Sankovic","Jonatan Vera","Joshua Wolfe","Mark Vitrone","Shichiu Kwan","Chris Moseley"}    
+			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+			```
+
+	tablePermission 'Legal Entity Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Product Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Sales Table' = [Sales Line Status] <> "Canceled"
+
+	tablePermission 'Warehouse Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	annotation PBI_Id = b82176c8c74d494984d9ee56815e6c6b
+
+

@@ -1,0 +1,250 @@
+table 'Production Measures'
+	lineageTag: 7b2a2684-56cf-45b8-a87c-85c4f871d7f9
+
+	measure 'PBO Variance - Selection Grain' =
+			
+			VAR _OneProduct =
+			    HASONEVALUE ( 'Fact_ProductionBatchOrderVariance'[ProductionBatchOrderKey] )
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        _OneProduct, "Product",
+			        "None"
+			    )
+		lineageTag: 43c8e012-e100-4b1b-98b5-3e5ebc033368
+
+	measure 'PBO Variance - Output Product Display' =
+			
+			VAR _Grain =
+			    [PBO Variance - Selection Grain]
+			RETURN
+			    SWITCH (
+			        _Grain,
+			        "Product", SELECTEDVALUE ( 'Dim_Product'[Product_Name] ) & "T",
+			        "Select a PBO ID"
+			    )
+		lineageTag: f1ef0e92-f621-4473-8f70-2dc0fad4693c
+
+	measure 'PBO Main Product Name' =
+			
+			VAR _selectedPBO =
+			    SELECTEDVALUE (
+			        'Dim_ProductionBatchOrder'[ProductionBatchOrder]
+			    )
+			
+			VAR _mainProductKeys =
+			    FILTER (
+			        CALCULATETABLE (
+			            VALUES (
+			                'Fact_ProductionBatchOrderVariance'[ProductKey]
+			            ),
+			
+			            // Prevent an existing product or resource selection
+			            // from restricting the product-key lookup
+			            REMOVEFILTERS ( 'Dim_Product' )
+			        ),
+			        NOT ISBLANK (
+			            'Fact_ProductionBatchOrderVariance'[ProductKey]
+			        )
+			    )
+			
+			VAR _mainProductKeyCount =
+			    COUNTROWS ( _mainProductKeys )
+			
+			VAR _mainProductName =
+			    CALCULATE (
+			        SELECTEDVALUE (
+			            'Dim_Product'[Product_Name]
+			        ),
+			        REMOVEFILTERS ( 'Dim_Product' ),
+			        TREATAS (
+			            _mainProductKeys,
+			            'Dim_Product'[ProductKey]
+			        )
+			    )
+			
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			
+			        ISBLANK ( _selectedPBO ),
+			            "Select PBO ID",
+			
+			        _mainProductKeyCount = 0,
+			            "No Main Product",
+			
+			        _mainProductKeyCount > 1,
+			            "Multiple Main Products",
+			
+			        COALESCE (
+			            _mainProductName,
+			            "Product Not Found"
+			        )
+			    )
+		lineageTag: 5ca432e9-f49b-4b83-a2be-02f6cccb9173
+
+	measure 'PBO Co-product Name' =
+			
+			VAR _selectedPBO =
+			    SELECTEDVALUE (
+			        'Dim_ProductionBatchOrder'[ProductionBatchOrder]
+			    )
+			
+			// Co-product key visible in the currently selected row/context
+			VAR _hasSingleCurrentKey =
+			    HASONEVALUE (
+			        'Fact_ProductionBatchOrderVariance'[CoProductKey]
+			    )
+			
+			VAR _currentCoProductKey =
+			    SELECTEDVALUE (
+			        'Fact_ProductionBatchOrderVariance'[CoProductKey]
+			    )
+			
+			// The selected row is itself an actual co-product row
+			VAR _currentRowIsCoProduct =
+			    _hasSingleCurrentKey
+			        && NOT ISBLANK ( _currentCoProductKey )
+			        && _currentCoProductKey <> -1
+			
+			// The selected row is an ordinary/main-product row
+			VAR _currentRowIsNonCoProduct =
+			    _hasSingleCurrentKey
+			        && (
+			            ISBLANK ( _currentCoProductKey )
+			                || _currentCoProductKey = -1
+			        )
+			
+			// Find every real co-product key for the selected PBO,
+			// ignoring the currently selected detail/resource row
+			VAR _coProductKeysForPBO =
+			    FILTER (
+			        CALCULATETABLE (
+			            VALUES (
+			                'Fact_ProductionBatchOrderVariance'[CoProductKey]
+			            ),
+			
+			            // Remove filters caused by selecting one fact row
+			            REMOVEFILTERS (
+			                'Fact_ProductionBatchOrderVariance'
+			            ),
+			
+			            // Prevent the active ProductKey relationship or
+			            // selected Resource from restricting sibling rows
+			            REMOVEFILTERS ( 'Dim_Product' ),
+			
+			            // Restore only the selected PBO
+			            TREATAS (
+			                { _selectedPBO },
+			                'Dim_ProductionBatchOrder'[ProductionBatchOrder]
+			            )
+			        ),
+			
+			        // Exclude the unknown/non-co-product member
+			        NOT ISBLANK (
+			            'Fact_ProductionBatchOrderVariance'[CoProductKey]
+			        )
+			            && 'Fact_ProductionBatchOrderVariance'[CoProductKey] <> -1
+			    )
+			
+			VAR _coProductKeyCount =
+			    COUNTROWS ( _coProductKeysForPBO )
+			
+			// Name of the currently selected co-product row
+			VAR _currentCoProductName =
+			    IF (
+			        _currentRowIsCoProduct,
+			        CALCULATE (
+			            SELECTEDVALUE (
+			                'Dim_Product'[Product_Name]
+			            ),
+			            REMOVEFILTERS ( 'Dim_Product' ),
+			            TREATAS (
+			                { _currentCoProductKey },
+			                'Dim_Product'[ProductKey]
+			            )
+			        )
+			    )
+			
+			// Name when a PBO is selected but no specific detail row is selected
+			VAR _singlePBOCoProductName =
+			    IF (
+			        _coProductKeyCount = 1,
+			        CALCULATE (
+			            SELECTEDVALUE (
+			                'Dim_Product'[Product_Name]
+			            ),
+			            REMOVEFILTERS ( 'Dim_Product' ),
+			            TREATAS (
+			                _coProductKeysForPBO,
+			                'Dim_Product'[ProductKey]
+			            )
+			        )
+			    )
+			
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			
+			        ISBLANK ( _selectedPBO ),
+			            "Select PBO ID",
+			
+			        // The selected row is the actual co-product row
+			        _currentRowIsCoProduct,
+			            COALESCE (
+			                _currentCoProductName,
+			                "Product not found"
+			            ),
+			
+			        // The selected row is not a co-product,
+			        // but another row for the same PBO is
+			        _currentRowIsNonCoProduct
+			            && _coProductKeyCount > 0,
+			            "At least one co-product",
+			
+			        // The selected row is not a co-product,
+			        // and the PBO has no co-product rows
+			        _currentRowIsNonCoProduct,
+			            "No co-product",
+			
+			        // PBO-level result when no detail row is selected
+			        _coProductKeyCount = 0,
+			            "No co-product",
+			
+			        _coProductKeyCount > 1,
+			            "Multiple co-products",
+			
+			        COALESCE (
+			            _singlePBOCoProductName,
+			            "Product not found"
+			        )
+			    )
+		lineageTag: 5df0d938-54fc-4762-922c-d50e94c3d375
+
+	measure 'PBO Variance Count' = COUNTROWS(Fact_ProductionBatchOrderVariance)
+		formatString: 0
+		lineageTag: 39f987e7-477b-4f14-ab01-187663ac2e01
+
+	column 'Measure Group'
+		isHidden
+		lineageTag: e81b4b7a-a600-44cb-bf9a-b4d77c98b785
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Measure Group]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Production Measures' = calculated
+		mode: import
+		source =
+				
+				DATATABLE (
+				    "Measure Group", STRING,
+				    {
+				        { "Production Measures" }
+				    }
+				)
+
+	annotation PBI_Id = 4546de083ab74d648722f71b971c61a8
+
+

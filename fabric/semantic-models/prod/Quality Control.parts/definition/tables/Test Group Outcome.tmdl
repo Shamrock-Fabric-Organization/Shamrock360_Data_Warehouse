@@ -1,0 +1,114 @@
+table 'Test Group Outcome'
+	lineageTag: 7e76e102-6077-4b5d-8d3b-a6771a17e89b
+
+	column RequirementKey
+		dataType: string
+		isHidden
+		lineageTag: 9b7d2e84-a33d-4ffe-b7a8-06e354f1f181
+		summarizeBy: none
+		sourceColumn: RequirementKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestGroupKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: ac8a5742-65c4-4ea8-9e28-c4cf8824d662
+		summarizeBy: count
+		sourceColumn: TestGroupKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: f4294e8a-3148-4329-a0d0-a5439fa837c2
+		summarizeBy: count
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column testgroupid
+		dataType: string
+		lineageTag: 6ff0776a-25ce-4d5c-b7fd-cc135efdda23
+		summarizeBy: none
+		sourceColumn: testgroupid
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestIdNormalized
+		dataType: string
+		lineageTag: 9e85c38e-4196-44a8-b3f7-adb0781bb632
+		summarizeBy: none
+		sourceColumn: TestIdNormalized
+
+		annotation SummarizationSetBy = Automatic
+
+	column testid
+		dataType: string
+		lineageTag: 811ad586-5f93-44bb-b992-ba2594087cad
+		summarizeBy: none
+		sourceColumn: testid
+
+		annotation SummarizationSetBy = Automatic
+
+	column OutcomeIdNormalized
+		dataType: string
+		lineageTag: d23613ed-1073-41d7-9a28-e24d696a99ca
+		summarizeBy: none
+		sourceColumn: OutcomeIdNormalized
+
+		annotation SummarizationSetBy = Automatic
+
+	column PossibleOutcomeId
+		dataType: string
+		lineageTag: 934ae284-4260-4d8a-a538-d47c87e475be
+		summarizeBy: none
+		sourceColumn: PossibleOutcomeId
+
+		annotation SummarizationSetBy = Automatic
+
+	column PossibleOutcomeDescription
+		dataType: string
+		lineageTag: a63afb78-38de-40cf-bb89-6a9e850823c3
+		summarizeBy: none
+		sourceColumn: PossibleOutcomeDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column OutcomeStatusNormalized
+		dataType: string
+		lineageTag: 91b8553b-2a5c-439d-8b86-131da0cf43dc
+		summarizeBy: none
+		sourceColumn: OutcomeStatusNormalized
+
+		annotation SummarizationSetBy = Automatic
+
+	column OutcomeConflictFlag
+		dataType: int64
+		formatString: 0
+		lineageTag: eaf87b86-d5b0-4e73-ba92-9e099f92ce7b
+		summarizeBy: sum
+		sourceColumn: OutcomeConflictFlag
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Test Group Outcome' = m
+		mode: import
+		source =
+				let
+				  Source = Sql.Database("efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com", "WH_Curated", [Query = "SELECT#(lf)    CONCAT(#(lf)        CAST(d.TestGroupKey AS varchar(20)),#(lf)        '|',#(lf)        UPPER(TRIM(d.testid))#(lf)    ) AS RequirementKey,#(lf)#(lf)    d.TestGroupKey,#(lf)    d.Legal_EntityKey,#(lf)    MAX(d.testgroupid) AS testgroupid,#(lf)#(lf)    UPPER(TRIM(d.testid)) AS TestIdNormalized,#(lf)    MAX(d.testid) AS testid,#(lf)#(lf)    UPPER(#(lf)        TRIM(#(lf)            CAST(d.PossibleOutcomeId AS varchar(100))#(lf)        )#(lf)    ) AS OutcomeIdNormalized,#(lf)#(lf)    MAX(d.PossibleOutcomeId) AS PossibleOutcomeId,#(lf)    MAX(d.PossibleOutcomeDescription) AS PossibleOutcomeDescription,#(lf)#(lf)    CASE#(lf)        WHEN COUNT(#(lf)                 DISTINCT UPPER(#(lf)                     TRIM(COALESCE(d.OutcomeStatus, ''))#(lf)                 )#(lf)             ) = 1#(lf)#(lf)        THEN MAX(#(lf)                 UPPER(#(lf)                     TRIM(COALESCE(d.OutcomeStatus, ''))#(lf)                 )#(lf)             )#(lf)#(lf)        ELSE 'CONFLICT'#(lf)    END AS OutcomeStatusNormalized,#(lf)#(lf)    CASE#(lf)        WHEN COUNT(#(lf)                 DISTINCT UPPER(#(lf)                     TRIM(COALESCE(d.OutcomeStatus, ''))#(lf)                 )#(lf)             ) > 1#(lf)#(lf)        THEN 1#(lf)        ELSE 0#(lf)    END AS OutcomeConflictFlag#(lf)#(lf)FROM dbo.mtbl_EDW_Fact_TestGroupDetails AS d#(lf)#(lf)INNER JOIN dbo.mtbl_EDW_Dim_TestGroup AS g#(lf)    ON d.TestGroupKey = g.TestGroupKey#(lf)    AND g.RecordStatus = 1#(lf)#(lf)WHERE#(lf)    d.TestType = 'Option'#(lf)    AND d.testid IS NOT NULL#(lf)    AND d.PossibleOutcomeId IS NOT NULL#(lf)#(lf)GROUP BY#(lf)    d.TestGroupKey,#(lf)    d.Legal_EntityKey,#(lf)    UPPER(TRIM(d.testid)),#(lf)    UPPER(#(lf)        TRIM(#(lf)            CAST(d.PossibleOutcomeId AS varchar(100))#(lf)        )#(lf)    );"])
+				in
+				  Source
+
+	annotation PBI_ResultType = Exception
+
+

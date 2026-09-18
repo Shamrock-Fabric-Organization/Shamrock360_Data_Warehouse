@@ -1,0 +1,176 @@
+relationship ed1b915e-45f3-93aa-ed11-27c42168fcd3
+	fromColumn: Fact_Inventory_Snapshot.Legal_EntityKey
+	toColumn: DIM_Legal_Entity.Legal_EntityKey
+
+relationship 0126a36c-2f6b-34ad-2032-ebc102f56448
+	fromColumn: Fact_Inventory_Snapshot.SiteKey
+	toColumn: DIM_Site.SiteKey
+
+relationship ca135077-01c5-e385-8935-d35403f9e789
+	fromColumn: Fact_Inventory_Snapshot.Snapshot_Date_Key
+	toColumn: Dim_Date.DateKey
+
+relationship 18156665-ada1-e56e-3546-369796852039
+	fromColumn: Fact_Planned_Purchase_Orders.VendorKey
+	toColumn: DIM_Vendor.VendorKey
+
+relationship bbbb2edd-82c9-479a-ae43-e91226c8b67f
+	fromColumn: Fact_Planned_Purchase_Orders.Legal_EntityKey
+	toColumn: DIM_Legal_Entity.Legal_EntityKey
+
+relationship ce5d24cd-8181-2cb9-3238-4e79421c9f25
+	fromColumn: Fact_Planned_Purchase_Orders.OrderDateKey
+	toColumn: Dim_Date.DateKey
+
+relationship 47d0b818-16f1-ff72-bbe7-dcbbb02c5785
+	isActive: false
+	fromColumn: Fact_Planned_Purchase_Orders.RequestedDateKey
+	toColumn: Dim_Date.DateKey
+
+relationship 88d19a53-aa87-f630-9760-ffc6452b99db
+	isActive: false
+	fromColumn: Fact_Planned_Purchase_Orders.DeliveryDateKey
+	toColumn: Dim_Date.DateKey
+
+relationship 5e692964-23b3-ef96-9d2d-b1587c429469
+	fromColumn: Fact_PurchaseOrders.Legal_EntityKey
+	toColumn: DIM_Legal_Entity.Legal_EntityKey
+
+relationship 0e9c9f85-4f39-000d-ceb8-614810f7f5db
+	fromColumn: Fact_PurchaseOrders.SiteKey
+	toColumn: DIM_Site.SiteKey
+
+relationship 5f60c838-4b1c-6c05-1375-9e9b9a46650b
+	fromColumn: Fact_PurchaseOrders.WarehouseKey
+	toColumn: DIM_Warehouse.WarehouseKey
+
+relationship a49d0fd0-632a-5b55-babd-dc4a87e5da32
+	isActive: false
+	fromColumn: Fact_PurchaseOrders.CreatedDateKey
+	toColumn: Dim_Date.DateKey
+
+relationship 5060ae47-a0b3-06a5-d70f-9af35379f54e
+	fromColumn: Fact_Planned_Purchase_Orders.WarehouseKey
+	toColumn: DIM_Warehouse.WarehouseKey
+
+relationship 25ac26cc-b8ae-96c0-5caf-3814f1212475
+	fromColumn: Fact_Inventory_Snapshot.WarehouseKey
+	toColumn: DIM_Warehouse.WarehouseKey
+
+relationship d81c4026-c9bc-0787-cd06-4eb57cab8d7e
+	fromColumn: Fact_Planned_Purchase_Orders.SiteKey
+	toColumn: DIM_Site.SiteKey
+
+relationship dd3d016b-95ae-0719-4476-934648f5238f
+	fromColumn: Fact_PurchaseOrders.VendorKey
+	toColumn: DIM_Vendor.VendorKey
+
+relationship 302a73cc-48b9-89c8-693e-3edd1aafc47a
+	fromColumn: Fact_Inventory_Snapshot.VendorKey
+	toColumn: DIM_Vendor.VendorKey
+
+relationship 76dea92c-67ab-d01c-f5c2-72bc24e02b43
+	isActive: false
+	fromColumn: Fact_PurchaseOrders.ConfirmedDeliveryDateKey
+	toColumn: Dim_Date.DateKey
+
+relationship ce3fb118-9a05-5ce6-fb4c-4d1c0082213c
+	isActive: false
+	fromColumn: Fact_PurchaseOrders.ConfirmedOrRequestedReceiptDateKey
+	toColumn: Dim_Date.DateKey
+
+relationship 4cd5500d-7e47-1951-5499-ad57654fd83d
+	isActive: false
+	fromColumn: Fact_PurchaseOrders.DeliveryDateKey
+	toColumn: Dim_Date.DateKey
+
+relationship a56d5541-47c7-6060-889f-1b4d89b32921
+	fromColumn: Fact_PurchaseOrders.PurchOrder_CreatedDateKey
+	toColumn: Dim_Date.DateKey
+
+relationship 59f4b114-9975-6f9c-0358-977f090a5c75
+	fromColumn: Fact_PurchaseOrders.PurchaseOrerKey
+	toColumn: Dim_PurchaseOrder.PurchaseOrderKey
+
+relationship 9376381f-118a-31c5-47af-9116e4d2fb9b
+	fromColumn: Fact_FinishedGoodsRawMaterials.Legal_EntityKey
+	toColumn: DIM_Legal_Entity.Legal_EntityKey
+
+relationship 1d905b16-dac0-c76c-51ed-32fe4a3b5149
+	fromColumn: Fact_FinishedGoodsRawMaterials.RawMaterialSiteKey
+	toColumn: DIM_Site.SiteKey
+
+relationship 72475527-1ef1-b3b4-96fa-2ae7a26b3519
+	fromColumn: Fact_Sales.SiteKey
+	toColumn: DIM_Site.SiteKey
+
+relationship 35370ff0-64d7-e518-e169-4d4c756c847b
+	fromColumn: Fact_Sales.WarehouseKey
+	toColumn: DIM_Warehouse.WarehouseKey
+
+relationship c8f8d59a-d526-8f43-9510-1f0fd3df3fcf
+	fromColumn: Fact_Sales.Legal_EntityKey
+	toColumn: DIM_Legal_Entity.Legal_EntityKey
+
+relationship 74e42ad1-ae14-55f0-b2ba-ac5882fb3c04
+	fromColumn: Fact_Sales.CustomerKey
+	toColumn: Dim_Account.CustomerKey
+
+relationship 8e67a2ba-fa5b-de97-ba88-110c8b5e5b8a
+	fromColumn: Fact_Sales.OrderDateKey
+	toColumn: Dim_Date.DateKey
+
+relationship 5c7c6511-7bb1-9271-92e8-761bb83c617c
+	fromColumn: Fact_FinishedGoodsRawMaterials.RawMaterialProductKey
+	toColumn: Dim_Product.ProductKey
+
+relationship 481ac358-2e7b-91ad-e056-049461d8570d
+	isActive: false
+	fromColumn: Fact_FinishedGoodsRawMaterials.FinishedGoodProductKey
+	toColumn: Dim_Product.ProductKey
+
+relationship d703e25f-624c-a151-3d3d-2c63fdbc87af
+	fromColumn: Fact_Inventory_Snapshot.ProductKey
+	toColumn: Dim_Product.ProductKey
+
+relationship 4d078c1a-349b-c192-16fa-27c101de63e0
+	fromColumn: Fact_PurchaseOrderItemConsumption.ProductKey
+	toColumn: Dim_Product.ProductKey
+
+relationship 1b53909b-d277-db19-11f9-8f1f58c48840
+	fromColumn: Fact_PurchaseOrderItemConsumptionSummary.ProductKey
+	toColumn: Dim_Product.ProductKey
+
+relationship a52b0844-8c32-274f-2417-d13a62313ef1
+	fromColumn: Fact_Planned_Purchase_Orders.ProductKey
+	toColumn: Dim_Product.ProductKey
+
+relationship 79226500-4ee8-78a4-f3a6-62a132a8f85c
+	fromColumn: Fact_PurchaseOrders.ProductKey
+	toColumn: Dim_Product.ProductKey
+
+relationship 3d0a135f-2d34-b9c9-3750-329a14934ed2
+	fromColumn: Fact_Sales.ProductKey
+	toColumn: Dim_Product.ProductKey
+
+relationship 3ee3f330-376f-a82d-ca45-2c73c91824c5
+	fromColumn: Fact_SalesAndForecastData.ProductKey
+	toColumn: Dim_Product.ProductKey
+
+relationship e1d2cd10-4329-f711-a5b5-ffdf50d99268
+	fromColumn: Fact_SalesAndForecastData.CustomerKey
+	toColumn: Dim_Account.CustomerKey
+
+relationship 1576da25-af4a-af2a-6a23-f2cb59fe1368
+	fromColumn: Fact_SalesAndForecastData.DateKey
+	toColumn: Dim_Date.DateKey
+
+relationship e28c70c9-dd4e-e9d4-bb04-05ffd40f8740
+	fromColumn: Fact_SalesAndForecastData.Legal_EntityKey
+	toColumn: DIM_Legal_Entity.Legal_EntityKey
+
+relationship 6cfc539d-b468-f76c-40a9-027381573a81
+	fromColumn: Fact_SalesAndForecastData.WarehouseKey
+	toColumn: DIM_Warehouse.WarehouseKey
+
+

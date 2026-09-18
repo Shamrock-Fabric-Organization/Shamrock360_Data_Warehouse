@@ -1,0 +1,17 @@
+relationship 3ab20be3-6652-9611-7cfd-e83e0cea2a67
+	fromColumn: Fact_Customer_Invoices.InvoiceDateKey
+	toColumn: Dim_Date.DateKey
+
+relationship f05e0b80-04ad-c5f2-c713-a5934f499dd8
+	fromColumn: Fact_Customer_Invoices.CustomerKey
+	toColumn: Dim_Account.CustomerKey
+
+relationship f78933cd-5c73-5a75-7d77-4b280e97f068
+	fromColumn: Fact_Customer_Invoices.DeliveryAddressKey
+	toColumn: Dim_Address.AddressKey
+
+relationship cb870247-0740-6355-a7e6-2bc8bcbc66bb
+	fromColumn: Fact_Customer_Invoices.ProductKey
+	toColumn: Dim_Product.ProductKey
+
+

@@ -1,0 +1,43 @@
+relationship a04946ff-93b4-debe-14d1-3113c57f6ace
+	fromColumn: Fact_ProductionBatchOrderVariance.FinishedDateKey
+	toColumn: Dim_Date.DateKey
+
+relationship 8f45b05c-57ca-3d6a-f5ba-502f994c8a23
+	isActive: false
+	fromColumn: Fact_ProductionBatchOrderVariance.CoProductKey
+	toColumn: Dim_Product.ProductKey
+
+relationship 468bad48-70b9-c192-d490-ebf3b6647602
+	isActive: false
+	fromColumn: Fact_ProductionBatchOrderVariance.OutputProductKey
+	toColumn: Dim_Product.ProductKey
+
+relationship 1ed31e26-55de-1cfc-873c-27f5c8a670e4
+	fromColumn: Fact_ProductionBatchOrderVariance.ProductKey
+	toColumn: Dim_Product.ProductKey
+
+relationship 84b88c51-1c14-8080-da60-dc91820dd6f9
+	fromColumn: Fact_ProductionBatchOrderVariance.ProductionBatchOrderKey
+	toColumn: Dim_ProductionBatchOrder.ProductionBatchOrderKey
+
+relationship fafa546d-7dac-213c-e0bb-807fbdfc7d7a
+	fromColumn: Fact_ProductionBatchOrderVariance.Legal_EntityKey
+	toColumn: Dim_Legal_Entity.Legal_EntityKey
+
+relationship c1aa72fa-8405-cad5-6646-f268f07656ac
+	fromColumn: Fact_ProductionBatchOrderVariance.WarehouseKey
+	toColumn: Dim_Warehouse.WarehouseKey
+
+relationship e6f12d59-60cc-0a71-a563-bcb6c62bf8f9
+	fromColumn: Fact_ProductionBatchOrderVariance.SiteKey
+	toColumn: Dim_Site.SiteKey
+
+relationship 8a4a57bc-8702-5eed-2537-eeb2e7c93564
+	fromColumn: Fact_ProductionBatchOrderVariance.RouteKey
+	toColumn: Dim_Route.RouteKey
+
+relationship 3692aba6-7f44-2759-de47-c0e853390d1e
+	fromColumn: Fact_ProductionBatchOrderVariance.Cost_Level
+	toColumn: Dim_ProductionVarianceCostLevelHelper.Cost_Level
+
+

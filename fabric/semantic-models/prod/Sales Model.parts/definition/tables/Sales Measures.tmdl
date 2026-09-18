@@ -1,0 +1,121 @@
+table 'Sales Measures'
+	lineageTag: 221a0c4b-a5d1-4e8d-9e53-cb8238a4a525
+
+	measure 'Base Sales Price Per LB Display' = ```
+			
+			VAR _OneProduct =
+			    HASONEVALUE ( 'Dim_Product'[Product_ID] )
+			VAR _BaseSalesPrice =
+			    SELECTEDVALUE ( 'Dim_Product'[BaseSalesPricePerLB] )
+			RETURN
+			    IF (
+			        _OneProduct,
+			        FORMAT ( _BaseSalesPrice, "$#,0.00" ),
+			        "Select a product"
+			    )
+			
+			```
+		lineageTag: fb669bd0-5d9b-46f0-9087-54334f515622
+
+	measure 'Base Price ($/LB)' = ```
+			
+			VAR BasePrice =
+			    SELECTEDVALUE ( 'Dim_Product'[BaseSalesPricePerLB] )
+			RETURN
+			    IF (
+			        NOT ISBLANK ( [TA Price] ),
+			        BasePrice
+			    )
+			
+			```
+		lineageTag: 3e1b558f-a56e-4b65-9dd9-153e7bcba33e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'TA vs Base Difference' = ```
+			
+			VAR TAPrice = [TA Price]
+			VAR BasePrice = [Base Price ($/LB)]
+			RETURN
+			    IF (
+			        NOT ISBLANK ( TAPrice )
+			            && NOT ISBLANK ( BasePrice ),
+			        TAPrice - BasePrice
+			    )
+			
+			```
+		lineageTag: 0bbfb12d-7070-449e-bd6a-84364e8b3844
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Product ID Display' = ```
+			
+			VAR _OneProduct =
+			    HASONEVALUE ( 'Dim_Product'[Product_ID] )
+			VAR _ProductID =
+			    SELECTEDVALUE ( 'Dim_Product'[Product_ID] )
+			RETURN
+			    IF (
+			        _OneProduct,
+			        _ProductID & "",
+			        "Select a product"
+			    )
+			
+			```
+		lineageTag: 8384c438-9bed-4784-84af-e1c717d764b6
+
+	measure 'Product Name Display' = ```
+			
+			VAR _OneProduct =
+			    HASONEVALUE ( 'Dim_Product'[Product_ID] )
+			VAR _ProductName =
+			    SELECTEDVALUE ( 'Dim_Product'[Product_Name] )
+			RETURN
+			    IF (
+			        _OneProduct,
+			        _ProductName,
+			        "Select a product"
+			    )
+			
+			```
+		lineageTag: 86636aa1-77af-4283-bb67-d6c8e7424b24
+
+	measure 'Sales Lead Time Display' = ```
+			
+			VAR _OneProduct =
+			    HASONEVALUE ( 'Dim_Product'[Product_ID] )
+			VAR _SalesLeadTime =
+			    SELECTEDVALUE ( 'Dim_Product'[Sales_leadtime] )
+			RETURN
+			    IF (
+			        _OneProduct,
+			        FORMAT ( _SalesLeadTime, "#,0" ),
+			        "Select a product"
+			    )
+			
+			```
+		lineageTag: 9ea9b40c-5cf5-498e-a171-aff7320f9b5a
+
+	column 'Measure Group'
+		isHidden
+		lineageTag: adef1729-cd85-46b8-8e46-870499e414c9
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Measure Group]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Sales Measures' = calculated
+		mode: import
+		source =
+				
+				DATATABLE (
+				    "Measure Group", STRING,
+				    {
+				        { "Sales Measures" }
+				    }
+				)
+
+	annotation PBI_Id = 3bf2cf7cfabf4ba6b146bf94e9e2c8fb
+
+

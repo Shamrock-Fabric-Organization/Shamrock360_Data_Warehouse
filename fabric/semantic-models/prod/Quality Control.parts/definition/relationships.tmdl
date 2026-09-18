@@ -1,0 +1,91 @@
+relationship fa059bd6-1666-bba9-7f80-75d748caab0d
+	fromColumn: Fact_QualityOrderLineResults.BatchKey
+	toColumn: Dim_Batch.BatchKey
+
+relationship 4b66bb76-68e6-2957-dc1c-67d380a17957
+	fromColumn: Fact_QualityOrderLineResults.CustomerKey
+	toColumn: Dim_Account.CustomerKey
+
+relationship c1763227-9e5b-b2ea-309e-bf4be6f4eb74
+	fromColumn: Fact_QualityOrderLineResults.Legal_EntityKey
+	toColumn: Dim_Legal_Entity.Legal_EntityKey
+
+relationship 5edb1d42-d161-dbdf-d71f-13f4bc362ad7
+	fromColumn: Fact_QualityOrderLineResults.ProductionBatchOrderKey
+	toColumn: Dim_ProductionBatchOrder.ProductionBatchOrderKey
+
+relationship 025465a5-ae34-6a43-9068-694b2b8b11f1
+	fromColumn: Fact_QualityOrderLineResults.ProductKey
+	toColumn: Dim_Product.ProductKey
+
+relationship 71747fcd-7b36-1bc3-574b-a28c7b0c240c
+	fromColumn: Fact_QualityOrderLineResults.SerialNumberKey
+	toColumn: Dim_SerialNumber.SerialNumberKey
+
+relationship acdcc12a-a50c-e028-3b16-77292ae0d51c
+	fromColumn: Fact_QualityOrderLineResults.SiteKey
+	toColumn: Dim_Site.SiteKey
+
+relationship 9930457d-fd7a-71e8-8563-e77a995f647c
+	fromColumn: Fact_QualityOrderLineResults.WarehouseKey
+	toColumn: Dim_Warehouse.WarehouseKey
+
+relationship 5614a66b-afa1-cec8-d3c5-d5ead70ef0fb
+	fromColumn: Fact_QualityOrderLineResults.WorkCenterKey
+	toColumn: Dim_WorkCenter.WorkCenterKey
+
+relationship 949335c7-cccc-0690-3a9f-4ef331d4f4bb
+	fromColumn: Fact_QualityOrderLineResults.RouteKey
+	toColumn: Dim_Route.RouteKey
+
+relationship db5538c6-2c89-045e-0d4c-2f9052448fb7
+	fromColumn: Fact_QualityOrderLineResults.LineCreatedDateKey
+	toColumn: Dim_Date.DateKey
+
+relationship 86d521c4-0562-4677-8ffd-0c022c1f2a40
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Source Quality Order'.ValidatedDateTime
+	toColumn: LocalDateTable_921371d7-6e72-4a57-a5c2-f231b18bcb64.Date
+
+relationship 4776e8ce-bafc-4db4-8318-28f01e557353
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Source Quality Order'.LineCreatedDateTime
+	toColumn: LocalDateTable_3c55ca01-feb7-4fb0-b273-d462f4a13e68.Date
+
+relationship 51c28c31-7a90-f763-ae20-2e92fba6e025
+	fromColumn: Fact_TestGroupDetails.Legal_EntityKey
+	toColumn: Dim_Legal_Entity.Legal_EntityKey
+
+relationship c3f1ecef-f863-c32e-0982-6d3a2d4b177e
+	fromColumn: Fact_TestGroupDetails.TestGroupKey
+	toColumn: Dim_TestGroup.TestGroupKey
+
+relationship 53eddaf4-a683-fbfc-70f3-bf9fc3cc32f8
+	fromColumn: Fact_QualityOrderLineResults.TestGroupKey
+	toColumn: Dim_TestGroup.TestGroupKey
+
+relationship 36341716-ee1e-a092-8452-f574645ef14d
+	fromColumn: 'Source Quality Order'.Legal_EntityKey
+	toColumn: Dim_Legal_Entity.Legal_EntityKey
+
+relationship 0b2f38f5-8c41-6002-215c-de546b2ce312
+	fromColumn: 'Quality Order Test Evidence'.SourceOrderKey
+	toColumn: 'Source Quality Order'.SourceOrderKey
+
+relationship c13dc7fe-426e-c095-8ee1-e2645a862374
+	fromColumn: 'Candidate Test Group'.Legal_EntityKey
+	toColumn: Dim_Legal_Entity.Legal_EntityKey
+
+relationship 2b226481-65b5-2278-5ffe-b2fcae38769b
+	fromColumn: 'Test Group Requirement'.TestGroupKey
+	toColumn: 'Candidate Test Group'.TestGroupKey
+
+relationship 7fc97ae0-d3e0-fc94-54bf-ebfe820b2df4
+	fromColumn: 'Test Group Outcome'.RequirementKey
+	toColumn: 'Test Group Requirement'.RequirementKey
+
+relationship 14a76fd9-c289-a7cf-b5d1-9358988cd2a3
+	fromColumn: 'Candidate Product Family'.TestGroupKey
+	toColumn: 'Candidate Test Group'.TestGroupKey
+
+

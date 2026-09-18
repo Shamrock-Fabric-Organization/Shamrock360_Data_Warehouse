@@ -84,6 +84,11 @@
     .\Export-FabricItemDefinition.ps1 -WorkspaceName 'Shamrock360 EDW' -ItemName pl_dimension_logic, pl_fact_table_data -OutFolder fabric\pipelines\prod
 
 .EXAMPLE
+    # Semantic models. -AllParts is not optional here: the model itself is the TMDL set,
+    # and the .json file written alongside it is only a settings stub.
+    .\Export-FabricItemDefinition.ps1 -TenantId <guid> -WorkspaceId <guid> -ItemType SemanticModel -AllParts -OutFolder fabric\semantic-models\dev
+
+.EXAMPLE
     # See what is there without writing anything.
     .\Export-FabricItemDefinition.ps1 -WorkspaceName 'Shamrock360 EDW' -ItemType DataPipeline -OutFolder . -Preview
 
@@ -102,6 +107,12 @@
     Works for any item type with a definition API: DataPipeline, Notebook,
     SemanticModel, Report, PaginatedReport, Lakehouse, SparkJobDefinition, Environment,
     VariableLibrary, Eventstream, the KQL types, and Dataflow. Only Scorecard has none.
+
+    ⛔ SEMANTIC MODELS NEED POWERSHELL 7. They answer getDefinition as a long-running
+    operation - 202 Accepted with an empty body - which this script polls to completion
+    before writing anything. Windows PowerShell 5.1 cannot read a response status code,
+    so it cannot see the 202 and the script says so rather than failing obscurely.
+    Pipelines return 200 inline and work on either engine.
 
     A bulk export API exists that would pull a whole workspace in one call. It entered
     public preview in March 2026 and still requires a ?beta=true query string, so this
@@ -193,17 +204,204 @@ function Get-FabricToken {
 }
 
 
-function Invoke-Fabric {
-    param([string] $Method, [string] $Path, [hashtable] $Headers, $Body)
+# ------------------------------------------------- long-running operations (202)
+# ⛔ NOT EVERY ITEM TYPE ANSWERS getDefinition INLINE. A DataPipeline returns 200 with
+# the definition in the body. A SemanticModel does not: Microsoft documents
+# getDefinition as a long-running operation, so the first call returns 202 Accepted
+# with an EMPTY BODY plus a Location / x-ms-operation-id / Retry-After header set, and
+# the definition has to be collected from a separate operation endpoint once the
+# operation reports Succeeded.
+#
+# Before this was handled, a semantic model export failed with
+#     The property 'definition' cannot be found on this object.
+# The empty 202 body read as $null, and Set-StrictMode turned the property access into
+# an error that looked like a malformed response rather than a protocol the script did
+# not speak. The sign-in, the workspace, the item listing and the type filter had all
+# worked, which made the failure read as a permissions or item-type problem.
+#
+# ⛔ EVERY RESPONSE THAT IS NOT 202 TAKES EXACTLY THE PATH IT ALWAYS TOOK. This is
+# additive: the status code is captured into a variable that does not change the return
+# value, and pipelines and dataflows never enter the polling code at all.
 
-    $uri = "$FabricApi/v1$Path"
-    $callArgs = @{ Method = $Method; Uri = $uri; Headers = $Headers; ErrorAction = 'Stop' }
+$LroTimeoutSeconds     = 600  # 10 minutes. Far longer than the largest Shamrock model
+                              # needs, short enough that a stuck operation gives the
+                              # session back instead of hanging until someone notices.
+$LroDefaultWaitSeconds = 5    # Only used when a 202 carries no Retry-After header.
+$LroMaxWaitSeconds     = 60   # A server-supplied Retry-After is honored up to this.
+
+# PowerShell 5.1's Invoke-RestMethod cannot report a status code or headers at all, so
+# on that engine a 202 is invisible. Detected once rather than assumed, matching how
+# Get-FabricToken already probes for the -AsPlainText parameter.
+$CanSeeResponseMetadata =
+    (Get-Command Invoke-RestMethod).Parameters.ContainsKey('StatusCodeVariable') -and
+    (Get-Command Invoke-RestMethod).Parameters.ContainsKey('ResponseHeadersVariable')
+
+
+function Get-HeaderValue {
+    # -ResponseHeadersVariable hands back a dictionary whose values are string ARRAYS and
+    # whose key casing follows the server rather than the documentation. Both are absorbed
+    # here so callers can ask for a header by the name Microsoft prints.
+    param($Headers, [string] $Name)
+
+    if (-not $Headers) { return $null }
+    foreach ($key in $Headers.Keys) {
+        if ($key -ieq $Name) {
+            $value = $Headers[$key]
+            if ($value -is [array]) { return $value[0] }
+            return $value
+        }
+    }
+    return $null
+}
+
+
+function Get-RetryAfterSeconds {
+    # Retry-After is an integer number of SECONDS - Microsoft states the unit explicitly.
+    # Clamped at both ends: a server value is respected, but a missing, unparseable or
+    # absurd one cannot make the loop spin hot or sleep for an hour.
+    param($Headers)
+
+    $seconds = $LroDefaultWaitSeconds
+    $raw = Get-HeaderValue -Headers $Headers -Name 'Retry-After'
+    if ($raw) {
+        $parsed = 0
+        if ([int]::TryParse([string]$raw, [ref] $parsed) -and $parsed -gt 0) { $seconds = $parsed }
+    }
+    if ($seconds -gt $LroMaxWaitSeconds) { $seconds = $LroMaxWaitSeconds }
+    if ($seconds -lt 1) { $seconds = 1 }
+    return $seconds
+}
+
+
+function Wait-FabricOperation {
+    <#
+        Polls a 202-accepted operation to completion and returns its result in the SAME
+        shape a 200 would have returned, so that every caller is unchanged.
+    #>
+    param([hashtable] $Headers, $ResponseHeaders)
+
+    $statusUri   = Get-HeaderValue -Headers $ResponseHeaders -Name 'Location'
+    $operationId = Get-HeaderValue -Headers $ResponseHeaders -Name 'x-ms-operation-id'
+
+    # ⛔ PREFER THE OPERATION ID OVER THE Location HEADER. Microsoft's own pages print the
+    # polling URL both with and without the /v1 segment, and only one of those resolves.
+    # The operation id is unambiguous, so the URL is built from it whenever it is present;
+    # Location is the fallback for an operation that does not return one.
+    if ($operationId) { $statusUri = "$FabricApi/v1/operations/$operationId" }
+    if (-not $statusUri) {
+        throw "the API accepted this as a long-running operation (202) but returned neither " +
+              "a Location header nor an x-ms-operation-id, so there is nothing to poll."
+    }
+
+    $wait = Get-RetryAfterSeconds -Headers $ResponseHeaders
+    Write-Host ("      long-running operation - polling every {0}s (ceiling {1}s)" -f
+                $wait, $LroTimeoutSeconds) -ForegroundColor DarkGray
+
+    $deadline = (Get-Date).AddSeconds($LroTimeoutSeconds)
+    while ($true) {
+        if ((Get-Date) -gt $deadline) {
+            throw ("the long-running operation did not finish within {0} seconds. It may " -f
+                   $LroTimeoutSeconds) +
+                  "still complete in Fabric - re-run the export for this item rather than " +
+                  "assuming it failed."
+        }
+        Start-Sleep -Seconds $wait
+
+        $state = Invoke-Fabric -Method GET -Uri $statusUri -Headers $Headers
+        $status = $null
+        if ($state -and $state.PSObject.Properties.Name -contains 'status') { $status = $state.status }
+
+        if ($status -eq 'Succeeded') {
+            return Get-FabricOperationResult -Headers $Headers -StatusUri $statusUri
+        }
+        if ($status -eq 'Failed') {
+            # ⛔ SURFACE THE SERVER'S OWN REASON. A failed operation that reports "failed"
+            # and nothing else sends the reader back to permissions and item types, which
+            # is exactly the wrong place when the API has already said what went wrong.
+            $detail = 'no error detail was returned'
+            if (($state.PSObject.Properties.Name -contains 'error') -and $state.error) {
+                $code = ''
+                $msg  = ''
+                if ($state.error.PSObject.Properties.Name -contains 'errorCode') { $code = $state.error.errorCode }
+                if ($state.error.PSObject.Properties.Name -contains 'message')   { $msg  = $state.error.message }
+                $joined = (@($code, $msg) | Where-Object { $_ }) -join ': '
+                if ($joined) { $detail = $joined }
+            }
+            throw "the long-running operation FAILED - $detail"
+        }
+
+        # ⛔ ANY OTHER STATUS KEEPS POLLING, INCLUDING ONE THIS SCRIPT HAS NEVER SEEN.
+        # Microsoft states plainly that "additional operation statuses may be added over
+        # time", so treating an unrecognized status as fatal would break every export on a
+        # platform change that is not an error. The deadline above is what stops a genuine
+        # stall, so an unknown status cannot loop forever.
+        if ($status) { Write-Host ("        {0}" -f $status) -ForegroundColor DarkGray }
+    }
+}
+
+
+function Get-FabricOperationResult {
+    param([hashtable] $Headers, [string] $StatusUri)
+
+    $result = Invoke-Fabric -Method GET -Uri "$StatusUri/result" -Headers $Headers
+    if (-not $result) {
+        throw "the operation reported Succeeded but its result was empty."
+    }
+
+    # Microsoft types the operation-result body as a generic file rather than a per-API
+    # schema, and publishes no getDefinition example, so BOTH plausible shapes are
+    # accepted: the inline 200 shape with a top-level definition wrapper, and a bare
+    # definition object carrying parts directly. Either way the caller receives what a
+    # 200 gives it.
+    if ($result.PSObject.Properties.Name -contains 'definition') { return $result }
+    if ($result.PSObject.Properties.Name -contains 'parts') {
+        return [pscustomobject]@{ definition = $result }
+    }
+    throw "the operation succeeded but its result carried neither a 'definition' nor a " +
+          "'parts' property, so the definition could not be read from it."
+}
+
+
+function Invoke-Fabric {
+    param([string] $Method, [string] $Path, [hashtable] $Headers, $Body, [string] $Uri)
+
+    # An operation URL is absolute and does not sit under /v1/workspaces, so callers that
+    # already hold a full URL pass -Uri instead of -Path.
+    if (-not $Uri) { $Uri = "$FabricApi/v1$Path" }
+
+    $callArgs = @{ Method = $Method; Uri = $Uri; Headers = $Headers; ErrorAction = 'Stop' }
     if ($null -ne $Body) {
         $callArgs.Body = ($Body | ConvertTo-Json -Depth 20)
         $callArgs.ContentType = 'application/json'
     }
-    try { return Invoke-RestMethod @callArgs }
-    catch { throw "Fabric API call failed ($Method $uri): $($_.Exception.Message)" }
+
+    # These two capture response metadata WITHOUT altering the returned object, which is
+    # what keeps the 200 path byte-identical to what it has always been.
+    $lroStatus  = $null
+    $lroHeaders = $null
+    if ($CanSeeResponseMetadata) {
+        $callArgs.StatusCodeVariable      = 'lroStatus'
+        $callArgs.ResponseHeadersVariable = 'lroHeaders'
+    }
+
+    $response = $null
+    try { $response = Invoke-RestMethod @callArgs }
+    catch { throw "Fabric API call failed ($Method $Uri): $($_.Exception.Message)" }
+
+    if ($lroStatus -eq 202) {
+        return Wait-FabricOperation -Headers $Headers -ResponseHeaders $lroHeaders
+    }
+
+    if ($null -eq $response -and -not $CanSeeResponseMetadata) {
+        # PowerShell 5.1 cannot see a 202, so an empty body is as far as the diagnosis
+        # gets. Name the likely cause rather than letting the caller hit a strict-mode
+        # property error on $null.
+        throw "the API returned an empty body. This is what a long-running operation (202 " +
+              "Accepted) looks like on Windows PowerShell 5.1, which cannot read a status " +
+              "code. Semantic models answer this way. Re-run in PowerShell 7."
+    }
+
+    return $response
 }
 
 

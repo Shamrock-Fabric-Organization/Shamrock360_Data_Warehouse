@@ -1,0 +1,828 @@
+table Fact_ProductionBatchOrderVariance
+	lineageTag: b3795ab8-998d-45db-8d77-e37ca9b41787
+	sourceLineageTag: [dbo].[mtbl_EDW_Fact_ProductionBatchOrderVariance]
+
+	measure 'Allowed Cost' = SUM(Fact_ProductionBatchOrderVariance[Allowed_Cost])
+		lineageTag: 6a001b5b-cf15-461f-b266-019ec9362cc4
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Allowed Qty' = SUM(Fact_ProductionBatchOrderVariance[Allowed_Qty])
+		lineageTag: e3fc1e0b-3fc4-40e4-8ca0-eaf75db2304f
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Lot Size Variance' = SUM(Fact_ProductionBatchOrderVariance[Lot_Size_Variance])
+		lineageTag: 8f22389d-b185-4619-b431-d84a5441b0d3
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Net Realized Costs' = SUM(Fact_ProductionBatchOrderVariance[Net_Realized_Cost])
+		lineageTag: 133e1f5f-5cf0-4df4-aedb-57a14edaf42a
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Net Realized Qty' = SUM(Fact_ProductionBatchOrderVariance[Net_Realized_Qty])
+		lineageTag: fcca3580-eed4-4f54-861c-d92fa0490e96
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Price Variance' = SUM(Fact_ProductionBatchOrderVariance[Price_Variance])
+		lineageTag: fcf3311b-fcd5-42fd-8cfc-20d925857e39
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Qty Variance' = SUM(Fact_ProductionBatchOrderVariance[Quantity_Variance])
+		lineageTag: 3d516432-84ff-4730-b7ed-064868b10b28
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Substitution Variance' = SUM(Fact_ProductionBatchOrderVariance[Substitution_Variance])
+		lineageTag: b0492a1a-0143-4061-ba4b-f9a3c932907d
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Variance' = SUM(Fact_ProductionBatchOrderVariance[Total_Variance])
+		lineageTag: e4a0bebf-b5c2-4045-b689-5c93ae7c56f4
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Returns "Yes" when Is_CoProduct = 1 and "No" when Is_CoProduct = 0; otherwise BLANK.
+	measure 'Is CoProduct (Yes/No)' =
+			VAR _flag = SELECTEDVALUE('Fact_ProductionBatchOrderVariance'[Is_CoProduct])
+			RETURN
+			SWITCH(TRUE(),
+			    _flag = 1, "Yes",
+			    _flag = 0, "No",
+			    BLANK()
+			)
+		formatString: @
+		lineageTag: f4a6e2ee-b936-4385-b58e-6587fdee7151
+
+	column Cost_Level
+		dataType: string
+		sourceProviderType: varchar(10)
+		lineageTag: 9e2b42d1-dd80-4fe9-b532-364fbef3c1be
+		sourceLineageTag: Cost_Level
+		summarizeBy: none
+		sourceColumn: Cost_Level
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 2284023d-ef05-4005-9e20-4d03d81fc38f
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductionBatchOrder
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 8a59c827-6edb-4b21-a7ef-3dd6e0ab2dad
+		sourceLineageTag: ProductionBatchOrder
+		summarizeBy: none
+		sourceColumn: ProductionBatchOrder
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductionOrderProductID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: d931b01f-b9b3-4e4d-a4bf-7c9e4c509b6d
+		sourceLineageTag: ProductionOrderProductID
+		summarizeBy: none
+		sourceColumn: ProductionOrderProductID
+
+		annotation SummarizationSetBy = Automatic
+
+	column OutputProductID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: c0bc9d06-92d0-4fbd-a1ed-72525183f082
+		sourceLineageTag: OutputProductID
+		summarizeBy: none
+		sourceColumn: OutputProductID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Is_CoProduct
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 94685723-aa25-4fb8-b438-84e9daa73425
+		sourceLineageTag: Is_CoProduct
+		summarizeBy: none
+		sourceColumn: Is_CoProduct
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column Output_Role
+		dataType: string
+		sourceProviderType: varchar(10)
+		lineageTag: 1d9dc120-783c-49d4-8fe2-35239ae85161
+		sourceLineageTag: Output_Role
+		summarizeBy: none
+		sourceColumn: Output_Role
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cost_Group
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: c13884f0-aa47-40b9-a743-a14a265b7db6
+		sourceLineageTag: Cost_Group
+		summarizeBy: none
+		sourceColumn: Cost_Group
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cost_Type
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: 358bcbb9-11ee-4e7e-a134-b84e45224258
+		sourceLineageTag: Cost_Type
+		summarizeBy: none
+		sourceColumn: Cost_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Resource
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 8176fcd8-516f-451b-b3ff-c9bc9323cf60
+		sourceLineageTag: Resource
+		summarizeBy: none
+		sourceColumn: Resource
+
+		annotation SummarizationSetBy = Automatic
+
+	column Oper_No
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 78b33f7f-bce5-48a4-b225-ac6fddc148a4
+		sourceLineageTag: Oper_No
+		summarizeBy: none
+		sourceColumn: Oper_No
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	column Net_Realized_Qty
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(28, 8)
+		lineageTag: a7c1d2c2-fe35-40ff-83a8-3e6a72758e6b
+		sourceLineageTag: Net_Realized_Qty
+		summarizeBy: sum
+		sourceColumn: Net_Realized_Qty
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Net_Realized_Cost
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(19, 4)
+		lineageTag: 7cee3e69-b524-4cd6-a871-8172f7e1f9d6
+		sourceLineageTag: Net_Realized_Cost
+		summarizeBy: sum
+		sourceColumn: Net_Realized_Cost
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Allowed_Qty
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(28, 8)
+		lineageTag: 91bf53df-ede4-48c5-bf20-31bcd1829947
+		sourceLineageTag: Allowed_Qty
+		summarizeBy: sum
+		sourceColumn: Allowed_Qty
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Allowed_Cost
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(19, 4)
+		lineageTag: 962e37a8-188d-426c-909a-82bbdeb89772
+		sourceLineageTag: Allowed_Cost
+		summarizeBy: sum
+		sourceColumn: Allowed_Cost
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Lot_Size_Variance
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(19, 4)
+		lineageTag: e18a93c2-697b-47ea-a272-1fdcdd0103d6
+		sourceLineageTag: Lot_Size_Variance
+		summarizeBy: sum
+		sourceColumn: Lot_Size_Variance
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Price_Variance
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(19, 4)
+		lineageTag: a04ea4cb-448f-4dd6-b4d7-e451efe7abf3
+		sourceLineageTag: Price_Variance
+		summarizeBy: sum
+		sourceColumn: Price_Variance
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Quantity_Variance
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(19, 4)
+		lineageTag: 1728f1a2-b817-4897-b75d-ed20babc4e85
+		sourceLineageTag: Quantity_Variance
+		summarizeBy: sum
+		sourceColumn: Quantity_Variance
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Substitution_Variance
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(19, 4)
+		lineageTag: de9c992f-0581-4fe6-b680-e3b2e13aa41c
+		sourceLineageTag: Substitution_Variance
+		summarizeBy: sum
+		sourceColumn: Substitution_Variance
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Total_Variance
+		dataType: double
+		isHidden
+		sourceProviderType: decimal(19, 4)
+		lineageTag: fb0e630e-0a65-4a91-a4bf-24ad34e05926
+		sourceLineageTag: Total_Variance
+		summarizeBy: sum
+		sourceColumn: Total_Variance
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column FinishedDate
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: date
+		lineageTag: d16f83fb-2ecb-4c7f-a2f2-888d0bb83919
+		sourceLineageTag: FinishedDate
+		summarizeBy: none
+		sourceColumn: FinishedDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column FinishedDateKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 82612492-8ca1-4519-81e1-7f378915ee46
+		sourceLineageTag: FinishedDateKey
+		summarizeBy: none
+		sourceColumn: FinishedDateKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		sourceProviderType: varchar(6)
+		lineageTag: f2044668-4d10-49ae-a8aa-72e444b42f66
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 55510fc6-d884-4e3f-96a7-c46a65c5bf68
+		sourceLineageTag: Legal_EntityKey
+		summarizeBy: none
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductionBatchOrderKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 5e4080c4-7894-4c82-85d2-4a211c3dba8c
+		sourceLineageTag: ProductionBatchOrderKey
+		summarizeBy: none
+		sourceColumn: ProductionBatchOrderKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column HistoricalProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 4e8825bc-2550-4396-b105-e1184c677434
+		sourceLineageTag: HistoricalProductKey
+		summarizeBy: count
+		sourceColumn: HistoricalProductKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: d099a5a3-df23-4593-8548-ec3ebe7a4c5f
+		sourceLineageTag: ProductKey
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column HistoricalOutputProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 501c7294-52b7-4b66-9329-b38a3d429af3
+		sourceLineageTag: HistoricalOutputProductKey
+		summarizeBy: count
+		sourceColumn: HistoricalOutputProductKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column OutputProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: e7311ddc-8f01-49ab-9ea5-23d8bd9be881
+		sourceLineageTag: OutputProductKey
+		summarizeBy: count
+		sourceColumn: OutputProductKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column SiteKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: b7302c45-2360-43b4-82b2-e55174ff270b
+		sourceLineageTag: SiteKey
+		summarizeBy: none
+		sourceColumn: SiteKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column WarehouseKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: bd968b69-1089-42e8-b429-73d687ab631e
+		sourceLineageTag: WarehouseKey
+		summarizeBy: none
+		sourceColumn: WarehouseKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column RouteKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: cd4f7d76-7e31-4711-82bc-4deec282a0ff
+		sourceLineageTag: RouteKey
+		summarizeBy: none
+		sourceColumn: RouteKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column accountingcurrency
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 75358b16-96ae-48e6-a12d-6a1cadaeab73
+		sourceLineageTag: accountingcurrency
+		summarizeBy: none
+		sourceColumn: accountingcurrency
+
+		annotation SummarizationSetBy = Automatic
+
+	column Net_Realized_Cost_USD
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: 30adacfa-a2c3-4583-94b3-41ccaae375d2
+		sourceLineageTag: Net_Realized_Cost_USD
+		summarizeBy: sum
+		sourceColumn: Net_Realized_Cost_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Net_Realized_Cost_EUR
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: a439f082-d92e-4679-b7cf-d254482eb11a
+		sourceLineageTag: Net_Realized_Cost_EUR
+		summarizeBy: sum
+		sourceColumn: Net_Realized_Cost_EUR
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Net_Realized_Cost_CNY
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: c1c3913b-f6f0-48a8-9e01-eae8a4b92935
+		sourceLineageTag: Net_Realized_Cost_CNY
+		summarizeBy: sum
+		sourceColumn: Net_Realized_Cost_CNY
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Allowed_Cost_USD
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: eda70c33-2d6f-43bd-9236-4e0d273173e2
+		sourceLineageTag: Allowed_Cost_USD
+		summarizeBy: sum
+		sourceColumn: Allowed_Cost_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Allowed_Cost_EUR
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: e2635d38-ca5d-4d89-a261-281101aaa267
+		sourceLineageTag: Allowed_Cost_EUR
+		summarizeBy: sum
+		sourceColumn: Allowed_Cost_EUR
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Allowed_Cost_CNY
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: 02280d78-1d78-4d20-a462-717d6d78ecb6
+		sourceLineageTag: Allowed_Cost_CNY
+		summarizeBy: sum
+		sourceColumn: Allowed_Cost_CNY
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Lot_Size_Variance_USD
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: 29174dd4-e2f3-415a-831f-8330f927e9ae
+		sourceLineageTag: Lot_Size_Variance_USD
+		summarizeBy: sum
+		sourceColumn: Lot_Size_Variance_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Lot_Size_Variance_EUR
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: fa07c483-8f0b-4f89-ae4c-63c28628eb28
+		sourceLineageTag: Lot_Size_Variance_EUR
+		summarizeBy: sum
+		sourceColumn: Lot_Size_Variance_EUR
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Lot_Size_Variance_CNY
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: 9e53a476-57f6-4229-b3e5-22e01fb6f349
+		sourceLineageTag: Lot_Size_Variance_CNY
+		summarizeBy: sum
+		sourceColumn: Lot_Size_Variance_CNY
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Price_Variance_USD
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: c7d4c2d9-348d-4ca0-9afc-04f660f5a6e5
+		sourceLineageTag: Price_Variance_USD
+		summarizeBy: sum
+		sourceColumn: Price_Variance_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Price_Variance_EUR
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: e3557f86-71b2-4733-9c4c-4487007970de
+		sourceLineageTag: Price_Variance_EUR
+		summarizeBy: sum
+		sourceColumn: Price_Variance_EUR
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Price_Variance_CNY
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: 3ae04e89-ebfa-4106-ace3-7a207815ce5e
+		sourceLineageTag: Price_Variance_CNY
+		summarizeBy: sum
+		sourceColumn: Price_Variance_CNY
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Quantity_Variance_USD
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: 567f9738-1af6-44ad-92d6-98954e292427
+		sourceLineageTag: Quantity_Variance_USD
+		summarizeBy: sum
+		sourceColumn: Quantity_Variance_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Quantity_Variance_EUR
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: d259be06-b8be-4362-a457-0290dcba4792
+		sourceLineageTag: Quantity_Variance_EUR
+		summarizeBy: sum
+		sourceColumn: Quantity_Variance_EUR
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Quantity_Variance_CNY
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: d1e5de6f-ea65-4622-b836-339492191465
+		sourceLineageTag: Quantity_Variance_CNY
+		summarizeBy: sum
+		sourceColumn: Quantity_Variance_CNY
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Substitution_Variance_USD
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: c339e074-cd54-419a-a051-ebd98e51bb38
+		sourceLineageTag: Substitution_Variance_USD
+		summarizeBy: sum
+		sourceColumn: Substitution_Variance_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Substitution_Variance_EUR
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: 5e112628-e613-4631-b888-4d5e36359b27
+		sourceLineageTag: Substitution_Variance_EUR
+		summarizeBy: sum
+		sourceColumn: Substitution_Variance_EUR
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Substitution_Variance_CNY
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: 9d62ee9f-c887-4ce7-a6c1-ddee2446ce42
+		sourceLineageTag: Substitution_Variance_CNY
+		summarizeBy: sum
+		sourceColumn: Substitution_Variance_CNY
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Total_Variance_USD
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: f8b9c202-32ec-4702-b0e5-ab095d7248e1
+		sourceLineageTag: Total_Variance_USD
+		summarizeBy: sum
+		sourceColumn: Total_Variance_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Total_Variance_EUR
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: 99e1c646-d16c-40a9-ae9e-e19c247a81d9
+		sourceLineageTag: Total_Variance_EUR
+		summarizeBy: sum
+		sourceColumn: Total_Variance_EUR
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Total_Variance_CNY
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: 1ac5523f-9d90-4597-ad10-0b21cfbd788b
+		sourceLineageTag: Total_Variance_CNY
+		summarizeBy: sum
+		sourceColumn: Total_Variance_CNY
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Txn_USD_Rate_Missing
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 6d9aa6ce-d8e6-40e3-a769-8e194d13214d
+		sourceLineageTag: Txn_USD_Rate_Missing
+		summarizeBy: sum
+		sourceColumn: Txn_USD_Rate_Missing
+
+		annotation SummarizationSetBy = Automatic
+
+	column Txn_EUR_Rate_Missing
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 45c17161-3f8b-4f4f-bde3-dba98fbd5dd5
+		sourceLineageTag: Txn_EUR_Rate_Missing
+		summarizeBy: sum
+		sourceColumn: Txn_EUR_Rate_Missing
+
+		annotation SummarizationSetBy = Automatic
+
+	column Txn_CNY_Rate_Missing
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: a1c9d982-5949-4159-a2b3-d49d2fefee53
+		sourceLineageTag: Txn_CNY_Rate_Missing
+		summarizeBy: sum
+		sourceColumn: Txn_CNY_Rate_Missing
+
+		annotation SummarizationSetBy = Automatic
+
+	column HistoricalCoProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: dea2b314-2b98-42e8-991e-44154e6c72c2
+		sourceLineageTag: HistoricalCoProductKey
+		summarizeBy: count
+		sourceColumn: HistoricalCoProductKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CoProductKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 02eac4da-6444-4e49-8b7b-f1171106ffd3
+		sourceLineageTag: CoProductKey
+		summarizeBy: none
+		sourceColumn: CoProductKey
+
+		changedProperty = IsHidden
+
+		changedProperty = SummarizeBy
+
+		annotation SummarizationSetBy = User
+
+	partition Fact_ProductionBatchOrderVariance = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Fact_ProductionBatchOrderVariance
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+
+

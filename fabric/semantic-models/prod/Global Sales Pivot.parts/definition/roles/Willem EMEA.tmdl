@@ -1,0 +1,25 @@
+role 'Willem EMEA'
+	modelPermission: read
+
+	tablePermission 'Account Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Date Table' =
+			-- Date table RLS
+			'Date Table'[Fiscal Year] >= 2023
+			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Employee Table' =
+			'Employee Table'[Salesperson] IN {"Tomàs De La Fuente ","Jutta Stemmler","Daan Dewulf","Michael Keller","Mikolaj Olejnicki","Willem Kulpers"}
+			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Legal Entity Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Product Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Sales Table' = [Sales Line Status] <> "Canceled"
+
+	tablePermission 'Warehouse Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	annotation PBI_Id = b799d965a5b14ce1addf602564545741
+
+

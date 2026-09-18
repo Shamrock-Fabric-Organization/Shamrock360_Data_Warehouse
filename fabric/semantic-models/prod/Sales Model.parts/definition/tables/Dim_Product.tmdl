@@ -1,0 +1,679 @@
+table Dim_Product
+	lineageTag: 7242199b-1169-4191-8c11-71c04ce8faca
+	sourceLineageTag: [dbo].[mtbl_EDW_Dim_Product]
+
+	column ProductKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 69255439-18e6-4809-968b-ff8bd4849787
+		sourceLineageTag: ProductKey
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 46e534d5-981b-4647-9e0d-03debf5010a6
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_ID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 2d72199d-8c7f-4def-b835-c9768cdfceb9
+		sourceLineageTag: Product_ID
+		summarizeBy: none
+		sourceColumn: Product_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_Name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 91e9c130-ba5c-4d05-a0b4-a08dd04919ca
+		sourceLineageTag: Product_Name
+		summarizeBy: none
+		sourceColumn: Product_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Search_Name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 5d497f58-643c-45d8-a83a-5a46bdd376c7
+		sourceLineageTag: Search_Name
+		summarizeBy: none
+		sourceColumn: Search_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Commercial_Name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 2aaf843e-fab9-4554-ace1-94a70a95ce52
+		sourceLineageTag: Commercial_Name
+		summarizeBy: none
+		sourceColumn: Commercial_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Technology
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: fac09d89-c050-46be-987c-7d180d827563
+		sourceLineageTag: Technology
+		summarizeBy: none
+		sourceColumn: Technology
+
+		annotation SummarizationSetBy = Automatic
+
+	column Material
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 35a9187b-6bff-4d10-b5f1-b40039ad2163
+		sourceLineageTag: Material
+		summarizeBy: none
+		sourceColumn: Material
+
+		annotation SummarizationSetBy = Automatic
+
+	column Business_Line
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: c5eab582-3f71-4a65-983d-48fd6d689fc9
+		sourceLineageTag: Business_Line
+		summarizeBy: none
+		sourceColumn: Business_Line
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_Line
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: ba0305b7-9cbb-4cc9-82e0-9d1543fe6027
+		sourceLineageTag: Product_Line
+		summarizeBy: none
+		sourceColumn: Product_Line
+
+		annotation SummarizationSetBy = Automatic
+
+	column MiscRevenue
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: a3b5e0ba-16ab-44f3-a86a-ec31aab15602
+		sourceLineageTag: MiscRevenue
+		summarizeBy: none
+		sourceColumn: MiscRevenue
+
+		annotation SummarizationSetBy = Automatic
+
+	column Lifecycle
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: f14abfbb-a2cd-4a6f-bb2f-c2ee08be32e5
+		sourceLineageTag: Lifecycle
+		summarizeBy: sum
+		sourceColumn: Lifecycle
+
+		annotation SummarizationSetBy = Automatic
+
+	column Inventory_UoM
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: b5f93a10-f9be-497b-97d0-aa4a6c2949f1
+		sourceLineageTag: Inventory_UoM
+		summarizeBy: none
+		sourceColumn: Inventory_UoM
+
+		annotation SummarizationSetBy = Automatic
+
+	column Purchasing_UoM
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 1fdf93d1-c234-40bc-aff0-f33d276fd776
+		sourceLineageTag: Purchasing_UoM
+		summarizeBy: none
+		sourceColumn: Purchasing_UoM
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sales_UoM
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 1faff9e7-5e90-4422-b61d-88cf861c9bb8
+		sourceLineageTag: Sales_UoM
+		summarizeBy: none
+		sourceColumn: Sales_UoM
+
+		annotation SummarizationSetBy = Automatic
+
+	column Item_Type
+		dataType: string
+		sourceProviderType: varchar(12)
+		lineageTag: d3b4e334-1609-4278-9649-e8638e382334
+		sourceLineageTag: Item_Type
+		summarizeBy: none
+		sourceColumn: Item_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column PTFE_Flag
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: a56b07f4-6900-4845-81cd-c77d41368251
+		sourceLineageTag: PTFE_Flag
+		summarizeBy: sum
+		sourceColumn: PTFE_Flag
+
+		annotation SummarizationSetBy = Automatic
+
+	column Reorder_Point
+		dataType: double
+		sourceProviderType: decimal(20, 4)
+		lineageTag: a4260cf4-53fe-48f4-b580-78a55ccbcec8
+		sourceLineageTag: Reorder_Point
+		summarizeBy: sum
+		sourceColumn: Reorder_Point
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column itemmodelgroupid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: ac92f5e5-75d2-4542-b4f8-9d54c966b702
+		sourceLineageTag: itemmodelgroupid
+		summarizeBy: none
+		sourceColumn: itemmodelgroupid
+
+		annotation SummarizationSetBy = Automatic
+
+	column producttype
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 7523f74c-e352-4c73-a1ec-420aed02e4f7
+		sourceLineageTag: producttype
+		summarizeBy: sum
+		sourceColumn: producttype
+
+		annotation SummarizationSetBy = Automatic
+
+	column producttype_desc
+		dataType: string
+		sourceProviderType: varchar(20)
+		lineageTag: 8ceb0494-f481-4c51-a3d9-894ff44f1c83
+		sourceLineageTag: producttype_desc
+		summarizeBy: none
+		sourceColumn: producttype_desc
+
+		annotation SummarizationSetBy = Automatic
+
+	column itemgroupid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 85370684-ba77-4565-aea6-e6c2805e9b8b
+		sourceLineageTag: itemgroupid
+		summarizeBy: none
+		sourceColumn: itemgroupid
+
+		annotation SummarizationSetBy = Automatic
+
+	column ItemGroupName
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 1600c0e5-6932-49fb-a6a1-73c511960666
+		sourceLineageTag: ItemGroupName
+		summarizeBy: none
+		sourceColumn: ItemGroupName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ItemGroupType
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 415244ee-ec65-4ba5-b69d-b8415773e866
+		sourceLineageTag: ItemGroupType
+		summarizeBy: sum
+		sourceColumn: ItemGroupType
+
+		annotation SummarizationSetBy = Automatic
+
+	column ItemGroupTypeName
+		dataType: string
+		sourceProviderType: varchar(20)
+		lineageTag: 5161dce7-4593-468b-bc89-cb0b05a98547
+		sourceLineageTag: ItemGroupTypeName
+		summarizeBy: none
+		sourceColumn: ItemGroupTypeName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ItemBuyerGroupID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 31d92070-cf32-40a8-97c5-da8e6849b4ab
+		sourceLineageTag: ItemBuyerGroupID
+		summarizeBy: none
+		sourceColumn: ItemBuyerGroupID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ItemBuyerGroupDesc
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 44bdb530-d9ce-4a57-8977-3d920b74685e
+		sourceLineageTag: ItemBuyerGroupDesc
+		summarizeBy: none
+		sourceColumn: ItemBuyerGroupDesc
+
+		annotation SummarizationSetBy = Automatic
+
+	column Phantom
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: ded7bb8e-7263-4158-a8c4-8e9e1a0b6935
+		sourceLineageTag: Phantom
+		summarizeBy: sum
+		sourceColumn: Phantom
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsPhantom
+		dataType: string
+		sourceProviderType: varchar(3)
+		lineageTag: b64dd913-f4b6-47d8-aec3-8e50d5f2e98d
+		sourceLineageTag: IsPhantom
+		summarizeBy: none
+		sourceColumn: IsPhantom
+
+		annotation SummarizationSetBy = Automatic
+
+	column min_purchase_qty
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: caf39d80-bef6-484e-a4cc-63b4d45316ba
+		sourceLineageTag: min_purchase_qty
+		summarizeBy: sum
+		sourceColumn: min_purchase_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column multiple_purchase_qty
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: d2a9f82a-740c-4de1-9d75-cb711b1bc2fa
+		sourceLineageTag: multiple_purchase_qty
+		summarizeBy: sum
+		sourceColumn: multiple_purchase_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column std_purchase_order_qty
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: b6e25af5-6a37-4ccf-a38f-cb2a9bc8d218
+		sourceLineageTag: std_purchase_order_qty
+		summarizeBy: sum
+		sourceColumn: std_purchase_order_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column max_purchase_order_qty
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 9557b5ea-015c-4ebf-921e-3c3f55d4dde1
+		sourceLineageTag: max_purchase_order_qty
+		summarizeBy: sum
+		sourceColumn: max_purchase_order_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column purchase_leadtime
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 856cd550-66c9-452f-bcbe-aeeeb4ba5d1a
+		sourceLineageTag: purchase_leadtime
+		summarizeBy: sum
+		sourceColumn: purchase_leadtime
+
+		annotation SummarizationSetBy = Automatic
+
+	column min_inventory_qty
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: ed6bd8b3-4044-47c2-8d37-3b90cb93efd7
+		sourceLineageTag: min_inventory_qty
+		summarizeBy: sum
+		sourceColumn: min_inventory_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column multiple_inventory_qty
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 7875056b-2f19-4734-88a1-bea7e1f6444b
+		sourceLineageTag: multiple_inventory_qty
+		summarizeBy: sum
+		sourceColumn: multiple_inventory_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column std_inventory_order_qty
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: d4e9c1e5-4216-4d11-a711-3d4d88bed9ad
+		sourceLineageTag: std_inventory_order_qty
+		summarizeBy: sum
+		sourceColumn: std_inventory_order_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column max_inventory_order_qty
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 7b215daa-6573-447a-ad39-70f292fae788
+		sourceLineageTag: max_inventory_order_qty
+		summarizeBy: sum
+		sourceColumn: max_inventory_order_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column inventory_leadtime
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: e2e55007-02a1-4820-bbf3-12adc69973f5
+		sourceLineageTag: inventory_leadtime
+		summarizeBy: sum
+		sourceColumn: inventory_leadtime
+
+		annotation SummarizationSetBy = Automatic
+
+	column min_sales_qty
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 206d4722-786b-429b-8168-48ef0b1e4e4b
+		sourceLineageTag: min_sales_qty
+		summarizeBy: sum
+		sourceColumn: min_sales_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column multiple_sales_qty
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 1f7cc29d-24e1-4dfb-be8d-590b305d2894
+		sourceLineageTag: multiple_sales_qty
+		summarizeBy: sum
+		sourceColumn: multiple_sales_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column std_sales_order_qty
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: f8c08557-e500-4b06-9a71-b66318c1e83a
+		sourceLineageTag: std_sales_order_qty
+		summarizeBy: sum
+		sourceColumn: std_sales_order_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column max_sales_order_qty
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: c2a36039-c812-4eeb-b377-0fd6df8a222b
+		sourceLineageTag: max_sales_order_qty
+		summarizeBy: sum
+		sourceColumn: max_sales_order_qty
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column sales_leadtime
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 31fd50de-c7f0-4e2a-a331-4b01a740557a
+		sourceLineageTag: sales_leadtime
+		summarizeBy: sum
+		sourceColumn: sales_leadtime
+
+		annotation SummarizationSetBy = Automatic
+
+	column BaseSalesPrice
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: e390afe5-9cf9-4608-a6bb-855c1a78be37
+		sourceLineageTag: BaseSalesPrice
+		summarizeBy: sum
+		sourceColumn: BaseSalesPrice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column BaseSalesPricePerLB
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: b0706a2f-9bd6-47f7-972d-eae51b0dc285
+		sourceLineageTag: BaseSalesPricePerLB
+		summarizeBy: sum
+		sourceColumn: BaseSalesPricePerLB
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DefaultPurchaseWarehouse
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: d97fcc2e-5e97-47f7-8e46-87fd488b52f8
+		sourceLineageTag: DefaultPurchaseWarehouse
+		summarizeBy: none
+		sourceColumn: DefaultPurchaseWarehouse
+
+		annotation SummarizationSetBy = Automatic
+
+	column DefaultPurchaseSiteID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 94f6c52a-4609-47a2-b0be-a090f143f285
+		sourceLineageTag: DefaultPurchaseSiteID
+		summarizeBy: none
+		sourceColumn: DefaultPurchaseSiteID
+
+		annotation SummarizationSetBy = Automatic
+
+	column DefaultInventoryWarehouse
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 02bdbab3-dbda-4eea-bf18-02f245942d7e
+		sourceLineageTag: DefaultInventoryWarehouse
+		summarizeBy: none
+		sourceColumn: DefaultInventoryWarehouse
+
+		annotation SummarizationSetBy = Automatic
+
+	column DefaultInventorySiteID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 062baf41-d8fe-437f-b5d2-e8aa759f27c9
+		sourceLineageTag: DefaultInventorySiteID
+		summarizeBy: none
+		sourceColumn: DefaultInventorySiteID
+
+		annotation SummarizationSetBy = Automatic
+
+	column DefaultSalesWarehouse
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: fefc2228-8552-4a3f-a41e-76f1c2dbbb63
+		sourceLineageTag: DefaultSalesWarehouse
+		summarizeBy: none
+		sourceColumn: DefaultSalesWarehouse
+
+		annotation SummarizationSetBy = Automatic
+
+	column DefaultSalesSiteID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: c7a91495-b99a-4c1a-962d-42e99d4371f5
+		sourceLineageTag: DefaultSalesSiteID
+		summarizeBy: none
+		sourceColumn: DefaultSalesSiteID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductLifecycleState
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: fbedaec9-67d5-45b3-b8aa-2b1941558b11
+		sourceLineageTag: ProductLifecycleState
+		summarizeBy: none
+		sourceColumn: ProductLifecycleState
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductionType
+		dataType: string
+		sourceProviderType: varchar(10)
+		lineageTag: f2045912-72c2-401f-9056-20a48f4b81d6
+		sourceLineageTag: ProductionType
+		summarizeBy: none
+		sourceColumn: ProductionType
+
+		annotation SummarizationSetBy = Automatic
+
+	column BaseItemProduct
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 8a0480dd-a9ef-4930-9541-604fbb955fc0
+		sourceLineageTag: BaseItemProduct
+		summarizeBy: sum
+		sourceColumn: BaseItemProduct
+
+		annotation SummarizationSetBy = Automatic
+
+	column testgroupid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 05abf19f-13c0-45f1-8bb6-e36be3491324
+		sourceLineageTag: testgroupid
+		summarizeBy: none
+		sourceColumn: testgroupid
+
+		annotation SummarizationSetBy = Automatic
+
+	column routeid
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 07b71888-b670-4856-9fc2-f244b03f95d2
+		sourceLineageTag: routeid
+		summarizeBy: none
+		sourceColumn: routeid
+
+		annotation SummarizationSetBy = Automatic
+
+	column routename
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 0c7c3b2a-1a23-485e-a87a-6860b0f6ca52
+		sourceLineageTag: routename
+		summarizeBy: none
+		sourceColumn: routename
+
+		annotation SummarizationSetBy = Automatic
+
+	column Start_Date
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: c2f923f1-8535-4369-8f79-2d5c301a88b7
+		sourceLineageTag: Start_Date
+		summarizeBy: none
+		sourceColumn: Start_Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column End_Date
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: ad3f0d41-0db1-45de-852b-c924e8a58e4e
+		sourceLineageTag: End_Date
+		summarizeBy: none
+		sourceColumn: End_Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column Record_Status
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: e17db51a-c6df-4270-8c69-c3a9e628efca
+		sourceLineageTag: Record_Status
+		summarizeBy: sum
+		sourceColumn: Record_Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		sourceProviderType: varchar(6)
+		lineageTag: 8fe820f4-1094-4ce9-b51e-90e1adb911fa
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Product = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Dim_Product
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+
+

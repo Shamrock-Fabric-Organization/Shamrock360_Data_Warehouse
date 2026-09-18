@@ -1,0 +1,378 @@
+table Fact_SalesAndForecastData
+	lineageTag: 42bb2c2f-415e-4d61-bdae-9d3e27fed0ed
+	sourceLineageTag: [dbo].[mtbl_EDW_Fact_SalesAndForecastData]
+
+	measure 'Count S&F' = COUNTROWS(Fact_SalesAndForecastData)
+		formatString: 0
+		lineageTag: 40896bc1-6d19-4214-bc8b-42e74b61abd1
+
+		changedProperty = Name
+
+	column CMPNY
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 7be9b8d5-6a3f-47e8-9143-78d6ab8c999a
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column ModelID
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 80943d88-b73d-48a3-ab29-1bef7da1eb97
+		sourceLineageTag: ModelID
+		summarizeBy: none
+		sourceColumn: ModelID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: date
+		lineageTag: 0e8f60a4-7fdf-4746-8ad7-44b63831f9f4
+		sourceLineageTag: Date
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column DateKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 6e03060f-0b88-489b-8ccf-9f8f58bf5ad1
+		sourceLineageTag: DateKey
+		summarizeBy: none
+		sourceColumn: DateKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Customer_Account
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: a640d892-2a62-42ef-9e8f-bff2fe011ee7
+		sourceLineageTag: Customer_Account
+		summarizeBy: none
+		sourceColumn: Customer_Account
+
+		annotation SummarizationSetBy = Automatic
+
+	column Item_Number
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 47b295ac-7cdf-4707-82be-bf0302106ce5
+		sourceLineageTag: Item_Number
+		summarizeBy: none
+		sourceColumn: Item_Number
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sales_Quantity
+		dataType: double
+		sourceProviderType: float
+		lineageTag: 344d2054-74d8-49b2-a626-72ac0d8bcb6a
+		sourceLineageTag: Sales_Quantity
+		summarizeBy: sum
+		sourceColumn: Sales_Quantity
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Unit
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 6d55c645-5c36-4ed7-a03c-82644b182672
+		sourceLineageTag: Unit
+		summarizeBy: none
+		sourceColumn: Unit
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sales_Quantity_LBs
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: dc328cb3-2907-40b7-95ca-e2e67b95eff9
+		sourceLineageTag: Sales_Quantity_LBs
+		summarizeBy: sum
+		sourceColumn: Sales_Quantity_LBs
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Sales_Quantity_KGs
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 968ea4c5-cee0-45f4-8332-c77c8f7b63a2
+		sourceLineageTag: Sales_Quantity_KGs
+		summarizeBy: sum
+		sourceColumn: Sales_Quantity_KGs
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Sales_Currency
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 533a08cf-094b-43ff-81d2-48279c646dc5
+		sourceLineageTag: Sales_Currency
+		summarizeBy: none
+		sourceColumn: Sales_Currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column Amount
+		dataType: double
+		sourceProviderType: decimal(38, 2)
+		lineageTag: 757a97e1-80f0-47d6-a8ff-40d23b7ceed7
+		sourceLineageTag: Amount
+		summarizeBy: sum
+		sourceColumn: Amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Amount_USD
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: 253dd250-737a-45a7-be9e-f3c49f31ce2e
+		sourceLineageTag: Amount_USD
+		summarizeBy: sum
+		sourceColumn: Amount_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Amount_EUR
+		dataType: double
+		sourceProviderType: numeric(38, 2)
+		lineageTag: 89bdc071-a2a7-495d-b4bb-34052a417c27
+		sourceLineageTag: Amount_EUR
+		summarizeBy: sum
+		sourceColumn: Amount_EUR
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Amount_CNY
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: b447662d-26cc-4ab8-af6a-ec34b8a08edf
+		sourceLineageTag: Amount_CNY
+		summarizeBy: sum
+		sourceColumn: Amount_CNY
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Sales_Price
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: 4415a1f9-9fef-4141-ab5c-2f4b48e3d344
+		sourceLineageTag: Sales_Price
+		summarizeBy: sum
+		sourceColumn: Sales_Price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SalesPrice_USD
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: 7c16c312-55d8-49b9-ac9d-bd4a1c9487cb
+		sourceLineageTag: SalesPrice_USD
+		summarizeBy: sum
+		sourceColumn: SalesPrice_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SalesPrice_EUR
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: f8feff02-5984-4ef8-926f-f2f6fd37ea86
+		sourceLineageTag: SalesPrice_EUR
+		summarizeBy: sum
+		sourceColumn: SalesPrice_EUR
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SalesPrice_CNY
+		dataType: double
+		sourceProviderType: numeric(38, 6)
+		lineageTag: 3497bbed-c86d-489d-b0a8-f565d688e6c3
+		sourceLineageTag: SalesPrice_CNY
+		summarizeBy: sum
+		sourceColumn: SalesPrice_CNY
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Source
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: 555beb4d-207d-4af3-ae3b-d11b26e1c88c
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_EntityKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 7a19938d-1134-40a4-a761-56693a22464b
+		sourceLineageTag: Legal_EntityKey
+		summarizeBy: none
+		sourceColumn: Legal_EntityKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column HistoricCustomerKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: c3c673ff-c968-4fee-b15f-ca78939c4d5b
+		sourceLineageTag: HistoricCustomerKey
+		summarizeBy: count
+		sourceColumn: HistoricCustomerKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 989c1f2c-a43f-4d1b-83a1-da4d4c71f7a7
+		sourceLineageTag: CustomerKey
+		summarizeBy: none
+		sourceColumn: CustomerKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column HistoricInvoiceCustomerKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 0c80eff9-1da1-4371-98ed-f62881d13c5b
+		sourceLineageTag: HistoricInvoiceCustomerKey
+		summarizeBy: count
+		sourceColumn: HistoricInvoiceCustomerKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column InvoiceCustomerKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: f669be91-b4ae-41f5-ab30-088d0c21c63b
+		sourceLineageTag: InvoiceCustomerKey
+		summarizeBy: count
+		sourceColumn: InvoiceCustomerKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column HistoricProductKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 30665cd6-d94c-4c3b-965b-4b8d41b7a4e0
+		sourceLineageTag: HistoricProductKey
+		summarizeBy: count
+		sourceColumn: HistoricProductKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 185ac661-1ac4-463b-a96b-2454d296178b
+		sourceLineageTag: ProductKey
+		summarizeBy: none
+		sourceColumn: ProductKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column SiteKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: aca32664-5671-4eee-95f5-287d88233737
+		sourceLineageTag: SiteKey
+		summarizeBy: count
+		sourceColumn: SiteKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column WarehouseKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 83bbab12-f052-48c6-9411-5854ce59ce24
+		sourceLineageTag: WarehouseKey
+		summarizeBy: none
+		sourceColumn: WarehouseKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Txn_USD_Rate_Missing
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 1dc5b88a-fa47-483d-9570-fc9732e1aa8b
+		sourceLineageTag: Txn_USD_Rate_Missing
+		summarizeBy: sum
+		sourceColumn: Txn_USD_Rate_Missing
+
+		annotation SummarizationSetBy = Automatic
+
+	column Txn_EUR_Rate_Missing
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 8f186135-77ba-41a5-b540-d10609f7795a
+		sourceLineageTag: Txn_EUR_Rate_Missing
+		summarizeBy: sum
+		sourceColumn: Txn_EUR_Rate_Missing
+
+		annotation SummarizationSetBy = Automatic
+
+	column Txn_CNY_Rate_Missing
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: c84ebbf3-40c1-4946-91a7-aa245e085a67
+		sourceLineageTag: Txn_CNY_Rate_Missing
+		summarizeBy: sum
+		sourceColumn: Txn_CNY_Rate_Missing
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_SalesAndForecastData = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Fact_SalesAndForecastData
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+
+

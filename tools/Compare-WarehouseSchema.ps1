@@ -166,6 +166,26 @@
     section states its own three numbers before the first entry: how many differences,
     how many columns they affect, and how many entries they are shown as.
 
+    ⛔ AND A TOLERATED DIFFERENCE IS DOWNGRADED, NEVER DELETED.
+
+    These warehouses are rebuilt BY HAND in production, so a column that came back as
+    varchar where development has nvarchar, or as bigint where development has int, is
+    expected noise rather than a deployment that went wrong. Noise is what makes a report
+    stop being read, so -IgnoreCompatibleTypes and -IgnoreLengthAndPrecision take those
+    two classes out of the verdict.
+
+    OUT OF THE VERDICT IS NOT OUT OF THE REPORT. Every tolerated difference is still
+    detected, still counted, and still printed - in one summary block at the END, after
+    the real findings, aggregated by the KIND of difference rather than listed column by
+    column. Four hundred tolerated columns are a dozen summary lines saying which type
+    pairings they were and how many of each, which is what a reader can actually judge:
+    an unexpected pairing stands out, and so does a count far larger than it should be.
+    A difference that vanished without trace is how somebody later concludes the two
+    environments match when they do not, and no switch here can produce that.
+
+    -Verbose lists every tolerated difference individually, the same audit channel the
+    folded restatements already use.
+
     And the report states its own PROVENANCE before anything else - per warehouse, the
     two files read, the environment each records, and the endpoint each was exported
     from. Every other line says "dev" or "prod"; this is the only place that says what
@@ -188,6 +208,17 @@
     Print the first differing line of any routine whose definition changed, rather than
     only naming it.
 
+.PARAMETER IgnoreCompatibleTypes
+    Treat two column types in the SAME family as equal: char/varchar/nchar/nvarchar,
+    tinyint/smallint/int/bigint, numeric/decimal, float/real. Crossing families is still
+    a difference - int against numeric, float against decimal, int against bit. The
+    families are listed in one table near the top of this script.
+
+.PARAMETER IgnoreLengthAndPrecision
+    Treat a declared SIZE as equal: varchar(10) against varchar(50), decimal(18,2)
+    against decimal(10,4). The type name still has to match unless -IgnoreCompatibleTypes
+    is given as well, and the two compose - both on, char(10) against varchar(50) passes.
+
 
 .EXAMPLE
     .\Compare-WarehouseSchema.ps1 -Folder warehouse-schema
@@ -204,7 +235,9 @@ param(
     [string] $Folder,
     [string] $DevFile,
     [string] $ProdFile,
-    [switch] $ShowRoutineDiff
+    [switch] $ShowRoutineDiff,
+    [switch] $IgnoreCompatibleTypes,
+    [switch] $IgnoreLengthAndPrecision
 )
 
 # ⛔ THE FOLDED-DIFFERENCE LISTING RIDES ON -Verbose, WHICH IS DELIBERATE AND NOT LAZINESS.
@@ -223,6 +256,95 @@ $ErrorActionPreference = 'Stop'
 
 if (-not $Folder -and -not ($DevFile -and $ProdFile)) {
     throw "Give -Folder, or both -DevFile and -ProdFile."
+}
+
+# ---------------------------------------------------------------------------
+# ⛔ THE COMPATIBLE-TYPE FAMILIES, IN ONE TABLE, BECAUSE THIS IS THE THING A READER HAS
+# TO BE ABLE TO CHECK AT A GLANCE AND EXTEND WITHOUT HUNTING THROUGH THE SCRIPT.
+#
+# -IgnoreCompatibleTypes treats two column types in the SAME row here as equal. CROSSING
+# ROWS IS ALWAYS A DIFFERENCE and no switch changes that: int against numeric, int
+# against decimal, float against numeric and float against decimal are all still
+# reported, because each of them changes what the column can actually hold.
+#
+#   Name                 the family, as the report prints it
+#   Types                its members. Matched case-insensitively - INFORMATION_SCHEMA
+#                        returns lower case, but an export built by hand is not obliged to
+#   SizeIsSetByTypeName  whether a member's precision follows from the NAME rather than
+#                        from a declared size. int and bigint carry NUMERIC_PRECISION 10
+#                        and 19 and no DDL can say otherwise, so tolerating the name
+#                        while still reporting "precision 10 against 19" would report the
+#                        exact difference the switch was turned on to ignore. varchar(10)
+#                        against varchar(50) is the opposite case - the size is declared
+#                        independently of the name, so it stays a difference until
+#                        -IgnoreLengthAndPrecision says otherwise
+#
+# ⛔ THREE TYPES ARE DELIBERATELY ABSENT FROM THIS TABLE, AND NONE OF THEM IS AN OVERSIGHT:
+#   bit                  a flag, not a small integer. int against bit is a real difference
+#                        and belongs in no family. To change that, add it to the integer
+#                        row - one word, and this comment stops being true
+#   date, datetime2,     no family at all, in either direction. date against datetime2
+#   time, datetimeoffset loses the time of day, which is a difference by any reading.
+#                        They were never mentioned in the request and are not tolerated
+#   sql_variant, xml,    nothing to be compatible with
+#   uniqueidentifier
+$script:TypeFamilies = @(
+    [pscustomobject]@{ Name = 'character';           SizeIsSetByTypeName = $false
+                       Types = @('char', 'varchar', 'nchar', 'nvarchar') }
+    [pscustomobject]@{ Name = 'integer';             SizeIsSetByTypeName = $true
+                       Types = @('tinyint', 'smallint', 'int', 'bigint') }
+    [pscustomobject]@{ Name = 'exact numeric';       SizeIsSetByTypeName = $false
+                       Types = @('numeric', 'decimal') }
+    [pscustomobject]@{ Name = 'approximate numeric'; SizeIsSetByTypeName = $true
+                       Types = @('float', 'real') }
+)
+
+# The type-name lookup, built from the table above so the table stays the only place a
+# family is stated. OrdinalIgnoreCase is explicit rather than left to PowerShell's default
+# hashtable behaviour: these warehouses are case-insensitive, but a TYPE NAME must compare
+# case-insensitively whether the collation says so or not.
+$script:TypeFamilyOf = New-Object 'System.Collections.Hashtable' ([System.StringComparer]::OrdinalIgnoreCase)
+foreach ($fam in $script:TypeFamilies) {
+    foreach ($t in $fam.Types) { $script:TypeFamilyOf[$t] = $fam }
+}
+
+# The three column attributes that record a DECLARED size. -IgnoreLengthAndPrecision
+# tolerates a difference in any of them; nothing else in the column comparison is a size.
+$script:SizeFields = @('CHARACTER_MAXIMUM_LENGTH', 'NUMERIC_PRECISION', 'NUMERIC_SCALE')
+
+function Get-TypeFamily {
+    # The family a type name belongs to, or $null for a type that belongs to none.
+    param([string] $TypeName)
+    $t = ([string]$TypeName).Trim()
+    if ($t -and $script:TypeFamilyOf.ContainsKey($t)) { return $script:TypeFamilyOf[$t] }
+    return $null
+}
+
+function Format-TypeDeclaration {
+    <#
+        One column's type as DDL would write it - varchar(50), decimal(18,2), int - so the
+        tolerated summary can name a PAIRING rather than four separate attribute values.
+
+        ⛔ A SIZE IS PRINTED ONLY WHERE DDL COULD HAVE DECLARED ONE. INFORMATION_SCHEMA
+        returns NUMERIC_PRECISION 10 for an int and 53 for a float, but nobody writes
+        int(10), and printing it would make "int / bigint" read as a size difference when
+        the whole point of that pairing is that it is not one.
+    #>
+    param($Row)
+    $t   = [string](Get-JsonProperty $Row 'DATA_TYPE' '')
+    $len = Get-JsonProperty $Row 'CHARACTER_MAXIMUM_LENGTH' $null
+    if ($null -ne $len) {
+        $n = 0
+        if ([int]::TryParse([string]$len, [ref] $n) -and $n -eq -1) { return "$t(max)" }
+        return ("{0}({1})" -f $t, $len)
+    }
+    $fam = Get-TypeFamily $t
+    $p   = Get-JsonProperty $Row 'NUMERIC_PRECISION' $null
+    if ($fam -and $fam.Name -eq 'exact numeric' -and $null -ne $p) {
+        $sc = Get-JsonProperty $Row 'NUMERIC_SCALE' 0
+        return ("{0}({1},{2})" -f $t, $p, $sc)
+    }
+    return $t
 }
 
 function Read-Schema {
@@ -376,9 +498,16 @@ function New-Finding {
         (schema, table, column) the first two fields are the object. That is the field
         that lets the renderer tell a child difference from the parent difference which
         already explains it.
+
+        ⛔ BOTH SIDES' ROWS ARE CARRIED, NOT JUST DEV'S. The tolerance check has to ask
+        what type PROD holds, and the tolerated summary has to print prod's full type
+        declaration. Reading either back out of the formatted Extra string would make the
+        verdict depend on the wording of a display string, which is how a report starts
+        deciding things it was only ever supposed to describe. ProdRow is $null on a
+        one-sided finding, where by definition there is no prod row.
     #>
     param([string] $Section, [string] $Change, [string] $Field, [string] $Key,
-          $Row, [string] $Extra, [int] $ObjectKeyFieldCount)
+          $Row, [string] $Extra, [int] $ObjectKeyFieldCount, $ProdRow = $null)
 
     $parts = $Key -split '\|'
     $take = [Math]::Min($ObjectKeyFieldCount, $parts.Count)
@@ -391,9 +520,14 @@ function New-Finding {
         Key       = $Key
         ObjectKey = $objectKey
         Row       = $Row
+        ProdRow   = $ProdRow
         Kind      = $kind
         Detail    = $Key
         Extra     = $Extra
+        # Which switch tolerated this difference, or empty for the overwhelming majority
+        # that no switch touches. It is set on the finding rather than held in a side list,
+        # so a finding can never travel through the report separated from its attribution.
+        ToleratedBy = ''
     }
 }
 
@@ -439,7 +573,7 @@ function Compare-Part {
                 # line makes the report unreadable and hides the other findings, so the
                 # value is summarized here and -ShowRoutineDiff gives the differing line.
                 $extra = if ($f -eq 'DEFINITION_HASH') { '' } else { Format-Difference $f $rawA $rawB }
-                $findings += New-Finding $What 'DIFFERS' $f $k $devMap[$k] $extra $ObjectKeyFieldCount
+                $findings += New-Finding $What 'DIFFERS' $f $k $devMap[$k] $extra $ObjectKeyFieldCount $prodMap[$k]
             }
         }
     }
@@ -531,6 +665,151 @@ function Resolve-Restatement {
         Restated = $restated
         ByParent = $byParent
     }
+}
+
+function Resolve-TypeTolerance {
+    <#
+        Splits the printable findings into the ones that stand as differences and the ones
+        a switch on this run tolerates.
+
+        ⛔ NOTHING IS DISCARDED HERE EITHER. Every finding leaves this function in exactly
+        one of the two lists, carrying the name of the switch that tolerated it, so the
+        caller can assert that the two add back up to what came in. Detection is not
+        touched at all - the comparison has already run and found every difference before
+        this function sees anything. What a switch changes is which list a difference is
+        printed in, and whether it counts toward the verdict.
+
+        ⛔ AND IT REACHES COLUMNS ONLY. A table present in one environment and not the
+        other, a routine body that changed, a nullability change, a column that moved
+        position - none of those is a type difference and none of them is tolerable by
+        either switch. The section and field tests below are what keep it that way.
+    #>
+    param($Findings, [bool] $Families, [bool] $Sizes)
+
+    # Pass 1 - the type NAME. A column whose two types share a family is recorded here,
+    # because pass 2 needs to know which columns had a tolerated type change before it can
+    # decide what to do with their precision.
+    $familyTolerated = @{}
+    if ($Families) {
+        foreach ($x in @($Findings)) {
+            if ($x.Section -ne 'column' -or $x.Change -ne 'DIFFERS' -or $x.Field -ne 'DATA_TYPE') { continue }
+            if ($null -eq $x.ProdRow) { continue }
+            $a = Get-TypeFamily ([string](Get-JsonProperty $x.Row     'DATA_TYPE' ''))
+            $b = Get-TypeFamily ([string](Get-JsonProperty $x.ProdRow 'DATA_TYPE' ''))
+            # ⛔ SAME FAMILY, NOT "BOTH IN A FAMILY". int and numeric each have one; they
+            # are not each other's. This single equality test is the client's whole
+            # requirement, and it is why the families are a table rather than a flat list.
+            if ($a -and $b -and $a.Name -eq $b.Name) { $familyTolerated[$x.Key] = $a }
+        }
+    }
+
+    $kept      = @()
+    $tolerated = @()
+    foreach ($x in @($Findings)) {
+        $by = ''
+        if ($x.Section -eq 'column' -and $x.Change -eq 'DIFFERS') {
+            if ($x.Field -eq 'DATA_TYPE' -and $familyTolerated.ContainsKey($x.Key)) {
+                $by = '-IgnoreCompatibleTypes'
+            }
+            elseif ($script:SizeFields -contains $x.Field) {
+                # ⛔ THE RIDE-ALONG IS TESTED FIRST, AND THAT ORDER IS THE POINT. With BOTH
+                # switches on, int against bigint would otherwise be attributed to
+                # -IgnoreLengthAndPrecision and the summary would tag it "family + size" -
+                # sending a reader to look for a declared size difference between "int" and
+                # "bigint", two declarations that do not carry one. The more specific
+                # attribution is the true one, so it wins.
+                if ($familyTolerated.ContainsKey($x.Key) -and
+                    $familyTolerated[$x.Key].SizeIsSetByTypeName) {
+                    # ⛔ THE PRECISION THAT COMES FREE WITH THE TYPE NAME. int against
+                    # bigint is ONE change, and INFORMATION_SCHEMA reports it twice - once as
+                    # DATA_TYPE and once as NUMERIC_PRECISION 10 against 19. Tolerating the
+                    # first while still reporting the second would say "precision 10 against
+                    # 19" about the very columns the switch was turned on to stop hearing
+                    # about, and no DDL could have declared that precision differently.
+                    # varchar(10) against varchar(50) is NOT this case and never reaches
+                    # here: the character family's SizeIsSetByTypeName is $false, so a
+                    # declared length stays a difference until -IgnoreLengthAndPrecision.
+                    $by = '-IgnoreCompatibleTypes'
+                }
+                elseif ($Sizes) {
+                    $by = '-IgnoreLengthAndPrecision'
+                }
+            }
+        }
+        if ($by) {
+            $x.ToleratedBy = $by
+            $tolerated += $x
+        } else {
+            $kept += $x
+        }
+    }
+    return [pscustomobject]@{ Kept = $kept; Tolerated = $tolerated }
+}
+
+function Group-ToleratedColumn {
+    <#
+        The tolerated differences aggregated into the shape the summary prints: one row per
+        distinct TYPE PAIRING, with the number of columns and tables it reached.
+
+        ⛔ THE GRAIN IS THE COLUMN, NOT THE DIFFERENCE. char(10) against varchar(50) is
+        two rows in INFORMATION_SCHEMA terms - the name changed and the length changed - and
+        ONE thing that happened to one column. Counting differences would report it twice
+        and put the block's own numbers at odds with the sentence above them.
+
+        ⛔ AND IT AGGREGATES BY KIND, WHICH IS THE ENTIRE POINT OF THE BLOCK. Four hundred
+        tolerated columns listed one per line is the clutter these switches exist to remove,
+        re-introduced under a different heading. A dozen lines saying which pairings they
+        were and how many of each is something a reader can judge at a glance: a pairing
+        nobody expected stands out, and so does a count far larger than it should be.
+    #>
+    param($Tolerated)
+
+    $byColumn = @{}
+    foreach ($x in @($Tolerated)) {
+        if (-not $byColumn.ContainsKey($x.Key)) { $byColumn[$x.Key] = @() }
+        $byColumn[$x.Key] += $x
+    }
+
+    $rows = @{}
+    foreach ($k in @($byColumn.Keys)) {
+        $items = @($byColumn[$k])
+        $dev   = Format-TypeDeclaration $items[0].Row
+        $prod  = Format-TypeDeclaration $items[0].ProdRow
+        # What was tolerated about THIS column, taken from the findings themselves rather
+        # than inferred back from the two declarations. A switch that stops tolerating
+        # something must not leave a label behind claiming that it still does.
+        #
+        # ⛔ "size" MEANS A SIZE THE READER CAN SEE IN THE TWO DECLARATIONS BESIDE IT, so
+        # it is read off the SWITCH that tolerated the finding and never off the field name.
+        # int against bigint carries a NUMERIC_PRECISION difference of 10 against 19 that
+        # -IgnoreCompatibleTypes tolerates along with the type name, and that no DDL could
+        # have written down - the pairing prints as "int / bigint" precisely because there
+        # is no size in it. Tagging that "family + size" would send a reader hunting for a
+        # size difference between two declarations that do not show one.
+        $nameChanged = (@($items | Where-Object { $_.Field -eq 'DATA_TYPE' }).Count -gt 0)
+        $sizeChanged = (@($items | Where-Object { $_.ToleratedBy -eq '-IgnoreLengthAndPrecision' }).Count -gt 0)
+        $tag = if ($nameChanged -and $sizeChanged) { 'family + size' }
+               elseif ($nameChanged)               { 'family' }
+               else                                { 'size' }
+
+        $pairing = "{0}  /  {1}" -f $dev, $prod
+        $sig     = $pairing + '|' + $tag
+        if (-not $rows.ContainsKey($sig)) {
+            $rows[$sig] = [pscustomobject]@{
+                Pairing = $pairing; Tag = $tag
+                Columns = 0; Tables = @{}; Differences = 0
+            }
+        }
+        $r = $rows[$sig]
+        $r.Columns     += 1
+        $r.Differences += $items.Count
+        $r.Tables[$items[0].ObjectKey] = $true
+    }
+
+    # Largest first: the pairing accounting for most of the noise is the one worth a look,
+    # and the long tail of one-offs below it is where an unexpected pairing shows up.
+    return @($rows.Values | Sort-Object @{ Expression = { $_.Columns }; Descending = $true },
+                                        @{ Expression = { $_.Pairing } })
 }
 
 function Get-FirstDifferingLine {
@@ -835,6 +1114,11 @@ $problems = 0
 $totalDetected = 0
 $totalListed = 0
 $totalFolded = 0
+# Tolerated differences are accumulated across the whole run rather than per warehouse,
+# because they are summarized ONCE at the end by the kind of difference they are. Four
+# hundred of them spread over four warehouses is still a dozen pairings.
+$totalTolerated = 0
+$toleratedRuns = @()
 
 foreach ($pair in $pairs) {
     $dev = Read-Schema $pair.Dev
@@ -892,15 +1176,57 @@ foreach ($pair in $pairs) {
         -not ($_.Section -eq 'routine' -and $_.Field -eq 'DEFINITION_LENGTH' -and $hashKeys.ContainsKey($_.Key))
     })
 
+    # ⛔ TOLERANCE IS APPLIED AFTER DETECTION AND AFTER FOLDING, WHICH IS WHY NEITHER OF
+    # THEM CHANGES. Every difference has already been found and every restatement has
+    # already been folded by the time a switch is consulted; all a switch decides is which
+    # list a difference is PRINTED in and whether it counts toward the verdict. With both
+    # switches off Tolerated is empty and $printable is exactly what it was before.
+    $tol       = Resolve-TypeTolerance $printable ([bool]$IgnoreCompatibleTypes) ([bool]$IgnoreLengthAndPrecision)
+    $tolerated = @($tol.Tolerated)
+    $printable = @($tol.Kept)
+
+    # ⛔ A TOLERATED DIFFERENCE ON A COLUMN THAT IS STILL LISTED ABOVE GETS NO PAIRING OF
+    # ITS OWN - THE SAME RULE THE REST OF THIS REPORT IS BUILT ON.
+    #
+    # With -IgnoreLengthAndPrecision alone, an int that became a bit has its precision
+    # tolerated while the type change stays a finding. Printing "int / bit" in the tolerated
+    # summary would tell a reader that int against bit was tolerated, which is the opposite
+    # of what happened and is printed three inches above them. The pairing is only ever
+    # honest for a column whose difference was tolerated in FULL, so the rest are counted
+    # against the finding that already names them - restated, exactly like the columns of an
+    # absent table, and stated with their count so the suppression stays visible.
+    $listedKeys = @{}
+    foreach ($x in $printable) { $listedKeys[$x.Key] = $true }
+    $tolWhole   = @($tolerated | Where-Object { -not $listedKeys.ContainsKey($_.Key) })
+    $tolPartial = @($tolerated | Where-Object {      $listedKeys.ContainsKey($_.Key) })
+
     $folded = @($split.Restated).Count + $merged.Count
-    $totalDetected += $f.Count
-    $totalListed   += $printable.Count
-    $totalFolded   += $folded
+    $totalDetected  += $f.Count
+    $totalListed    += $printable.Count
+    $totalFolded    += $folded
+    $totalTolerated += $tolerated.Count
+    if ($tolerated.Count -gt 0) {
+        $toleratedRuns += [pscustomobject]@{
+            Database     = $db
+            Count        = $tolerated.Count
+            Rows         = @(Group-ToleratedColumn $tolWhole)
+            PartialCount = $tolPartial.Count
+            PartialCols  = @(@($tolPartial | ForEach-Object { $_.Key } | Sort-Object -Unique)).Count
+            Findings     = $tolerated
+        }
+    }
 
     # ⛔ "DIFFERS (10) +11 folded" IS THREE BARE NUMBERS IN A ROW. Spelled out, because a
     # reader cannot tell a count of findings from a count of objects by looking at it.
-    $status = if ($f.Count -eq 0) { 'match' } else { "DIFFERS - $($printable.Count) finding(s) listed" }
+    # ⛔ A WAREHOUSE WHOSE ONLY DIFFERENCES WERE TOLERATED READS AS A MATCH, AND SAYS SO
+    # IN THE SAME BREATH. "match" alone would be the difference-that-vanished-without-trace
+    # this whole report is written against; "DIFFERS" would be a verdict the switch was
+    # turned on to retire. It matches, AND it says how many were tolerated to get there.
+    $status = if ($f.Count -eq 0) { 'match' }
+              elseif ($printable.Count -eq 0 -and $folded -eq 0) { 'match' }
+              else { "DIFFERS - $($printable.Count) finding(s) listed" }
     if ($folded -gt 0) { $status += ", $folded folded" }
+    if ($tolerated.Count -gt 0) { $status += ", $($tolerated.Count) tolerated" }
 
     # ⛔ BOTH SIDES' COUNTS, AND LABELED AS SUCH. This row used to print the DEV export's
     # counts with no side named at all, so "3 tables" beside a warehouse whose production
@@ -915,17 +1241,24 @@ foreach ($pair in $pairs) {
                     @($dev.routines).Count, @($prod.routines).Count)
         Status   = $status
     }
-    if ($f.Count -gt 0) {
+    # ⛔ IDENTICAL TO "$f.Count -gt 0" WHENEVER NOTHING WAS TOLERATED, AND THAT IS NOT A
+    # COINCIDENCE: printable + folded = detected by construction, because a folded
+    # difference always has a printed parent. The test is written this way so that a
+    # warehouse whose every difference was tolerated gets NO detail block - it has nothing
+    # to put in one - and does not count as a problem, while every other warehouse behaves
+    # exactly as it did before either switch existed.
+    if ($printable.Count -gt 0 -or $folded -gt 0) {
         $problems++
         $details += [pscustomobject]@{
-            Database    = $db; Dev = $dev; Prod = $prod
-            Detected    = $f.Count
-            Printable   = $printable
-            Restated    = @($split.Restated)
-            ByParent    = $split.ByParent
-            MergedByKey = $mergedByKey
-            Merged      = $merged
-            MergedCount = $merged.Count
+            Database       = $db; Dev = $dev; Prod = $prod
+            Detected       = $f.Count
+            Printable      = $printable
+            Restated       = @($split.Restated)
+            ByParent       = $split.ByParent
+            MergedByKey    = $mergedByKey
+            Merged         = $merged
+            MergedCount    = $merged.Count
+            ToleratedCount = $tolerated.Count
         }
     }
 }
@@ -936,6 +1269,30 @@ Write-Host 'WAREHOUSE SCHEMA COMPARISON'
 Write-Host ('=' * 78)
 Write-Host '  Two warehouses built from the same repository should be identical.'
 Write-Host '  There is nothing here that legitimately differs, so every finding is real.'
+
+# ⛔ A TOLERANCE IS A FACT ABOUT THE RUN AND IS STATED ONCE, HERE, WHETHER OR NOT IT
+# TOLERATED ANYTHING. A report that says "match" while a switch was quietly relaxing the
+# comparison is a report that misleads by omission, and it misleads hardest on the run
+# where the switch happened to catch nothing - which is exactly the run a reader would
+# take as proof. The sentence above it stays true: it now describes the findings listed,
+# and the tolerated ones are summarized under their own heading at the end.
+if ($IgnoreCompatibleTypes -or $IgnoreLengthAndPrecision) {
+    Write-Host ''
+    Write-Host '  TOLERANCES WERE IN FORCE ON THIS RUN:' -ForegroundColor DarkCyan
+    if ($IgnoreCompatibleTypes) {
+        Write-Host '    -IgnoreCompatibleTypes     two types of the SAME family compare as equal -'
+        Write-Host '                               char/varchar/nchar/nvarchar, tinyint/smallint/int/bigint,'
+        Write-Host '                               numeric/decimal, float/real. Crossing families is still a'
+        Write-Host '                               difference, int against bit included.'
+    }
+    if ($IgnoreLengthAndPrecision) {
+        Write-Host '    -IgnoreLengthAndPrecision  a declared length, precision or scale compares as equal -'
+        Write-Host '                               varchar(10) against varchar(50), decimal(18,2) against'
+        Write-Host '                               decimal(10,4). The type NAME still has to match.'
+    }
+    Write-Host '  What they cover was still detected and is still printed - summarized by kind under'
+    Write-Host '  TOLERATED TYPE DIFFERENCES at the end. Nothing was dropped.'
+}
 Write-Host ''
 
 # ⛔ THE REPORT MUST SAY WHAT IT COMPARED, so it is self-contained when it is pasted to
@@ -1025,6 +1382,10 @@ foreach ($d in $details) {
     $recapFolded = @($d.Restated).Count + $d.MergedCount
     $recap = ("  {0} finding(s) listed below" -f @($p).Count)
     if ($recapFolded -gt 0) { $recap += (", {0} folded into them" -f $recapFolded) }
+    # Named here and counted here, but not LISTED here: they are summarized by kind at the
+    # end of the report, so a reader inside this block still knows how many there were and
+    # where they went.
+    if ($d.ToleratedCount -gt 0) { $recap += (", {0} tolerated and summarized at the end" -f $d.ToleratedCount) }
     Write-Host $recap -ForegroundColor DarkGray
 
     # 1. Whole objects that exist on one side only. FIRST, because they are the largest
@@ -1241,8 +1602,8 @@ foreach ($d in $details) {
         Write-Host ''
         Write-Host ("  NOT LISTED SEPARATELY - {0} difference(s)" -f $foldedHere) -ForegroundColor DarkCyan
         Write-Host ("    {0} raw difference(s) were detected in {1}." -f $d.Detected, $d.Database)
-        Write-Host ("    {0} are listed above. The other {1} each restate one of them and carry no" -f
-                    @($p).Count, $foldedHere)
+        Write-Host ("    {0} are listed above. {1} {2} each restate one of them and carry no" -f
+                    @($p).Count, $(if ($d.ToleratedCount -gt 0) { 'A further' } else { 'The other' }), $foldedHere)
         Write-Host '    information of their own:'
         foreach ($g in (@($d.Restated) | Group-Object RestatementOf | Sort-Object Name)) {
             # ⛔ EACH REASON NAMES THE FINDING IT WAS FOLDED INTO, so the reader can walk
@@ -1259,8 +1620,13 @@ foreach ($d in $details) {
             Write-Host ("      {0,5}  a definition LENGTH shown under its own hash finding above, with both sides named there" -f
                         $d.MergedCount)
         }
-        Write-Host ("    {0} listed + {1} folded = {2} detected difference(s). Nothing was dropped." -f
-                    @($p).Count, $foldedHere, $d.Detected)
+        # The arithmetic still closes with a tolerance in force - the tolerated term is
+        # simply added to it. An equation that stopped closing the moment a switch was used
+        # would be the same as having no equation at all.
+        $eq = "    {0} listed" -f @($p).Count
+        if ($d.ToleratedCount -gt 0) { $eq += (" + {0} tolerated" -f $d.ToleratedCount) }
+        $eq += (" + {0} folded = {1} detected difference(s). Nothing was dropped." -f $foldedHere, $d.Detected)
+        Write-Host $eq
         if ($ListRestated) {
             # Every folded difference, the merged length lines included, so the count
             # above and the list below are the same number. A listing that showed 10 of
@@ -1275,6 +1641,134 @@ foreach ($d in $details) {
     }
 }
 
+
+# ---------------------------------------------------------------------------
+# ⛔ THE TOLERATED SUMMARY. IT GOES AT THE END, AFTER THE REAL FINDINGS, AND IT IS A
+# SUMMARY BY KIND RATHER THAN A LIST BY OCCURRENCE.
+#
+# The first version of this block named every tolerated column, which reproduced the exact
+# clutter the two switches were added to remove - four hundred rows, each telling the
+# reader nothing they could act on, with the genuine findings somewhere above them. The
+# thing a reader can actually judge is the SHAPE of what was tolerated: which type pairings
+# occurred and how many of each. An unexpected pairing stands out in a dozen lines, and so
+# does a count far larger than it ought to be. Neither is visible in four hundred.
+#
+# ⛔ AND IT IS NEVER NOTHING. A tolerated difference that left no trace is how somebody
+# later concludes the two environments match when they do not, which is the failure this
+# entire family of scripts exists to prevent. The trace is now one line per pairing instead
+# of one line per column; -Verbose still prints every tolerated difference individually,
+# on the same audit channel the folded restatements already use.
+if ($toleratedRuns.Count -gt 0) {
+    # One row per pairing across the WHOLE run. A pairing that appears in three warehouses
+    # is one line with the three counts added, because the kind of difference is the thing
+    # being summarized and it does not become a different kind in a different warehouse.
+    $summary   = @{}
+    $allTables = @{}
+    foreach ($tr in $toleratedRuns) {
+        foreach ($r in $tr.Rows) {
+            $sig = $r.Pairing + '|' + $r.Tag
+            if (-not $summary.ContainsKey($sig)) {
+                $summary[$sig] = [pscustomobject]@{ Pairing = $r.Pairing; Tag = $r.Tag
+                                                    Columns = 0; Tables = @{} }
+            }
+            $summary[$sig].Columns += $r.Columns
+            # ⛔ A TABLE IS COUNTED ONCE, AND THE WAREHOUSE IS PART OF ITS IDENTITY. Adding
+            # each pairing's table count would count one table again for every pairing it
+            # happens to carry - a table with a varchar change AND an int change would be
+            # "2 tables" - and leaving the warehouse out would merge a dbo.Customer in
+            # WH_Raw with a different dbo.Customer in WH_Curated into one.
+            foreach ($t in @($r.Tables.Keys)) {
+                $summary[$sig].Tables[($tr.Database + '|' + $t)] = $true
+                $allTables[($tr.Database + '|' + $t)] = $true
+            }
+        }
+    }
+    $summaryRows = @($summary.Values |
+        Sort-Object @{ Expression = { $_.Columns }; Descending = $true },
+                    @{ Expression = { $_.Pairing } })
+    $tolColumns  = [int](@($summaryRows | ForEach-Object { $_.Columns } | Measure-Object -Sum).Sum)
+    $tolTables   = $allTables.Count
+    $tolPartials = [int](@($toleratedRuns | ForEach-Object { $_.PartialCount } | Measure-Object -Sum).Sum)
+    $tolPartCols = [int](@($toleratedRuns | ForEach-Object { $_.PartialCols }  | Measure-Object -Sum).Sum)
+
+    Write-Host ''
+    Write-Host ('=' * 78)
+    Write-Host ("TOLERATED TYPE DIFFERENCES - {0} in {1}" -f
+                (Format-Count $tolColumns 'column' 'columns'),
+                (Format-Count $tolTables  'table'  'tables')) -ForegroundColor DarkCyan
+    Write-Host ('=' * 78)
+    Write-Host '  These differ, and were detected. A switch on this run tolerates them, so they are'
+    Write-Host '  summarized here by KIND rather than listed one by one, and they did not affect the'
+    Write-Host '  verdict or the exit code. What to look for is a pairing you did not expect, or a'
+    Write-Host '  count far larger than it should be.'
+    Write-Host '    family   the two type NAMES are in one family      -IgnoreCompatibleTypes'
+    Write-Host '    size     a declared length, precision or scale     -IgnoreLengthAndPrecision'
+    Write-Host ''
+
+    # ⛔ PER WAREHOUSE, BUT ONLY WHEN THERE IS MORE THAN ONE. 400 in one warehouse and 12
+    # in another is a fact worth a line; the same line under a single-warehouse run just
+    # repeats the total that is already in the heading.
+    if ($toleratedRuns.Count -gt 1) {
+        foreach ($tr in ($toleratedRuns | Sort-Object Database)) {
+            Write-Host ("  {0,-20} {1} tolerated" -f $tr.Database, $tr.Count) -ForegroundColor DarkGray
+        }
+        Write-Host ''
+    }
+
+    if ($summaryRows.Count -gt 0) {
+        Write-Host ("  {0,-46} {1,7}  {2,6}  {3}" -f 'dev type  /  prod type', 'columns', 'tables', 'tolerated as')
+    }
+    foreach ($r in $summaryRows) {
+        Write-Host ("  {0,-46} {1,7}  {2,6}  {3}" -f
+                    $r.Pairing, $r.Columns, $r.Tables.Count, $r.Tag) -ForegroundColor DarkGray
+    }
+
+    if ($tolPartials -gt 0) {
+        # Counted, never silent. These are tolerated differences whose column is already a
+        # finding above, so a pairing for them would describe a change that was NOT
+        # tolerated in full - but a count that vanished would be the very thing the whole
+        # block exists to prevent.
+        if ($summaryRows.Count -gt 0) { Write-Host '' }
+        Write-Host ("  A further {0} tolerated difference(s) sit on {1} column(s) already LISTED ABOVE as" -f
+                    $tolPartials, $tolPartCols)
+        Write-Host '  differing in another way. They are counted here and named there, rather than given a'
+        Write-Host '  pairing of their own - a pairing is only true of a column tolerated in full.'
+    }
+
+    # The run's arithmetic, stated here when nothing was folded. Where differences WERE
+    # folded the same equation is printed in the closing summary below, with all three
+    # terms in it, and printing it twice would be the repetition this report is written
+    # against.
+    if ($totalFolded -eq 0) {
+        Write-Host ''
+        Write-Host ("  {0} listed + {1} tolerated = {2} detected difference(s). Nothing was dropped." -f
+                    $totalListed, $totalTolerated, $totalDetected)
+    }
+
+    if ($ListRestated) {
+        # Every tolerated difference on its own line, so the summary above can be audited
+        # against the raw findings rather than trusted. Same channel as the folded ones.
+        Write-Host ''
+        Write-Host '  EVERY TOLERATED DIFFERENCE INDIVIDUALLY' -ForegroundColor DarkGray
+        # ⛔ THE WAREHOUSE AND THE SWITCH ARE SUB-HEADINGS, NOT TWO MORE COLUMNS ON EVERY
+        # ROW. Carried per row they added forty characters to a line that already runs to
+        # the width of the main report's own verbose dump, and pushed it off the right edge
+        # of the console - which is the defect this report spent four revisions removing.
+        # Each row now carries only what varies within its group: the column, the attribute,
+        # and the two values.
+        foreach ($tr in ($toleratedRuns | Sort-Object Database)) {
+            foreach ($g in (@($tr.Findings) | Group-Object ToleratedBy | Sort-Object Name)) {
+                Write-Host ("    {0} - tolerated by {1}" -f $tr.Database, $g.Name) -ForegroundColor DarkGray
+                foreach ($x in (@($g.Group) | Sort-Object Detail, Field)) {
+                    Write-Host (("      {0,-44} {1,-26} {2}" -f
+                                 (Format-Key $x.Detail), $x.Field, $x.Extra).TrimEnd()) -ForegroundColor DarkGray
+                }
+            }
+        }
+    }
+    Write-Host ''
+}
+
 Write-Host ''
 if ($unpaired -gt 0) {
     # ⛔ AN UNPAIRED WAREHOUSE IS A FAILURE, NOT A WARNING. It used to print a yellow line
@@ -1286,19 +1780,36 @@ if ($unpaired -gt 0) {
 if ($problems -eq 0 -and $unpaired -eq 0) {
     # The two environments are named in the EXPORTS COMPARED block at the top, endpoint
     # and all, so this line can stay short without leaving the reader guessing.
-    Write-Host ("The two environments match across {0} warehouse(s) - see EXPORTS COMPARED above for which two." -f
-                @($pairs).Count) -ForegroundColor Green
+    #
+    # ⛔ A MATCH REACHED WITH A TOLERANCE IN FORCE SAYS SO ON THE SAME LINE. It is the one
+    # line somebody quotes out of this report, and "the two environments match" on its own,
+    # after a switch relaxed the comparison, is the sentence that would later be wrong.
+    if ($totalTolerated -gt 0) {
+        Write-Host ("The two environments match across {0} warehouse(s), apart from {1} tolerated type" -f
+                    @($pairs).Count, $totalTolerated) -ForegroundColor Green
+        Write-Host 'difference(s) summarized above under TOLERATED TYPE DIFFERENCES - see EXPORTS COMPARED' -ForegroundColor Green
+        Write-Host 'at the top for which two environments those were.' -ForegroundColor Green
+    } else {
+        Write-Host ("The two environments match across {0} warehouse(s) - see EXPORTS COMPARED above for which two." -f
+                    @($pairs).Count) -ForegroundColor Green
+    }
 }
 elseif ($problems -gt 0) {
     # ⛔ THE HEADLINE NUMBER IS THE ONE A PERSON HAS TO ACT ON. It used to be the raw
     # difference count, which counted forty restatements of one absent table as forty
     # things to look at.
     Write-Host ("{0} warehouse(s) differ: {1} finding(s) listed." -f $problems, $totalListed) -ForegroundColor Yellow
+    if ($totalTolerated -gt 0) {
+        Write-Host ("  A further {0} difference(s) were TOLERATED by a switch on this run and did not" -f $totalTolerated)
+        Write-Host '  affect this verdict. They are summarized by kind under TOLERATED TYPE DIFFERENCES.'
+    }
     if ($totalFolded -gt 0) {
         Write-Host ("  A further {0} difference(s) were detected and folded into the finding that" -f $totalFolded)
         Write-Host '  already explains them. They were counted, not skipped:'
-        Write-Host ("  {0} listed + {1} folded = {2} detected difference(s)." -f
-                    $totalListed, $totalFolded, $totalDetected)
+        $geq = "  {0} listed" -f $totalListed
+        if ($totalTolerated -gt 0) { $geq += (" + {0} tolerated" -f $totalTolerated) }
+        $geq += (" + {0} folded = {1} detected difference(s)." -f $totalFolded, $totalDetected)
+        Write-Host $geq
         if (-not $ListRestated) {
             Write-Host '  Re-run with -Verbose to see every folded difference individually.'
         }

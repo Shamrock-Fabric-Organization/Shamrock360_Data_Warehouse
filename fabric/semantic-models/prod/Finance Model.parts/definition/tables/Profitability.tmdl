@@ -1,0 +1,49 @@
+table Profitability
+	lineageTag: 5e864875-caa5-48de-a506-c56f5fba0c47
+
+	column Profitability
+		lineageTag: f11d0f48-2ce6-400b-b9e0-72b9c7555db8
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Profitability Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Profitability Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Profitability Fields'
+		isHidden
+		lineageTag: 66befab2-2d6d-49f4-870e-45689e2d8ab7
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Profitability Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Profitability Order'
+		isHidden
+		formatString: 0
+		lineageTag: a702faee-4ec2-4540-85d0-e9ddd608c30f
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Profitability = calculated
+		mode: import
+		source =
+				{
+				    ("Contribution", NAMEOF('Dim_StandardCost'[ContributionPerLB_Inv]), 0),
+				    ("Profit", NAMEOF('Dim_StandardCost'[ProfitPerLB_Inv]), 1)
+				}
+
+	annotation PBI_Id = d889b472b2e54ed2a02a53825e7f8bc8
+
+

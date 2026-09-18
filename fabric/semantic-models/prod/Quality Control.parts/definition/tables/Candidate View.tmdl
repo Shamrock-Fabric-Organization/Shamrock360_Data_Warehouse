@@ -1,0 +1,42 @@
+table 'Candidate View'
+	lineageTag: a9e20151-84c6-440c-9444-5a7d9e8c03df
+
+	column 'Candidate View'
+		lineageTag: e38a12b8-b50c-4e79-b906-05e3d0db749d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Candidate View]
+		sortByColumn: 'Sort Order'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sort Order'
+		isHidden
+		formatString: 0
+		lineageTag: 3e8bfa7b-e9aa-453a-a093-78afd7a18452
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Sort Order]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Candidate View' = calculated
+		mode: import
+		source =
+				
+				DATATABLE (
+				    "Candidate View", STRING,
+				    "Sort Order", INTEGER,
+				    {
+				        { "Complete coverage", 1 },
+				        { "Exact coverage", 2 },
+				        { "Overrepresented", 3 },
+				        { "Underrepresented", 4 },
+				        { "Any overlap", 5 },
+				        { "All current groups", 6 }
+				    }
+				)
+
+	annotation PBI_Id = 84d19d420710463da09a0da13bf5006e
+
+

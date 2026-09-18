@@ -1,0 +1,25 @@
+role 'Ming & Virgil APAC'
+	modelPermission: read
+
+	tablePermission 'Account Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Date Table' =
+			-- Date table RLS
+			'Date Table'[Fiscal Year] >= 2023
+			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Employee Table' =
+			'Employee Table'[Salesperson] IN {"Ming Chong","Virgil Yu","Steve Lin","Leslie Luo","Andrew Yuan","Will Kang"}
+			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Legal Entity Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Product Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Sales Table' = [Sales Line Status] <> "Canceled"
+
+	tablePermission 'Warehouse Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	annotation PBI_Id = 728c47f89c7f4c548f00cb21863b490a
+
+

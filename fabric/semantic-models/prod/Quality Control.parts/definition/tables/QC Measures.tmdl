@@ -1,0 +1,1371 @@
+table 'QC Measures'
+	lineageTag: ff91c694-d152-46eb-91c2-886cc9889c3a
+
+	measure 'Source Order Selection Count' =
+			
+			IF (
+			    [Source Search Is Applied] = 1,
+			    DISTINCTCOUNT ( 'Source Quality Order'[SourceOrderKey] )
+			)
+		formatString: 0
+		lineageTag: ddda5c84-0a51-43e8-aed3-46a51cdfb115
+
+	measure 'Source Quality Order ID' =
+			
+			IF (
+			    [Source Order Selection Count] = 1,
+			    SELECTEDVALUE ( 'Source Quality Order'[qualityorderid] )
+			)
+		lineageTag: d63320f6-f405-4714-a607-3ce5a1f1d776
+
+	measure 'Source Order Status' =
+			
+			IF (
+			    [Source Order Selection Count] = 1,
+			    SELECTEDVALUE ( 'Source Quality Order'[QualityOrderStatus] )
+			)
+		lineageTag: 30bb52c2-f88e-4139-8719-60f41a73eeee
+
+	measure 'Source Selection Message' =
+			
+			VAR SearchApplied =
+			    [Source Search Is Applied]
+			VAR SelectionCount =
+			    [Source Order Selection Count]
+			VAR Statuss =
+			    [Source Order Status]
+			VAR BatchFiltered =
+			    ISFILTERED ( 'Source Quality Order'[Batch Number] )
+			VAR SerialFiltered =
+			    ISFILTERED ( 'Source Quality Order'[Serial Number] )
+			RETURN
+			SWITCH (
+			    TRUE (),
+			    SearchApplied = 0,
+			        "Select a quality order or batch.",
+			    SelectionCount = 0,
+			        "No quality order matches the current selection.",
+			    SelectionCount = 1 && Statuss = "Open",
+			        "The selected quality order is Open and cannot yet be evaluated.",
+			    SelectionCount = 1,
+			        "Source quality order selected.",
+			    SelectionCount > 1 && BatchFiltered && NOT SerialFiltered,
+			        "This batch has multiple quality orders. Select a serial number.",
+			    SelectionCount > 1,
+			        "The selection resolves to multiple quality orders.",
+			    "Review the source selection."
+			)
+		lineageTag: 3b3c428a-8447-4c5c-a65c-c8f77fef6514
+
+	measure 'Source Selection Is Valid' =
+			
+			IF (
+			    [Source Search Is Applied] = 1
+			        && [Source Order Selection Count] = 1
+			        && [Source Order Status] <> "Open",
+			    1,
+			    0
+			)
+		formatString: 0
+		lineageTag: 537452ee-9e07-4a06-a3d5-30d8dc311c49
+
+	measure 'Source Search Is Applied' =
+			
+			INT (
+			    ISFILTERED ( 'Source Quality Order'[qualityorderid] )
+			        || ISFILTERED ( 'Source Quality Order'[Batch Number] )
+			        || ISFILTERED ( 'Source Quality Order'[Serial Number] )
+			)
+		formatString: 0
+		lineageTag: cca0c655-8716-415e-be58-405fd680e18f
+
+	measure 'Source Order Key' =
+			
+			IF (
+			    [Source Order Selection Count] = 1,
+			    SELECTEDVALUE ( 'Source Quality Order'[SourceOrderKey] )
+			)
+		lineageTag: 6934e7c9-679c-495f-92ce-2c765bed37db
+
+	measure 'Source Product' =
+			
+			SELECTEDVALUE ( 'Source Quality Order'[Product_Name] )
+		lineageTag: 325504b2-0db4-4886-8d9a-f4df57def4ae
+
+	measure 'Source Commercial Name' =
+			
+			SELECTEDVALUE ( 'Source Quality Order'[Source Commercial Name] )
+		lineageTag: 284521b9-2a18-478b-8856-15b4d29eca8b
+
+	measure 'Source Original Test Group' =
+			
+			SELECTEDVALUE (
+			    'Source Quality Order'[OriginalTestGroupDescription]
+			)
+		lineageTag: 20229192-c136-4ad9-8b42-86429ec75edc
+
+	measure 'Source Test Count' =
+			
+			IF (
+			    [Source Selection Is Valid] = 1,
+			    DISTINCTCOUNT (
+			        'Quality Order Test Evidence'[TestIdNormalized]
+			    )
+			)
+		formatString: 0
+		lineageTag: 2abf753a-3a14-4e56-a7f3-a2567dfb08e9
+
+	measure 'Source Skipped Test Count' =
+			
+			IF (
+			    [Source Selection Is Valid] = 1,
+			    CALCULATE (
+			        DISTINCTCOUNT (
+			            'Quality Order Test Evidence'[TestIdNormalized]
+			        ),
+			        'Quality Order Test Evidence'[IsSkipped] = 1
+			    )
+			)
+		formatString: 0
+		lineageTag: dea02eb5-6c12-4af8-9950-4eab6961ee6b
+
+	measure 'Candidate Required Test Count' =
+			
+			MAX ( 'Candidate Test Group'[RequiredTestCount] )
+		formatString: 0
+		lineageTag: 460870d5-4980-4c94-8cbc-3b27c2866c19
+
+	measure 'Candidate Product Family Count' =
+			
+			MAX ( 'Candidate Test Group'[ProductFamilyCount] )
+		formatString: 0
+		lineageTag: b9aad90a-ec46-4f96-8469-5880cb7a2894
+
+	measure 'Matched Required Test Count' =
+			
+			VAR SourceTests =
+			    SELECTCOLUMNS (
+			        VALUES (
+			            'Quality Order Test Evidence'[TestIdNormalized]
+			        ),
+			        "__TestID",
+			            'Quality Order Test Evidence'[TestIdNormalized] & ""
+			    )
+			
+			VAR RequiredTests =
+			    SELECTCOLUMNS (
+			        VALUES (
+			            'Test Group Requirement'[TestIdNormalized]
+			        ),
+			        "__TestID",
+			            'Test Group Requirement'[TestIdNormalized] & ""
+			    )
+			
+			RETURN
+			IF (
+			    [Source Selection Is Valid] = 1,
+			    COUNTROWS (
+			        INTERSECT (
+			            SourceTests,
+			            RequiredTests
+			        )
+			    )
+			)
+		formatString: 0
+		lineageTag: 048d9939-1465-498d-9462-83ec45effc15
+
+	measure 'Missing Required Test Count' =
+			
+			MAX (
+			    0,
+			    [Candidate Required Test Count]
+			        - [Matched Required Test Count]
+			)
+		formatString: 0
+		lineageTag: 976b17e1-3629-40a8-9ca7-e8ee06b8c22c
+
+	measure 'Extra Source Test Count' =
+			
+			MAX (
+			    0,
+			    [Source Test Count]
+			        - [Matched Required Test Count]
+			)
+		formatString: 0
+		lineageTag: 9fe8d8fb-2f22-4b04-ac8c-5b9706537867
+
+	measure 'Candidate Coverage Type' =
+			
+			VAR Matched =
+			    [Matched Required Test Count]
+			VAR Missing =
+			    [Missing Required Test Count]
+			VAR Extra =
+			    [Extra Source Test Count]
+			RETURN
+			SWITCH (
+			    TRUE (),
+			    [Source Selection Is Valid] <> 1, BLANK (),
+			    Matched = 0, "No useful match",
+			    Missing = 0 && Extra = 0, "Exact coverage",
+			    Missing = 0 && Extra > 0, "Overrepresented",
+			    Missing > 0 && Matched > 0, "Underrepresented",
+			    "Review"
+			)
+		lineageTag: 336f20e6-bf45-4cc5-a25d-f08292683686
+
+	measure 'Candidate Group Same Company' =
+			
+			VAR SourceLegalEntity =
+			    SELECTEDVALUE (
+			        'Source Quality Order'[Legal_EntityKey]
+			    )
+			VAR CandidateLegalEntity =
+			    SELECTEDVALUE (
+			        'Candidate Test Group'[Legal_EntityKey]
+			    )
+			RETURN
+			IF (
+			    [Source Selection Is Valid] = 1
+			        && NOT ISBLANK ( CandidateLegalEntity )
+			        && SourceLegalEntity = CandidateLegalEntity,
+			    1,
+			    0
+			)
+		formatString: 0
+		lineageTag: 4175351f-f722-4559-9a95-986ef22598e1
+
+	measure 'Candidate Group Visible' =
+			
+			VAR SelectedView =
+			    SELECTEDVALUE (
+			        'Candidate View'[Candidate View],
+			        "Complete coverage"
+			    )
+			VAR Matched =
+			    [Matched Required Test Count]
+			VAR Missing =
+			    [Missing Required Test Count]
+			VAR Extra =
+			    [Extra Source Test Count]
+			VAR HasProducts =
+			    [Candidate Product Family Count] > 0
+			VAR HasRequirements =
+			    [Candidate Required Test Count] > 0
+			RETURN
+			IF (
+			    [Source Selection Is Valid] <> 1
+			        || [Candidate Group Same Company] <> 1
+			        || NOT HasProducts
+			        || NOT HasRequirements,
+			    0,
+			    SWITCH (
+			        TRUE (),
+			        SelectedView = "Complete coverage"
+			            && Missing = 0, 1,
+			
+			        SelectedView = "Exact coverage"
+			            && Missing = 0
+			            && Extra = 0, 1,
+			
+			        SelectedView = "Overrepresented"
+			            && Missing = 0
+			            && Extra > 0, 1,
+			
+			        SelectedView = "Underrepresented"
+			            && Missing > 0
+			            && Matched > 0, 1,
+			
+			        SelectedView = "Any overlap"
+			            && Matched > 0, 1,
+			
+			        SelectedView = "All current groups", 1,
+			
+			        0
+			    )
+			)
+		formatString: 0
+		lineageTag: 4d0a71f0-06de-474a-a30c-56e0645e1700
+
+	measure 'Candidate Group Decision Code' =
+			
+			VAR SourceIsValid =
+			    [Source Selection Is Valid] = 1
+			VAR SameCompany =
+			    [Candidate Group Same Company] = 1
+			VAR RequiredCount =
+			    [Candidate Required Test Count]
+			
+			RETURN
+			IF (
+			    NOT SourceIsValid
+			        || NOT SameCompany
+			        || RequiredCount = 0,
+			    BLANK (),
+			
+			    VAR SourceRows =
+			        SELECTCOLUMNS (
+			            'Quality Order Test Evidence',
+			
+			            "__JoinTestID",
+			                'Quality Order Test Evidence'[TestIdNormalized] & "",
+			
+			            "__SourceExists", 1,
+			
+			            "__SourceSkipped",
+			                'Quality Order Test Evidence'[IsSkipped],
+			
+			            "__SourceConflict",
+			                'Quality Order Test Evidence'[SourceConflictFlag],
+			
+			            "__SourceClass",
+			                'Quality Order Test Evidence'[SourceTestClass],
+			
+			            "__SourceUnit",
+			                COALESCE (
+			                    'Quality Order Test Evidence'[SourceUnitNormalized],
+			                    ""
+			                ),
+			
+			            "__SourceNumeric",
+			                'Quality Order Test Evidence'[SourceNumericResult],
+			
+			            "__SourceOutcome",
+			                COALESCE (
+			                    'Quality Order Test Evidence'[SourceOutcomeNormalized],
+			                    ""
+			                )
+			        )
+			
+			    VAR TargetRows =
+			        SELECTCOLUMNS (
+			            'Test Group Requirement',
+			
+			            "__JoinTestID",
+			                'Test Group Requirement'[TestIdNormalized] & "",
+			
+			            "__RequirementKey",
+			                'Test Group Requirement'[RequirementKey],
+			
+			            "__TargetConflict",
+			                'Test Group Requirement'[RequirementConflictFlag],
+			
+			            "__TargetClass",
+			                'Test Group Requirement'[TargetTestClass],
+			
+			            "__TargetUnit",
+			                COALESCE (
+			                    'Test Group Requirement'[TargetUnitNormalized],
+			                    ""
+			                ),
+			
+			            "__TargetLower",
+			                'Test Group Requirement'[lowerlimit],
+			
+			            "__TargetUpper",
+			                'Test Group Requirement'[upperlimit]
+			        )
+			
+			    VAR JoinedRows =
+			        NATURALLEFTOUTERJOIN (
+			            TargetRows,
+			            SourceRows
+			        )
+			
+			    VAR EvaluatedRows =
+			        ADDCOLUMNS (
+			            JoinedRows,
+			
+			            "__EvaluationCode",
+			
+			            VAR SourceExists =
+			                COALESCE ( [__SourceExists], 0 ) = 1
+			
+			            VAR SourceSkipped =
+			                COALESCE ( [__SourceSkipped], 0 ) = 1
+			
+			            VAR SourceConflict =
+			                COALESCE ( [__SourceConflict], 0 ) = 1
+			
+			            VAR TargetConflict =
+			                COALESCE ( [__TargetConflict], 0 ) = 1
+			
+			            VAR SourceClass =
+			                COALESCE ( [__SourceClass], "UNSUPPORTED" )
+			
+			            VAR TargetClass =
+			                COALESCE ( [__TargetClass], "UNSUPPORTED" )
+			
+			            VAR SourceUnit =
+			                COALESCE ( [__SourceUnit], "" )
+			
+			            VAR TargetUnit =
+			                COALESCE ( [__TargetUnit], "" )
+			
+			            VAR SourceNumeric =
+			                [__SourceNumeric]
+			
+			            VAR SourceOutcome =
+			                COALESCE ( [__SourceOutcome], "" )
+			
+			            VAR TargetLower =
+			                [__TargetLower]
+			
+			            VAR TargetUpper =
+			                [__TargetUpper]
+			
+			            VAR RequirementKey =
+			                [__RequirementKey]
+			
+			            VAR HasLower =
+			                NOT ISBLANK ( TargetLower )
+			
+			            VAR HasUpper =
+			                NOT ISBLANK ( TargetUpper )
+			
+			            VAR NumericOutsideRange =
+			                ( HasLower && SourceNumeric < TargetLower )
+			                    || ( HasUpper && SourceNumeric > TargetUpper )
+			
+			            VAR MappedOutcomeStatus =
+			                IF (
+			                    TargetClass = "OPTION"
+			                        && SourceExists
+			                        && NOT SourceSkipped
+			                        && SourceOutcome <> "",
+			
+			                    CALCULATE (
+			                        SELECTEDVALUE (
+			                            'Test Group Outcome'[OutcomeStatusNormalized]
+			                        ),
+			
+			                        REMOVEFILTERS (
+			                            'Test Group Outcome'
+			                        ),
+			
+			                        TREATAS (
+			                            { RequirementKey },
+			                            'Test Group Outcome'[RequirementKey]
+			                        ),
+			
+			                        TREATAS (
+			                            { SourceOutcome },
+			                            'Test Group Outcome'[OutcomeIdNormalized]
+			                        )
+			                    )
+			                )
+			
+			            RETURN
+			                SWITCH (
+			                    TRUE (),
+			
+			                    NOT SourceExists, 1,
+			
+			                    SourceSkipped, 1,
+			
+			                    SourceConflict || TargetConflict, 1,
+			
+			                    NOT (
+			                        SourceClass IN { "OPTION", "NUMERIC" }
+			                    ), 1,
+			
+			                    NOT (
+			                        TargetClass IN { "OPTION", "NUMERIC" }
+			                    ), 1,
+			
+			                    SourceClass <> TargetClass, 1,
+			
+			                    TargetClass = "NUMERIC"
+			                        && SourceUnit <> TargetUnit, 1,
+			
+			                    TargetClass = "NUMERIC"
+			                        && ISBLANK ( SourceNumeric ), 1,
+			
+			                    TargetClass = "NUMERIC"
+			                        && NOT ( HasLower || HasUpper ), 1,
+			
+			                    TargetClass = "NUMERIC"
+			                        && NumericOutsideRange, 2,
+			
+			                    TargetClass = "NUMERIC", 0,
+			
+			                    TargetClass = "OPTION"
+			                        && SourceOutcome = "", 1,
+			
+			                    TargetClass = "OPTION"
+			                        && MappedOutcomeStatus = "PASS", 0,
+			
+			                    TargetClass = "OPTION"
+			                        && MappedOutcomeStatus = "FAIL", 2,
+			
+			                    1
+			                )
+			        )
+			
+			    VAR FailedTests =
+			        COUNTROWS (
+			            FILTER (
+			                EvaluatedRows,
+			                [__EvaluationCode] = 2
+			            )
+			        )
+			
+			    VAR IncompleteTests =
+			        COUNTROWS (
+			            FILTER (
+			                EvaluatedRows,
+			                [__EvaluationCode] = 1
+			            )
+			        )
+			
+			    RETURN
+			        SWITCH (
+			            TRUE (),
+			            FailedTests > 0, 3,
+			            IncompleteTests > 0, 2,
+			            1
+			        )
+			)
+		formatString: 0
+		lineageTag: 7547306f-25b3-4573-97f8-0afab9ad00b0
+
+	measure 'Candidate Group Decision' =
+			
+			SWITCH (
+			    [Candidate Group Decision Code],
+			    1, "ELIGIBLE",
+			    2, "NEEDS TESTING",
+			    3, "NOT ELIGIBLE",
+			    BLANK ()
+			)
+		lineageTag: bcff4fd6-5a1d-414c-aa53-47dee57163c5
+
+	measure 'Source Test Row Count' =
+			
+			VAR CurrentTest =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[TestIdNormalized]
+			    )
+			RETURN
+			IF (
+			    [Source Selection Is Valid] = 1
+			        && NOT ISBLANK ( CurrentTest ),
+			
+			    CALCULATE (
+			        COUNTROWS (
+			            'Quality Order Test Evidence'
+			        ),
+			
+			        TREATAS (
+			            { CurrentTest },
+			            'Quality Order Test Evidence'[TestIdNormalized]
+			        )
+			    )
+			)
+		formatString: 0
+		lineageTag: 0ae4fe22-8c3e-4cfe-8321-7ffe42d9e9b6
+
+	measure 'Source Test Is Skipped' =
+			
+			VAR CurrentTest =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[TestIdNormalized]
+			    )
+			RETURN
+			CALCULATE (
+			    MAX (
+			        'Quality Order Test Evidence'[IsSkipped]
+			    ),
+			    TREATAS (
+			        { CurrentTest },
+			        'Quality Order Test Evidence'[TestIdNormalized]
+			    )
+			)
+		formatString: 0
+		lineageTag: 0eb0522a-3a76-4f4a-975e-4262029f0479
+
+	measure 'Source Test Conflict Flag' =
+			
+			VAR CurrentTest =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[TestIdNormalized]
+			    )
+			RETURN
+			CALCULATE (
+			    MAX (
+			        'Quality Order Test Evidence'[SourceConflictFlag]
+			    ),
+			    TREATAS (
+			        { CurrentTest },
+			        'Quality Order Test Evidence'[TestIdNormalized]
+			    )
+			)
+		formatString: 0
+		lineageTag: e13946ab-fe74-4e4a-8367-f47267f777e3
+
+	measure 'Source Test Class' =
+			
+			VAR CurrentTest =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[TestIdNormalized]
+			    )
+			RETURN
+			CALCULATE (
+			    SELECTEDVALUE (
+			        'Quality Order Test Evidence'[SourceTestClass]
+			    ),
+			    TREATAS (
+			        { CurrentTest },
+			        'Quality Order Test Evidence'[TestIdNormalized]
+			    )
+			)
+		lineageTag: 18d22e05-f239-49b5-a1b3-7e550fca932e
+
+	measure 'Source Unit' =
+			
+			VAR CurrentTest =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[TestIdNormalized]
+			    )
+			RETURN
+			CALCULATE (
+			    SELECTEDVALUE (
+			        'Quality Order Test Evidence'[SourceUnit]
+			    ),
+			    TREATAS (
+			        { CurrentTest },
+			        'Quality Order Test Evidence'[TestIdNormalized]
+			    )
+			)
+		lineageTag: 2f125ffa-03fb-481c-9924-acc08f945d82
+
+	measure 'Source Unit Normalized' =
+			
+			VAR CurrentTest =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[TestIdNormalized]
+			    )
+			RETURN
+			CALCULATE (
+			    SELECTEDVALUE (
+			        'Quality Order Test Evidence'[SourceUnitNormalized]
+			    ),
+			    TREATAS (
+			        { CurrentTest },
+			        'Quality Order Test Evidence'[TestIdNormalized]
+			    )
+			)
+		lineageTag: 62d85daa-2016-47e8-9312-93c62f66aec2
+
+	measure 'Source Numeric Result' =
+			
+			VAR CurrentTest =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[TestIdNormalized]
+			    )
+			RETURN
+			CALCULATE (
+			    MAX (
+			        'Quality Order Test Evidence'[SourceNumericResult]
+			    ),
+			    TREATAS (
+			        { CurrentTest },
+			        'Quality Order Test Evidence'[TestIdNormalized]
+			    )
+			)
+		lineageTag: f74404a6-e0b8-4b23-aeda-4ba4832dd3fd
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Source Outcome' =
+			
+			VAR CurrentTest =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[TestIdNormalized]
+			    )
+			RETURN
+			CALCULATE (
+			    SELECTEDVALUE (
+			        'Quality Order Test Evidence'[SourceOutcome]
+			    ),
+			    TREATAS (
+			        { CurrentTest },
+			        'Quality Order Test Evidence'[TestIdNormalized]
+			    )
+			)
+		lineageTag: 7b602132-d410-4e53-83ca-00929aa0a441
+
+	measure 'Source Outcome Normalized' =
+			
+			VAR CurrentTest =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[TestIdNormalized]
+			    )
+			RETURN
+			CALCULATE (
+			    SELECTEDVALUE (
+			        'Quality Order Test Evidence'[SourceOutcomeNormalized]
+			    ),
+			    TREATAS (
+			        { CurrentTest },
+			        'Quality Order Test Evidence'[TestIdNormalized]
+			    )
+			)
+		lineageTag: d2437863-144d-4c05-88c3-000fc6ad3cfd
+
+	measure 'Source Original QC Result' =
+			
+			VAR CurrentTest =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[TestIdNormalized]
+			    )
+			RETURN
+			CALCULATE (
+			    SELECTEDVALUE (
+			        'Quality Order Test Evidence'[OriginalResultLabel]
+			    ),
+			    TREATAS (
+			        { CurrentTest },
+			        'Quality Order Test Evidence'[TestIdNormalized]
+			    )
+			)
+		lineageTag: dd5756fd-e3c9-448a-af5b-08e3f7b3a621
+
+	measure 'Mapped Outcome Status' =
+			
+			VAR RequirementKey =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[RequirementKey]
+			    )
+			VAR SourceOutcome =
+			    [Source Outcome Normalized]
+			RETURN
+			IF (
+			    NOT ISBLANK ( RequirementKey )
+			        && NOT ISBLANK ( SourceOutcome ),
+			
+			    CALCULATE (
+			        SELECTEDVALUE (
+			            'Test Group Outcome'[OutcomeStatusNormalized]
+			        ),
+			
+			        REMOVEFILTERS (
+			            'Test Group Outcome'
+			        ),
+			
+			        TREATAS (
+			            { RequirementKey },
+			            'Test Group Outcome'[RequirementKey]
+			        ),
+			
+			        TREATAS (
+			            { SourceOutcome },
+			            'Test Group Outcome'[OutcomeIdNormalized]
+			        )
+			    )
+			)
+		lineageTag: 3df3b9da-8a4e-4a99-a664-b23dfc84d306
+
+	measure 'Relabel Test Status' =
+			
+			VAR SourceExists =
+			    [Source Test Row Count] > 0
+			VAR SourceSkipped =
+			    [Source Test Is Skipped] = 1
+			VAR SourceConflict =
+			    [Source Test Conflict Flag] = 1
+			
+			VAR SourceClass =
+			    [Source Test Class]
+			VAR TargetClass =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[TargetTestClass]
+			    )
+			
+			VAR TargetConflict =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[RequirementConflictFlag],
+			        0
+			    ) = 1
+			
+			VAR SourceUnit =
+			    COALESCE ( [Source Unit Normalized], "" )
+			VAR TargetUnit =
+			    COALESCE (
+			        SELECTEDVALUE (
+			            'Test Group Requirement'[TargetUnitNormalized]
+			        ),
+			        ""
+			    )
+			
+			VAR NumericResult =
+			    [Source Numeric Result]
+			VAR LowerLimit =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[lowerlimit]
+			    )
+			VAR UpperLimit =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[upperlimit]
+			    )
+			
+			VAR HasLower =
+			    NOT ISBLANK ( LowerLimit )
+			VAR HasUpper =
+			    NOT ISBLANK ( UpperLimit )
+			
+			VAR Outcome =
+			    [Source Outcome Normalized]
+			VAR OutcomeStatus =
+			    [Mapped Outcome Status]
+			
+			RETURN
+			SWITCH (
+			    TRUE (),
+			
+			    [Source Selection Is Valid] <> 1, BLANK (),
+			
+			    NOT SourceExists, "MISSING",
+			
+			    SourceSkipped, "SKIPPED",
+			
+			    SourceConflict || TargetConflict, "REVIEW",
+			
+			    NOT (
+			        SourceClass IN { "OPTION", "NUMERIC" }
+			    ), "REVIEW",
+			
+			    NOT (
+			        TargetClass IN { "OPTION", "NUMERIC" }
+			    ), "REVIEW",
+			
+			    SourceClass <> TargetClass, "REVIEW",
+			
+			    TargetClass = "NUMERIC"
+			        && SourceUnit <> TargetUnit, "REVIEW",
+			
+			    TargetClass = "NUMERIC"
+			        && ISBLANK ( NumericResult ), "NO VALUE",
+			
+			    TargetClass = "NUMERIC"
+			        && NOT ( HasLower || HasUpper ), "REVIEW",
+			
+			    TargetClass = "NUMERIC"
+			        && HasLower
+			        && NumericResult < LowerLimit, "FAIL",
+			
+			    TargetClass = "NUMERIC"
+			        && HasUpper
+			        && NumericResult > UpperLimit, "FAIL",
+			
+			    TargetClass = "NUMERIC", "PASS",
+			
+			    TargetClass = "OPTION"
+			        && ISBLANK ( Outcome ), "NO VALUE",
+			
+			    TargetClass = "OPTION"
+			        && OutcomeStatus = "PASS", "PASS",
+			
+			    TargetClass = "OPTION"
+			        && OutcomeStatus = "FAIL", "FAIL",
+			
+			    "REVIEW"
+			)
+		lineageTag: fd1a23d0-2202-4148-b4af-f2b42151841c
+
+	measure 'Passing Outcomes' =
+			
+			CONCATENATEX (
+			    FILTER (
+			        'Test Group Outcome',
+			        'Test Group Outcome'[OutcomeStatusNormalized] = "PASS"
+			    ),
+			
+			    'Test Group Outcome'[PossibleOutcomeId]
+			        & IF (
+			            NOT ISBLANK (
+			                'Test Group Outcome'[PossibleOutcomeDescription]
+			            ),
+			            " - "
+			                & 'Test Group Outcome'[PossibleOutcomeDescription],
+			            ""
+			        ),
+			
+			    ", ",
+			
+			    'Test Group Outcome'[PossibleOutcomeId],
+			    ASC
+			)
+		lineageTag: 5e475903-d4e1-45c3-a67e-6b4c3f0e1cdd
+
+	measure 'Target Criteria' =
+			
+			VAR TargetClass =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[TargetTestClass]
+			    )
+			VAR LowerLimit =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[lowerlimit]
+			    )
+			VAR UpperLimit =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[upperlimit]
+			    )
+			VAR Unit =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[TargetUnit]
+			    )
+			VAR UnitSuffix =
+			    IF (
+			        NOT ISBLANK ( Unit ),
+			        " " & Unit,
+			        ""
+			    )
+			RETURN
+			SWITCH (
+			    TRUE (),
+			
+			    TargetClass = "OPTION",
+			        COALESCE (
+			            [Passing Outcomes],
+			            "No passing outcomes defined"
+			        ),
+			
+			    TargetClass = "NUMERIC"
+			        && NOT ISBLANK ( LowerLimit )
+			        && NOT ISBLANK ( UpperLimit ),
+			        FORMAT ( LowerLimit, "0.####" )
+			            & " to "
+			            & FORMAT ( UpperLimit, "0.####" )
+			            & UnitSuffix,
+			
+			    TargetClass = "NUMERIC"
+			        && NOT ISBLANK ( LowerLimit ),
+			        "≥ "
+			            & FORMAT ( LowerLimit, "0.####" )
+			            & UnitSuffix,
+			
+			    TargetClass = "NUMERIC"
+			        && NOT ISBLANK ( UpperLimit ),
+			        "≤ "
+			            & FORMAT ( UpperLimit, "0.####" )
+			            & UnitSuffix,
+			
+			    "Review specification"
+			)
+		lineageTag: 13aa1f80-f997-48b6-b63b-fbd033fedd80
+
+	measure 'Source Result Display' =
+			
+			VAR TargetClass =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[TargetTestClass]
+			    )
+			VAR Unit =
+			    [Source Unit]
+			RETURN
+			SWITCH (
+			    TRUE (),
+			
+			    [Source Test Row Count] = 0,
+			        BLANK (),
+			
+			    [Source Test Is Skipped] = 1,
+			        "Skipped",
+			
+			    TargetClass = "OPTION",
+			        [Source Outcome],
+			
+			    TargetClass = "NUMERIC"
+			        && NOT ISBLANK ( [Source Numeric Result] ),
+			        FORMAT (
+			            [Source Numeric Result],
+			            "0.####"
+			        )
+			            & IF (
+			                NOT ISBLANK ( Unit ),
+			                " " & Unit,
+			                ""
+			            ),
+			
+			    BLANK ()
+			)
+		lineageTag: e58e2baa-23c2-48f3-bfa1-414233ca8c8c
+
+	measure 'Test Action Required' =
+			
+			SWITCH (
+			    [Relabel Test Status],
+			
+			    "PASS",
+			        "No action",
+			
+			    "FAIL",
+			        "Candidate group requirement failed",
+			
+			    "MISSING",
+			        "Perform this required test",
+			
+			    "SKIPPED",
+			        "Perform or validate the skipped test",
+			
+			    "NO VALUE",
+			        "Enter or validate the test result",
+			
+			    "REVIEW",
+			        "QC review required",
+			
+			    BLANK ()
+			)
+		lineageTag: cf20e5e9-b6f5-4758-8ee7-db25467c1ae8
+
+	measure 'Selected Candidate Test Group' =
+			
+			SELECTEDVALUE (
+			    'Candidate Test Group'[TestGroupDescription]
+			)
+		lineageTag: 0fd2d1fe-fda2-4e75-b8c1-8bb5861f510c
+
+	measure 'Selected Candidate Group ID' =
+			
+			SELECTEDVALUE (
+			    'Candidate Test Group'[testgroupid]
+			)
+		lineageTag: e1ba1cc5-1030-4182-89c7-d44297ce9355
+
+	measure 'Selected Group Failed Test Count' =
+			
+			SUMX (
+			    VALUES (
+			        'Test Group Requirement'[RequirementKey]
+			    ),
+			    IF (
+			        [Relabel Test Status] = "FAIL",
+			        1,
+			        0
+			    )
+			)
+		formatString: 0
+		lineageTag: 2b9828ac-d2c5-464a-9a12-aa6ba4d7e09c
+
+	measure 'Selected Group Incomplete Test Count' =
+			
+			SUMX (
+			    VALUES (
+			        'Test Group Requirement'[RequirementKey]
+			    ),
+			    IF (
+			        [Relabel Test Status]
+			            IN {
+			                "MISSING",
+			                "SKIPPED",
+			                "NO VALUE",
+			                "REVIEW"
+			            },
+			        1,
+			        0
+			    )
+			)
+		formatString: 0
+		lineageTag: 9dd66712-f99f-453a-bb9a-051405647a4a
+
+	measure 'Selected Group Decision' =
+			
+			[Candidate Group Decision]
+		lineageTag: 3e1f0cc7-e01a-49ce-ade6-52cb43860f7b
+
+	measure 'Source Test Is Extra' =
+			
+			VAR SourceTest =
+			    SELECTEDVALUE (
+			        'Quality Order Test Evidence'[TestIdNormalized]
+			    )
+			VAR RequirementRows =
+			    CALCULATE (
+			        COUNTROWS (
+			            'Test Group Requirement'
+			        ),
+			        TREATAS (
+			            { SourceTest },
+			            'Test Group Requirement'[TestIdNormalized]
+			        )
+			    )
+			RETURN
+			IF (
+			    NOT ISBLANK ( SourceTest )
+			        && RequirementRows = 0,
+			    1,
+			    0
+			)
+		formatString: 0
+		lineageTag: 4c5911f0-37b0-4e34-9df7-e7f7c0a46d03
+
+	measure 'Candidate Group Selection Count' =
+			
+			IF (
+			    [Source Selection Is Valid] = 1,
+			    DISTINCTCOUNT (
+			        'Candidate Test Group'[TestGroupKey]
+			    )
+			)
+		formatString: 0
+		lineageTag: 7e910680-a522-4994-8f0d-8839ef4d9f53
+
+	measure 'Candidate Detail Context Is Valid' =
+			
+			IF (
+			    [Source Selection Is Valid] = 1
+			        && [Candidate Group Selection Count] = 1,
+			    1,
+			    0
+			)
+		formatString: 0
+		lineageTag: 85e9f099-4b48-48c7-9043-0a3859b8ac7c
+
+	measure 'Show Action Row' =
+			
+			IF (
+			    [Candidate Detail Context Is Valid] = 1
+			        && [Relabel Test Status]
+			            IN {
+			                "FAIL",
+			                "MISSING",
+			                "SKIPPED",
+			                "NO VALUE",
+			                "REVIEW"
+			            },
+			    1,
+			    0
+			)
+		formatString: 0
+		lineageTag: 100d2ef3-1b5b-4b2f-9e6b-de80ed3e0e92
+
+	measure 'Source Evidence Result' =
+			
+			VAR IsSkipped =
+			    SELECTEDVALUE (
+			        'Quality Order Test Evidence'[IsSkipped],
+			        0
+			    ) = 1
+			
+			VAR SourceClass =
+			    SELECTEDVALUE (
+			        'Quality Order Test Evidence'[SourceTestClass]
+			    )
+			
+			VAR NumericResult =
+			    MAX (
+			        'Quality Order Test Evidence'[SourceNumericResult]
+			    )
+			
+			VAR Outcome =
+			    SELECTEDVALUE (
+			        'Quality Order Test Evidence'[SourceOutcome]
+			    )
+			
+			VAR Unit =
+			    SELECTEDVALUE (
+			        'Quality Order Test Evidence'[SourceUnit]
+			    )
+			
+			RETURN
+			SWITCH (
+			    TRUE (),
+			
+			    IsSkipped,
+			        "Skipped",
+			
+			    SourceClass = "OPTION",
+			        Outcome,
+			
+			    SourceClass = "NUMERIC"
+			        && NOT ISBLANK ( NumericResult ),
+			        FORMAT (
+			            NumericResult,
+			            "0.####"
+			        )
+			            & IF (
+			                NOT ISBLANK ( Unit ),
+			                " " & Unit,
+			                ""
+			            ),
+			
+			    BLANK ()
+			)
+		lineageTag: 8522759b-8d7b-4d5d-878c-7252a4e41601
+
+	measure 'Show Selected Source QC Row' =
+			
+			VAR SelectedQualityOrder =
+			    [Source Quality Order ID]
+			
+			VAR SelectedLegalEntity =
+			    SELECTEDVALUE (
+			        'Source Quality Order'[Legal_EntityKey]
+			    )
+			
+			VAR RowQualityOrder =
+			    SELECTEDVALUE (
+			        'Fact_QualityOrderLineResults'[qualityorderid]
+			    )
+			
+			VAR RowLegalEntity =
+			    SELECTEDVALUE (
+			        'Fact_QualityOrderLineResults'[Legal_EntityKey]
+			    )
+			
+			RETURN
+			IF (
+			    [Candidate Detail Context Is Valid] = 1
+			        && RowQualityOrder = SelectedQualityOrder
+			        && RowLegalEntity = SelectedLegalEntity,
+			    1,
+			    0
+			)
+		formatString: 0
+		lineageTag: 0f26572f-50e6-45e3-8110-729047998aab
+
+	measure 'Show Selected Candidate Specification Row' =
+			
+			VAR SelectedTestGroupKey =
+			    SELECTEDVALUE (
+			        'Candidate Test Group'[TestGroupKey]
+			    )
+			
+			VAR RowTestGroupKey =
+			    SELECTEDVALUE (
+			        'Fact_TestGroupDetails'[TestGroupKey]
+			    )
+			
+			RETURN
+			IF (
+			    [Candidate Detail Context Is Valid] = 1
+			        && RowTestGroupKey = SelectedTestGroupKey,
+			    1,
+			    0
+			)
+		formatString: 0
+		lineageTag: 27a2f22d-08eb-44e8-b8f4-627b0a10b51b
+
+	measure 'Selected Candidate Test Group Key' =
+			
+			IF (
+			    [Candidate Detail Context Is Valid] = 1,
+			    SELECTEDVALUE (
+			        'Candidate Test Group'[TestGroupKey]
+			    )
+			)
+		formatString: 0
+		lineageTag: fad23352-2b09-4070-96ea-8e169ced01f3
+
+	measure 'Show Selected Candidate Requirement Row' =
+			
+			VAR SelectedGroupKey =
+			    [Selected Candidate Test Group Key]
+			
+			VAR RequirementRowGroupKey =
+			    SELECTEDVALUE (
+			        'Test Group Requirement'[TestGroupKey]
+			    )
+			
+			RETURN
+			IF (
+			    [Candidate Detail Context Is Valid] = 1
+			        && NOT ISBLANK ( SelectedGroupKey )
+			        && RequirementRowGroupKey = SelectedGroupKey,
+			    1,
+			    0
+			)
+		formatString: 0
+		lineageTag: 8a77d727-1dd7-4914-bb4f-dbd0e95e03cb
+
+	measure 'Source Skipped Display' =
+			
+			SWITCH (
+			    SELECTEDVALUE (
+			        'Quality Order Test Evidence'[IsSkipped]
+			    ),
+			    1, "Yes",
+			    0, "No",
+			    BLANK ()
+			)
+		lineageTag: b54603d7-e348-4f58-82b9-c06e7ed16ed0
+
+	measure 'Candidate Evaluation Background Color' =
+			
+			SWITCH (
+			    [Candidate Group Decision],
+			    "ELIGIBLE", "#E6F4EA",
+			    "NEEDS TESTING", "#FFF4CC",
+			    "NOT ELIGIBLE", "#FDE8E7",
+			    "#FFFFFF"
+			)
+		lineageTag: 27031bc0-95d6-46b7-b986-a7f32f974451
+
+	measure 'Relabel Status Background Color' =
+			
+			SWITCH (
+			    [Relabel Test Status],
+			    "PASS", "#E6F4EA",
+			    "FAIL", "#FDE8E7",
+			    "MISSING", "#FFF4CC",
+			    "SKIPPED", "#FFF4CC",
+			    "NO VALUE", "#FFF4CC",
+			    "REVIEW", "#FFF4CC",
+			    "#FFFFFF"
+			)
+		lineageTag: 014e980d-2c82-45c5-b03a-1d09b23efb4c
+
+	measure 'Action Required Background Color' =
+			
+			SWITCH (
+			    [Relabel Test Status],
+			    "PASS", "#F2F2F2",
+			    "FAIL", "#FDE8E7",
+			    "MISSING", "#FFF8E1",
+			    "SKIPPED", "#FFF8E1",
+			    "NO VALUE", "#FFF8E1",
+			    "REVIEW", "#FFF8E1",
+			    "#FFFFFF"
+			)
+		lineageTag: 1d3abd14-de65-43bc-a72a-a717d194dd80
+
+	measure 'Drillthrough Border Color' =
+			
+			VAR DrillthroughAvailable =
+			    COALESCE (
+			        [Candidate Detail Context Is Valid],
+			        0
+			    ) = 1
+			RETURN
+			IF (
+			    DrillthroughAvailable,
+			    "#C89B1D",   -- Available: gold
+			    "##E6E6E6"    -- Unavailable: near-black
+			)
+		lineageTag: af006dd5-65b9-4119-86fe-59646d185587
+
+	column 'Measure Group'
+		isHidden
+		lineageTag: 203a77a4-dad0-4dfb-a2da-9d5098d3a292
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Measure Group]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'QC Measures' = calculated
+		mode: import
+		source =
+				
+				DATATABLE (
+				    "Measure Group", STRING,
+				    {
+				        { "QC Measures" }
+				    }
+				)
+
+	annotation PBI_Id = 51bb21ad84cc4c029c8bf508621f5732
+
+

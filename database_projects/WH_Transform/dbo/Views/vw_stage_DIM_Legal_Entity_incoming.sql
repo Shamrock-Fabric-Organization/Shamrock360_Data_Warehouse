@@ -1,8 +1,18 @@
 
-CREATE     VIEW [dbo].[vw_stage_DIM_Legal_Entity_incoming]			
+CREATE OR ALTER    VIEW [dbo].[vw_stage_DIM_Legal_Entity_incoming]			
 AS			
 SELECT 		
-	CONVERT(BIGINT, CONVERT(VARBINARY, CONCAT(NEWID(), GETDATE())))	 Legal_EntityKey
+    ABS(CAST(CAST(
+    HASHBYTES('SHA2_256', 
+        CONCAT(
+            CAST(NEWID() AS VARCHAR(36)), '|'
+            ,CAST(SYSDATETIME() AS VARCHAR(30)), '|'
+            ,CAST(NEWID() AS VARCHAR(36)), '|'
+            -- Add row-specific data for extra uniqueness
+            ,CAST(d.fno_id AS VARCHAR(20))
+
+     ) ) AS BINARY(8)) AS BIGINT))     AS Legal_EntityKey
+
 	,d.fno_id	 CMPNY
 	,d.Name	 Legal_Entity_Name
 	, l.accountingcurrency 

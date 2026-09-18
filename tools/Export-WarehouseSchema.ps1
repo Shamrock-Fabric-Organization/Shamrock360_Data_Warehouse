@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Exports a Fabric Warehouse's schema to a JSON file, so two environments can be compared.
 
@@ -17,6 +17,35 @@
       columns     name, position, type, length, precision, scale, nullability
       routines    every procedure, function and view - by default as a HASH of its
                   definition, not the definition itself
+
+    ⛔ TWO HASHES PER ROUTINE, AND THE SECOND ONE IS THE ONE THAT DECIDES.
+
+    DEFINITION_HASH is SHA-256 of the definition exactly as the server holds it. Every
+    space, tab, blank line and CRLF goes into it, and SHA-256 is case-sensitive - so a
+    tab-for-spaces reindent, or a file saved with LF where the other side has CRLF,
+    changes it. These warehouses are rebuilt BY HAND, so that happens, and it raised a
+    full "the bodies differ" finding for a change that could not alter what the code does.
+
+    DEFINITION_NORMALIZED_HASH is SHA-256 of the same definition with whitespace
+    normalized first: CRLF and lone CR become LF, tabs become spaces, runs of spaces
+    collapse to one, trailing whitespace comes off each line, blank lines go, and the
+    whole body is trimmed at both ends. Compare-WarehouseSchema.ps1 takes its VERDICT
+    from this one, and reports a raw-hash difference under an identical normalized hash
+    as whitespace only - counted and named, never a finding.
+
+    ⛔ CASE IS NOT NORMALIZED, DELIBERATELY. Select against SELECT, or dbo.Orders against
+    dbo.ORDERS, is a real difference between two hand-rebuilt environments and nobody
+    asked for it to be hidden. Lower-casing the body would hide it.
+
+    ⛔ AND ONE THING THE NORMALIZATION DOES HIDE: WHITESPACE INSIDE A STRING LITERAL.
+    'a  b' and 'a b' in an error message or a delimiter are DIFFERENT behavior, and
+    collapsing runs of spaces makes their normalized hashes identical. Nothing vanishes -
+    the raw hash still differs and the comparison still names the routine - but
+    "logically identical" is exactly that strong and no stronger. A routine that builds
+    text out of spaces has to be read, not accepted on the strength of this hash.
+
+    ⛔ BOTH ARE KEPT. The raw hash is the witness: it is what proves a normalized match
+    was a whitespace match and not a hash that stopped covering the whole body.
 
     ⛔ ROUTINE DEFINITIONS ARE HASHED, NOT STORED. THIS MATTERS.
 
@@ -84,14 +113,28 @@
 
     ⛔ THAT IS WHAT WAS REPORTED, NOT WHAT WAS WATCHED. Nobody maintaining this file was
     at the keyboard for those runs; the evidence is the client's own runs and the output
-    they produced. Two paths carry no evidence either way and are still unexercised:
+    they produced. Three things carry no evidence from a live run and are still
+    unexercised there:
 
       -IncludeDefinitions   the .full.json export, and -ShowRoutineDiff reading it
       the failure branch    reached only when ONE warehouse cannot be read while the
                             others can, which no reported run has hit
+      DEFINITION_NORMALIZED_HASH
+                            added 2026-09-18 and NOT YET RUN AGAINST A LIVE WAREHOUSE.
+                            The expression was proved on SQL Server 2022 under
+                            Latin1_General_100_BIN2 - the binary collation Fabric
+                            Warehouse uses, so REPLACE matches byte for byte the same
+                            way - over constructed definitions covering CRLF, tabs,
+                            trailing spaces, blank lines, leading and trailing
+                            whitespace, a string literal holding a double space, a
+                            case-only change and a real logic change. REPLACE, CHAR and
+                            HASHBYTES are the only functions it uses and all three are
+                            already exercised live by the raw hash beside it. That is
+                            strong evidence, and it is not a live run.
 
-    Neither is on the routine path. Neither should be called tested until somebody says
-    it ran.
+    The first two are not on the routine path. The third IS - every export now computes
+    it - which is why its evidence is spelled out rather than left as an inference. None
+    of the three should be called tested against Fabric until somebody says it ran.
 #>
 
 [CmdletBinding()]
@@ -153,6 +196,48 @@ $token = if ((Get-Command Get-AzAccessToken).Parameters.ContainsKey('AsPlainText
     } else { $t }
 }
 
+# ---------------------------------------------------------------------------
+# ⛔ THE WHITESPACE NORMALIZATION, BUILT ONE STEP AT A TIME BECAUSE THE FINISHED
+# EXPRESSION IS SIXTEEN NESTED REPLACE CALLS AND NOBODY CAN READ, CHECK OR SAFELY EDIT
+# THAT. Each line below wraps the one above it, so the file shows the STEPS and the
+# server receives ONE expression. Read it top to bottom: that is the order it applies in.
+#
+# Two collapse markers do the work that a regex would do if T-SQL had one. CHAR(2) and
+# CHAR(3) are STX and ETX - control characters that cannot occur in T-SQL source - and
+# every one of them is consumed by the step that introduced it. CHAR(1) is the same idea
+# used as an anchor: REPLACE cannot say "at the start of the string", so the body is
+# bracketed with a character that appears nowhere else and the ends are matched against
+# THAT. The bracket comes off on the last line.
+#
+# ⛔ NO LOWER() AND NO UPPER(). Case is a real difference between two hand-rebuilt
+# environments; see the header.
+$norm = 'm.definition'
+# Line endings first: everything downstream matches on a bare LF.
+$norm = "REPLACE($norm, CHAR(13)+CHAR(10), CHAR(10))"   # CRLF -> LF
+$norm = "REPLACE($norm, CHAR(13), CHAR(10))"            # a lone CR -> LF
+$norm = "REPLACE($norm, CHAR(9), ' ')"                  # tab -> space, so a reindent collapses below
+# A run of spaces collapses to one: mark every space as <2><3>, delete every <3><2>
+# that a neighbouring pair creates, then unmark. One space marks and unmarks unchanged.
+$norm = "REPLACE($norm, ' ', CHAR(2)+CHAR(3))"
+$norm = "REPLACE($norm, CHAR(3)+CHAR(2), '')"
+$norm = "REPLACE($norm, CHAR(2)+CHAR(3), ' ')"
+# Trailing whitespace on a line is now exactly one space before the LF. A line of nothing
+# but spaces becomes an empty line here, which the next step then removes.
+$norm = "REPLACE($norm, ' '+CHAR(10), CHAR(10))"
+# Blank lines: the same collapse, applied to runs of LF.
+$norm = "REPLACE($norm, CHAR(10), CHAR(2)+CHAR(3))"
+$norm = "REPLACE($norm, CHAR(3)+CHAR(2), '')"
+$norm = "REPLACE($norm, CHAR(2)+CHAR(3), CHAR(10))"
+# Trim the whole body. After the steps above each end carries at most one LF and one
+# space, in that order, so one removal each is enough - and the order below is the order
+# they can occur in.
+$norm = "CHAR(1)+$norm+CHAR(1)"
+$norm = "REPLACE($norm, CHAR(1)+CHAR(10), CHAR(1))"     # leading LF
+$norm = "REPLACE($norm, CHAR(1)+' ', CHAR(1))"          # leading space
+$norm = "REPLACE($norm, ' '+CHAR(1), CHAR(1))"          # trailing space
+$norm = "REPLACE($norm, CHAR(10)+CHAR(1), CHAR(1))"     # trailing LF
+$norm = "REPLACE($norm, CHAR(1), '')"                   # the anchor comes off
+
 $QUERIES = @{
     tables = @"
 SELECT TABLE_SCHEMA, TABLE_NAME, TABLE_TYPE
@@ -167,12 +252,15 @@ ORDER BY TABLE_SCHEMA, TABLE_NAME, ORDINAL_POSITION;
 "@
     # sys.sql_modules, not INFORMATION_SCHEMA - see the header. definition is
     # nvarchar(max) here and nvarchar(4000) there.
-    # Hashing happens here in SQL rather than in PowerShell so the definition text
-    # never leaves the server unless -IncludeDefinitions asks for it.
+    # BOTH hashes are computed here in SQL rather than in PowerShell so the definition
+    # text never leaves the server unless -IncludeDefinitions asks for it. That is also
+    # why the normalization is T-SQL: normalizing in PowerShell would mean shipping every
+    # body back to do it.
     routines = @"
 SELECT s.name AS ROUTINE_SCHEMA, o.name AS ROUTINE_NAME, o.type_desc AS ROUTINE_TYPE,
        LEN(m.definition) AS DEFINITION_LENGTH,
-       CONVERT(varchar(64), HASHBYTES('SHA2_256', m.definition), 2) AS DEFINITION_HASH
+       CONVERT(varchar(64), HASHBYTES('SHA2_256', m.definition), 2) AS DEFINITION_HASH,
+       CONVERT(varchar(64), HASHBYTES('SHA2_256', $norm), 2) AS DEFINITION_NORMALIZED_HASH
 FROM sys.sql_modules AS m
 JOIN sys.objects AS o ON o.object_id = m.object_id
 JOIN sys.schemas AS s ON s.schema_id = o.schema_id
@@ -182,6 +270,7 @@ ORDER BY s.name, o.name;
 SELECT s.name AS ROUTINE_SCHEMA, o.name AS ROUTINE_NAME, o.type_desc AS ROUTINE_TYPE,
        LEN(m.definition) AS DEFINITION_LENGTH,
        CONVERT(varchar(64), HASHBYTES('SHA2_256', m.definition), 2) AS DEFINITION_HASH,
+       CONVERT(varchar(64), HASHBYTES('SHA2_256', $norm), 2) AS DEFINITION_NORMALIZED_HASH,
        m.definition AS ROUTINE_DEFINITION
 FROM sys.sql_modules AS m
 JOIN sys.objects AS o ON o.object_id = m.object_id

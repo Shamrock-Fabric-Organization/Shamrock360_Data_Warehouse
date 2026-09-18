@@ -1,0 +1,8 @@
+role 'All Access (US)'
+	modelPermission: read
+
+	tablePermission Dim_Legal_Entity = [CMPNY] == "101"
+
+	annotation PBI_Id = 1205c13b61694ff9abd72ebee69f50f9
+
+

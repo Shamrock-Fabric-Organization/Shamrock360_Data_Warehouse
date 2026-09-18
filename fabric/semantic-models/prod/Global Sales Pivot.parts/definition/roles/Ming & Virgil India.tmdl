@@ -1,0 +1,26 @@
+role 'Ming & Virgil India'
+	modelPermission: read
+
+	tablePermission 'Account Table' = ```
+			'Account Table'[Country] = "India"    
+			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+			```
+
+	tablePermission 'Date Table' =
+			-- Date table RLS
+			'Date Table'[Fiscal Year] >= 2023
+			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Employee Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Legal Entity Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Product Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Sales Table' = [Sales Line Status] <> "Canceled"
+
+	tablePermission 'Warehouse Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	annotation PBI_Id = 49a4482cbb374ff9ba281ae76449156f
+
+

@@ -1,0 +1,59 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "name": "Load Snapshots",
+        "description": "Runs the pl_snapshot_logic pipeline to update the snapshot data",
+        "type": "InvokePipeline",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.4:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "waitOnCompletion": true,
+          "operationType": "InvokeFabricPipeline",
+          "pipelineId": "bd2c4ed5-43d2-4fe3-bd85-08e8342356c3",
+          "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05",
+          "parameters": {}
+        },
+        "externalReferences": {
+          "connection": "0e76a90a-657f-45e3-899b-51d8862e9159"
+        }
+      },
+      {
+        "name": "Load Manged Tables",
+        "description": "Runs the pl_managed_table_data pipeline to update the managed tables in the curated warehouse",
+        "type": "InvokePipeline",
+        "dependsOn": [
+          {
+            "activity": "Load Snapshots",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.4:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "waitOnCompletion": true,
+          "operationType": "InvokeFabricPipeline",
+          "pipelineId": "a47f0636-8233-4f0a-a6b6-088f64f8b9e8",
+          "workspaceId": "2b09b481-244a-470e-9797-6743fd25ca05",
+          "parameters": {}
+        },
+        "externalReferences": {
+          "connection": "0e76a90a-657f-45e3-899b-51d8862e9159"
+        }
+      }
+    ]
+  }
+}

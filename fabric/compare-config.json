@@ -1,0 +1,57 @@
+{
+  "_readme": [
+    "Differences between the development and production Fabric objects that are",
+    "CORRECT. Recorded here so the comparison stays quiet about them and says WHY,",
+    "rather than either reporting them forever or hiding them silently.",
+    "",
+    "Read automatically by Compare-FabricEnvironment.ps1 from the root of this",
+    "folder. The file is optional - without it everything still works, objects",
+    "simply pair by filename and nothing is set aside.",
+    "",
+    "pairs               objects whose NAME differs between environments. Without an",
+    "                    entry they cannot pair on filename, and each side reports as",
+    "                    DEV ONLY / PROD ONLY forever.",
+    "",
+    "expectedDifferences differences that are deliberate everywhere. These are SET",
+    "                    ASIDE AND COUNTED, never hidden - each run prints how many",
+    "                    were set aside and the reason recorded here.",
+    "",
+    "A rule matches a finding when every field it SPECIFIES matches. Omitting a",
+    "field lets it match anything, so an empty rule matches everything - prefer",
+    "more fields, not fewer. Available fields: kind, activityType, dev, prod.",
+    "kind is one of MISSING IN PROD, EXTRA IN PROD, TYPE DIFFERS, STATE DIFFERS,",
+    "DEFINITION DIFFERS.",
+    "",
+    "expectDifferent on a pair marks that ONE OBJECT as known to differ in CONTENT,",
+    "not just in name. Deliberately narrower than an expectedDifferences rule, which",
+    "applies everywhere and could hide a real regression in a different object.",
+    "",
+    "label on a rule is a short phrase shown on the summary line, so the row says",
+    "what was allowed rather than only how many.",
+    "",
+    "ALWAYS fill in reason. It is printed on every run. A suppression with no reason",
+    "is one nobody remembers agreeing to.",
+    "",
+    "REVIEW THIS FILE WHEN THE PLATFORM CHANGES. The semantic model entry below is",
+    "true only while development holds fewer models than production."
+  ],
+  "pairs": [
+    {
+      "type": "pipelines",
+      "dev": "pl_DEV_Semantic_Models.json",
+      "prod": "pl_PROD_Semantic_Models.json",
+      "reason": "The semantic model refresh pipeline carries its environment in its name, which is useful when looking at a workspace. Confirmed 2026-09-02 to map the pair here rather than rename either object. It is also expected to DIFFER IN CONTENT: the development workspace holds only one semantic model at present, so its pipeline refreshes one where production refreshes eight. Confirmed 2026-09-02.",
+      "expectDifferent": true
+    }
+  ],
+  "expectedDifferences": [
+    {
+      "kind": "STATE DIFFERS",
+      "activityType": "Office365Outlook",
+      "dev": "Inactive",
+      "prod": "Active",
+      "reason": "Email activities are deliberately disabled in development, so development runs do not notify the production distribution list. Confirmed 2026-09-02.",
+      "label": "dev email activities are switched off"
+    }
+  ]
+}

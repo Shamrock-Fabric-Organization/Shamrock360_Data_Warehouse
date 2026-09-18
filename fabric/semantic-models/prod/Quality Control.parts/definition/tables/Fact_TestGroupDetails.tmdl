@@ -1,0 +1,280 @@
+table Fact_TestGroupDetails
+	lineageTag: 62eb7395-fea8-4de7-925e-6360e7761cf1
+	sourceLineageTag: [dbo].[mtbl_EDW_Fact_TestGroupDetails]
+
+	measure 'Test Group Selection Count' =
+			
+			CALCULATE (
+			    DISTINCTCOUNT (
+			        'Dim_TestGroup'[TestGroupKey]
+			    ),
+			    ALLSELECTED (
+			        'Dim_TestGroup'
+			    )
+			)
+		formatString: 0
+		lineageTag: e63c4dcc-f614-4273-8db6-182c5c97b8ed
+
+		changedProperty = Name
+
+	measure 'Show Test Group Details' =
+			
+			IF (
+			    [Test Group Selection Count] = 1,
+			    1,
+			    0
+			)
+		formatString: 0
+		lineageTag: 4f26d08a-83ee-4478-bee8-eda680bbdcde
+
+		changedProperty = Name
+
+	column CompanyId
+		dataType: string
+		lineageTag: aabd7150-48c3-4a19-bb57-c0c9f1e0cb24
+		sourceLineageTag: CompanyId
+		summarizeBy: none
+		sourceColumn: CompanyId
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestGroupId
+		dataType: string
+		lineageTag: c1fbf83b-9ef2-4dd3-8a06-e86ee6bfa71d
+		sourceLineageTag: TestGroupId
+		summarizeBy: none
+		sourceColumn: TestGroupId
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestId
+		dataType: string
+		lineageTag: 55690c3e-4c11-4d3a-976c-2fa8973aaf35
+		sourceLineageTag: TestId
+		summarizeBy: none
+		sourceColumn: TestId
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestSequence
+		dataType: int64
+		formatString: 0
+		lineageTag: 23fea888-f19e-4673-94a1-8c8f4772c964
+		sourceLineageTag: TestSequence
+		summarizeBy: sum
+		sourceColumn: TestSequence
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestDescription
+		dataType: string
+		lineageTag: 77cc2f27-2411-4708-af39-685dfc83c3c2
+		sourceLineageTag: TestDescription
+		summarizeBy: none
+		sourceColumn: TestDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestType
+		dataType: string
+		lineageTag: f707cc96-14e2-49cb-a6c4-3644515699c0
+		sourceLineageTag: TestType
+		summarizeBy: none
+		sourceColumn: TestType
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestUnitId
+		dataType: string
+		lineageTag: 2c7d0633-1212-488a-8133-4dc1b93ceeb4
+		sourceLineageTag: TestUnitId
+		summarizeBy: none
+		sourceColumn: TestUnitId
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestMember_AcceptableQualityLevel
+		dataType: double
+		lineageTag: c79bc49e-6595-459e-9950-ad653551cb41
+		sourceLineageTag: TestMember_AcceptableQualityLevel
+		summarizeBy: sum
+		sourceColumn: TestMember_AcceptableQualityLevel
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column StandardValue
+		dataType: double
+		lineageTag: a6cd812c-88c4-4725-8209-3651a9bed8cf
+		sourceLineageTag: StandardValue
+		summarizeBy: sum
+		sourceColumn: StandardValue
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column LowerLimit
+		dataType: double
+		lineageTag: 8e88fe42-d78f-4bc2-9bf7-1593e85cab1a
+		sourceLineageTag: LowerLimit
+		summarizeBy: sum
+		sourceColumn: LowerLimit
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column UpperLimit
+		dataType: double
+		lineageTag: 2d32c699-1642-4840-8e85-f74d16026490
+		sourceLineageTag: UpperLimit
+		summarizeBy: sum
+		sourceColumn: UpperLimit
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column LowerTolerance
+		dataType: double
+		lineageTag: 07b7da6f-3806-49c3-88d0-a9372084e213
+		sourceLineageTag: LowerTolerance
+		summarizeBy: sum
+		sourceColumn: LowerTolerance
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column UpperTolerance
+		dataType: double
+		lineageTag: 7eb49b8c-b684-4596-80ca-fc8f4ba06825
+		sourceLineageTag: UpperTolerance
+		summarizeBy: sum
+		sourceColumn: UpperTolerance
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ActionOnFailure
+		dataType: string
+		lineageTag: c32bb51d-17ba-4874-936c-dafe6ce683ec
+		sourceLineageTag: ActionOnFailure
+		summarizeBy: none
+		sourceColumn: ActionOnFailure
+
+		annotation SummarizationSetBy = Automatic
+
+	column MemberValidFrom
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 9d9774e2-2881-43cf-b5b4-86b8b0812fb5
+		sourceLineageTag: MemberValidFrom
+		summarizeBy: none
+		sourceColumn: MemberValidFrom
+
+		annotation SummarizationSetBy = Automatic
+
+	column MemberValidTo
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: e7c16433-6a04-4dc3-b590-0d03729d2203
+		sourceLineageTag: MemberValidTo
+		summarizeBy: none
+		sourceColumn: MemberValidTo
+
+		annotation SummarizationSetBy = Automatic
+
+	column CertificateOfAnalysis
+		dataType: string
+		lineageTag: c320c4e8-5603-42bc-bd48-7bf330ec1461
+		sourceLineageTag: CertificateOfAnalysis
+		summarizeBy: none
+		sourceColumn: CertificateOfAnalysis
+
+		annotation SummarizationSetBy = Automatic
+
+	column testinstrumentid
+		dataType: string
+		lineageTag: 484aca3e-8395-4301-bf26-e18bdb85e525
+		sourceLineageTag: testinstrumentid
+		summarizeBy: none
+		sourceColumn: testinstrumentid
+
+		annotation SummarizationSetBy = Automatic
+
+	column VariableDescription
+		dataType: string
+		lineageTag: 7c630ed3-450b-4394-9f26-06d2b92f900a
+		sourceLineageTag: VariableDescription
+		summarizeBy: none
+		sourceColumn: VariableDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column PossibleOutcomeId
+		dataType: string
+		lineageTag: bf995042-7393-4829-8280-adff627f0283
+		sourceLineageTag: PossibleOutcomeId
+		summarizeBy: none
+		sourceColumn: PossibleOutcomeId
+
+		annotation SummarizationSetBy = Automatic
+
+	column PossibleOutcomeDescription
+		dataType: string
+		lineageTag: e4bb4ab9-45fc-492c-bd72-f67cba711097
+		sourceLineageTag: PossibleOutcomeDescription
+		summarizeBy: none
+		sourceColumn: PossibleOutcomeDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column OutcomeStatus
+		dataType: string
+		lineageTag: a5b426ba-b2b8-4b74-bc5a-d13195063f8f
+		sourceLineageTag: OutcomeStatus
+		summarizeBy: none
+		sourceColumn: OutcomeStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a096f286-e2a4-4337-82cf-c0feb8d83f00
+		sourceLineageTag: Legal_EntityKey
+		summarizeBy: none
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestGroupKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: e8231851-5840-4288-92f9-90c2a8aa6bcd
+		sourceLineageTag: TestGroupKey
+		summarizeBy: none
+		sourceColumn: TestGroupKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_TestGroupDetails = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Fact_TestGroupDetails
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+
+

@@ -1,0 +1,113 @@
+table Dim_TestGroup
+	lineageTag: 7cac20a6-9e75-45b3-ab5e-3896df57bb0a
+	sourceLineageTag: [dbo].[mtbl_EDW_Dim_TestGroup]
+
+	column TestGroupKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 11570707-cc1f-4187-9376-fb437ca3afe5
+		sourceLineageTag: TestGroupKey
+		summarizeBy: none
+		sourceColumn: TestGroupKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		lineageTag: 64b511c2-3819-447e-9627-08d8d5c53d4f
+		sourceLineageTag: CMPNY
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestGroupId
+		dataType: string
+		lineageTag: 371fa731-5f6b-47b0-a82d-6cbd3d982581
+		sourceLineageTag: TestGroupId
+		summarizeBy: none
+		sourceColumn: TestGroupId
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestGroupDescription
+		dataType: string
+		lineageTag: 71e720b6-29a7-4876-b466-1b24fe5f77e5
+		sourceLineageTag: TestGroupDescription
+		summarizeBy: none
+		sourceColumn: TestGroupDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column AcceptableQualityLevel
+		dataType: double
+		lineageTag: a38f7fa3-1020-4df5-bc4c-5422ee290605
+		sourceLineageTag: AcceptableQualityLevel
+		summarizeBy: sum
+		sourceColumn: AcceptableQualityLevel
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column IsDestructive
+		dataType: string
+		lineageTag: 04d2f635-a610-47f6-9a94-ee3c93afc341
+		sourceLineageTag: IsDestructive
+		summarizeBy: none
+		sourceColumn: IsDestructive
+
+		annotation SummarizationSetBy = Automatic
+
+	column Source
+		dataType: string
+		lineageTag: 7cc94f2a-c5b2-47e8-a65a-81e236d2772b
+		sourceLineageTag: Source
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveStartDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: dd2467e3-4333-4299-bc4b-5994487edd24
+		sourceLineageTag: RecordEffectiveStartDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveStartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordEffectiveEndDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: daa75262-d138-4bfd-a317-b5ad05cf6764
+		sourceLineageTag: RecordEffectiveEndDate
+		summarizeBy: none
+		sourceColumn: RecordEffectiveEndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		lineageTag: 21055055-379b-404f-99d0-7045998b7a0a
+		sourceLineageTag: RecordStatus
+		summarizeBy: sum
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_TestGroup = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Dim_TestGroup
+			schemaName: dbo
+			expressionSource: 'DirectLake - WH_Curated'
+
+	changedProperty = Name
+
+

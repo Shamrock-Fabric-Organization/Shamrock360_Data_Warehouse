@@ -183,8 +183,7 @@ SELECT
 
 	, COALESCE(dsc.StandardCostKey, dsc2.StandardCostKey, -1) StandardCostKey
 	, ISNULL(db.BatchKey, -1) BatchKey
-	, ISNULL(dsn.SerialNumberKey, -1) SerialNumberKey
-
+	, COALESCE(dsn.SerialNumberKey, dsnu.SerialNumberKey, -1) SerialNumberKey
 
 FROM WH_Raw.dbo.inventsum s
 ----FROM [dbo].[tbl_InventSum_Snapshot]  s
@@ -243,7 +242,12 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_Batch db
 LEFT JOIN WH_Transform.dbo.tbl_DIM_SerialNumber dsn
 	ON s.inventserialid = dsn.SerialNumber
 		AND s.dataareaid = dsn.CMPNY
+		AND s.itemid = dsn.ProductID
 		AND dsn.RecordStatus=1
+
+LEFT JOIN WH_Transform.dbo.vw_DIM_SerialNumber_Unambiguous dsnu
+	ON s.inventserialid = dsnu.SerialNumber
+		AND s.dataareaid = dsnu.CMPNY
 --***
 
 LEFT JOIN WH_Transform.dbo.tbl_DIM_StandardCost dsc
@@ -304,6 +308,6 @@ S.dataareaid
 	, dv.VendorKey
 	, COALESCE(dsc.StandardCostKey, dsc2.StandardCostKey, -1)
 	, ISNULL(db.BatchKey, -1) --BatchKey
-	, ISNULL(dsn.SerialNumberKey, -1) --SerialNumberKey
+	, COALESCE(dsn.SerialNumberKey, dsnu.SerialNumberKey, -1) 
 
 HAVING  sum(s.physicalinvent)> 0

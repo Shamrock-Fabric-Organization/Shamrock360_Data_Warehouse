@@ -1,0 +1,172 @@
+table 'Candidate Product Family'
+	lineageTag: b9a8e96e-c1b1-4689-8ee1-0a6f85dfd766
+
+	measure 'Selected Relabel Product Family' =
+			
+			VAR Ready =
+			    [Candidate Detail Context Is Valid] = 1
+			
+			VAR Families =
+			    VALUES (
+			        'Candidate Product Family'[RelabelProduct]
+			    )
+			
+			VAR FamilyCount =
+			    COUNTROWS ( Families )
+			
+			RETURN
+			IF (
+			    NOT Ready,
+			    BLANK (),
+			    SWITCH (
+			        TRUE (),
+			        FamilyCount = 0, BLANK (),
+			        FamilyCount = 1,
+			            MAXX (
+			                Families,
+			                'Candidate Product Family'[RelabelProduct]
+			            ),
+			        FORMAT ( FamilyCount, "0" ) & " product families"
+			    )
+			)
+		lineageTag: 1b74f1a9-d846-438b-b996-7019968456bd
+
+	measure 'Selected Packaging SKU Count' =
+			
+			IF (
+			    [Candidate Detail Context Is Valid] = 1,
+			    SUM (
+			        'Candidate Product Family'[SKUCount]
+			    )
+			)
+		formatString: 0
+		lineageTag: 18dd102c-3eba-4e56-ab52-c6cf70cceedc
+
+	measure 'Selected Example Product ID' =
+			
+			VAR Ready =
+			    [Candidate Detail Context Is Valid] = 1
+			
+			VAR FamilyCount =
+			    DISTINCTCOUNT (
+			        'Candidate Product Family'[RelabelProduct]
+			    )
+			
+			RETURN
+			IF (
+			    Ready,
+			    IF (
+			        FamilyCount = 1,
+			        SELECTEDVALUE (
+			            'Candidate Product Family'[ExampleProductID]
+			        ),
+			        "See product list"
+			    )
+			)
+		lineageTag: 46f4a174-f165-4ee0-aeae-9a3576a5f0c8
+
+	measure 'Candidate Detail Message' =
+			
+			SWITCH (
+			    TRUE (),
+			    [Source Selection Is Valid] <> 1,
+			        "Select a quality order or batch.",
+			    [Candidate Detail Context Is Valid] <> 1,
+			        "Select one candidate test group.",
+			    "Candidate test group selected."
+			)
+		lineageTag: 0e707a1f-d355-4f58-8d26-5a09e807a0ac
+
+	column TestGroupKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: df97158b-2a87-44fc-b85b-ca046f767618
+		summarizeBy: none
+		sourceColumn: TestGroupKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 669e58d0-fc27-4dcc-afb9-f1eea1ccc22a
+		summarizeBy: count
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		lineageTag: 29aa6d32-b916-4d51-95a2-db53254f07d1
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column testgroupid
+		dataType: string
+		lineageTag: 3a63cfc5-7265-406f-a437-a8c7a9f436c7
+		summarizeBy: none
+		sourceColumn: testgroupid
+
+		annotation SummarizationSetBy = Automatic
+
+	column RelabelProduct
+		dataType: string
+		lineageTag: ed61e63f-433b-41e6-b2aa-c797d41318d2
+		summarizeBy: none
+		sourceColumn: RelabelProduct
+
+		annotation SummarizationSetBy = Automatic
+
+	column SKUCount
+		dataType: int64
+		formatString: 0
+		lineageTag: b6f1b7cd-3b9b-49c8-a2b9-59ee396bbfef
+		summarizeBy: sum
+		sourceColumn: SKUCount
+
+		annotation SummarizationSetBy = Automatic
+
+	column ExampleProductID
+		dataType: string
+		lineageTag: fe8c8177-c365-46e8-8f5c-25e6ce2496f7
+		summarizeBy: none
+		sourceColumn: ExampleProductID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ExampleProductName
+		dataType: string
+		lineageTag: f3f489e7-a944-499e-a03c-c393c669afd7
+		summarizeBy: none
+		sourceColumn: ExampleProductName
+
+		annotation SummarizationSetBy = Automatic
+
+	column UsedCommercialNameFlag
+		dataType: int64
+		formatString: 0
+		lineageTag: c9a370e3-0f88-4722-b508-5aebd3d04f4f
+		summarizeBy: sum
+		sourceColumn: UsedCommercialNameFlag
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Candidate Product Family' = m
+		mode: import
+		source =
+				let
+				  Source = Sql.Database("efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com", "WH_Curated", [Query = "WITH ResolvedProducts AS#(lf)(#(lf)    SELECT#(lf)        g.TestGroupKey,#(lf)        le.Legal_EntityKey,#(lf)        g.CMPNY,#(lf)        g.testgroupid,#(lf)#(lf)        COALESCE(#(lf)            NULLIF(TRIM(p.Commercial_Name), ''),#(lf)            NULLIF(TRIM(p.Product_Name), ''),#(lf)            p.Product_ID#(lf)        ) AS RelabelProduct,#(lf)#(lf)        p.Product_ID,#(lf)        p.Product_Name,#(lf)#(lf)        CASE#(lf)            WHEN NULLIF(TRIM(p.Commercial_Name), '') IS NOT NULL#(lf)                THEN 1#(lf)            ELSE 0#(lf)        END AS UsedCommercialNameFlag#(lf)#(lf)    FROM dbo.mtbl_EDW_Dim_Product AS p#(lf)#(lf)    INNER JOIN dbo.mtbl_EDW_Dim_TestGroup AS g#(lf)        ON p.CMPNY = g.CMPNY#(lf)        AND p.testgroupid = g.testgroupid#(lf)        AND g.RecordStatus = 1#(lf)#(lf)    INNER JOIN dbo.mtbl_EDW_Dim_Legal_Entity AS le#(lf)        ON g.CMPNY = le.CMPNY#(lf)        AND le.RecordStatus = 1#(lf)#(lf)    WHERE#(lf)        p.Record_Status = 1#(lf)        AND p.testgroupid IS NOT NULL#(lf))#(lf)#(lf)SELECT#(lf)    TestGroupKey,#(lf)    Legal_EntityKey,#(lf)    CMPNY,#(lf)    testgroupid,#(lf)    RelabelProduct,#(lf)#(lf)    COUNT(DISTINCT Product_ID) AS SKUCount,#(lf)    MIN(Product_ID) AS ExampleProductID,#(lf)    MIN(Product_Name) AS ExampleProductName,#(lf)    MAX(UsedCommercialNameFlag) AS UsedCommercialNameFlag#(lf)#(lf)FROM ResolvedProducts#(lf)#(lf)GROUP BY#(lf)    TestGroupKey,#(lf)    Legal_EntityKey,#(lf)    CMPNY,#(lf)    testgroupid,#(lf)    RelabelProduct;"])
+				in
+				  Source
+
+	annotation PBI_ResultType = Exception
+
+

@@ -66,8 +66,7 @@ id2.inventserialid,id2.inventsiteid, id2.inventlocationid, id2.inventbatchid,
     , ISNULL(db.BatchKey, -1) BatchKey
     , ISNULL(dr.RouteKey, -1) RouteKey
     , ISNULL(dwc.WorkCenterKey, -1) WorkCenterKey
-    , ISNULL(dsn.SerialNumberKey, -1) SerialNumberKey
-
+     , COALESCE(dsn.SerialNumberKey, dsnu.SerialNumberKey, -1) SerialNumberKey
     --,'@@@@'
     --,pjp.*
 FROM WH_Raw.dbo.ProdJournalProd pjp
@@ -181,7 +180,12 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_WorkCenter dwc
 LEFT JOIN WH_Transform.dbo.tbl_DIM_SerialNumber dsn
     ON id2.inventserialid = dsn.SerialNumber
         AND id2.dataareaid = dsn.CMPNY
+        AND it2.itemid = dsn.ProductID
         AND dsn.RecordStatus=1
+
+LEFT JOIN WH_Transform.dbo.vw_DIM_SerialNumber_Unambiguous dsnu
+    ON id2.inventserialid = dsnu.SerialNumber
+        AND id2.dataareaid = dsnu.CMPNY
 
 
 WHERE
@@ -250,8 +254,7 @@ id2.inventserialid,id2.inventsiteid, id2.inventlocationid, id2.inventbatchid,
     , ISNULL(dr.RouteKey, -1) RouteKey
 
     , ISNULL(dwc.WorkCenterKey, -1) WorkCenterKey
-    , ISNULL(dsn.SerialNumberKey, -1) SerialNumberKey
-
+     , COALESCE(dsn.SerialNumberKey, dsnu.SerialNumberKey, -1) SerialNumberKey
 
     --,'@@@@'
     --,pjp.*
@@ -350,7 +353,12 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_WorkCenter dwc
 LEFT JOIN WH_Transform.dbo.tbl_DIM_SerialNumber dsn
     ON id2.inventserialid = dsn.SerialNumber
         AND id2.dataareaid = dsn.CMPNY
+        AND it2.itemid = dsn.ProductID
         AND dsn.RecordStatus=1
+
+LEFT JOIN WH_Transform.dbo.vw_DIM_SerialNumber_Unambiguous dsnu
+    ON id2.inventserialid = dsnu.SerialNumber
+        AND id2.dataareaid = dsnu.CMPNY
 
 
 WHERE
@@ -421,8 +429,7 @@ id2.inventserialid,id2.inventsiteid, id2.inventlocationid, id2.inventbatchid,
     , ISNULL(dr.RouteKey, -1) RouteKey
 
     , ISNULL(dwc.WorkCenterKey, -1) WorkCenterKey
-    , ISNULL(dsn.SerialNumberKey, -1) SerialNumberKey
-
+    , COALESCE(dsn.SerialNumberKey, dsnu.SerialNumberKey, -1) SerialNumberKey
 
     --,'@@@@'
     --,pjp.*
@@ -521,7 +528,12 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_WorkCenter dwc
 LEFT JOIN WH_Transform.dbo.tbl_DIM_SerialNumber dsn
     ON id2.inventserialid = dsn.SerialNumber
         AND id2.dataareaid = dsn.CMPNY
+        AND it2.itemid = dsn.ProductID
         AND dsn.RecordStatus=1
+
+LEFT JOIN WH_Transform.dbo.vw_DIM_SerialNumber_Unambiguous dsnu
+    ON id2.inventserialid = dsnu.SerialNumber
+        AND id2.dataareaid = dsnu.CMPNY
 
 
 WHERE

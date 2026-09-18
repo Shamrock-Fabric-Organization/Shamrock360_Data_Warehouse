@@ -1,0 +1,171 @@
+table 'Test Group Requirement'
+	lineageTag: 88b4c59f-7511-4801-b5e6-22b7f192db38
+
+	measure 'Total Test Group Requirement' = COUNTROWS('Test Group Requirement')
+		formatString: 0
+		lineageTag: d2fff5f2-2ad1-4fc2-92d9-61c36258aabd
+
+	column RequirementKey
+		dataType: string
+		isHidden
+		lineageTag: 89c0500d-69cd-4d3b-a52d-bfde5613434d
+		summarizeBy: none
+		sourceColumn: RequirementKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestGroupKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 15e49cb2-1567-48dd-99b2-3cc985ead451
+		summarizeBy: none
+		sourceColumn: TestGroupKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: aeaf59be-756c-4485-8f50-1785ad7e7367
+		summarizeBy: count
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column testgroupid
+		dataType: string
+		lineageTag: 5525faaf-7b47-46c0-8261-23c3f4005062
+		summarizeBy: none
+		sourceColumn: testgroupid
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestIdNormalized
+		dataType: string
+		lineageTag: 9583c0e4-3345-44f0-8b78-bbfb6e975aaf
+		summarizeBy: none
+		sourceColumn: TestIdNormalized
+
+		annotation SummarizationSetBy = Automatic
+
+	column testid
+		dataType: string
+		lineageTag: acd7577f-8f01-4623-981a-ec4decdc07e9
+		summarizeBy: none
+		sourceColumn: testid
+
+		annotation SummarizationSetBy = Automatic
+
+	column testsequence
+		dataType: int64
+		formatString: 0
+		lineageTag: fafc0822-fbc7-4791-984f-ed36b0c75206
+		summarizeBy: sum
+		sourceColumn: testsequence
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestDescription
+		dataType: string
+		lineageTag: 388a5e41-fa52-4e63-8b81-7b781034cb20
+		summarizeBy: none
+		sourceColumn: TestDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column TargetTestType
+		dataType: string
+		lineageTag: 8fdc8a00-9b7f-473d-b0d0-32332f433675
+		summarizeBy: none
+		sourceColumn: TargetTestType
+
+		annotation SummarizationSetBy = Automatic
+
+	column TargetTestClass
+		dataType: string
+		lineageTag: 5612b8ed-54a0-4a5e-8e19-e6efaa45558f
+		summarizeBy: none
+		sourceColumn: TargetTestClass
+
+		annotation SummarizationSetBy = Automatic
+
+	column TargetUnit
+		dataType: string
+		lineageTag: abcf767b-c6cd-402a-a63a-1dcc5ffcf6a0
+		summarizeBy: none
+		sourceColumn: TargetUnit
+
+		annotation SummarizationSetBy = Automatic
+
+	column TargetUnitNormalized
+		dataType: string
+		lineageTag: 59087dbe-4fb2-4629-9798-47a2c9b4a91c
+		summarizeBy: none
+		sourceColumn: TargetUnitNormalized
+
+		annotation SummarizationSetBy = Automatic
+
+	column lowerlimit
+		dataType: double
+		lineageTag: 5816ede8-f0be-4d3a-b93e-e3b72abe4ca7
+		summarizeBy: sum
+		sourceColumn: lowerlimit
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column upperlimit
+		dataType: double
+		lineageTag: 9657e490-98c2-4c0f-8b71-a76a1c56187e
+		summarizeBy: sum
+		sourceColumn: upperlimit
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ActionOnFailure
+		dataType: string
+		lineageTag: 623dec73-d70d-4d0b-a28d-478afb6ce24a
+		summarizeBy: none
+		sourceColumn: ActionOnFailure
+
+		annotation SummarizationSetBy = Automatic
+
+	column CertificateOfAnalysis
+		dataType: string
+		lineageTag: e729dfc2-1b5b-4d28-bb63-25ba6941ffbb
+		summarizeBy: none
+		sourceColumn: CertificateOfAnalysis
+
+		annotation SummarizationSetBy = Automatic
+
+	column RequirementConflictFlag
+		dataType: int64
+		formatString: 0
+		lineageTag: ac78bb8c-c8a4-4949-856e-c1517a125f98
+		summarizeBy: sum
+		sourceColumn: RequirementConflictFlag
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Test Group Requirement' = m
+		mode: import
+		source =
+				let
+				  Source = Sql.Database("efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com", "WH_Curated", [Query = "SELECT#(lf)    CONCAT(#(lf)        CAST(d.TestGroupKey AS varchar(20)),#(lf)        '|',#(lf)        UPPER(TRIM(d.testid))#(lf)    ) AS RequirementKey,#(lf)#(lf)    d.TestGroupKey,#(lf)    d.Legal_EntityKey,#(lf)    MAX(d.testgroupid) AS testgroupid,#(lf)#(lf)    UPPER(TRIM(d.testid)) AS TestIdNormalized,#(lf)    MAX(d.testid) AS testid,#(lf)#(lf)    MIN(d.testsequence) AS testsequence,#(lf)    MAX(d.TestDescription) AS TestDescription,#(lf)#(lf)    MAX(d.TestType) AS TargetTestType,#(lf)#(lf)    CASE#(lf)        WHEN MAX(d.TestType) = 'Option'#(lf)            THEN 'OPTION'#(lf)        WHEN MAX(d.TestType) IN ('Fraction', 'Integer')#(lf)            THEN 'NUMERIC'#(lf)        ELSE 'UNSUPPORTED'#(lf)    END AS TargetTestClass,#(lf)#(lf)MAX(#(lf)    CASE#(lf)        WHEN d.TestType IN ('Fraction', 'Integer')#(lf)            THEN d.testunitid#(lf)        ELSE NULL#(lf)    END#(lf)) AS TargetUnit,#(lf)#(lf)NULLIF(#(lf)    UPPER(#(lf)        TRIM(#(lf)            MAX(#(lf)                CASE#(lf)                    WHEN d.TestType IN ('Fraction', 'Integer')#(lf)                        THEN d.testunitid#(lf)                    ELSE NULL#(lf)                END#(lf)            )#(lf)        )#(lf)    ),#(lf)    ''#(lf)) AS TargetUnitNormalized,#(lf)#(lf)MAX(#(lf)    CASE#(lf)        WHEN d.TestType IN ('Fraction', 'Integer')#(lf)            THEN d.lowerlimit#(lf)        ELSE NULL#(lf)    END#(lf)) AS lowerlimit,#(lf)#(lf)MAX(#(lf)    CASE#(lf)        WHEN d.TestType IN ('Fraction', 'Integer')#(lf)            THEN d.upperlimit#(lf)        ELSE NULL#(lf)    END#(lf)) AS upperlimit,#(lf)#(lf)    MAX(d.ActionOnFailure) AS ActionOnFailure,#(lf)    MAX(d.CertificateOfAnalysis) AS CertificateOfAnalysis,#(lf)#(lf)    CASE#(lf)    WHEN COUNT(#(lf)             DISTINCT COALESCE(d.TestType, '<NULL>')#(lf)         ) > 1#(lf)#(lf)      OR COUNT(#(lf)             DISTINCT CASE#(lf)                 WHEN d.TestType IN ('Fraction', 'Integer')#(lf)                     THEN COALESCE(d.testunitid, '<NULL>')#(lf)                 ELSE NULL#(lf)             END#(lf)         ) > 1#(lf)#(lf)      OR COUNT(#(lf)             DISTINCT CASE#(lf)                 WHEN d.TestType IN ('Fraction', 'Integer')#(lf)                     THEN COALESCE(#(lf)                         CAST(d.lowerlimit AS varchar(100)),#(lf)                         '<NULL>'#(lf)                     )#(lf)                 ELSE NULL#(lf)             END#(lf)         ) > 1#(lf)#(lf)      OR COUNT(#(lf)             DISTINCT CASE#(lf)                 WHEN d.TestType IN ('Fraction', 'Integer')#(lf)                     THEN COALESCE(#(lf)                         CAST(d.upperlimit AS varchar(100)),#(lf)                         '<NULL>'#(lf)                     )#(lf)                 ELSE NULL#(lf)             END#(lf)         ) > 1#(lf)#(lf)    THEN 1#(lf)    ELSE 0#(lf)END AS RequirementConflictFlag#(lf)#(lf)FROM dbo.mtbl_EDW_Fact_TestGroupDetails AS d#(lf)#(lf)INNER JOIN dbo.mtbl_EDW_Dim_TestGroup AS g#(lf)    ON d.TestGroupKey = g.TestGroupKey#(lf)    AND g.RecordStatus = 1#(lf)#(lf)WHERE#(lf)    d.testid IS NOT NULL#(lf)#(lf)    -- If Fact_TestGroupDetails later receives RecordStatus:#(lf)    -- AND d.RecordStatus = 1#(lf)#(lf)GROUP BY#(lf)    d.TestGroupKey,#(lf)    d.Legal_EntityKey,#(lf)    UPPER(TRIM(d.testid));"])
+				in
+				  Source
+
+	annotation PBI_ResultType = Exception
+
+

@@ -1,0 +1,39 @@
+table 'Revenue PVM Steps'
+	lineageTag: fb0d4b51-108b-4af6-9fc6-fc3417e61c0e
+
+	column Step
+		lineageTag: a3a3b7e6-7375-451e-a2e7-990ea411ac33
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Step]
+		sortByColumn: Sort
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sort
+		formatString: 0
+		lineageTag: 1e22b92c-35a1-4557-a1ca-de5419bd23f2
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Sort]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Revenue PVM Steps' = calculated
+		mode: import
+		source =
+				
+				DATATABLE (
+				    "Step", STRING,
+				    "Sort", INTEGER,
+				    {
+				        { "Budget Revenue", 1 },
+				        { "Volume Effect", 2 },
+				        { "Mix Effect", 3 },
+				        { "Price Effect", 4 }
+				    }
+				)
+
+	annotation PBI_Id = 865323ada07b47688148b42897f92719
+
+

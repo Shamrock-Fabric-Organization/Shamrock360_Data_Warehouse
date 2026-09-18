@@ -91,7 +91,6 @@ SELECT
 
 	/* ============================================================================
 	   ===  ADDED: MULTI-CURRENCY CONVERSION COLUMNS (USD / EUR / CNY)  ===========
-	   ===  ITEM-018 — Brix, SQL Architect — additive; originals untouched   =====
 	   ============================================================================ */
 
 	---- ---- AUDIT: FROM-currency for each basis ---- ----

@@ -1,0 +1,25 @@
+role 'Shichiu Salesperson'
+	modelPermission: read
+
+	tablePermission 'Account Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Date Table' =
+			-- Date table RLS
+			'Date Table'[Fiscal Year] >= 2023
+			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Employee Table' =
+			'Employee Table'[Salesperson] = "Shichiu Kwan"
+			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Legal Entity Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Product Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Sales Table' = [Sales Line Status] <> "Canceled"
+
+	tablePermission 'Warehouse Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	annotation PBI_Id = 2073b00eb17d4ee2973c7ad6bcc38cd6
+
+

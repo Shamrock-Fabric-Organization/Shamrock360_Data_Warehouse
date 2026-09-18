@@ -1,0 +1,41 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["DirectLake - WH_Curated","Source Quality Order","Quality Order Test Evidence","Candidate Test Group","Test Group Requirement","Test Group Outcome","Candidate Product Family"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_ProTooling = ["DirectLakeOnOneLakeInWeb","WebModelingEdit","DaxQueryView_Desktop"]
+
+ref table Fact_QualityOrderLineResults
+ref table Dim_Account
+ref table Dim_Product
+ref table Dim_Warehouse
+ref table Dim_Batch
+ref table Dim_Legal_Entity
+ref table Dim_ProductionBatchOrder
+ref table Dim_Date
+ref table Dim_Route
+ref table Dim_SerialNumber
+ref table Dim_Site
+ref table Dim_WorkCenter
+ref table 'Source Quality Order'
+ref table DateTableTemplate_b19413eb-094a-4391-9946-2092e04e7e2f
+ref table LocalDateTable_921371d7-6e72-4a57-a5c2-f231b18bcb64
+ref table LocalDateTable_3c55ca01-feb7-4fb0-b273-d462f4a13e68
+ref table 'QC Measures'
+ref table 'Quality Order Test Evidence'
+ref table Dim_TestGroup
+ref table Fact_TestGroupDetails
+ref table 'Candidate Test Group'
+ref table 'Test Group Requirement'
+ref table 'Test Group Outcome'
+ref table 'Candidate Product Family'
+ref table 'Candidate View'
+
+

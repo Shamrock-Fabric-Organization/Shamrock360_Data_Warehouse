@@ -1,0 +1,172 @@
+table 'Quality Order Test Evidence'
+	lineageTag: 8fac3e95-cf3a-421e-b81f-52f6032f5acd
+
+	column qualityorderid
+		dataType: string
+		lineageTag: 75e89384-db9b-4e07-8c59-7c5b0dc2cf81
+		summarizeBy: none
+		sourceColumn: qualityorderid
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceOrderKey
+		dataType: string
+		isHidden
+		lineageTag: e19a6fe2-3b1c-4e2c-b1cb-d4d1a0f8c1c6
+		summarizeBy: none
+		sourceColumn: SourceOrderKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: cb2dfe87-ac3b-4546-b386-8346cd15b686
+		summarizeBy: count
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestIdNormalized
+		dataType: string
+		lineageTag: 8542e2ba-2e9c-41cb-add0-b1449813a9f6
+		summarizeBy: none
+		sourceColumn: TestIdNormalized
+
+		annotation SummarizationSetBy = Automatic
+
+	column testid
+		dataType: string
+		lineageTag: 330771ff-24ee-40d9-9624-2a8d12d745ab
+		summarizeBy: none
+		sourceColumn: testid
+
+		annotation SummarizationSetBy = Automatic
+
+	column testsequence
+		dataType: int64
+		formatString: 0
+		lineageTag: 96616177-f9d2-4da5-a7e9-2941de46855d
+		summarizeBy: sum
+		sourceColumn: testsequence
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceTestType
+		dataType: string
+		lineageTag: 561cc87e-c2fc-4ded-801e-c923f8476475
+		summarizeBy: none
+		sourceColumn: SourceTestType
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceTestClass
+		dataType: string
+		lineageTag: f862de28-ee88-4352-ac97-550bccd9aa06
+		summarizeBy: none
+		sourceColumn: SourceTestClass
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceUnit
+		dataType: string
+		lineageTag: bdbe5c77-4568-4fce-a3aa-4e5d644fc59b
+		summarizeBy: none
+		sourceColumn: SourceUnit
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceUnitNormalized
+		dataType: string
+		lineageTag: 0de4fd5a-39d6-4646-999a-c9af1fb40617
+		summarizeBy: none
+		sourceColumn: SourceUnitNormalized
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsSkipped
+		dataType: int64
+		formatString: 0
+		lineageTag: 7751c5bc-2f45-40c0-b76a-0e0c25ee0aeb
+		summarizeBy: sum
+		sourceColumn: IsSkipped
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceNumericResult
+		dataType: double
+		lineageTag: cba9aade-9094-4243-b977-d5c093f5cf75
+		summarizeBy: sum
+		sourceColumn: SourceNumericResult
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SourceOutcome
+		dataType: string
+		lineageTag: b302fafd-2b58-450a-9853-46b452c34af2
+		summarizeBy: none
+		sourceColumn: SourceOutcome
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceOutcomeNormalized
+		dataType: string
+		lineageTag: 92eae11a-28c4-4b95-bc63-8f2c46a9ac5d
+		summarizeBy: none
+		sourceColumn: SourceOutcomeNormalized
+
+		annotation SummarizationSetBy = Automatic
+
+	column OriginalResultFlag
+		dataType: int64
+		formatString: 0
+		lineageTag: 61abc1fc-75f0-40ce-88ad-c5077db287f1
+		summarizeBy: sum
+		sourceColumn: OriginalResultFlag
+
+		annotation SummarizationSetBy = Automatic
+
+	column OriginalResultLabel
+		dataType: string
+		lineageTag: b819d3a8-585e-4f99-bf8e-bc6711019949
+		summarizeBy: none
+		sourceColumn: OriginalResultLabel
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceRowCount
+		dataType: int64
+		formatString: 0
+		lineageTag: 9da0ca12-1a76-434f-975b-24711ade2828
+		summarizeBy: sum
+		sourceColumn: SourceRowCount
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceConflictFlag
+		dataType: int64
+		formatString: 0
+		lineageTag: 91d7ec47-266b-430e-a212-9e7382171a24
+		summarizeBy: sum
+		sourceColumn: SourceConflictFlag
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Quality Order Test Evidence' = m
+		mode: import
+		source =
+				let
+				  Source = Sql.Database("efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com", "WH_Curated", [Query = "SELECT#(lf)    CONCAT(#(lf)        CAST(f.Legal_EntityKey AS varchar(20)),#(lf)        '|',#(lf)        f.qualityorderid#(lf)    ) AS SourceOrderKey,#(lf)#(lf)    f.Legal_EntityKey,#(lf)    f.qualityorderid,#(lf)#(lf)    UPPER(TRIM(f.testid)) AS TestIdNormalized,#(lf)    MAX(f.testid) AS testid,#(lf)    MIN(f.testsequence) AS testsequence,#(lf)#(lf)    MAX(f.TestType) AS SourceTestType,#(lf)#(lf)    CASE#(lf)        WHEN MAX(f.TestType) = 'Option'#(lf)            THEN 'OPTION'#(lf)        WHEN MAX(f.TestType) IN ('Fraction', 'Integer')#(lf)            THEN 'NUMERIC'#(lf)        ELSE 'UNSUPPORTED'#(lf)    END AS SourceTestClass,#(lf)#(lf)    MAX(f.testunitid) AS SourceUnit,#(lf)#(lf)    NULLIF(#(lf)        UPPER(TRIM(MAX(COALESCE(f.testunitid, '')))),#(lf)        ''#(lf)    ) AS SourceUnitNormalized,#(lf)#(lf)    MAX(f.qmsskiptest) AS IsSkipped,#(lf)#(lf)    MAX(f.testresultvaluereal) AS SourceNumericResult,#(lf)    MAX(f.testresultvalueoutcome) AS SourceOutcome,#(lf)#(lf)    NULLIF(#(lf)        UPPER(TRIM(MAX(COALESCE(f.testresultvalueoutcome, '')))),#(lf)        ''#(lf)    ) AS SourceOutcomeNormalized,#(lf)#(lf)    MAX(f.testresult) AS OriginalResultFlag,#(lf)    MAX(f.[testresult_$label]) AS OriginalResultLabel,#(lf)#(lf)    COUNT(*) AS SourceRowCount,#(lf)#(lf)    CASE#(lf)        WHEN COUNT(*) > 1#(lf)          OR COUNT(DISTINCT COALESCE(f.TestType, '<NULL>')) > 1#(lf)          OR COUNT(DISTINCT COALESCE(f.testunitid, '<NULL>')) > 1#(lf)        THEN 1#(lf)        ELSE 0#(lf)    END AS SourceConflictFlag#(lf)#(lf)FROM dbo.mtbl_EDW_Fact_QualityOrderLineResults AS f#(lf)#(lf)WHERE#(lf)    f.qualityorderid IS NOT NULL#(lf)    AND f.testid IS NOT NULL#(lf)#(lf)    -- Optional future size control:#(lf)    -- AND f.LineCreatedDateTime >= 'YOUR-D365-GO-LIVE-DATE'#(lf)#(lf)GROUP BY#(lf)    f.Legal_EntityKey,#(lf)    f.qualityorderid,#(lf)    UPPER(TRIM(f.testid));"])
+				in
+				  Source
+
+	annotation PBI_ResultType = Table
+
+

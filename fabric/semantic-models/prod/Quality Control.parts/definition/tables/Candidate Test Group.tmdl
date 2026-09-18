@@ -1,0 +1,96 @@
+table 'Candidate Test Group'
+	lineageTag: 5d65b8d1-6f89-447d-a44f-d23d48eb5481
+
+	column TestGroupKey
+		dataType: int64
+		formatString: 0
+		lineageTag: cc1d7f4d-2d41-4664-830a-8419d34be411
+		summarizeBy: none
+		sourceColumn: TestGroupKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 0ea8af30-f9be-46b5-a30a-5245e4d19edf
+		summarizeBy: none
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		lineageTag: 31485796-633f-4511-a1d7-14937541dc73
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column testgroupid
+		dataType: string
+		lineageTag: 971cf5b0-ad01-4519-9bed-c69eafb3896e
+		summarizeBy: none
+		sourceColumn: testgroupid
+
+		annotation SummarizationSetBy = Automatic
+
+	column TestGroupDescription
+		dataType: string
+		lineageTag: 162f964a-32fc-445e-978e-62564b816b43
+		summarizeBy: none
+		sourceColumn: TestGroupDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsDestructive
+		dataType: string
+		lineageTag: a51f9517-a7ce-455a-878d-b3278b48ac49
+		summarizeBy: none
+		sourceColumn: IsDestructive
+
+		annotation SummarizationSetBy = Automatic
+
+	column RecordStatus
+		dataType: int64
+		formatString: 0
+		lineageTag: 1890e624-8665-4061-9e20-50d24a020337
+		summarizeBy: sum
+		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column RequiredTestCount
+		dataType: int64
+		formatString: 0
+		lineageTag: f43cc369-c1c7-446d-b4b5-668a4be64e41
+		summarizeBy: sum
+		sourceColumn: RequiredTestCount
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductFamilyCount
+		dataType: int64
+		formatString: 0
+		lineageTag: 19e72258-3341-40db-97eb-0d407d7b41b5
+		summarizeBy: sum
+		sourceColumn: ProductFamilyCount
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Candidate Test Group' = m
+		mode: import
+		source =
+				let
+				  Source = Sql.Database("efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com", "WH_Curated", [Query = "WITH CurrentGroups AS#(lf)(#(lf)    SELECT#(lf)        g.TestGroupKey,#(lf)        le.Legal_EntityKey,#(lf)        g.CMPNY,#(lf)        g.testgroupid,#(lf)        g.TestGroupDescription,#(lf)        g.IsDestructive,#(lf)        g.RecordStatus#(lf)#(lf)    FROM dbo.mtbl_EDW_Dim_TestGroup AS g#(lf)#(lf)    INNER JOIN dbo.mtbl_EDW_Dim_Legal_Entity AS le#(lf)        ON g.CMPNY = le.CMPNY#(lf)        AND le.RecordStatus = 1#(lf)#(lf)    WHERE#(lf)        g.RecordStatus = 1#(lf)),#(lf)#(lf)RequirementCounts AS#(lf)(#(lf)    SELECT#(lf)        d.TestGroupKey,#(lf)        COUNT(DISTINCT UPPER(TRIM(d.testid))) AS RequiredTestCount#(lf)#(lf)    FROM dbo.mtbl_EDW_Fact_TestGroupDetails AS d#(lf)#(lf)    INNER JOIN CurrentGroups AS g#(lf)        ON d.TestGroupKey = g.TestGroupKey#(lf)#(lf)    WHERE#(lf)        d.testid IS NOT NULL#(lf)#(lf)    GROUP BY#(lf)        d.TestGroupKey#(lf)),#(lf)#(lf)ResolvedProductFamilies AS#(lf)(#(lf)    SELECT#(lf)        g.TestGroupKey,#(lf)#(lf)        COALESCE(#(lf)            NULLIF(TRIM(p.Commercial_Name), ''),#(lf)            NULLIF(TRIM(p.Product_Name), ''),#(lf)            p.Product_ID#(lf)        ) AS RelabelProduct#(lf)#(lf)    FROM dbo.mtbl_EDW_Dim_Product AS p#(lf)#(lf)    INNER JOIN CurrentGroups AS g#(lf)        ON p.CMPNY = g.CMPNY#(lf)        AND p.testgroupid = g.testgroupid#(lf)#(lf)    WHERE#(lf)        p.Record_Status = 1#(lf)        AND p.testgroupid IS NOT NULL#(lf)),#(lf)#(lf)ProductFamilyCounts AS#(lf)(#(lf)    SELECT#(lf)        TestGroupKey,#(lf)        COUNT(DISTINCT RelabelProduct) AS ProductFamilyCount#(lf)#(lf)    FROM ResolvedProductFamilies#(lf)#(lf)    GROUP BY#(lf)        TestGroupKey#(lf))#(lf)#(lf)SELECT#(lf)    g.TestGroupKey,#(lf)    g.Legal_EntityKey,#(lf)    g.CMPNY,#(lf)    g.testgroupid,#(lf)    g.TestGroupDescription,#(lf)    g.IsDestructive,#(lf)    g.RecordStatus,#(lf)#(lf)    COALESCE(r.RequiredTestCount, 0) AS RequiredTestCount,#(lf)    COALESCE(p.ProductFamilyCount, 0) AS ProductFamilyCount#(lf)#(lf)FROM CurrentGroups AS g#(lf)#(lf)LEFT JOIN RequirementCounts AS r#(lf)    ON g.TestGroupKey = r.TestGroupKey#(lf)#(lf)LEFT JOIN ProductFamilyCounts AS p#(lf)    ON g.TestGroupKey = p.TestGroupKey;"])
+				in
+				  Source
+
+	annotation PBI_ResultType = Exception
+
+

@@ -1,0 +1,158 @@
+table 'Source Quality Order'
+	lineageTag: 95d72d1f-1203-4820-b161-e656e33d024d
+
+	measure 'Total Source Quality Order' = COUNTROWS('Source Quality Order')
+		formatString: 0
+		lineageTag: eac3dd1a-1b22-4aff-832d-9c1f11269242
+
+	column qualityorderid
+		dataType: string
+		lineageTag: d795257e-5621-42b7-b857-ef769fd3985e
+		summarizeBy: none
+		sourceColumn: qualityorderid
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Batch Number'
+		dataType: string
+		lineageTag: 1eed8612-ba2f-4e9a-b3ab-1738e8112aac
+		summarizeBy: none
+		sourceColumn: Batch Number
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Serial Number'
+		dataType: string
+		lineageTag: f86f9450-20ba-4be2-95f1-32d366833a31
+		summarizeBy: none
+		sourceColumn: Serial Number
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_ID
+		dataType: string
+		lineageTag: 40202adf-cbf5-4e48-b4cd-f5c8e853df99
+		summarizeBy: none
+		sourceColumn: Product_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Product_Name
+		dataType: string
+		lineageTag: 41da60af-aff2-4c6f-89d9-6c756b474116
+		summarizeBy: none
+		sourceColumn: Product_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column ValidatedDateTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 287b9b19-b3ab-4ee8-866a-32ffa8ce82b9
+		summarizeBy: none
+		sourceColumn: ValidatedDateTime
+
+		variation Variation
+			isDefault
+			relationship: 86d521c4-0562-4677-8ffd-0c022c1f2a40
+			defaultHierarchy: LocalDateTable_921371d7-6e72-4a57-a5c2-f231b18bcb64.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column LineCreatedDateTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 004981fe-ffdb-41cc-a9aa-640d8c7e2062
+		summarizeBy: none
+		sourceColumn: LineCreatedDateTime
+
+		variation Variation
+			isDefault
+			relationship: 4776e8ce-bafc-4db4-8318-28f01e557353
+			defaultHierarchy: LocalDateTable_3c55ca01-feb7-4fb0-b273-d462f4a13e68.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceOrderKey
+		dataType: string
+		lineageTag: ebbb4822-890a-423c-b391-56bcad16fb11
+		summarizeBy: none
+		sourceColumn: SourceOrderKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column Legal_EntityKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 9685bae2-20cd-4494-884a-2e2b23633062
+		summarizeBy: none
+		sourceColumn: Legal_EntityKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column CMPNY
+		dataType: string
+		lineageTag: 1ad8b024-0a6a-4838-afc6-fe18ddb8de2c
+		summarizeBy: none
+		sourceColumn: CMPNY
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Source Commercial Name'
+		dataType: string
+		lineageTag: 9bae0c82-9a7a-4db8-b620-9fd31e58c40a
+		summarizeBy: none
+		sourceColumn: Source Commercial Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column QualityOrderStatus
+		dataType: string
+		lineageTag: 54bcfa9c-52fe-49e0-b373-fd4c0d88bfe1
+		summarizeBy: none
+		sourceColumn: QualityOrderStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column OriginalTestGroupKey
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 7044e4e8-a145-479d-9982-45c3325e77fc
+		summarizeBy: count
+		sourceColumn: OriginalTestGroupKey
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column OriginalTestGroupID
+		dataType: string
+		lineageTag: 0f649ac4-e301-4be0-b54e-954d63ef1bc6
+		summarizeBy: none
+		sourceColumn: OriginalTestGroupID
+
+		annotation SummarizationSetBy = Automatic
+
+	column OriginalTestGroupDescription
+		dataType: string
+		lineageTag: 4f95aaf4-ffcb-4aec-a704-0b8fecaef0fb
+		summarizeBy: none
+		sourceColumn: OriginalTestGroupDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Source Quality Order' = m
+		mode: import
+		source =
+				let
+				  Source = Sql.Database("efrhfadk6eru3b7hpy4j3xs2eu-qg2ask2keqhepf4xm5b72jokau.datawarehouse.fabric.microsoft.com", "WH_Curated", [Query = "SELECT#(lf)    CONCAT(#(lf)        CAST(f.Legal_EntityKey AS varchar(20)),#(lf)        '|',#(lf)        f.qualityorderid#(lf)    ) AS SourceOrderKey,#(lf)#(lf)    f.Legal_EntityKey,#(lf)    le.CMPNY,#(lf)    f.qualityorderid,#(lf)#(lf)    MAX(f.inventbatchid) AS [Batch Number],#(lf)    NULLIF(MAX(NULLIF(f.inventserialid, '')), '') AS [Serial Number],#(lf)#(lf)    MAX(p.Product_ID) AS Product_ID,#(lf)    MAX(p.Product_Name) AS Product_Name,#(lf)    MAX(p.Commercial_Name) AS [Source Commercial Name],#(lf)#(lf)    MAX(f.QuaityOrderStatus) AS QualityOrderStatus,#(lf)#(lf)    MAX(f.TestGroupKey) AS OriginalTestGroupKey,#(lf)    MAX(f.testgroupid) AS OriginalTestGroupID,#(lf)    MAX(tg.TestGroupDescription) AS OriginalTestGroupDescription,#(lf)#(lf)    MIN(f.LineCreatedDateTime) AS LineCreatedDateTime,#(lf)    MAX(f.ValidatedDateTime) AS ValidatedDateTime#(lf)#(lf)FROM dbo.mtbl_EDW_Fact_QualityOrderLineResults AS f#(lf)#(lf)LEFT JOIN dbo.mtbl_EDW_Dim_Product AS p#(lf)    ON f.ProductKey = p.ProductKey#(lf)#(lf)LEFT JOIN dbo.mtbl_EDW_Dim_Legal_Entity AS le#(lf)    ON f.Legal_EntityKey = le.Legal_EntityKey#(lf)    AND le.RecordStatus = 1#(lf)#(lf)LEFT JOIN dbo.mtbl_EDW_Dim_TestGroup AS tg#(lf)    ON f.TestGroupKey = tg.TestGroupKey#(lf)    AND tg.RecordStatus = 1#(lf)#(lf)WHERE#(lf)    f.qualityorderid IS NOT NULL#(lf)#(lf)    -- Optional future size control:#(lf)    -- AND f.LineCreatedDateTime >= 'YOUR-D365-GO-LIVE-DATE'#(lf)#(lf)GROUP BY#(lf)    f.Legal_EntityKey,#(lf)    le.CMPNY,#(lf)    f.qualityorderid;"])
+				in
+				  Source
+
+	annotation PBI_ResultType = Table
+
+

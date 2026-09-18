@@ -1,0 +1,545 @@
+table 'Finance Measures'
+	lineageTag: 0c76d0e6-73c3-471d-8846-57074e279772
+
+	measure 'Budget Revenue' =
+			
+			SUM ( 'Fact_SalesBudget'[Amount] )
+		lineageTag: 0743a1a1-885e-4e89-b57a-e36f62f5eabe
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Budget Quantity (LBs)' =
+			
+			SUM ( 'Fact_SalesBudget'[Quantity_LBs] )
+		lineageTag: 58afea50-603e-4151-8119-bc78f3b29361
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Budget Price per LB' =
+			
+			DIVIDE (
+			    [Budget Revenue],
+			    [Budget Quantity (LBs)]
+			)
+		lineageTag: 347b50e0-d85e-4ba5-b851-bc55953739f6
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue PVM Baseline Revenue' =
+			
+			[Budget Revenue]
+		lineageTag: 4611c71c-4940-4d17-9eb2-64cc3df93484
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue PVM Baseline Quantity (LBs)' =
+			
+			[Budget Quantity (LBs)]
+		lineageTag: f371e303-c515-4fa1-8475-73cfe3c94364
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue PVM Baseline Price per LB' =
+			
+			DIVIDE (
+			    [Revenue PVM Baseline Revenue],
+			    [Revenue PVM Baseline Quantity (LBs)]
+			)
+		lineageTag: 79f698cb-6380-4149-aa69-b454688d79a0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue PVM Baseline Mix %' =
+			
+			VAR PortfolioBaselineQuantity =
+			    CALCULATE (
+			        [Revenue PVM Baseline Quantity (LBs)],
+			        ALLSELECTED ( 'Dim_Product' )
+			    )
+			RETURN
+			    DIVIDE (
+			        [Revenue PVM Baseline Quantity (LBs)],
+			        PortfolioBaselineQuantity
+			    )
+		lineageTag: 56204d8d-c7a8-4c6f-bb2a-d25c1b337e3d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue PVM Actual Mix %' =
+			
+			VAR PortfolioActualQuantity =
+			    CALCULATE (
+			        [Invoice Quantity (LBs)],
+			        ALLSELECTED ( 'Dim_Product' )
+			    )
+			RETURN
+			    DIVIDE (
+			        [Invoice Quantity (LBs)],
+			        PortfolioActualQuantity
+			    )
+		lineageTag: d2c9cf3f-74f8-4a65-bdbf-b8d99ef0e83e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue PVM Has Data' =
+			
+			VAR HasBaselineData =
+			    NOT ISBLANK ( [Revenue PVM Baseline Revenue] )
+			        || NOT ISBLANK (
+			            [Revenue PVM Baseline Quantity (LBs)]
+			        )
+			VAR HasActualData =
+			    NOT ISBLANK ( [Invoice Line Amount] )
+			        || NOT ISBLANK ( [Invoice Quantity (LBs)] )
+			RETURN
+			    IF (
+			        HasBaselineData || HasActualData,
+			        1
+			    )
+		formatString: 0
+		lineageTag: 8d439e7d-5823-4292-bd88-ecf581bdd25f
+
+	measure 'Revenue PVM Reference Price per LB' =
+			
+			VAR BaselineQuantity =
+			    COALESCE (
+			        [Revenue PVM Baseline Quantity (LBs)],
+			        0
+			    )
+			VAR ActualQuantity =
+			    COALESCE (
+			        [Invoice Quantity (LBs)],
+			        0
+			    )
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			
+			        BaselineQuantity <> 0,
+			            [Revenue PVM Baseline Price per LB],
+			
+			        ActualQuantity <> 0,
+			            [InvoicePricePerLB],
+			
+			        BLANK ()
+			    )
+		lineageTag: 835dae2f-2149-4edc-ad31-a42858df1ee0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue PVM Actual Revenue at Baseline Price' =
+			
+			VAR MonthsInScope =
+			    VALUES ( 'Dim_Date'[MonthStartDate] )
+			RETURN
+			    SUMX (
+			        MonthsInScope,
+			
+			        VAR ProductsInCell =
+			            VALUES ( 'Dim_Product'[ProductKey] )
+			
+			        VAR ProductsWithData =
+			            FILTER (
+			                ProductsInCell,
+			
+			                COALESCE (
+			                    CALCULATE (
+			                        [Revenue PVM Baseline Quantity (LBs)]
+			                    ),
+			                    0
+			                ) <> 0
+			
+			                    || COALESCE (
+			                        CALCULATE (
+			                            [Invoice Quantity (LBs)]
+			                        ),
+			                        0
+			                    ) <> 0
+			
+			                    || COALESCE (
+			                        CALCULATE (
+			                            [Revenue PVM Baseline Revenue]
+			                        ),
+			                        0
+			                    ) <> 0
+			
+			                    || COALESCE (
+			                        CALCULATE (
+			                            [Invoice Line Amount]
+			                        ),
+			                        0
+			                    ) <> 0
+			            )
+			
+			        RETURN
+			            SUMX (
+			                ProductsWithData,
+			
+			                VAR ActualQuantity =
+			                    COALESCE (
+			                        CALCULATE (
+			                            [Invoice Quantity (LBs)]
+			                        ),
+			                        0
+			                    )
+			
+			                VAR ReferencePrice =
+			                    COALESCE (
+			                        CALCULATE (
+			                            [Revenue PVM Reference Price per LB]
+			                        ),
+			                        0
+			                    )
+			
+			                RETURN
+			                    ActualQuantity * ReferencePrice
+			            )
+			    )
+		lineageTag: 8301e175-c910-4cbd-bbbe-0df813b7694a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue PVM Quantity Effect' =
+			
+			VAR Result =
+			    COALESCE (
+			        [Revenue PVM Actual Revenue at Baseline Price],
+			        0
+			    )
+			        - COALESCE (
+			            [Revenue PVM Baseline Revenue],
+			            0
+			        )
+			RETURN
+			    IF (
+			        ISBLANK ( [Revenue PVM Has Data] ),
+			        BLANK (),
+			        Result
+			    )
+		lineageTag: 3acdcff2-a6a8-4472-98df-ea5e9d8b0411
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue PVM Volume Effect' =
+			
+			VAR MonthsInScope =
+			    VALUES ( 'Dim_Date'[MonthStartDate] )
+			
+			VAR Result =
+			    SUMX (
+			        MonthsInScope,
+			
+			        VAR ActualPortfolioQuantity =
+			            CALCULATE (
+			                [Invoice Quantity (LBs)],
+			                ALLSELECTED ( 'Dim_Product' )
+			            )
+			
+			        VAR BaselinePortfolioQuantity =
+			            CALCULATE (
+			                [Revenue PVM Baseline Quantity (LBs)],
+			                ALLSELECTED ( 'Dim_Product' )
+			            )
+			
+			        VAR BaselineRevenueInCell =
+			            CALCULATE (
+			                [Revenue PVM Baseline Revenue]
+			            )
+			
+			        VAR PortfolioQuantityChange =
+			            COALESCE ( ActualPortfolioQuantity, 0 )
+			                - COALESCE (
+			                    BaselinePortfolioQuantity,
+			                    0
+			                )
+			
+			        RETURN
+			            PortfolioQuantityChange
+			                * DIVIDE (
+			                    COALESCE (
+			                        BaselineRevenueInCell,
+			                        0
+			                    ),
+			                    BaselinePortfolioQuantity,
+			                    0
+			                )
+			    )
+			
+			RETURN
+			    IF (
+			        ISBLANK ( [Revenue PVM Has Data] ),
+			        BLANK (),
+			        Result
+			    )
+		lineageTag: 30e7dfe6-89b6-4237-a98d-755134ab40f1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue PVM Mix Effect' =
+			
+			VAR Result =
+			    COALESCE (
+			        [Revenue PVM Quantity Effect],
+			        0
+			    )
+			        - COALESCE (
+			            [Revenue PVM Volume Effect],
+			            0
+			        )
+			RETURN
+			    IF (
+			        ISBLANK ( [Revenue PVM Has Data] ),
+			        BLANK (),
+			        Result
+			    )
+		lineageTag: 3480b171-c595-4d68-be28-b2629c5cc468
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue PVM Price Effect' =
+			
+			VAR Result =
+			    COALESCE (
+			        [Invoice Line Amount],
+			        0
+			    )
+			        - COALESCE (
+			            [Revenue PVM Actual Revenue at Baseline Price],
+			            0
+			        )
+			RETURN
+			    IF (
+			        ISBLANK ( [Revenue PVM Has Data] ),
+			        BLANK (),
+			        Result
+			    )
+		lineageTag: faf1f2f3-9dd0-47c2-a451-16da9355d0b1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue PVM Total Variance' =
+			
+			VAR Result =
+			    COALESCE (
+			        [Invoice Line Amount],
+			        0
+			    )
+			        - COALESCE (
+			            [Revenue PVM Baseline Revenue],
+			            0
+			        )
+			RETURN
+			    IF (
+			        ISBLANK ( [Revenue PVM Has Data] ),
+			        BLANK (),
+			        Result
+			    )
+		lineageTag: 79b9a19b-47fb-42b6-9172-4abd403392d5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue PVM Variance %' =
+			
+			DIVIDE (
+			    [Revenue PVM Total Variance],
+			    [Revenue PVM Baseline Revenue]
+			)
+		lineageTag: 96892c5c-c9e2-40b2-986e-0bcfbe6004f0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue PVM Explained Variance' =
+			
+			VAR Result =
+			    COALESCE (
+			        [Revenue PVM Volume Effect],
+			        0
+			    )
+			        + COALESCE (
+			            [Revenue PVM Mix Effect],
+			            0
+			        )
+			        + COALESCE (
+			            [Revenue PVM Price Effect],
+			            0
+			        )
+			RETURN
+			    IF (
+			        ISBLANK ( [Revenue PVM Has Data] ),
+			        BLANK (),
+			        Result
+			    )
+		lineageTag: 65c2c032-e31f-470a-b710-ed32bf33cfff
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue PVM Reconciliation Check' =
+			
+			VAR Difference =
+			    COALESCE (
+			        [Revenue PVM Total Variance],
+			        0
+			    )
+			        - COALESCE (
+			            [Revenue PVM Explained Variance],
+			            0
+			        )
+			RETURN
+			    IF (
+			        ISBLANK ( [Revenue PVM Has Data] ),
+			        BLANK (),
+			        IF (
+			            ABS ( Difference ) < 0.01,
+			            0,
+			            Difference
+			        )
+			    )
+		lineageTag: 2c2c74c0-4b79-44cc-a75b-9f737a45d945
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue PVM Reconciliation Status' =
+			
+			VAR Difference =
+			    [Revenue PVM Reconciliation Check]
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			
+			        ISBLANK ( Difference ),
+			            BLANK (),
+			
+			        ABS ( Difference ) < 0.01,
+			            "Reconciled",
+			
+			        "Review: "
+			            & FORMAT (
+			                Difference,
+			                "#,##0.00;(#,##0.00)"
+			            )
+			    )
+		lineageTag: 2e354123-5f6f-4ffe-9b45-64ec3301d621
+
+	measure 'Revenue PVM Waterfall Value' =
+			
+			VAR SelectedStep =
+			    SELECTEDVALUE (
+			        'Revenue PVM Steps'[Step]
+			    )
+			RETURN
+			    SWITCH (
+			        SelectedStep,
+			
+			        "Budget Revenue",
+			            [Revenue PVM Baseline Revenue],
+			
+			        "Volume Effect",
+			            [Revenue PVM Volume Effect],
+			
+			        "Mix Effect",
+			            [Revenue PVM Mix Effect],
+			
+			        "Price Effect",
+			            [Revenue PVM Price Effect]
+			    )
+		lineageTag: 12b7dab7-44bc-43cf-a603-ab667bfe8be3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue PVM Step Interpretation' =
+			
+			VAR SelectedStep =
+			    SELECTEDVALUE (
+			        'Revenue PVM Steps'[Step]
+			    )
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			
+			        ISBLANK ( SelectedStep ),
+			            "Actual invoice-line revenue after applying the Volume, Mix, and Price effects to Budget Revenue.",
+			
+			        SelectedStep = "Budget Revenue",
+			            "Budgeted invoice-line revenue for the selected period.",
+			
+			        SelectedStep = "Volume Effect",
+			            "Impact of Actual total pounds differing from Budget, holding Budget mix and Budget price per pound constant.",
+			
+			        SelectedStep = "Mix Effect",
+			            "Impact of Actual pounds shifting toward products with higher or lower Budget prices per pound.",
+			
+			        SelectedStep = "Price Effect",
+			            "Impact of Actual realized invoice price per pound differing from the Budget reference price on Actual pounds."
+			    )
+		lineageTag: e8eb6dd2-4238-4173-b843-d902d35bc501
+
+	measure 'Revenue PVM Subtitle' =
+			
+			VAR ValidDates =
+			    CALCULATETABLE (
+			        VALUES ( 'Dim_Date'[Date] ),
+			        KEEPFILTERS (
+			            FILTER (
+			                ALLSELECTED ( 'Dim_Date'[Date] ),
+			                'Dim_Date'[Date] > DATE ( 2025, 10, 31 )
+			                    && [Total Invoices] > 0
+			            )
+			        )
+			    )
+			
+			VAR StartDate =
+			    MINX (
+			        ValidDates,
+			        'Dim_Date'[Date]
+			    )
+			
+			VAR EndDate =
+			    MAXX (
+			        ValidDates,
+			        'Dim_Date'[Date]
+			    )
+			
+			VAR PeriodLabel =
+			    SWITCH (
+			        TRUE (),
+			
+			        ISBLANK ( StartDate ),
+			            "Select an analysis period",
+			
+			        EOMONTH ( StartDate, 0 )
+			            = EOMONTH ( EndDate, 0 ),
+			            FORMAT ( StartDate, "MMM 'yy" ),
+			
+			        FORMAT ( StartDate, "MMM 'yy" )
+			            & " – "
+			            & FORMAT ( EndDate, "MMM 'yy" )
+			    )
+			
+			RETURN
+			    "Actual vs Budget:  "
+			        & PeriodLabel
+		lineageTag: afda8525-4834-4979-98fa-b443a96f13de
+
+	column 'Measure Group'
+		isHidden
+		lineageTag: fd5dd5f0-38ad-49b9-a893-d6989c70955e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Measure Group]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Finance Measures' = calculated
+		mode: import
+		source =
+				
+				DATATABLE (
+				    "Measure Group", STRING,
+				    {
+				        { "Finance Measures" }
+				    }
+				)
+
+	annotation PBI_Id = ef3e4418d3fe4769b12728cbd30205b7
+
+

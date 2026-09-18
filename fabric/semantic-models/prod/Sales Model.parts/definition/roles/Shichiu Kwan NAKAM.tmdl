@@ -1,0 +1,8 @@
+role 'Shichiu Kwan NAKAM'
+	modelPermission: read
+
+	tablePermission Dim_Account = [Harmonized_Name] IN {"Sabic"}
+
+	annotation PBI_Id = 70b0f0d768a246a6a737f5d0b6fd36bd
+
+

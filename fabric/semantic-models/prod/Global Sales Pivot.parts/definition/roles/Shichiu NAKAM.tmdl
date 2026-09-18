@@ -1,0 +1,28 @@
+role 'Shichiu NAKAM'
+	modelPermission: read
+
+	tablePermission 'Account Table' =
+			'Account Table'[Customer Chain] IN {"Sabic"}
+			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Date Table' =
+			-- Date table RLS
+			'Date Table'[Fiscal Year] >= 2023
+			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Employee Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Legal Entity Table' = ```
+			'Legal Entity Table'[Legal Entity ID] IN {"101"}   
+			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+			```
+
+	tablePermission 'Product Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	tablePermission 'Sales Table' = [Sales Line Status] <> "Canceled"
+
+	tablePermission 'Warehouse Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
+
+	annotation PBI_Id = 168d01821c41472491a14c910f7ac2b5
+
+

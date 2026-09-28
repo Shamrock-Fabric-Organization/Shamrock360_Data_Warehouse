@@ -296,8 +296,16 @@ foreach ($db in $Database) {
             } else {
                 $QUERIES[$part]
             }
+            # ⛔ -MaxCharLength, OR EVERY ROUTINE BODY ARRIVES CUT AT 4,000 CHARACTERS.
+            # Invoke-Sqlcmd caps character columns at 4,000 by default and says nothing about
+            # it. sys.sql_modules.definition is nvarchar(max) and the largest routine here is
+            # over 146,000 characters, so the default silently delivered the first page of 298
+            # of 928 bodies - mid-identifier, mid-string, mid-comment. That is the same class
+            # of false pass the INFORMATION_SCHEMA note above warns about, arriving through a
+            # parameter default instead of a column width.
             $rows = Invoke-Sqlcmd -ServerInstance $Endpoint -Database $db `
                                   -AccessToken $token -Query $q `
+                                  -MaxCharLength ([int]::MaxValue) `
                                   -TrustServerCertificate -ErrorAction Stop
             $captured[$part] = @($rows | Select-Object -Property * -ExcludeProperty ItemArray, Table, RowError, RowState, HasErrors)
             Write-Host ("      {0,-10} {1,6} row(s)" -f $part, @($rows).Count)

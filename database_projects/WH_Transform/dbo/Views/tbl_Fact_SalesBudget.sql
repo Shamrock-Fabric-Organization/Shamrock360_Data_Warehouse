@@ -113,6 +113,11 @@ FROM WH_Raw.dbo.Budget_2026 b
 
  left join WH_Curated.[dbo].[XREF_Product_ID] X 
 	ON b.ProductID = x.Apollo_ProductID  
+	  AND b.Cmpny = CASE WHEN x.Company in ('001','002') then '101' 
+						 WHEN x.Company = '101' THEN '301'  
+						 WHEN x.Company = '201' THEN '501'
+						 WHEN x.Company = '999' THEN '301'
+						 else x.Company end
 	  --AND case when b.Cmpny = '002' then '001' else b.Cmpny end = X.Company  --case statement not used as the XRef has the legacy company values = X.Company
 
  left join WH_Curated.[dbo].[XREF_Customer_ID] y 
@@ -130,6 +135,7 @@ LEFT JOIN WH_Curated.dbo.mtbl_EDW_DIM_Account dcc
 
 LEFT JOIN WH_Curated.dbo.mtbl_EDW_DIM_Product dpc
 	ON coalesce(x.D365_ProductID, b.ProductID) = dpc.Product_ID
+		AND x.To_Company_D365 = dpc.CMPNY
 		--AND b.Cmpny = dpc.CMPNY
 		AND dpc.Record_Status=1
 

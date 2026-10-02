@@ -1,6 +1,6 @@
 
 
-CREATE OR ALTER       view [dbo].[vw_EDW_Fact_Sales] as  
+CREATE OR ALTER         view [dbo].[vw_EDW_Fact_Sales] as  
 SELECT f.[RecordID]
 	,f.[CMPNY]
 	,f.[SalesLine_Status]
@@ -330,7 +330,7 @@ FROM [dbo].[legacy_tbl_Fact_Sales] s
 
  left join [dbo].[XREF_Product_ID] X 
 	ON s.Product = x.Apollo_ProductID  
-	  --AND case when s.Cmpny = '002' then '001' else s.Cmpny end = X.Company  --case statement not used as the XRef has the legacy company values = X.Company
+	  AND s.Cmpny = X.Company
 
  left join [dbo].[XREF_Customer_ID] y 
 	ON s.CustomerID = y.Apollo_CustomerID 
@@ -376,26 +376,6 @@ LEFT JOIN mtbl_EDW_DIM_Product dpc
 		 else s.Cmpny end = dpc.CMPNY
 		AND dpc.Record_Status=1
 		 
---LEFT JOIN mtbl_EDW_DIM_Account dc
---	ON coalesce(y.D365_CustomerID, s.[CustomerID])  = dc.Customer_ID
---		AND CASE WHEN s.Cmpny='001' then '101' else s.Cmpny end = dc.CMPNY
---		AND s.[OrderDate] between dc.RecordEffectiveStartDate and dc.RecordEffectiveEndDate
-
---LEFT JOIN mtbl_EDW_DIM_Account dcc
---	ON coalesce(y.D365_CustomerID, s.[CustomerID])  = dcc.Customer_ID
---		AND CASE WHEN s.Cmpny='001' then '101' else s.Cmpny end = dcc.CMPNY
---		AND dcc.RecordStatus=1
-
---LEFT JOIN mtbl_EDW_DIM_Product dp
---	ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
---		AND CASE WHEN s.Cmpny='001' then '101' else s.Cmpny end = dp.CMPNY
---		AND s.[OrderDate] between dp.Start_Date and dp.End_Date
-
---LEFT JOIN mtbl_EDW_DIM_Product dpc
---	ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
---		AND CASE WHEN s.Cmpny='001' then '101' else s.Cmpny end = dpc.CMPNY
---		AND dpc.Record_Status=1
-
 LEFT JOIN mtbl_EDW_DIM_Legal_Entity dle
 	ON CASE WHEN s.Cmpny in ('001','002') then '101' 
 		 WHEN s.Cmpny = '101' THEN '301'  
@@ -724,7 +704,7 @@ left join mtbl_EDW_Dim_Date_Forex ddf on f.[Invoice Date] = ddf.date
 
  left join [dbo].[XREF_Product_ID] X 
 	ON f.Product = x.Apollo_ProductID  
-	  --AND f.Cmpny = X.Company
+	  AND f.Cmpny = X.Company
 	  
 LEFT JOIN mtbl_EDW_DIM_Account dc
 	--ON coalesce(y.D365_CustomerID, f.[Customer No])  = dc.Customer_ID
@@ -757,9 +737,7 @@ LEFT JOIN mtbl_EDW_DIM_Account dcc
 		AND dcc.RecordStatus=1
 
 LEFT JOIN mtbl_EDW_DIM_Product dp
-	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
 	ON COALESCE(x.D365_ProductID, f.Product) = dp.Product_ID
-		----AND f.Cmpny = dp.CMPNY
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
@@ -768,9 +746,7 @@ LEFT JOIN mtbl_EDW_DIM_Product dp
 		AND CONVERT(datetime2(6), [Ord Date] ) between dp.Start_Date and dp.End_Date
 
 LEFT JOIN mtbl_EDW_DIM_Product dp2
-	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
 	ON COALESCE(x.D365_ProductID, f.Product) = dp2.Search_Name
-----		AND f.Cmpny = dp2.CMPNY
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
@@ -779,9 +755,7 @@ LEFT JOIN mtbl_EDW_DIM_Product dp2
 		AND CONVERT(datetime2(6), f.[Ord Date] ) between dp2.Start_Date and dp2.End_Date
 
 LEFT JOIN mtbl_EDW_DIM_Product dpc
-	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
 	ON COALESCE(x.D365_ProductID, f.Product) = dpc.Product_ID
-----		AND f.Cmpny = dpc.CMPNY
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
@@ -790,9 +764,7 @@ LEFT JOIN mtbl_EDW_DIM_Product dpc
 		AND dpc.Record_Status=1
 
 LEFT JOIN mtbl_EDW_DIM_Product dpc2
-	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
 	ON COALESCE(x.D365_ProductID, f.Product) = dpc2.Search_Name
-		----AND f.Cmpny = dpc2.CMPNY
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
@@ -1084,6 +1056,7 @@ SELECT  ABS(CAST(CAST(
 from tbl_RESULTSSLSBYYR_TEDA f
 left join [dbo].[XREF_Product_ID] X 
 	ON f.[Product Name] = x.Apollo_ProductID  
+	  AND '201' = X.Company
 	  --AND '101' = case when X.Company='001' then '101' else X.Company end
 	  
 LEFT JOIN mtbl_EDW_DIM_Account dc
@@ -1099,31 +1072,31 @@ LEFT JOIN mtbl_EDW_DIM_Account dcc
 		AND dcc.RecordStatus=1
 
 LEFT JOIN mtbl_EDW_DIM_Product dp
-	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp.Product_ID
+		AND COALESCE(X.To_Company_D365,'101') = dp.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dp.CMPNY  --Changed from 201 to 501 for D365
-		AND dp.Source = 'Legacy'
+		--AND dp.Source = 'Legacy'
 		AND CONVERT(datetime2(6), f.[Order Date] ) between dp.Start_Date and dp.End_Date
 
 LEFT JOIN mtbl_EDW_DIM_Product dp2
-	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp2.Search_Name
+		AND COALESCE(X.To_Company_D365,'101') = dp2.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dp2.CMPNY  --Changed from 201 to 501 for D365
-		AND dp2.Source = 'Legacy'
+		--AND dp2.Source = 'Legacy'
 		AND CONVERT(datetime2(6), f.[Order Date] ) between dp2.Start_Date and dp2.End_Date
 
 LEFT JOIN mtbl_EDW_DIM_Product dpc
-	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc.Product_ID
+		AND COALESCE(X.To_Company_D365,'101') = dpc.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dpc.CMPNY  --Changed from 201 to 501 for D365
-		AND dpc.Source = 'Legacy'
+		--AND dpc.Source = 'Legacy'
 		AND dpc.Record_Status=1
 
 LEFT JOIN mtbl_EDW_DIM_Product dpc2
-	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc2.Search_Name
+		AND COALESCE(X.To_Company_D365,'101') = dpc2.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dpc2.CMPNY  --Changed from 201 to 501 for D365
-		AND dpc2.Source = 'Legacy'
+		--AND dpc2.Source = 'Legacy'
 		AND dpc2.Record_Status=1
 
 LEFT JOIN mtbl_EDW_DIM_Legal_Entity dle
@@ -1229,396 +1202,396 @@ union all
 ----------
 
 
------------------------------------------------------------------------------
--- Section 3A: Open Orders BVBA
-------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+------ Section 3A: Open Orders BVBA  -------COMMENTED OUT 2026-09-30 IN PREPATION FOR GO LIVE IN D365
+----------------------------------------------------------------------------------
 
-SELECT  ABS(CAST(CAST(
-        HASHBYTES('SHA2_256', 
-            CONCAT(
-                CAST(NEWID() AS VARCHAR(36)), '|'
-                ,CAST(SYSDATETIME() AS VARCHAR(30)), '|'
-                ,CAST(NEWID() AS VARCHAR(36)), '|'
-                -- Add row-specific data for extra uniqueness
-                ,CAST(f.[Order No] AS VARCHAR(100))
-            )
-        ) AS BINARY(8)) AS BIGINT))  AS ID
-	, CASE WHEN f.Cmpny in ('001','002') then '101' 
-		 WHEN f.Cmpny = '101' THEN '301'  
-		 WHEN f.Cmpny = '201' THEN '501'
-		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end Cmpny
-	--, CASE WHEN f.RecordType = 'Open Order' then 'Open' WHEN f.RecordType = 'Closed Order' then 'Invoiced' else f.RecordType end as [SalesLine_Status]
-	, 'Open' AS [SalesLine_Status]
-	, CONVERT(datetime2(6), COALESCE(
-					case when CONVERT(datetime2(6), [Invoice Date] )<='01/01/1900' then NULL else CONVERT(datetime2(6), [Invoice Date] ) end
-					,case when CONVERT(datetime2(6), [Ship Date] )<='01/01/1900' then NULL else CONVERT(datetime2(6), [Ship Date] ) end 
-					, [Ord Date])) 	DATE
-	, convert(int, convert(char(8), CONVERT(datetime2(6), COALESCE(
-					case when CONVERT(datetime2(6), [Invoice Date] )<='01/01/1900' then NULL else CONVERT(datetime2(6), [Invoice Date] ) end
-					,case when CONVERT(datetime2(6), [Ship Date] )<='01/01/1900' then NULL else CONVERT(datetime2(6), [Ship Date] ) end 
-					, [Ord Date])),112))	DATEKey
-	, CONVERT(datetime2(6), [Ord Date] ) AS OrderDate
-	, convert(int, convert(char(8), CONVERT(datetime2(6), [Ord Date] ),112))	OrderDateKey
-	, CONVERT(datetime2(6), '01/01/1900') as [SalesLine_RequestedShipDate]
-	, convert(int, 19000101) as [SalesLine_RequestedShipDateKey]
-	, case when CONVERT(datetime2(6), [Ship Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Ship Date] ) end AS ShipDate
-	, convert(int, convert(char(8), case when CONVERT(datetime2(6), [Ship Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Ship Date] ) end,112))	ShipDateKey
+----SELECT  ABS(CAST(CAST(
+----        HASHBYTES('SHA2_256', 
+----            CONCAT(
+----                CAST(NEWID() AS VARCHAR(36)), '|'
+----                ,CAST(SYSDATETIME() AS VARCHAR(30)), '|'
+----                ,CAST(NEWID() AS VARCHAR(36)), '|'
+----                -- Add row-specific data for extra uniqueness
+----                ,CAST(f.[Order No] AS VARCHAR(100))
+----            )
+----        ) AS BINARY(8)) AS BIGINT))  AS ID
+----	, CASE WHEN f.Cmpny in ('001','002') then '101' 
+----		 WHEN f.Cmpny = '101' THEN '301'  
+----		 WHEN f.Cmpny = '201' THEN '501'
+----		 WHEN f.CMPNY = '999' THEN '301'
+----		 else f.Cmpny end Cmpny
+----	--, CASE WHEN f.RecordType = 'Open Order' then 'Open' WHEN f.RecordType = 'Closed Order' then 'Invoiced' else f.RecordType end as [SalesLine_Status]
+----	, 'Open' AS [SalesLine_Status]
+----	, CONVERT(datetime2(6), COALESCE(
+----					case when CONVERT(datetime2(6), [Invoice Date] )<='01/01/1900' then NULL else CONVERT(datetime2(6), [Invoice Date] ) end
+----					,case when CONVERT(datetime2(6), [Ship Date] )<='01/01/1900' then NULL else CONVERT(datetime2(6), [Ship Date] ) end 
+----					, [Ord Date])) 	DATE
+----	, convert(int, convert(char(8), CONVERT(datetime2(6), COALESCE(
+----					case when CONVERT(datetime2(6), [Invoice Date] )<='01/01/1900' then NULL else CONVERT(datetime2(6), [Invoice Date] ) end
+----					,case when CONVERT(datetime2(6), [Ship Date] )<='01/01/1900' then NULL else CONVERT(datetime2(6), [Ship Date] ) end 
+----					, [Ord Date])),112))	DATEKey
+----	, CONVERT(datetime2(6), [Ord Date] ) AS OrderDate
+----	, convert(int, convert(char(8), CONVERT(datetime2(6), [Ord Date] ),112))	OrderDateKey
+----	, CONVERT(datetime2(6), '01/01/1900') as [SalesLine_RequestedShipDate]
+----	, convert(int, 19000101) as [SalesLine_RequestedShipDateKey]
+----	, case when CONVERT(datetime2(6), [Ship Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Ship Date] ) end AS ShipDate
+----	, convert(int, convert(char(8), case when CONVERT(datetime2(6), [Ship Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Ship Date] ) end,112))	ShipDateKey
 
-	,CONVERT(datetime2(6), '01/01/1900') as [SalesLine_DeliveryDate]
-	,convert(int, 19000101) as [SalesLine_DeliveryDateKey]
+----	,CONVERT(datetime2(6), '01/01/1900') as [SalesLine_DeliveryDate]
+----	,convert(int, 19000101) as [SalesLine_DeliveryDateKey]
 
-	, case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end AS InvoiceDate
-	, convert(int, convert(char(8), case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end,112))	InvoiceDateDateKey
-	,CASE WHEN f.Cmpny in ('001','002') then '101' 
-		 WHEN f.Cmpny = '101' THEN '301'  
-		 WHEN f.Cmpny = '201' THEN '501'
-		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end as [Legal_Entity_ID]
+----	, case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end AS InvoiceDate
+----	, convert(int, convert(char(8), case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end,112))	InvoiceDateDateKey
+----	,CASE WHEN f.Cmpny in ('001','002') then '101' 
+----		 WHEN f.Cmpny = '101' THEN '301'  
+----		 WHEN f.Cmpny = '201' THEN '501'
+----		 WHEN f.CMPNY = '999' THEN '301'
+----		 else f.Cmpny end as [Legal_Entity_ID]
 
---	, 'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6) as CustomerID -- KY 4/8/26
-	, 'A' + f.Cmpny 
-       + TRIM(f.[Customer No])
-       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) as CustomerID
-	, null as [InvoiceAccount]
-	, COALESCE(x.D365_ProductID, f.Product)  ProductID
-	----,[CPCID]  ----replaced with CASE logic code below
-	,CASE WHEN f.Cmpny in ('001','002') then '101' 
-		 WHEN f.Cmpny = '101' THEN '301'  
-		 WHEN f.Cmpny = '201' THEN '501'
-		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end
-			+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
-			+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 	CPCID
-	--, 'A'+Trim(f.Cmpny)+Trim([Customer No])+Trim([Ship To No])+'---'+Trim(Product) AS CPCID
-	, [Invoice No]  InvoiceNo
-	, [Order No]  Customer_Order_Number
-	, [Lbs Ordered] as [Quantity]
-	, 'LB' as [Quantity_UoM]
-	,CONVERT(decimal(38,6), [Lbs Ordered]) as [Quantity_LBs]
-	,CONVERT(decimal(38,6), [Lbs Ordered]) * 0.45359237 as [Quantity_KGs]
-	,null AS [Volume]
-	,null as [Volume_UoM]
-	,null as [Price]
-	,'EUR' as [Currency]
-	,CONVERT(decimal(38,2), Extension) /* * ddf.Rate*/  as Amount  --Cmmented the * ddf.Rate so this value is reported in original EUR currency per Kevin Y. 2026-07-22 
-	--,CONVERT(decimal(38,2), Extension) * 1.171570000 as Amount
-	,null as [Amount_Currency]
-	,null as [Returned_Quantity]
-	,null as [Returned_Amount]
-	,null as [SalesLine_Salesman_ID]
-	,null as [Customer_Salesman_ID]
-	--,CONVERT(decimal(38,4), 0) as [Total_Direct_Cost_Standard]
-	--,CONVERT(decimal(38,4), 0) as [Total_Overhead_Cost_Standard]
-	--,CONVERT(decimal(38,4), 0) as [Packaging_Cost_Standard]
-	--,CONVERT(decimal(38,4), 0) as [TotalCost]
-	,CONVERT(varchar(50),'BRILJANT') AS [Source]
-	, ISNULL(dc.CustomerKey, -1) HistoricCustomerKey
-	, ISNULL(dcc.CustomerKey, -1) CustomerKey
-	, -1 HistoricInvoiceCustomerKey
-	, -1 InvoiceCustomerKey
-	, COALESCE(dp.ProductKey, dp2.ProductKey, -1) HistoricProductKey
-	, COALESCE(dpc.ProductKey, dpc2.ProductKey, -1) ProductKey
-	,-1 as [StandardCostKey]
-	, ISNULL(dle.Legal_EntityKey, -1) Legal_EntityKey
-	,-1 as [SiteKey]
-	, ISNULL(de.EmployeeKey, -1) as [SalesLine_EmployeeKey]
-	--, COALESCE(de2.EmployeeKey, de.EmployeeKey, -1) as [CustAcct_EmployeeKey]
-	, COALESCE(de3.EmployeeKey, de2.EmployeeKey, de.EmployeeKey, -1) as [CustAcct_EmployeeKey]
-	, -1 as [SalesTaker_EmployeeKey]
-	, ISNULL(dw.WarehouseKey, -1) WarehouseKey
-	,-1 as [SalesOrderKey]
-	,null as [OnHold]
-	,null as [OrderOnHold]
-	,null as [HoldCode]
-	,null as [HoldReasonCode]
-	,null as [SalesOrderLineNumber]
-	, CONVERT(datetime2(6), [Ord Date] ) AS [SalesLineCreatedDate]
-	, convert(int, convert(char(8), CONVERT(datetime2(6), [Ord Date] ),112))	[SalesLineCreatedDateKey]
-	--, ISNULL(dms.MarketSegmentationKey, -1) HistoricMarketSegmentationKey  --Per Kevin Y 2026-02-02 historic value not needed
-	, ISNULL(dmsc.MarketSegmentationKey, -1) MarketSegmentationKey
-	,NULL [PurchaseOrderFormNumber]
-	,ISNULL(da.AddressKey, -1) [DeliveryAddressKey]
+------	, 'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6) as CustomerID -- KY 4/8/26
+----	, 'A' + f.Cmpny 
+----       + TRIM(f.[Customer No])
+----       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) as CustomerID
+----	, null as [InvoiceAccount]
+----	, COALESCE(x.D365_ProductID, f.Product)  ProductID
+----	----,[CPCID]  ----replaced with CASE logic code below
+----	,CASE WHEN f.Cmpny in ('001','002') then '101' 
+----		 WHEN f.Cmpny = '101' THEN '301'  
+----		 WHEN f.Cmpny = '201' THEN '501'
+----		 WHEN f.CMPNY = '999' THEN '301'
+----		 else f.Cmpny end
+----			+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+----			+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 	CPCID
+----	--, 'A'+Trim(f.Cmpny)+Trim([Customer No])+Trim([Ship To No])+'---'+Trim(Product) AS CPCID
+----	, [Invoice No]  InvoiceNo
+----	, [Order No]  Customer_Order_Number
+----	, [Lbs Ordered] as [Quantity]
+----	, 'LB' as [Quantity_UoM]
+----	,CONVERT(decimal(38,6), [Lbs Ordered]) as [Quantity_LBs]
+----	,CONVERT(decimal(38,6), [Lbs Ordered]) * 0.45359237 as [Quantity_KGs]
+----	,null AS [Volume]
+----	,null as [Volume_UoM]
+----	,null as [Price]
+----	,'EUR' as [Currency]
+----	,CONVERT(decimal(38,2), Extension) /* * ddf.Rate*/  as Amount  --Cmmented the * ddf.Rate so this value is reported in original EUR currency per Kevin Y. 2026-07-22 
+----	--,CONVERT(decimal(38,2), Extension) * 1.171570000 as Amount
+----	,null as [Amount_Currency]
+----	,null as [Returned_Quantity]
+----	,null as [Returned_Amount]
+----	,null as [SalesLine_Salesman_ID]
+----	,null as [Customer_Salesman_ID]
+----	--,CONVERT(decimal(38,4), 0) as [Total_Direct_Cost_Standard]
+----	--,CONVERT(decimal(38,4), 0) as [Total_Overhead_Cost_Standard]
+----	--,CONVERT(decimal(38,4), 0) as [Packaging_Cost_Standard]
+----	--,CONVERT(decimal(38,4), 0) as [TotalCost]
+----	,CONVERT(varchar(50),'BRILJANT') AS [Source]
+----	, ISNULL(dc.CustomerKey, -1) HistoricCustomerKey
+----	, ISNULL(dcc.CustomerKey, -1) CustomerKey
+----	, -1 HistoricInvoiceCustomerKey
+----	, -1 InvoiceCustomerKey
+----	, COALESCE(dp.ProductKey, dp2.ProductKey, -1) HistoricProductKey
+----	, COALESCE(dpc.ProductKey, dpc2.ProductKey, -1) ProductKey
+----	,-1 as [StandardCostKey]
+----	, ISNULL(dle.Legal_EntityKey, -1) Legal_EntityKey
+----	,-1 as [SiteKey]
+----	, ISNULL(de.EmployeeKey, -1) as [SalesLine_EmployeeKey]
+----	--, COALESCE(de2.EmployeeKey, de.EmployeeKey, -1) as [CustAcct_EmployeeKey]
+----	, COALESCE(de3.EmployeeKey, de2.EmployeeKey, de.EmployeeKey, -1) as [CustAcct_EmployeeKey]
+----	, -1 as [SalesTaker_EmployeeKey]
+----	, ISNULL(dw.WarehouseKey, -1) WarehouseKey
+----	,-1 as [SalesOrderKey]
+----	,null as [OnHold]
+----	,null as [OrderOnHold]
+----	,null as [HoldCode]
+----	,null as [HoldReasonCode]
+----	,null as [SalesOrderLineNumber]
+----	, CONVERT(datetime2(6), [Ord Date] ) AS [SalesLineCreatedDate]
+----	, convert(int, convert(char(8), CONVERT(datetime2(6), [Ord Date] ),112))	[SalesLineCreatedDateKey]
+----	--, ISNULL(dms.MarketSegmentationKey, -1) HistoricMarketSegmentationKey  --Per Kevin Y 2026-02-02 historic value not needed
+----	, ISNULL(dmsc.MarketSegmentationKey, -1) MarketSegmentationKey
+----	,NULL [PurchaseOrderFormNumber]
+----	,ISNULL(da.AddressKey, -1) [DeliveryAddressKey]
 
-	,case when isnull(dpc.isphantom,'') = 'Yes' 
-		THEN 
-			CASE WHEN f.Cmpny in ('001','002') then '101' 
-				 WHEN f.Cmpny = '101' THEN '301'  
-				 WHEN f.Cmpny = '201' THEN '501'
-				 WHEN f.CMPNY = '999' THEN '301'
-				 else f.Cmpny end
-					+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
-					+'-'+ Trim(f.Product) 
-		ELSE 
-			CASE WHEN f.Cmpny in ('001','002') then '101' 
-				 WHEN f.Cmpny = '101' THEN '301'  
-				 WHEN f.Cmpny = '201' THEN '501'
-				 WHEN f.CMPNY = '999' THEN '301'
-				 else f.Cmpny end
-					+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
-					+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 
-		END CPCID2
-		,TRIM(case when isnull(dpc.isphantom,'') = 'Yes'	
-			THEN f.Product   
-			ELSE COALESCE(x.D365_ProductID, f.Product)
-			END) as ProductID2
-	, dpc.IsPhantom  IsPhantom2
+----	,case when isnull(dpc.isphantom,'') = 'Yes' 
+----		THEN 
+----			CASE WHEN f.Cmpny in ('001','002') then '101' 
+----				 WHEN f.Cmpny = '101' THEN '301'  
+----				 WHEN f.Cmpny = '201' THEN '501'
+----				 WHEN f.CMPNY = '999' THEN '301'
+----				 else f.Cmpny end
+----					+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+----					+'-'+ Trim(f.Product) 
+----		ELSE 
+----			CASE WHEN f.Cmpny in ('001','002') then '101' 
+----				 WHEN f.Cmpny = '101' THEN '301'  
+----				 WHEN f.Cmpny = '201' THEN '501'
+----				 WHEN f.CMPNY = '999' THEN '301'
+----				 else f.Cmpny end
+----					+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+----					+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 
+----		END CPCID2
+----		,TRIM(case when isnull(dpc.isphantom,'') = 'Yes'	
+----			THEN f.Product   
+----			ELSE COALESCE(x.D365_ProductID, f.Product)
+----			END) as ProductID2
+----	, dpc.IsPhantom  IsPhantom2
 
 
-	-- === ADDED: multi-currency conversion columns  ===
-	-- Audit: FROM-currency for each conversion basis
-	, 'EUR' [Txn_Source_Currency]
-	, NULL as [Cost_Source_Currency]
-	-- Txn basis: Price (base f.[Price])
-	, null as [SalesPrice_USD]
-	, null as [SalesPrice_EUR]
-	, null as [SalesPrice_CNY]
-	-- Txn basis: Amount (base null as [Amount])
-	, erTxnUSD.ExchangeRate * CONVERT(decimal(38,2), Extension) as [Amount_USD]
-	, CONVERT(decimal(38,2), Extension) as [Amount_EUR]
-	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,2), Extension) as [Amount_CNY]
-	-- Txn basis: Returned_Amount (base null as [Returned_Amount])
-	, null as [Returned_Amount_USD]
-	, null as [Returned_Amount_EUR]
-	, null as [Returned_Amount_CNY]
-	---- Cost/MST basis: Total_Direct_Cost_Standard (base null as [Total_Direct_Cost_Standard])
-	--, null as [Total_Direct_Cost_Standard_USD]
-	--, null as [Total_Direct_Cost_Standard_EUR]
-	--, null as [Total_Direct_Cost_Standard_CNY]
-	---- Cost/MST basis: Total_Overhead_Cost_Standard (base null as [Total_Overhead_Cost_Standard])
-	--, null as [Total_Overhead_Cost_Standard_USD]
-	--, null as [Total_Overhead_Cost_Standard_EUR]
-	--, null as [Total_Overhead_Cost_Standard_CNY]
-	---- Cost/MST basis: Packaging_Cost_Standard (base null as [Packaging_Cost_Standard])
-	--, null as [Packaging_Cost_Standard_USD]
-	--, null as [Packaging_Cost_Standard_EUR]
-	--, null as [Packaging_Cost_Standard_CNY]
-	---- Cost/MST basis: TotalCost (base null as [TotalCost])
-	--, null as [TotalCost_USD]
-	--, null as [TotalCost_EUR]
-	--, null as [TotalCost_CNY]
+----	-- === ADDED: multi-currency conversion columns  ===
+----	-- Audit: FROM-currency for each conversion basis
+----	, 'EUR' [Txn_Source_Currency]
+----	, NULL as [Cost_Source_Currency]
+----	-- Txn basis: Price (base f.[Price])
+----	, null as [SalesPrice_USD]
+----	, null as [SalesPrice_EUR]
+----	, null as [SalesPrice_CNY]
+----	-- Txn basis: Amount (base null as [Amount])
+----	, erTxnUSD.ExchangeRate * CONVERT(decimal(38,2), Extension) as [Amount_USD]
+----	, CONVERT(decimal(38,2), Extension) as [Amount_EUR]
+----	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,2), Extension) as [Amount_CNY]
+----	-- Txn basis: Returned_Amount (base null as [Returned_Amount])
+----	, null as [Returned_Amount_USD]
+----	, null as [Returned_Amount_EUR]
+----	, null as [Returned_Amount_CNY]
+----	---- Cost/MST basis: Total_Direct_Cost_Standard (base null as [Total_Direct_Cost_Standard])
+----	--, null as [Total_Direct_Cost_Standard_USD]
+----	--, null as [Total_Direct_Cost_Standard_EUR]
+----	--, null as [Total_Direct_Cost_Standard_CNY]
+----	---- Cost/MST basis: Total_Overhead_Cost_Standard (base null as [Total_Overhead_Cost_Standard])
+----	--, null as [Total_Overhead_Cost_Standard_USD]
+----	--, null as [Total_Overhead_Cost_Standard_EUR]
+----	--, null as [Total_Overhead_Cost_Standard_CNY]
+----	---- Cost/MST basis: Packaging_Cost_Standard (base null as [Packaging_Cost_Standard])
+----	--, null as [Packaging_Cost_Standard_USD]
+----	--, null as [Packaging_Cost_Standard_EUR]
+----	--, null as [Packaging_Cost_Standard_CNY]
+----	---- Cost/MST basis: TotalCost (base null as [TotalCost])
+----	--, null as [TotalCost_USD]
+----	--, null as [TotalCost_EUR]
+----	--, null as [TotalCost_CNY]
 		
-	, CONVERT(decimal(38,2), Extension) [InvoiceLineAmount]
-	, erTxnUSD.ExchangeRate * CONVERT(decimal(38,2), Extension)   as [InvoiceLineAmount_USD]
-	, CONVERT(decimal(38,2), Extension)                           as [InvoiceLineAmount_EUR]
-	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,2), Extension)   as [InvoiceLineAmount_CNY]
-	, NULL [InvoiceLineAmountMST]
-	, 'EUR' [InvoiceCurrency_Code]
-	,'LB' as [InvoiceSalesUnit]
-	,[Lbs Ordered] as [InvoiceQty]
-	,CONVERT(decimal(38,6), [Lbs Ordered]) as [InvoiceQuantity_LBs]
-	,CONVERT(decimal(38,6), [Lbs Ordered]) * 0.45359237 as [InvoiceQuantity_KGs]
+----	, CONVERT(decimal(38,2), Extension) [InvoiceLineAmount]
+----	, erTxnUSD.ExchangeRate * CONVERT(decimal(38,2), Extension)   as [InvoiceLineAmount_USD]
+----	, CONVERT(decimal(38,2), Extension)                           as [InvoiceLineAmount_EUR]
+----	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,2), Extension)   as [InvoiceLineAmount_CNY]
+----	, NULL [InvoiceLineAmountMST]
+----	, 'EUR' [InvoiceCurrency_Code]
+----	,'LB' as [InvoiceSalesUnit]
+----	,[Lbs Ordered] as [InvoiceQty]
+----	,CONVERT(decimal(38,6), [Lbs Ordered]) as [InvoiceQuantity_LBs]
+----	,CONVERT(decimal(38,6), [Lbs Ordered]) * 0.45359237 as [InvoiceQuantity_KGs]
 
-	-- Rate-missing flags (1 = real conversion needed but no rate row found)
-	, CASE WHEN erTxnUSD.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_USD_Rate_Missing]
-	, 0 as [Txn_EUR_Rate_Missing]
-	, CASE WHEN erTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
-	, null as [Cost_USD_Rate_Missing]
-	, null as [Cost_EUR_Rate_Missing]
-	, null as [Cost_CNY_Rate_Missing]
+----	-- Rate-missing flags (1 = real conversion needed but no rate row found)
+----	, CASE WHEN erTxnUSD.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_USD_Rate_Missing]
+----	, 0 as [Txn_EUR_Rate_Missing]
+----	, CASE WHEN erTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_CNY_Rate_Missing]
+----	, null as [Cost_USD_Rate_Missing]
+----	, null as [Cost_EUR_Rate_Missing]
+----	, null as [Cost_CNY_Rate_Missing]
 	
-	, CASE WHEN erTxnUSD.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_USD_Rate_Missing]
-	, 0 as [InvoiceTxn_EUR_Rate_Missing]
-	, CASE WHEN erTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_CNY_Rate_Missing]
+----	, CASE WHEN erTxnUSD.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_USD_Rate_Missing]
+----	, 0 as [InvoiceTxn_EUR_Rate_Missing]
+----	, CASE WHEN erTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_CNY_Rate_Missing]
 
-from tbl_RESULTSSLSBYYR_BVBA_Open f
+----from tbl_RESULTSSLSBYYR_BVBA_Open f
 
-left join mtbl_EDW_Dim_Date_Forex ddf on f.[Ord Date] = ddf.date 
+----left join mtbl_EDW_Dim_Date_Forex ddf on f.[Ord Date] = ddf.date 
 
- left join [dbo].[XREF_Product_ID] X 
-	ON f.Product = x.Apollo_ProductID  
-	--  AND case when f.Cmpny='201' then '101' else f.Cmpny end = X.Company
+---- left join [dbo].[XREF_Product_ID] X 
+----	ON f.Product = x.Apollo_ProductID  
+----	--  AND case when f.Cmpny='201' then '101' else f.Cmpny end = X.Company
 	  
-LEFT JOIN mtbl_EDW_DIM_Account dc
-	--ON coalesce(y.D365_CustomerID, f.[Customer No])  = dc.Customer_ID
---	ON f.[Customer No]  = dc.Customer_ID
---	ON 'A'+f.Cmpny+trim([Customer No])+'000000'  = dc.Customer_ID
-		--'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6)  = dc.Customer_ID
-	ON 'A' + f.Cmpny 
-       + TRIM(f.[Customer No])
-       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dc.Customer_ID
-		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
-		 WHEN f.Cmpny = '101' THEN '301'  
-		 WHEN f.Cmpny = '201' THEN '501'
-		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end = dc.CMPNY
-		AND CONVERT(datetime2(6), [Ord Date] ) between dc.RecordEffectiveStartDate and dc.RecordEffectiveEndDate
+----LEFT JOIN mtbl_EDW_DIM_Account dc
+----	--ON coalesce(y.D365_CustomerID, f.[Customer No])  = dc.Customer_ID
+------	ON f.[Customer No]  = dc.Customer_ID
+------	ON 'A'+f.Cmpny+trim([Customer No])+'000000'  = dc.Customer_ID
+----		--'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6)  = dc.Customer_ID
+----	ON 'A' + f.Cmpny 
+----       + TRIM(f.[Customer No])
+----       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dc.Customer_ID
+----		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
+----		 WHEN f.Cmpny = '101' THEN '301'  
+----		 WHEN f.Cmpny = '201' THEN '501'
+----		 WHEN f.CMPNY = '999' THEN '301'
+----		 else f.Cmpny end = dc.CMPNY
+----		AND CONVERT(datetime2(6), [Ord Date] ) between dc.RecordEffectiveStartDate and dc.RecordEffectiveEndDate
 
-LEFT JOIN mtbl_EDW_DIM_Account dcc
-	--ON coalesce(y.D365_CustomerID, f.[Customer No])  = dc.Customer_ID
---	ON f.[Customer No]  = dc.Customer_ID
---	ON 'A'+f.Cmpny+trim([Customer No])+'000000'  = dcc.Customer_ID
-		--'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6)  = dcc.Customer_ID
-	ON 'A' + f.Cmpny 
-       + TRIM(f.[Customer No])
-       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dcc.Customer_ID
-		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
-		 WHEN f.Cmpny = '101' THEN '301'  
-		 WHEN f.Cmpny = '201' THEN '501'
-		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end = dcc.CMPNY
-		AND dcc.RecordStatus=1
+----LEFT JOIN mtbl_EDW_DIM_Account dcc
+----	--ON coalesce(y.D365_CustomerID, f.[Customer No])  = dc.Customer_ID
+------	ON f.[Customer No]  = dc.Customer_ID
+------	ON 'A'+f.Cmpny+trim([Customer No])+'000000'  = dcc.Customer_ID
+----		--'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6)  = dcc.Customer_ID
+----	ON 'A' + f.Cmpny 
+----       + TRIM(f.[Customer No])
+----       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dcc.Customer_ID
+----		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
+----		 WHEN f.Cmpny = '101' THEN '301'  
+----		 WHEN f.Cmpny = '201' THEN '501'
+----		 WHEN f.CMPNY = '999' THEN '301'
+----		 else f.Cmpny end = dcc.CMPNY
+----		AND dcc.RecordStatus=1
 
-LEFT JOIN mtbl_EDW_DIM_Product dp
-	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
-	ON COALESCE(x.D365_ProductID, f.Product) = dp.Product_ID
-		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
-		 WHEN f.Cmpny = '101' THEN '301'  
-		 WHEN f.Cmpny = '201' THEN '501'
-		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end = dp.CMPNY
-		AND CONVERT(datetime2(6), [Ord Date] ) between dp.Start_Date and dp.End_Date
+----LEFT JOIN mtbl_EDW_DIM_Product dp
+----	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
+----	ON COALESCE(x.D365_ProductID, f.Product) = dp.Product_ID
+----		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
+----		 WHEN f.Cmpny = '101' THEN '301'  
+----		 WHEN f.Cmpny = '201' THEN '501'
+----		 WHEN f.CMPNY = '999' THEN '301'
+----		 else f.Cmpny end = dp.CMPNY
+----		AND CONVERT(datetime2(6), [Ord Date] ) between dp.Start_Date and dp.End_Date
 
-LEFT JOIN mtbl_EDW_DIM_Product dp2
-	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
-	ON COALESCE(x.D365_ProductID, f.Product) = dp2.Search_Name
-		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
-		 WHEN f.Cmpny = '101' THEN '301'  
-		 WHEN f.Cmpny = '201' THEN '501'
-		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end = dp2.CMPNY
-		AND CONVERT(datetime2(6), f.[Ord Date] ) between dp2.Start_Date and dp2.End_Date
+----LEFT JOIN mtbl_EDW_DIM_Product dp2
+----	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
+----	ON COALESCE(x.D365_ProductID, f.Product) = dp2.Search_Name
+----		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
+----		 WHEN f.Cmpny = '101' THEN '301'  
+----		 WHEN f.Cmpny = '201' THEN '501'
+----		 WHEN f.CMPNY = '999' THEN '301'
+----		 else f.Cmpny end = dp2.CMPNY
+----		AND CONVERT(datetime2(6), f.[Ord Date] ) between dp2.Start_Date and dp2.End_Date
 
-LEFT JOIN mtbl_EDW_DIM_Product dpc
-	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
-	ON COALESCE(x.D365_ProductID, f.Product) = dpc.Product_ID
-		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
-		 WHEN f.Cmpny = '101' THEN '301'  
-		 WHEN f.Cmpny = '201' THEN '501'
-		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end = dpc.CMPNY
-		AND dpc.Record_Status=1
+----LEFT JOIN mtbl_EDW_DIM_Product dpc
+----	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
+----	ON COALESCE(x.D365_ProductID, f.Product) = dpc.Product_ID
+----		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
+----		 WHEN f.Cmpny = '101' THEN '301'  
+----		 WHEN f.Cmpny = '201' THEN '501'
+----		 WHEN f.CMPNY = '999' THEN '301'
+----		 else f.Cmpny end = dpc.CMPNY
+----		AND dpc.Record_Status=1
 
-LEFT JOIN mtbl_EDW_DIM_Product dpc2
-	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
-	ON COALESCE(x.D365_ProductID, f.Product) = dpc2.Search_Name
-		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
-		 WHEN f.Cmpny = '101' THEN '301'  
-		 WHEN f.Cmpny = '201' THEN '501'
-		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end = dpc2.CMPNY
-		AND dpc2.Record_Status=1
+----LEFT JOIN mtbl_EDW_DIM_Product dpc2
+----	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
+----	ON COALESCE(x.D365_ProductID, f.Product) = dpc2.Search_Name
+----		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
+----		 WHEN f.Cmpny = '101' THEN '301'  
+----		 WHEN f.Cmpny = '201' THEN '501'
+----		 WHEN f.CMPNY = '999' THEN '301'
+----		 else f.Cmpny end = dpc2.CMPNY
+----		AND dpc2.Record_Status=1
 
-LEFT JOIN mtbl_EDW_DIM_Legal_Entity dle
-	ON CASE WHEN f.Cmpny in ('001','002') then '101' 
-		 WHEN f.Cmpny = '101' THEN '301'  
-		 WHEN f.Cmpny = '201' THEN '501'
-		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end = dle.CMPNY
-		AND dle.RecordStatus=1
-
-
-LEFT JOIN mtbl_EDW_DIM_Warehouse dw
-	ON CASE 
-				WHEN f.Warehouse IN ('','n.a.','Not Applicable','Not Available') THEN 'UNKNOWN'
-				WHEN f.Cmpny in ('001','002') then '101' 
-				WHEN f.Cmpny = '101' THEN '301'  
-				WHEN f.Cmpny = '201' THEN '501'
-				WHEN f.CMPNY = '999' THEN '301'
-				ELSE f.Cmpny 
-			END  = dw.CMPNY
-		AND CASE 
-				WHEN f.Warehouse IN ('','n.a.') THEN 'not applicable'
-				ELSE f.Warehouse
-			END = dw.Warehouse_ID
-
-LEFT JOIN [dbo].[tbl_DIM_Accounts] lda --Legacy Account data with Salesman needed
-	--ON f.[Customer No] = lda.CustomerID
-	ON 'A' + f.Cmpny 
-       + TRIM(f.[Customer No])
-       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = lda.CustomerID
-		AND f.Cmpny = lda.CMPNY
-		AND lda.RecordStatus=1
-
-LEFT JOIN mtbl_EDW_DIM_Employee de
-	ON lda.Salesman = de.Employee_Name
-
---LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
---	ON xrs.Apollo_SalesmanName = lda.Salesman
-
---LEFT JOIN mtbl_EDW_DIM_Employee de2
---	ON xrs.D365_SalesmanID = de2.Personnel_Number
-
-LEFT JOIN mtbl_EDW_DIM_Employee de2
-	--ON xrs.D365_SalesmanID = de2.Personnel_Number
-	ON dcc.Salesman_ID = de2.Personnel_Number
-	  AND de2.RecordStatus = 1
-
-LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
-	ON xrs.Apollo_SalesmanName = lda.Salesman
-
-LEFT JOIN mtbl_EDW_DIM_Employee de3
-	ON xrs.D365_SalesmanID = de3.Personnel_Number
-
---LEFT JOIN mtbl_EDW_DIM_MarketSegmentation dms  --Per Kevin Y 2026-02-02 historic value not needed
---	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = dms.CustomerID  --Per Kevin Y 2026-02-02 historic value not needed
---		AND COALESCE(x.D365_ProductID, f.Product) = dms.ProductID  --Per Kevin Y 2026-02-02 historic value not needed
---		AND CASE WHEN f.Cmpny in ('001','002') then '101'   --Per Kevin Y 2026-02-02 historic value not needed
---		 WHEN f.Cmpny = '101' THEN '301'    --Per Kevin Y 2026-02-02 historic value not needed
---		 WHEN f.Cmpny = '201' THEN '501'  --Per Kevin Y 2026-02-02 historic value not needed
---		 WHEN f.CMPNY = '999' THEN '301'  --Per Kevin Y 2026-02-02 historic value not needed
---		 else f.Cmpny end = dms.CMPNY  --Per Kevin Y 2026-02-02 historic value not needed
---		AND CONVERT(datetime2(6), [Ord Date] ) between dms.RecordEffectiveStartDate and dms.RecordEffectiveEndDate  --Per Kevin Y 2026-02-02 historic value not needed
-
-LEFT JOIN mtbl_EDW_DIM_MarketSegmentation dmsc
-	ON 'A' + f.Cmpny 
-       + TRIM(f.[Customer No])
-       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dmsc.CustomerID
-		AND COALESCE(x.D365_ProductID, f.Product) = dmsc.ProductID
-		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
-		 WHEN f.Cmpny = '101' THEN '301'  
-		 WHEN f.Cmpny = '201' THEN '501'
-		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end = dmsc.CMPNY
-		AND dmsc.RecordStatus=1
-
-LEFT JOIN (SELECT street
-			, city
-			, state
-			, zipcode
-			, country
-			, min(AddressKey) AddressKey
-			FROM mtbl_EDW_DIM_Address
-			WHERE RecordStatus = 1
-			GROUP BY street
-			, city
-			, state
-			, zipcode
-			, country) da
-	ON ISNULL(COALESCE(lda.Address1 + ' ', '') + COALESCE(lda.Address2 + ' ', '') + COALESCE(lda.Address3, '') + COALESCE(lda.Address4, ''),'') = da.street
-      AND isnull(lda.[City],'')    = da.City
-      AND isnull(lda.[State],'')   = da.State
-      AND isnull(lda.[ZIP],'')     = da.ZipCode
-      AND isnull(lda.[Country],'') = da.Country
+----LEFT JOIN mtbl_EDW_DIM_Legal_Entity dle
+----	ON CASE WHEN f.Cmpny in ('001','002') then '101' 
+----		 WHEN f.Cmpny = '101' THEN '301'  
+----		 WHEN f.Cmpny = '201' THEN '501'
+----		 WHEN f.CMPNY = '999' THEN '301'
+----		 else f.Cmpny end = dle.CMPNY
+----		AND dle.RecordStatus=1
 
 
-LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnUSD
-	ON erTxnUSD.fromcurrencycode = 'EUR'
-		AND erTxnUSD.tocurrencycode   = 'USD'
-		AND erTxnUSD.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
-		AND case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end 
-			between erTxnUSD.validfrom and erTxnUSD.validto
+----LEFT JOIN mtbl_EDW_DIM_Warehouse dw
+----	ON CASE 
+----				WHEN f.Warehouse IN ('','n.a.','Not Applicable','Not Available') THEN 'UNKNOWN'
+----				WHEN f.Cmpny in ('001','002') then '101' 
+----				WHEN f.Cmpny = '101' THEN '301'  
+----				WHEN f.Cmpny = '201' THEN '501'
+----				WHEN f.CMPNY = '999' THEN '301'
+----				ELSE f.Cmpny 
+----			END  = dw.CMPNY
+----		AND CASE 
+----				WHEN f.Warehouse IN ('','n.a.') THEN 'not applicable'
+----				ELSE f.Warehouse
+----			END = dw.Warehouse_ID
 
-LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
-	ON erTxnCNY.fromcurrencycode = 'EUR'
-		AND erTxnCNY.tocurrencycode   = 'CNY'
-		AND erTxnCNY.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
-		AND case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end
-			between erTxnCNY.validfrom and erTxnCNY.validto
+----LEFT JOIN [dbo].[tbl_DIM_Accounts] lda --Legacy Account data with Salesman needed
+----	--ON f.[Customer No] = lda.CustomerID
+----	ON 'A' + f.Cmpny 
+----       + TRIM(f.[Customer No])
+----       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = lda.CustomerID
+----		AND f.Cmpny = lda.CMPNY
+----		AND lda.RecordStatus=1
 
---left outer join vw360_Dim_Account on
---'A'+tbl_RESULTSSLSBYYR_BVBA_Open.Cmpny+tbl_RESULTSSLSBYYR_BVBA_Open.[Customer No]+tbl_RESULTSSLSBYYR_BVBA_Open.[Ship To No]  = vw360_Dim_Account.CustomerID
+----LEFT JOIN mtbl_EDW_DIM_Employee de
+----	ON lda.Salesman = de.Employee_Name
 
---left outer join vw360_Dim_Product on
---tbl_RESULTSSLSBYYR_BVBA_Open.Product= vw360_Dim_Product.Product_Code
+------LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
+------	ON xrs.Apollo_SalesmanName = lda.Salesman
 
-where 
-[Customer No] not like ('%SHAM%') --AND Cast([Invoice Date] AS DATE) >= '2026-01-01'
+------LEFT JOIN mtbl_EDW_DIM_Employee de2
+------	ON xrs.D365_SalesmanID = de2.Personnel_Number
+
+----LEFT JOIN mtbl_EDW_DIM_Employee de2
+----	--ON xrs.D365_SalesmanID = de2.Personnel_Number
+----	ON dcc.Salesman_ID = de2.Personnel_Number
+----	  AND de2.RecordStatus = 1
+
+----LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
+----	ON xrs.Apollo_SalesmanName = lda.Salesman
+
+----LEFT JOIN mtbl_EDW_DIM_Employee de3
+----	ON xrs.D365_SalesmanID = de3.Personnel_Number
+
+------LEFT JOIN mtbl_EDW_DIM_MarketSegmentation dms  --Per Kevin Y 2026-02-02 historic value not needed
+------	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = dms.CustomerID  --Per Kevin Y 2026-02-02 historic value not needed
+------		AND COALESCE(x.D365_ProductID, f.Product) = dms.ProductID  --Per Kevin Y 2026-02-02 historic value not needed
+------		AND CASE WHEN f.Cmpny in ('001','002') then '101'   --Per Kevin Y 2026-02-02 historic value not needed
+------		 WHEN f.Cmpny = '101' THEN '301'    --Per Kevin Y 2026-02-02 historic value not needed
+------		 WHEN f.Cmpny = '201' THEN '501'  --Per Kevin Y 2026-02-02 historic value not needed
+------		 WHEN f.CMPNY = '999' THEN '301'  --Per Kevin Y 2026-02-02 historic value not needed
+------		 else f.Cmpny end = dms.CMPNY  --Per Kevin Y 2026-02-02 historic value not needed
+------		AND CONVERT(datetime2(6), [Ord Date] ) between dms.RecordEffectiveStartDate and dms.RecordEffectiveEndDate  --Per Kevin Y 2026-02-02 historic value not needed
+
+----LEFT JOIN mtbl_EDW_DIM_MarketSegmentation dmsc
+----	ON 'A' + f.Cmpny 
+----       + TRIM(f.[Customer No])
+----       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dmsc.CustomerID
+----		AND COALESCE(x.D365_ProductID, f.Product) = dmsc.ProductID
+----		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
+----		 WHEN f.Cmpny = '101' THEN '301'  
+----		 WHEN f.Cmpny = '201' THEN '501'
+----		 WHEN f.CMPNY = '999' THEN '301'
+----		 else f.Cmpny end = dmsc.CMPNY
+----		AND dmsc.RecordStatus=1
+
+----LEFT JOIN (SELECT street
+----			, city
+----			, state
+----			, zipcode
+----			, country
+----			, min(AddressKey) AddressKey
+----			FROM mtbl_EDW_DIM_Address
+----			WHERE RecordStatus = 1
+----			GROUP BY street
+----			, city
+----			, state
+----			, zipcode
+----			, country) da
+----	ON ISNULL(COALESCE(lda.Address1 + ' ', '') + COALESCE(lda.Address2 + ' ', '') + COALESCE(lda.Address3, '') + COALESCE(lda.Address4, ''),'') = da.street
+----      AND isnull(lda.[City],'')    = da.City
+----      AND isnull(lda.[State],'')   = da.State
+----      AND isnull(lda.[ZIP],'')     = da.ZipCode
+----      AND isnull(lda.[Country],'') = da.Country
 
 
--------------
-union all
--------------
+----LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnUSD
+----	ON erTxnUSD.fromcurrencycode = 'EUR'
+----		AND erTxnUSD.tocurrencycode   = 'USD'
+----		AND erTxnUSD.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
+----		AND case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end 
+----			between erTxnUSD.validfrom and erTxnUSD.validto
+
+----LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
+----	ON erTxnCNY.fromcurrencycode = 'EUR'
+----		AND erTxnCNY.tocurrencycode   = 'CNY'
+----		AND erTxnCNY.exchangeratetype = 'Historical average rate'  --Per Kevin Y on 2026-07-22
+----		AND case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end
+----			between erTxnCNY.validfrom and erTxnCNY.validto
+
+------left outer join vw360_Dim_Account on
+------'A'+tbl_RESULTSSLSBYYR_BVBA_Open.Cmpny+tbl_RESULTSSLSBYYR_BVBA_Open.[Customer No]+tbl_RESULTSSLSBYYR_BVBA_Open.[Ship To No]  = vw360_Dim_Account.CustomerID
+
+------left outer join vw360_Dim_Product on
+------tbl_RESULTSSLSBYYR_BVBA_Open.Product= vw360_Dim_Product.Product_Code
+
+----where 
+----[Customer No] not like ('%SHAM%') --AND Cast([Invoice Date] AS DATE) >= '2026-01-01'
+
+
+-----------------
+----union all
+-----------------
 
 -----------------------------------------------------------------------------
 -- Section 3B: Current Year - TEDA [Open Order]
@@ -1785,6 +1758,7 @@ SELECT  ABS(CAST(CAST(
 from tbl_RESULTSSLSBYYR_TEDA f
 left join [dbo].[XREF_Product_ID] X 
 	ON f.[Product Name] = x.Apollo_ProductID  
+	  AND '201' = X.Company
 --	  AND '101' = case when X.Company='001' then '101' else X.Company end
 	  
 LEFT JOIN mtbl_EDW_DIM_Account dc
@@ -1800,31 +1774,31 @@ LEFT JOIN mtbl_EDW_DIM_Account dcc
 		AND dcc.RecordStatus=1
 
 LEFT JOIN mtbl_EDW_DIM_Product dp
-	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp.Product_ID
+		AND COALESCE(X.To_Company_D365,'101') = dp.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dp.CMPNY  --Changed from 201 to 501 for D365
-		AND dp.Source = 'Legacy'
+		--AND dp.Source = 'Legacy'
 		AND CONVERT(datetime2(6), f.[Order Date] ) between dp.Start_Date and dp.End_Date
 
 LEFT JOIN mtbl_EDW_DIM_Product dp2
-	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp2.Search_Name
+		AND COALESCE(X.To_Company_D365,'101') = dp2.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dp2.CMPNY  --Changed from 201 to 501 for D365
-		AND dp2.Source = 'Legacy'
+		--AND dp2.Source = 'Legacy'
 		AND CONVERT(datetime2(6), f.[Order Date] ) between dp2.Start_Date and dp2.End_Date
 
 LEFT JOIN mtbl_EDW_DIM_Product dpc
-	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc.Product_ID
+		AND COALESCE(X.To_Company_D365,'101') = dpc.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dpc.CMPNY  --Changed from 201 to 501 for D365
-		AND dpc.Source = 'Legacy'
+		--AND dpc.Source = 'Legacy'
 		AND dpc.Record_Status=1
 
 LEFT JOIN mtbl_EDW_DIM_Product dpc2
-	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc2.Search_Name
+		AND COALESCE(X.To_Company_D365,'101') = dpc2.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dpc2.CMPNY  --Changed from 201 to 501 for D365
-		AND dpc2.Source = 'Legacy'
+		--AND dpc2.Source = 'Legacy'
 		AND dpc2.Record_Status=1
 
 LEFT JOIN mtbl_EDW_DIM_Legal_Entity dle
@@ -2307,7 +2281,7 @@ left join mtbl_EDW_Dim_Date_Forex ddf on f.[Invoice Date] = ddf.date
 
  left join [dbo].[XREF_Product_ID] X 
 	ON f.Product = x.Apollo_ProductID  
-	  --AND f.Cmpny = X.Company
+	  AND f.Cmpny = X.Company
 	  
 LEFT JOIN mtbl_EDW_DIM_Account dc
 	--ON coalesce(y.D365_CustomerID, f.[Customer No])  = dc.Customer_ID
@@ -2667,6 +2641,7 @@ SELECT  ABS(CAST(CAST(
 from tbl_RESULTSSLSBYYR_TEDA_Thru2025 f
 left join [dbo].[XREF_Product_ID] X 
 	ON f.[Product Name] = x.Apollo_ProductID  
+	  AND '201' = X.Company
 	  --AND '101' = case when X.Company='001' then '101' else X.Company end
 	  
 LEFT JOIN mtbl_EDW_DIM_Account dc
@@ -2682,31 +2657,31 @@ LEFT JOIN mtbl_EDW_DIM_Account dcc
 		AND dcc.RecordStatus=1
 
 LEFT JOIN mtbl_EDW_DIM_Product dp
-	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp.Product_ID
+		AND COALESCE(X.To_Company_D365,'101') = dp.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dp.CMPNY  --Changed from 201 to 501 for D365
-		AND dp.Source = 'Legacy'
+		--AND dp.Source = 'Legacy'
 		AND CONVERT(datetime2(6), f.[Order Date] ) between dp.Start_Date and dp.End_Date
 
 LEFT JOIN mtbl_EDW_DIM_Product dp2
-	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp2.Search_Name
+		AND COALESCE(X.To_Company_D365,'101') = dp2.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dp2.CMPNY  --Changed from 201 to 501 for D365
-		AND dp2.Source = 'Legacy'
+		--AND dp2.Source = 'Legacy'
 		AND CONVERT(datetime2(6), f.[Order Date] ) between dp2.Start_Date and dp2.End_Date
 
 LEFT JOIN mtbl_EDW_DIM_Product dpc
-	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc.Product_ID
+		AND COALESCE(X.To_Company_D365,'101') = dpc.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dpc.CMPNY  --Changed from 201 to 501 for D365
-		AND dpc.Source = 'Legacy'
+		--AND dpc.Source = 'Legacy'
 		AND dpc.Record_Status=1
 
 LEFT JOIN mtbl_EDW_DIM_Product dpc2
-	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc2.Search_Name
+		AND COALESCE(X.To_Company_D365,'101') = dpc2.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dpc2.CMPNY  --Changed from 201 to 501 for D365
-		AND dpc2.Source = 'Legacy'
+		--AND dpc2.Source = 'Legacy'
 		AND dpc2.Record_Status=1
 
 LEFT JOIN mtbl_EDW_DIM_Legal_Entity dle

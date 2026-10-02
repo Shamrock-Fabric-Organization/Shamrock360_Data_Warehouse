@@ -1,5 +1,5 @@
 
-CREATE     VIEW [dbo].[vw_stage_DIM_MarketSegmentation_incoming]
+CREATE  OR ALTER   VIEW [dbo].[vw_stage_DIM_MarketSegmentation_incoming]
 AS
 
 -- ============================================================
@@ -91,8 +91,18 @@ FROM
         FROM wh_raw.[dbo].[marketsegmentation] ms
         LEFT JOIN WH_Curated.[dbo].[XREF_Customer_ID] lc
             ON ms.customerid = lc.Apollo_CustomerID
+              AND CASE WHEN substring(ms.CustomerID,2,3) in ('001','002') then '101'
+                  WHEN substring(ms.CustomerID,2,3) = '101' THEN '301'
+                  WHEN substring(ms.CustomerID,2,3) = '201' THEN '501'
+                  WHEN substring(ms.CustomerID,2,3) = '999' THEN '301'
+                  else substring(ms.CustomerID,2,3) end  = lc.Company
         LEFT JOIN WH_Curated.[dbo].[XREF_Product_ID] lp
             ON ms.productid = lp.Apollo_ProductID
+              AND CASE WHEN substring(ms.CustomerID,2,3) in ('001','002') then '101'
+                  WHEN substring(ms.CustomerID,2,3) = '101' THEN '301'
+                  WHEN substring(ms.CustomerID,2,3) = '201' THEN '501'
+                  WHEN substring(ms.CustomerID,2,3) = '999' THEN '301'
+                  else substring(ms.CustomerID,2,3) end  = lp.Company
     ) prelim1
     WHERE dedup_rn = 1
 ) m
@@ -215,15 +225,35 @@ FROM
                         FROM wh_raw.[dbo].[marketsegmentation] ms
                         LEFT JOIN WH_Curated.[dbo].[XREF_Customer_ID] lc
                             ON ms.customerid = lc.Apollo_CustomerID
+                              AND CASE WHEN substring(ms.CustomerID,2,3) in ('001','002') then '101'
+                                  WHEN substring(ms.CustomerID,2,3) = '101' THEN '301'
+                                  WHEN substring(ms.CustomerID,2,3) = '201' THEN '501'
+                                  WHEN substring(ms.CustomerID,2,3) = '999' THEN '301'
+                                  else substring(ms.CustomerID,2,3) end  = lc.Company
                         LEFT JOIN WH_Curated.[dbo].[XREF_Product_ID] lp
                             ON ms.productid = lp.Apollo_ProductID
+                              AND CASE WHEN substring(ms.CustomerID,2,3) in ('001','002') then '101'
+                                  WHEN substring(ms.CustomerID,2,3) = '101' THEN '301'
+                                  WHEN substring(ms.CustomerID,2,3) = '201' THEN '501'
+                                  WHEN substring(ms.CustomerID,2,3) = '999' THEN '301'
+                                  else substring(ms.CustomerID,2,3) end  = lp.Company
                     ) prelim1
                     WHERE dedup_rn = 1
                 ) m
                 LEFT JOIN WH_Curated.[dbo].[XREF_Customer_ID] lc
                     ON m.customerid = lc.Apollo_CustomerID
+                        AND CASE WHEN substring(m.CustomerID,2,3) in ('001','002') then '101'
+                            WHEN substring(m.CustomerID,2,3) = '101' THEN '301'
+                            WHEN substring(m.CustomerID,2,3) = '201' THEN '501'
+                            WHEN substring(m.CustomerID,2,3) = '999' THEN '301'
+                            else substring(m.CustomerID,2,3) end  = lc.Company
                 LEFT JOIN WH_Curated.[dbo].[XREF_Product_ID] lp
                     ON m.productid = lp.Apollo_ProductID
+                      AND CASE WHEN substring(m.CustomerID,2,3) in ('001','002') then '101'
+                          WHEN substring(m.CustomerID,2,3) = '101' THEN '301'
+                          WHEN substring(m.CustomerID,2,3) = '201' THEN '501'
+                          WHEN substring(m.CustomerID,2,3) = '999' THEN '301'
+                          else substring(m.CustomerID,2,3) end  = lp.Company
                 )
               )
 
@@ -259,9 +289,19 @@ FROM
               FROM wh_raw.[dbo].[marketsegmentation] ms
               LEFT JOIN WH_Curated.[dbo].[XREF_Customer_ID] lc
                   ON ms.customerid = lc.Apollo_CustomerID
+                      AND CASE WHEN substring(ms.CustomerID,2,3) in ('001','002') then '101'
+                          WHEN substring(ms.CustomerID,2,3) = '101' THEN '301'
+                          WHEN substring(ms.CustomerID,2,3) = '201' THEN '501'
+                          WHEN substring(ms.CustomerID,2,3) = '999' THEN '301'
+                          else substring(ms.CustomerID,2,3) end  = lc.Company
               LEFT JOIN WH_Curated.[dbo].[XREF_Product_ID] lp
                   ON ms.productid  = lp.Apollo_ProductID
-          ) legacy
+                       AND CASE WHEN substring(ms.CustomerID,2,3) in ('001','002') then '101'
+                          WHEN substring(ms.CustomerID,2,3) = '101' THEN '301'
+                          WHEN substring(ms.CustomerID,2,3) = '201' THEN '501'
+                          WHEN substring(ms.CustomerID,2,3) = '999' THEN '301'
+                          else substring(ms.CustomerID,2,3) end  = lp.Company
+         ) legacy
           WHERE legacy.CMPNY      = mms.cmpny
             AND legacy.CustomerID = mms.customerid
             AND legacy.ProductID  = mms.productid

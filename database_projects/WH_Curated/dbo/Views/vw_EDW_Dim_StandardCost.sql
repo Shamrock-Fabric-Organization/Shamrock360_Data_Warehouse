@@ -1,5 +1,5 @@
 
-CREATE           VIEW [dbo].[vw_EDW_Dim_StandardCost]
+CREATE  OR ALTER         VIEW [dbo].[vw_EDW_Dim_StandardCost]
 AS
 with stdcost as
 (
@@ -11,7 +11,24 @@ SELECT distinct  s.[PRODUCT CODE]
       ,convert(decimal(38,6), s.[PACKAGING COST/LB]) [PACKAGING COST/LB]
       ,convert(decimal(38,6), s.[OVERHEAD COST/LB]) [OVERHEAD COST/LB]
 FROM [dbo].[legacy_tbl_Dim_StandardCost]  s
+),
+Product_XREF as
+(
+select [Company], [Apollo_ProductID], [D365_ProductID], [To_Company_D365]
+from [dbo].[XREF_Product_ID]
+where Company='001'
+union all
+select [Company], [Apollo_ProductID], [D365_ProductID], [To_Company_D365]
+from [dbo].[XREF_Product_ID]
+where Company<>'001'
+and Apollo_ProductID not in 
+	(
+	select [Apollo_ProductID]
+	from [dbo].[XREF_Product_ID]
+	where Company='001'
+	)  
 )
+
 
 select StandardCostKey
 , CMPNY
@@ -105,7 +122,7 @@ SELECT
 
   FROM stdcost  s
 
- left join [dbo].[XREF_Product_ID] X 
+ left join Product_XREF X 
 	ON s.[PRODUCT CODE] = x.Apollo_ProductID  
 	  --AND case when s.Cmpny = '002' then '001' else s.Cmpny end = X.Company  --case statement not used as the XRef has the legacy company values = X.Company
     LEFT JOIN mtbl_EDW_DIM_Product p

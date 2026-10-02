@@ -18,6 +18,7 @@ CREATE TABLE [dbo].[mtbl_EDW_Fact_SupplyChain_JobCard] (
 	[person] bigint NULL, 
 	[personnelnumber] varchar(8000) NULL, 
 	[transdate] datetime2(6) NULL, 
+	[TransDateKey] int NULL, 
 	[dataareaid] varchar(8000) NULL, 
 	[oprfinished_$label] varchar(3) NULL, 
 	[jobtype_$label] varchar(11) NULL, 
@@ -37,5 +38,6 @@ CREATE TABLE [dbo].[mtbl_EDW_Fact_SupplyChain_JobCard] (
 	[SiteKey] bigint NOT NULL, 
 	[WarehouseKey] bigint NOT NULL, 
 	[BatchKey] bigint NOT NULL, 
-	[RouteKey] bigint NOT NULL
+	[RouteKey] bigint NOT NULL,
+	[WorkCenterKey] bigint NOT NULL 
 );

@@ -1,6 +1,4 @@
-
-
-CREATE      VIEW [dbo].[tbl_Fact_SupplyChain_JobCard] 
+CREATE or ALTER     VIEW [dbo].[tbl_Fact_SupplyChain_JobCard] 
 AS 
 ----Job Card / Route Card data  --Route Card Data not needed at this time
 SELECT 
@@ -22,6 +20,8 @@ SELECT
     h.person,
     h.personnelnumber,
     pjr.transdate,
+	convert(int, convert(char(8), pjr.transdate,112) ) TransDateKey,
+
     pjt.dataareaid,
     pjr.oprfinished_$label
     ,pjr.jobtype_$label
@@ -43,6 +43,7 @@ SELECT
 	, ISNULL(dw.WarehouseKey, -1) WarehouseKey
 	, ISNULL(db.BatchKey, -1) BatchKey
 	, ISNULL(dr.RouteKey, -1) RouteKey
+	, ISNULL(dwc.WorkCenterKey, -1) WorkCenterKey
 
 FROM WH_Raw.dbo.ProdJournalTable pjt
 
@@ -101,9 +102,15 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_Employee de
 	ON h.personnelnumber = de.Personnel_Number
 		AND de.RecordStatus=1
 
+LEFT JOIN WH_Transform.dbo.tbl_DIM_WorkCenter dwc
+	ON pjr.dataareaid = dwc.CMPNY
+		AND pjr.wrkctrid = dwc.WorkCenterID
+		AND dwc.RecordStatus=1
+
 where 
 ----pjt.prodid = 'PBO0001075'
 ----and
 pjt.journaltype_$Label = 'JobCard'
 ----order by 2,1,3
 ----order by 2,1,3
+

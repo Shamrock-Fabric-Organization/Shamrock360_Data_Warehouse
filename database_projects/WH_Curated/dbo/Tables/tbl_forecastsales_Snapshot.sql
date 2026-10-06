@@ -1,6 +1,6 @@
 
-
-
+--CHANGED TO VIEW AFTER IMPLEMENTING THE SNAPSHOT LOGIC PER LEGAL ENTITY
+/*
 CREATE TABLE [dbo].[tbl_forecastsales_Snapshot](
 	[Snapshot_Date] [date] NULL,
 	[Snapshot_Date_Key] [int] NULL,
@@ -90,3 +90,4 @@ CREATE TABLE [dbo].[tbl_forecastsales_Snapshot](
 ) 
 GO
 
+*/

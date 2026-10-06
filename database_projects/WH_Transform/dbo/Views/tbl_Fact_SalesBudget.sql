@@ -135,7 +135,7 @@ LEFT JOIN WH_Curated.dbo.mtbl_EDW_DIM_Account dcc
 
 LEFT JOIN WH_Curated.dbo.mtbl_EDW_DIM_Product dpc
 	ON coalesce(x.D365_ProductID, b.ProductID) = dpc.Product_ID
-		AND x.To_Company_D365 = dpc.CMPNY
+		AND coalesce(x.To_Company_D365,b.cmpny) = dpc.CMPNY
 		--AND b.Cmpny = dpc.CMPNY
 		AND dpc.Record_Status=1
 

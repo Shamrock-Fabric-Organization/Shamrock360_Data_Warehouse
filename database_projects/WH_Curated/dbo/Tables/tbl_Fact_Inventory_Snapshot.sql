@@ -1,3 +1,7 @@
+
+--CHANGED TO VIEW AFTER IMPLEMENTING THE SNAPSHOT LOGIC PER LEGAL ENTITY
+/*
+
 CREATE TABLE [dbo].[tbl_Fact_Inventory_Snapshot] (
 
 	[inventorySnapshotKey] bigint NULL, 
@@ -64,3 +68,6 @@ CREATE TABLE [dbo].[tbl_Fact_Inventory_Snapshot] (
 	[VendorKey] bigint NOT NULL, 
 	[StandardCostKey] bigint NULL
 );
+
+
+*/

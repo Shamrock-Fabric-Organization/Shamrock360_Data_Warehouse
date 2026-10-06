@@ -1,11 +1,6 @@
 
 
-
---CHANGED TO VIEW AFTER IMPLEMENTING THE SNAPSHOT LOGIC PER LEGAL ENTITY
-/*
-
-
-CREATE TABLE [dbo].[tbl_forecastsales_Snapshot](
+CREATE TABLE [dbo].[tbl_forecastsales_Snapshot_301](
 	[Snapshot_Date] [date] NULL,
 	[Snapshot_Date_Key] [int] NULL,
 	[Id] [varchar](8000) NULL,
@@ -91,9 +86,6 @@ CREATE TABLE [dbo].[tbl_forecastsales_Snapshot](
 	[freqcode_$label] [varchar](5) NULL,
 	[projforecastbudgettype_$label] [varchar](15) NULL,
 	[report_$label] [varchar](3) NULL
-) 
-GO
+)
 
-
-*/
 

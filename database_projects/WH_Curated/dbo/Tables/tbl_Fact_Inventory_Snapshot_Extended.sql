@@ -1,3 +1,7 @@
+
+--CHANGED TO VIEW AFTER IMPLEMENTING THE SNAPSHOT LOGIC PER LEGAL ENTITY
+/*
+
 CREATE TABLE [dbo].[tbl_Fact_Inventory_Snapshot_Extended] (
 
 	[InventorySnapshotKey] bigint NULL, 
@@ -69,3 +73,7 @@ CREATE TABLE [dbo].[tbl_Fact_Inventory_Snapshot_Extended] (
 	[BatchKey] bigint NOT NULL, 
 	[SerialNumberKey] bigint NOT NULL
 );
+
+
+*/
+

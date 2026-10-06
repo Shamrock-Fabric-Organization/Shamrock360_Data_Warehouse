@@ -3,7 +3,7 @@ create or alter  view vwExchangeRate
 as
 WITH rate AS (
     SELECT
-          ert.description                              AS exchangeratetype
+          CASE WHEN ert.name='Default' then 'Default global rate' else ert.description end                              AS exchangeratetype
         , ercp.fromcurrencycode                        AS fromcurrencycode
         , ercp.tocurrencycode                          AS tocurrencycode
         , er.validfrom

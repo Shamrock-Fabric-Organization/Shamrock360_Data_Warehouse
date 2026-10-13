@@ -54,6 +54,7 @@ CREATE OR ALTER            View [dbo].[vw_EDW_Dim_Product]
             , sales_leadtime
             , BaseSalesPrice
             , BaseSalesPricePerLB
+            , BaseSalesPricePerKG
 
             , DefaultPurchaseWarehouse
             , DefaultPurchaseSiteID
@@ -136,6 +137,7 @@ SELECT ABS(CAST(CAST(
       ,NULL AS sales_leadtime
       ,NULL AS BaseSalesPrice
       ,NULL AS BaseSalesPricePerLB
+      ,NULL AS BaseSalesPricePerKG
 
     , NULL AS DefaultPurchaseWarehouse
     , NULL AS DefaultPurchaseSiteID

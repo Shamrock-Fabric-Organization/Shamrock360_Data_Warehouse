@@ -91,6 +91,7 @@ BEGIN
 			OR ISNULL(Target.sales_leadtime, 0) <> ISNULL(Source.sales_leadtime, 0)
 			OR ISNULL(Target.BaseSalesPrice, 0) <> ISNULL(Source.BaseSalesPrice, 0)
 			OR ISNULL(Target.BaseSalesPricePerLB, 0) <> ISNULL(Source.BaseSalesPricePerLB, 0)
+			OR ISNULL(Target.BaseSalesPricePerKG, 0) <> ISNULL(Source.BaseSalesPricePerKG, 0)
 
 			OR ISNULL(Target.DefaultPurchaseWarehouse, 0) <> ISNULL(Source.DefaultPurchaseWarehouse, 0)
 			OR ISNULL(Target.DefaultPurchaseSiteID, 0) <> ISNULL(Source.DefaultPurchaseSiteID, 0)
@@ -166,6 +167,7 @@ BEGIN
 		, Source.sales_leadtime
 		, Source.BaseSalesPrice
 		, Source.BaseSalesPricePerLB
+		, Source.BaseSalesPricePerKG
 
 		, Source.DefaultPurchaseWarehouse
 		, Source.DefaultPurchaseSiteID
@@ -276,6 +278,7 @@ BEGIN
 		, sales_leadtime
 		, BaseSalesPrice
 		, BaseSalesPricePerLB
+		, BaseSalesPricePerKG
 
 		, DefaultPurchaseWarehouse
 		, DefaultPurchaseSiteID
@@ -351,6 +354,7 @@ BEGIN
 		, s.sales_leadtime
 		, s.BaseSalesPrice
 		, s.BaseSalesPricePerLB
+		, s.BaseSalesPricePerKG
 
 		, s.DefaultPurchaseWarehouse
 		, s.DefaultPurchaseSiteID
@@ -441,6 +445,7 @@ BEGIN
 		, sales_leadtime
 		, BaseSalesPrice
 		, BaseSalesPricePerLB
+		, BaseSalesPricePerKG
 
 		, DefaultPurchaseWarehouse
 		, DefaultPurchaseSiteID
@@ -517,6 +522,5 @@ BEGIN
 	---- Drop the staging/source table after processing is complete -- not needed using a view for incoming data
 	--DROP TABLE IF EXISTS vw_stage_DIM_Product_incoming;
 END;
-
 
 

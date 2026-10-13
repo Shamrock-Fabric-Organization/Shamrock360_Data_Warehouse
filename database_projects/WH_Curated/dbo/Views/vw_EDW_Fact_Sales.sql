@@ -706,6 +706,15 @@ left join mtbl_EDW_Dim_Date_Forex ddf on f.[Invoice Date] = ddf.date
 	ON f.Product = x.Apollo_ProductID  
 	  AND f.Cmpny = X.Company
 	  
+
+ left join [dbo].[XREF_Customer_ID] y 
+	----ON f.[Customer No] = y.Apollo_CustomerID 
+	ON 'A' + f.Cmpny 
+       + TRIM(f.[Customer No])
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = y.Apollo_CustomerID
+	  AND f.Cmpny = y.Company
+
+	  
 LEFT JOIN mtbl_EDW_DIM_Account dc
 	--ON coalesce(y.D365_CustomerID, f.[Customer No])  = dc.Customer_ID
 --	ON f.[Customer No]  = dc.Customer_ID
@@ -726,15 +735,17 @@ LEFT JOIN mtbl_EDW_DIM_Account dcc
 --	ON f.[Customer No]  = dc.Customer_ID
 --	ON'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6) = dcc.Customer_ID -- KY 4/8/26
 --	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = dcc.Customer_ID -- KY 6/15/26
-	ON 'A' + f.Cmpny 
+	ON coalesce(y.D365_CustomerID
+		, 'A' + f.Cmpny 
        + TRIM(f.[Customer No])
-       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dcc.Customer_ID
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) ) = dcc.Customer_ID
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
 		 WHEN f.CMPNY = '999' THEN '301'
 		 else f.Cmpny end = dcc.CMPNY
 		AND dcc.RecordStatus=1
+
 
 LEFT JOIN mtbl_EDW_DIM_Product dp
 	ON COALESCE(x.D365_ProductID, f.Product) = dp.Product_ID
@@ -2283,11 +2294,20 @@ left join mtbl_EDW_Dim_Date_Forex ddf on f.[Invoice Date] = ddf.date
 	ON f.Product = x.Apollo_ProductID  
 	  AND f.Cmpny = X.Company
 	  
+
+ left join [dbo].[XREF_Customer_ID] y 
+	----ON f.[Customer No] = y.Apollo_CustomerID 
+	ON 'A' + f.Cmpny 
+       + TRIM(f.[Customer No])
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = y.Apollo_CustomerID
+	  AND f.Cmpny = y.Company
+
+	  
 LEFT JOIN mtbl_EDW_DIM_Account dc
 	--ON coalesce(y.D365_CustomerID, f.[Customer No])  = dc.Customer_ID
 --	ON f.[Customer No]  = dc.Customer_ID
---	ON 'A'+f.Cmpny+trim([Customer No])+'000000'  = dc.Customer_ID
-		--'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No]  as varchar(6)),6) = dc.Customer_ID
+--	ON 'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No]  as varchar(6)),6) = dc.Customer_ID -- KY 4/8/26
+--	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = dc.Customer_ID -- KY 6/15/26
 	ON 'A' + f.Cmpny 
        + TRIM(f.[Customer No])
        + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dc.Customer_ID
@@ -2301,11 +2321,12 @@ LEFT JOIN mtbl_EDW_DIM_Account dc
 LEFT JOIN mtbl_EDW_DIM_Account dcc
 	--ON coalesce(y.D365_CustomerID, f.[Customer No])  = dc.Customer_ID
 --	ON f.[Customer No]  = dc.Customer_ID
---	ON 'A'+f.Cmpny+trim([Customer No])+'000000'  = dcc.Customer_ID
-		--'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6) = dcc.Customer_ID
-	ON 'A' + f.Cmpny 
+--	ON'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6) = dcc.Customer_ID -- KY 4/8/26
+--	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = dcc.Customer_ID -- KY 6/15/26
+	ON coalesce(y.D365_CustomerID
+		, 'A' + f.Cmpny 
        + TRIM(f.[Customer No])
-       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dcc.Customer_ID
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) ) = dcc.Customer_ID
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'

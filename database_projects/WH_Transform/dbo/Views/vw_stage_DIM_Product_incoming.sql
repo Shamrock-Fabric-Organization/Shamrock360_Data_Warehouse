@@ -67,6 +67,11 @@ SELECT
 		ELSE (ITMs.price / CASE WHEN ITMs.unitid = 'lb' then 1 else UOM_s.UOMConversionFactor end ) 
 		END BaseSalesPricePerLB
 
+	, CASE WHEN ISNULL(CASE WHEN ITMs.unitid = 'kg' then 1 else UOM_s_kg.UOMConversionFactor end, 0) = 0
+		THEN NULL
+		ELSE (ITMs.price / CASE WHEN ITMs.unitid = 'kg' then 1 else UOM_s_kg.UOMConversionFactor end ) 
+		END BaseSalesPricePerKG
+
 	, idp.inventlocationid DefaultPurchaseWarehouse
 	, idp.inventsiteid DefaultPurchaseSiteID
 	, idi.inventlocationid DefaultInventoryWarehouse
@@ -156,6 +161,11 @@ LEFT JOIN WH_Raw.dbo.vwUnitOfMeasureConversion UOM_s
 	ON IT.product = UOM_s.product
 		AND ITMs.unitid = UOM_s.SYMBOLFROM
 		AND UOM_s.SYMBOLTO = 'lb'
+
+LEFT JOIN WH_Raw.dbo.vwUnitOfMeasureConversion UOM_s_kg
+	ON IT.product = UOM_s_kg.product
+		AND ITMs.unitid = UOM_s_kg.SYMBOLFROM
+		AND UOM_s_kg.SYMBOLTO = 'kg'
 
 LEFT JOIN WH_Raw.[dbo].[inventdim] idp
     ON iips.InventdimIddefault = idp.Inventdimid
@@ -249,6 +259,7 @@ SELECT
     ,sales_leadtime
     ,BaseSalesPrice
     ,BaseSalesPricePerLB
+    ,BaseSalesPricePerKG
 
 	,  DefaultPurchaseSiteID
 	,  DefaultPurchaseWarehouse
@@ -324,6 +335,7 @@ SELECT -1 [ProductKey]
 , NULL sales_leadtime
 , NULL BaseSalesPrice
 , NULL BaseSalesPricePerLB
+, NULL BaseSalesPricePerKG
 
 , NULL DefaultPurchaseWarehouse
 , NULL DefaultPurchaseSiteID

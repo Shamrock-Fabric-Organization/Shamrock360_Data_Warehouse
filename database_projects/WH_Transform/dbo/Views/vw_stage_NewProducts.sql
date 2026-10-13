@@ -1,5 +1,4 @@
 
-    -- Create a view to identify new records not present in the current dimension --needed because the CTAS does not allow the logic used
 CREATE  OR ALTER      VIEW [dbo].[vw_stage_NewProducts]
 AS
 SELECT 
@@ -54,6 +53,7 @@ SELECT
 	, sales_leadtime
 	, BaseSalesPrice
 	, BaseSalesPricePerLB
+	, BaseSalesPricePerKG
 
 	, DefaultPurchaseWarehouse
 	, DefaultPurchaseSiteID

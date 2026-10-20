@@ -49,6 +49,34 @@ GROUP BY Company
         ----, ContactType
         , ContactDescription
 )
+, primary_emails as
+(
+  SELECT Company
+        , CustomerAccount
+        , STRING_AGG(ContactValue,';') WITHIN GROUP (ORDER BY ContactValue, ContactDescription) PrimaryEmail
+        , STRING_AGG(ContactDescription,';') WITHIN GROUP (ORDER BY ContactValue, ContactDescription) PrimaryEmailDescription
+  FROM (
+  SELECT DISTINCT 
+       CT.DATAAREAID               AS Company
+      ,CT.ACCOUNTNUM               AS CustomerAccount
+      ,DPT.NAME                    AS CustomerName
+      ,EA.LOCATOR                  AS ContactValue
+      ,ISNULL(EA.DESCRIPTION,'NONE') AS ContactDescription
+  FROM WH_Raw.dbo.CUSTTABLE CT
+  LEFT JOIN WH_Raw.dbo.DIRPARTYTABLE DPT
+      ON DPT.RECID = CT.PARTY
+  LEFT JOIN WH_Raw.dbo.DIRPARTYLOCATION DPL
+      ON DPL.PARTY = DPT.RECID
+  LEFT JOIN WH_Raw.dbo.LOGISTICSLOCATION LL
+      ON LL.RECID = DPL.LOCATION
+  LEFT JOIN WH_Raw.dbo.LOGISTICSELECTRONICADDRESS EA
+      ON EA.LOCATION = LL.RECID
+  WHERE EA.TYPE = 2              -- 2 = Email; remove to get all types
+    AND EA.ISPRIMARY = 1         -- primary flag on the electronic address, not on the party location
+  ) cust
+GROUP BY Company
+        , CustomerAccount
+)
 SELECT
     ABS(CAST(CAST(
     HASHBYTES('SHA2_256', 
@@ -87,6 +115,8 @@ SELECT
 , [PhoneNumber]
 , [PurchasingEmail]
 , [InvoicingEmail]
+, [PrimaryEmail]
+, [PrimaryEmailDescription]
 , [customergroup]
 , [customer_currency]
 , [Source]
@@ -150,6 +180,8 @@ SELECT 	DISTINCT	C.dataareaid	 CMPNY
 	--,LEAemail.locator eMail
 	, e_pur.eMail PurchasingEmail
 	, e_inv.eMail InvoicingEmail
+	, e_pri.PrimaryEmail PrimaryEmail
+	, e_pri.PrimaryEmailDescription PrimaryEmailDescription
 	,C.custgroup customergroup
 	,C.currency  customer_currency
 	,'D365FO'	 Source
@@ -215,6 +247,10 @@ LEFT JOIN emails e_inv
 		AND C.accountnum = e_inv.CustomerAccount
 		AND e_inv.ContactDescription = 'Invoicing'
 
+LEFT JOIN primary_emails e_pri		
+	ON C.dataareaid = e_pri.Company
+		AND C.accountnum = e_pri.CustomerAccount
+
 ) c
 
 UNION ALL   --Legacy Goldmine data 
@@ -268,6 +304,8 @@ UNION ALL   --Legacy Goldmine data
 	  ,Phone as PhoneNumber
 	  ,NULL as [PurchasingEmail]
       ,NULL as [InvoicingEmail]
+      ,NULL as [PrimaryEmail]
+      ,NULL as [PrimaryEmailDescription]
       , CASE WHEN Cmpny = '002' THEN '800'
             WHEN UPPER([CustomerName]) like '%SHAMROCK%' THEN '999'
             ELSE '100' END as [customergroup]
@@ -312,6 +350,8 @@ SELECT -1 [CustomerKey]
 , NULL [PhoneNumber]
 , NULL [PurchasingEmail]
 , NULL [InvoicingEmail]
+, NULL [PrimaryEmail]
+, NULL [PrimaryEmailDescription]
 , NULL [customergroup]
 , NULL [customer_currency]
 , 'D365FO' [Source]

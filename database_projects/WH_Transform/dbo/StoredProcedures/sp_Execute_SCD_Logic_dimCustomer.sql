@@ -63,6 +63,8 @@ BEGIN
 			OR ISNULL(Target.PhoneNumber, '') <> ISNULL(Source.PhoneNumber, '')
 			OR ISNULL(Target.PurchasingEmail, '') <> ISNULL(Source.PurchasingEmail, '')
 			OR ISNULL(Target.InvoicingEmail, '') <> ISNULL(Source.InvoicingEmail, '')
+			OR ISNULL(Target.PrimaryEmail, '') <> ISNULL(Source.PrimaryEmail, '')
+			OR ISNULL(Target.PrimaryEmailDescription, '') <> ISNULL(Source.PrimaryEmailDescription, '')
 			OR ISNULL(Target.customergroup, '') <> ISNULL(Source.customergroup, '')
 			OR ISNULL(Target.customer_currency, '') <> ISNULL(Source.customer_currency, '')
 			)
@@ -103,6 +105,8 @@ BEGIN
 		, Source.PhoneNumber
 		, Source.PurchasingEmail
 		, Source.InvoicingEmail
+		, Source.PrimaryEmail
+		, Source.PrimaryEmailDescription
 
 		, Source.customergroup
 		, Source.customer_currency
@@ -178,6 +182,8 @@ BEGIN
 		, PhoneNumber
 		, PurchasingEmail
 		, InvoicingEmail
+		, PrimaryEmail
+		, PrimaryEmailDescription
 		, customergroup
 		, customer_currency
 		, Source
@@ -217,6 +223,8 @@ BEGIN
 		, s.PhoneNumber
 		, s.PurchasingEmail
 		, s.InvoicingEmail
+		, s.PrimaryEmail
+		, s.PrimaryEmailDescription
 		, s.customergroup
 		, s.customer_currency
 		, s.Source
@@ -271,6 +279,8 @@ BEGIN
 		, PhoneNumber
 		, PurchasingEmail
 		, InvoicingEmail
+		, PrimaryEmail
+		, PrimaryEmailDescription
 		, customergroup
 		, customer_currency
 		, Source

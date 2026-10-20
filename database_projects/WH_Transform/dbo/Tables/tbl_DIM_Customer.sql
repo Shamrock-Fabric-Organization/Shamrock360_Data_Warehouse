@@ -28,6 +28,8 @@ CREATE TABLE [dbo].[tbl_DIM_Customer] (
 	[PhoneNumber] varchar(8000) NULL, 
 	[PurchasingEmail] varchar(8000) NULL, 
 	[InvoicingEmail] varchar(8000) NULL, 
+	[PrimaryEmail] varchar(8000) NULL, 
+	[PrimaryEmailDescription] varchar(8000) NULL, 
 	[customergroup] varchar(8000) NULL, 
 	[customer_currency] varchar(8000) NULL, 
 	[Source] varchar(6) NOT NULL, 

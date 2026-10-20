@@ -360,20 +360,22 @@ LEFT JOIN mtbl_EDW_DIM_Account dcc
 
 LEFT JOIN mtbl_EDW_DIM_Product dp
 	ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
-		AND CASE WHEN s.Cmpny in ('001','002') then '101' 
+		AND COALESCE(X.To_Company_D365, 
+		 CASE WHEN s.Cmpny in ('001','002') then '101' 
 		 WHEN s.Cmpny = '101' THEN '301'  
 		 WHEN s.Cmpny = '201' THEN '501'
 		 WHEN s.CMPNY = '999' THEN '301'
-		 else s.Cmpny end = dp.CMPNY
+		 else s.Cmpny end) = dp.CMPNY
 		AND s.[OrderDate] between dp.Start_Date and dp.End_Date
 
 LEFT JOIN mtbl_EDW_DIM_Product dpc
 	ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
-		AND CASE WHEN s.Cmpny in ('001','002') then '101' 
+		AND COALESCE(X.To_Company_D365, 
+		 CASE WHEN s.Cmpny in ('001','002') then '101' 
 		 WHEN s.Cmpny = '101' THEN '301'  
 		 WHEN s.Cmpny = '201' THEN '501'
 		 WHEN s.CMPNY = '999' THEN '301'
-		 else s.Cmpny end = dpc.CMPNY
+		 else s.Cmpny end) = dpc.CMPNY
 		AND dpc.Record_Status=1
 		 
 LEFT JOIN mtbl_EDW_DIM_Legal_Entity dle
@@ -749,38 +751,42 @@ LEFT JOIN mtbl_EDW_DIM_Account dcc
 
 LEFT JOIN mtbl_EDW_DIM_Product dp
 	ON COALESCE(x.D365_ProductID, f.Product) = dp.Product_ID
-		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
+		AND COALESCE(X.To_Company_D365, 
+		CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
 		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end = dp.CMPNY
+		 else f.Cmpny end) = dp.CMPNY
 		AND CONVERT(datetime2(6), [Ord Date] ) between dp.Start_Date and dp.End_Date
 
 LEFT JOIN mtbl_EDW_DIM_Product dp2
 	ON COALESCE(x.D365_ProductID, f.Product) = dp2.Search_Name
-		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
+		AND COALESCE(X.To_Company_D365, 
+		 CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
 		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end = dp2.CMPNY
+		 else f.Cmpny end) = dp2.CMPNY
 		AND CONVERT(datetime2(6), f.[Ord Date] ) between dp2.Start_Date and dp2.End_Date
 
 LEFT JOIN mtbl_EDW_DIM_Product dpc
 	ON COALESCE(x.D365_ProductID, f.Product) = dpc.Product_ID
-		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
+		AND COALESCE(X.To_Company_D365, 
+		 CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
 		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end = dpc.CMPNY
+		 else f.Cmpny end) = dpc.CMPNY
 		AND dpc.Record_Status=1
 
 LEFT JOIN mtbl_EDW_DIM_Product dpc2
 	ON COALESCE(x.D365_ProductID, f.Product) = dpc2.Search_Name
-		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
+		AND COALESCE(X.To_Company_D365, 
+		 CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
 		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end = dpc2.CMPNY
+		 else f.Cmpny end) = dpc2.CMPNY
 		AND dpc2.Record_Status=1
 
 LEFT JOIN mtbl_EDW_DIM_Legal_Entity dle
@@ -2338,44 +2344,48 @@ LEFT JOIN mtbl_EDW_DIM_Product dp
 	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
 	ON COALESCE(x.D365_ProductID, f.Product) = dp.Product_ID
 		----AND f.Cmpny = dp.CMPNY
-		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
+		AND COALESCE(X.To_Company_D365, 
+		 CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
 		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end = dp.CMPNY
+		 else f.Cmpny end) = dp.CMPNY
 		AND CONVERT(datetime2(6), [Ord Date] ) between dp.Start_Date and dp.End_Date
 
 LEFT JOIN mtbl_EDW_DIM_Product dp2
 	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
 	ON COALESCE(x.D365_ProductID, f.Product) = dp2.Search_Name
 ----		AND f.Cmpny = dp2.CMPNY
-		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
+		AND COALESCE(X.To_Company_D365, 
+		 CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
 		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end = dp2.CMPNY
+		 else f.Cmpny end) = dp2.CMPNY
 		AND CONVERT(datetime2(6), f.[Ord Date] ) between dp2.Start_Date and dp2.End_Date
 
 LEFT JOIN mtbl_EDW_DIM_Product dpc
 	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
 	ON COALESCE(x.D365_ProductID, f.Product) = dpc.Product_ID
 ----		AND f.Cmpny = dpc.CMPNY
-		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
+		AND COALESCE(X.To_Company_D365, 
+		 CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
 		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end = dpc.CMPNY
+		 else f.Cmpny end) = dpc.CMPNY
 		AND dpc.Record_Status=1
 
 LEFT JOIN mtbl_EDW_DIM_Product dpc2
 	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
 	ON COALESCE(x.D365_ProductID, f.Product) = dpc2.Search_Name
 		----AND f.Cmpny = dpc2.CMPNY
-		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
+		AND COALESCE(X.To_Company_D365, 
+		 CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
 		 WHEN f.CMPNY = '999' THEN '301'
-		 else f.Cmpny end = dpc2.CMPNY
+		 else f.Cmpny end) = dpc2.CMPNY
 		AND dpc2.Record_Status=1
 
 LEFT JOIN mtbl_EDW_DIM_Legal_Entity dle

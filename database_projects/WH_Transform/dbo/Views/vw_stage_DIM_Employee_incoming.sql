@@ -1,6 +1,6 @@
 
-CREATE         VIEW [dbo].[vw_stage_DIM_Employee_incoming]			
-AS			
+CREATE OR ALTER        VIEW [dbo].[vw_stage_DIM_Employee_incoming]
+AS
 WITH Numbers AS (
     SELECT n FROM (VALUES
         (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(13),(14),(15),(16),(17),(18),(19),(20),
@@ -15,20 +15,31 @@ WITH Numbers AS (
         (181),(182),(183),(184),(185),(186),(187),(188),(189),(190),(191),(192),(193),(194),(195),(196),(197),(198),(199),(200)
     ) AS Numbers(n)
 ),
+-- NCHAR(160) is nvarchar and turned the whole REPLACE into nvarchar. CAST to VARCHAR gives the UTF-8 non-breaking
+-- space (bytes C2A0) in the warehouse's UTF-8 collation, so the result stays varchar.
+CleanNames AS (
+    SELECT dpt.RECID
+        , dpt.NAME AS OriginalName
+        , LTRIM(RTRIM(
+              REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(dpt.NAME
+                  , CAST(NCHAR(160) AS VARCHAR(4)), ' '), CHAR(9), ' '), CHAR(13), ' '), CHAR(10), ' '), '   ', ' '), '  ', ' ')
+          )) AS CleanName
+    FROM WH_Raw.dbo.DirPartyTable dpt
+    WHERE dpt.NAME IS NOT NULL
+),
 CharacterProcessing AS (
     SELECT
-        dpt.RECID
-        , dpt.NAME                                  AS OriginalName
+        cn.RECID
+        , cn.OriginalName
         , n                                         AS Position
-        , SUBSTRING(dpt.NAME, n, 1)                 AS CurrentChar
+        , SUBSTRING(cn.CleanName, n, 1)             AS CurrentChar
         , CASE
             WHEN n = 1 THEN ' '
-            ELSE SUBSTRING(dpt.NAME, n - 1, 1)
+            ELSE SUBSTRING(cn.CleanName, n - 1, 1)
           END                                       AS PrevChar
-    FROM WH_Raw.dbo.DirPartyTable dpt
+    FROM CleanNames cn
     CROSS JOIN Numbers
-    WHERE n <= LEN(dpt.NAME)
-        AND dpt.NAME IS NOT NULL
+    WHERE n <= LEN(cn.CleanName)
 ),
 FormattedNames AS (
     SELECT
@@ -43,6 +54,23 @@ FormattedNames AS (
           ) WITHIN GROUP (ORDER BY Position)        AS Formatted_Name
     FROM CharacterProcessing
     GROUP BY RECID, OriginalName
+),
+EmploymentRanked AS (
+    SELECT e.WORKER
+        , e.employmenttype
+        , e.employmenttype_$label
+        , e.validfrom
+        , e.validto
+        , ROW_NUMBER() OVER (
+              PARTITION BY e.WORKER
+              ORDER BY CASE WHEN GETDATE() >= e.validfrom AND GETDATE() <= e.validto THEN 0 ELSE 1 END
+                     , e.validfrom
+                     , e.RECID ) AS pick
+        , MIN(e.validfrom) OVER (PARTITION BY e.WORKER) AS first_valid_from
+        , MAX(e.validto) OVER (PARTITION BY e.WORKER) AS last_valid_to
+        , MAX(CASE WHEN GETDATE() >= e.validfrom AND GETDATE() <= e.validto THEN 1 ELSE 0 END)
+              OVER (PARTITION BY e.WORKER) AS any_current
+    FROM WH_Raw.dbo.HCMEMPLOYMENT e
 )
 SELECT
     ABS(CAST(CAST(
@@ -55,33 +83,31 @@ SELECT
             )
         ) AS BINARY(8)) AS BIGINT))                                     AS EmployeeKey
     , w.personnelnumber                                                 AS Personnel_Number
-    , COALESCE(fn.Formatted_Name, dpt.name)                            AS Employee_Name
-    , e.employmenttype                                                  AS Employment_Type
-    , e.employmenttype_$label                                           AS Employment_Type_Desc
+    , CAST(COALESCE(fn.Formatted_Name, dpt.name) AS VARCHAR(400))      AS Employee_Name
+    , er.employmenttype                                                 AS Employment_Type
+    , er.employmenttype_$label                                          AS Employment_Type_Desc
     , CASE WHEN LEN(w.personnelnumber) < 4 THEN 'No' ELSE 'Yes' END    AS IsPerson
-    , e.validfrom
-    , e.validto
+    , er.first_valid_from                                               AS validfrom
+    , er.last_valid_to                                                  AS validto
     , 'D365FO'                                                          AS [Source]
-    , CAST(e.validfrom AS DATETIME2(3))                                 AS [RecordEffectiveStartDate]
-    , CAST(e.validto AS DATETIME2(3))                                   AS [RecordEffectiveEndDate]
-    , CASE WHEN GETDATE() >= e.validfrom AND GETDATE() <= e.validto
-           THEN 1
-           ELSE 0
-      END                                                               AS [RecordStatus]
+    , CAST(er.first_valid_from AS DATETIME2(3))                         AS [RecordEffectiveStartDate]
+    , CAST(er.last_valid_to AS DATETIME2(3))                            AS [RecordEffectiveEndDate]
+    , er.any_current                                                    AS [RecordStatus]
 FROM WH_Raw.dbo.dirpartytable dpt
 LEFT JOIN FormattedNames fn
     ON dpt.recid = fn.recid
 JOIN WH_Raw.dbo.hcmworker w
     ON dpt.recid = w.person
-JOIN WH_Raw.dbo.HCMEMPLOYMENT e
-    ON w.RECID = e.WORKER
+JOIN EmploymentRanked er
+    ON er.WORKER = w.RECID
+   AND er.pick = 1
 
 UNION ALL
 
 SELECT
     -1                                          AS [EmployeeKey]
     , 'Unknown'                                 AS Personnel_Number
-    , 'Unknown'                                 AS Employee_Name
+    , CAST('Unknown' AS VARCHAR(400))           AS Employee_Name
     , NULL                                      AS Employment_Type
     , NULL                                      AS Employment_Type_Desc
     , NULL                                      AS IsPerson

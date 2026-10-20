@@ -31,14 +31,45 @@ SELECT b.[CMPNY]
 	, b.[AccountTranslatedToD365]
 	, b.[ProductTranslatedToD365]
 	, b.[Source]
-	, b.[CustomerKey]
-	, b.[ProductKey]
+	, ISNULL(dcc.CustomerKey, -1) CustomerKey
+	, ISNULL(dpc.ProductKey, -1) ProductKey
 	, b.[Legal_EntityKey]
 	, b.[EmployeeKey]
 	, b.[MarketSegmentationKey]
 	, COALESCE(dsc.StandardCostKey, -1) StandardCostKey
 
 FROM WH_Curated.dbo.tbl_legacy_budget_data b
+
+
+ left join WH_Curated.[dbo].[XREF_Product_ID] X 
+	ON b.ProductID = x.Apollo_ProductID  
+	  AND b.Cmpny = CASE WHEN x.Company in ('001','002') then '101' 
+						 WHEN x.Company = '101' THEN '301'  
+						 WHEN x.Company = '201' THEN '501'
+						 WHEN x.Company = '999' THEN '301'
+						 else x.Company end
+	  --AND case when b.Cmpny = '002' then '001' else b.Cmpny end = X.Company  --case statement not used as the XRef has the legacy company values = X.Company
+
+ left join WH_Curated.[dbo].[XREF_Customer_ID] y 
+	ON b.CustomerID = y.Apollo_CustomerID 
+	  AND b.Cmpny = CASE WHEN y.Company in ('001','002') then '101' 
+						 WHEN y.Company = '101' THEN '301'  
+						 WHEN y.Company = '201' THEN '501'
+						 WHEN y.Company = '999' THEN '301'
+						 else y.Company end
+
+LEFT JOIN WH_Curated.dbo.mtbl_EDW_DIM_Account dcc
+	ON coalesce(y.D365_CustomerID, b.[CustomerID])  = dcc.Customer_ID
+		AND b.Cmpny = dcc.CMPNY
+		AND dcc.RecordStatus=1
+
+LEFT JOIN WH_Curated.dbo.mtbl_EDW_DIM_Product dpc
+	ON coalesce(x.D365_ProductID, b.ProductID) = dpc.Product_ID
+		AND coalesce(x.To_Company_D365,b.cmpny) = dpc.CMPNY
+		--AND b.Cmpny = dpc.CMPNY
+		AND dpc.Record_Status=1
+
+
 
 ---- ---- TXN-BASIS RATE JOINS (FROM SL.currencycode) ---- ----
 LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnEUR
@@ -53,8 +84,8 @@ LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnCNY
 		AND erTxnCNY.exchangeratetype = 'Default global rate'
 		AND b.[DATE] between erTxnCNY.validfrom and erTxnCNY.validto
 		
-LEFT JOIN WH_Transform.dbo.tbl_DIM_Product dp
-	ON b.[ProductKey] = dp.ProductKey
+--LEFT JOIN WH_Transform.dbo.tbl_DIM_Product dp
+--	ON b.[ProductKey] = dp.ProductKey
 		
 LEFT JOIN WH_Curated.dbo.mtbl_EDW_Dim_StandardCost dsc
 	ON b.[ProductID] = dsc.Product_ID
@@ -170,3 +201,6 @@ LEFT JOIN WH_Curated.dbo.mtbl_EDW_Dim_StandardCost dsc
 		AND CONVERT(varchar(20), b.CMPNY) = dsc.CMPNY
 		AND dpc.DefaultInventorySiteID = dsc.siteid
 		AND CONVERT(datetime2(3),convert(char(8), b.DateKey),112) between dsc.activationdate and dsc.enddate --dsc.RecordEffectiveStartDate and dsc.RecordEffectiveEndDate
+GO
+
+

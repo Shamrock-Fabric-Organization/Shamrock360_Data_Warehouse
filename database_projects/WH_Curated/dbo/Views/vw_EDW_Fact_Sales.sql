@@ -228,7 +228,7 @@ Union ALL
 	,-1 as [SiteKey]
 	, ISNULL(de.EmployeeKey, -1) as [SalesLine_EmployeeKey]
 	--, COALESCE(de2.EmployeeKey, de.EmployeeKey, -1) as [CustAcct_EmployeeKey]
-	, COALESCE(de2.EmployeeKey, de3.EmployeeKey, de.EmployeeKey, -1) as [CustAcct_EmployeeKey]
+	, COALESCE(de2.EmployeeKey, deo.EmployeeKey, -1) as [CustAcct_EmployeeKey]
 	, -1 as [SalesTaker_EmployeeKey]
 	, ISNULL(dw.WarehouseKey, -1) WarehouseKey
 	, -1 as [SalesOrderKey]
@@ -358,6 +358,16 @@ LEFT JOIN mtbl_EDW_DIM_Account dcc
 		 else s.Cmpny end = dcc.CMPNY
 		AND dcc.RecordStatus=1
 
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dp
+--	ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
+--		AND COALESCE(X.To_Company_D365, 
+--		 CASE WHEN s.Cmpny in ('001','002') then '101' 
+--		 WHEN s.Cmpny = '101' THEN '301'  
+--		 WHEN s.Cmpny = '201' THEN '501'
+--		 WHEN s.CMPNY = '999' THEN '301'
+--		 else s.Cmpny end) = dp.CMPNY
+--		AND s.[OrderDate] between dp.Start_Date and dp.End_Date
 LEFT JOIN mtbl_EDW_DIM_Product dp
 	ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
 		AND COALESCE(X.To_Company_D365, 
@@ -367,8 +377,28 @@ LEFT JOIN mtbl_EDW_DIM_Product dp
 		 WHEN s.CMPNY = '999' THEN '301'
 		 else s.Cmpny end) = dp.CMPNY
 		AND s.[OrderDate] between dp.Start_Date and dp.End_Date
+		AND NOT EXISTS (SELECT 1
+			FROM mtbl_EDW_DIM_Product p
+			WHERE p.Product_ID = dp.Product_ID
+			  AND p.CMPNY = dp.CMPNY
+			  AND s.[OrderDate] between p.Start_Date and p.End_Date
+			  AND (p.Start_Date > dp.Start_Date
+			       OR (p.Start_Date = dp.Start_Date AND p.ProductKey > dp.ProductKey)))
 
-LEFT JOIN mtbl_EDW_DIM_Product dpc
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dpc
+--	ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
+--		AND COALESCE(X.To_Company_D365, 
+--		 CASE WHEN s.Cmpny in ('001','002') then '101' 
+--		 WHEN s.Cmpny = '101' THEN '301'  
+--		 WHEN s.Cmpny = '201' THEN '501'
+--		 WHEN s.CMPNY = '999' THEN '301'
+--		 else s.Cmpny end) = dpc.CMPNY
+--		AND dpc.Record_Status=1
+LEFT JOIN (SELECT *
+		, ROW_NUMBER() OVER (PARTITION BY Product_ID, CMPNY ORDER BY Start_Date DESC, ProductKey DESC) AS rn
+	FROM mtbl_EDW_DIM_Product
+	WHERE Record_Status = 1) dpc
 	ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
 		AND COALESCE(X.To_Company_D365, 
 		 CASE WHEN s.Cmpny in ('001','002') then '101' 
@@ -377,6 +407,7 @@ LEFT JOIN mtbl_EDW_DIM_Product dpc
 		 WHEN s.CMPNY = '999' THEN '301'
 		 else s.Cmpny end) = dpc.CMPNY
 		AND dpc.Record_Status=1
+		AND dpc.rn = 1
 		 
 LEFT JOIN mtbl_EDW_DIM_Legal_Entity dle
 	ON CASE WHEN s.Cmpny in ('001','002') then '101' 
@@ -410,8 +441,9 @@ LEFT JOIN [dbo].[tbl_DIM_Accounts] lda --Legacy Account data with Salesman neede
 		AND s.Cmpny = lda.CMPNY
 		AND lda.RecordStatus=1
 
-LEFT JOIN mtbl_EDW_DIM_Employee de
-	ON lda.Salesman = de.Employee_Name
+--  Replaced 2026-10-22 (employee joins by personnel number); previous joins kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Employee de
+--	ON lda.Salesman = de.Employee_Name
 
 --LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
 --	ON xrs.Apollo_SalesmanName = lda.Salesman
@@ -421,16 +453,32 @@ LEFT JOIN mtbl_EDW_DIM_Employee de
 
 
 
-LEFT JOIN mtbl_EDW_DIM_Employee de2
+--LEFT JOIN mtbl_EDW_DIM_Employee de2
 	--ON xrs.D365_SalesmanID = de2.Personnel_Number
-	ON dcc.Salesman_ID = de2.Personnel_Number
+--	ON dcc.Salesman_ID = de2.Personnel_Number
+--	  AND de2.RecordStatus = 1
+
+--LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
+--	ON xrs.Apollo_SalesmanName = lda.Salesman
+
+--LEFT JOIN mtbl_EDW_DIM_Employee de3
+--	ON xrs.D365_SalesmanID = de3.Personnel_Number
+-- Employee joins by personnel number (2026-10-22): seller, owner of the legacy book, current D365 customer main contact.
+LEFT JOIN [dbo].[vw_Legacy_Salesman_Resolution] lsr
+	ON lsr.Legacy_Company = lda.CMPNY
+	  AND lsr.Salesman = lda.Salesman
+
+LEFT JOIN mtbl_EDW_DIM_Employee de
+	ON de.Personnel_Number = lsr.Seller_Personnel_Number
+	  AND de.RecordStatus = 1
+
+LEFT JOIN mtbl_EDW_DIM_Employee deo
+	ON deo.Personnel_Number = lsr.Owner_Personnel_Number
+	  AND deo.RecordStatus = 1
+
+LEFT JOIN mtbl_EDW_DIM_Employee de2
+	ON de2.Personnel_Number = dcc.Salesman_ID
 	  AND de2.RecordStatus = 1
-
-LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
-	ON xrs.Apollo_SalesmanName = lda.Salesman
-
-LEFT JOIN mtbl_EDW_DIM_Employee de3
-	ON xrs.D365_SalesmanID = de3.Personnel_Number
 
 
 
@@ -603,7 +651,7 @@ SELECT  ABS(CAST(CAST(
 	,-1 as [SiteKey]
 	, ISNULL(de.EmployeeKey, -1) as [SalesLine_EmployeeKey]
 	--, COALESCE(de2.EmployeeKey, de.EmployeeKey, -1) as [CustAcct_EmployeeKey]
-	, COALESCE(de3.EmployeeKey, de2.EmployeeKey, de.EmployeeKey, -1) as [CustAcct_EmployeeKey]
+	, COALESCE(de2.EmployeeKey, deo.EmployeeKey, -1) as [CustAcct_EmployeeKey]
 	, -1 as [SalesTaker_EmployeeKey]
 	, ISNULL(dw.WarehouseKey, -1) WarehouseKey
 	,-1 as [SalesOrderKey]
@@ -749,6 +797,16 @@ LEFT JOIN mtbl_EDW_DIM_Account dcc
 		AND dcc.RecordStatus=1
 
 
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dp
+--	ON COALESCE(x.D365_ProductID, f.Product) = dp.Product_ID
+--		AND COALESCE(X.To_Company_D365, 
+--		CASE WHEN f.Cmpny in ('001','002') then '101' 
+--		 WHEN f.Cmpny = '101' THEN '301'  
+--		 WHEN f.Cmpny = '201' THEN '501'
+--		 WHEN f.CMPNY = '999' THEN '301'
+--		 else f.Cmpny end) = dp.CMPNY
+--		AND CONVERT(datetime2(6), [Ord Date] ) between dp.Start_Date and dp.End_Date
 LEFT JOIN mtbl_EDW_DIM_Product dp
 	ON COALESCE(x.D365_ProductID, f.Product) = dp.Product_ID
 		AND COALESCE(X.To_Company_D365, 
@@ -757,8 +815,25 @@ LEFT JOIN mtbl_EDW_DIM_Product dp
 		 WHEN f.Cmpny = '201' THEN '501'
 		 WHEN f.CMPNY = '999' THEN '301'
 		 else f.Cmpny end) = dp.CMPNY
-		AND CONVERT(datetime2(6), [Ord Date] ) between dp.Start_Date and dp.End_Date
+		AND CONVERT(datetime2(6), f.[Ord Date] ) between dp.Start_Date and dp.End_Date
+		AND NOT EXISTS (SELECT 1
+			FROM mtbl_EDW_DIM_Product p
+			WHERE p.Product_ID = dp.Product_ID
+			  AND p.CMPNY = dp.CMPNY
+			  AND CONVERT(datetime2(6), f.[Ord Date] ) between p.Start_Date and p.End_Date
+			  AND (p.Start_Date > dp.Start_Date
+			       OR (p.Start_Date = dp.Start_Date AND p.ProductKey > dp.ProductKey)))
 
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dp2
+--	ON COALESCE(x.D365_ProductID, f.Product) = dp2.Search_Name
+--		AND COALESCE(X.To_Company_D365, 
+--		 CASE WHEN f.Cmpny in ('001','002') then '101' 
+--		 WHEN f.Cmpny = '101' THEN '301'  
+--		 WHEN f.Cmpny = '201' THEN '501'
+--		 WHEN f.CMPNY = '999' THEN '301'
+--		 else f.Cmpny end) = dp2.CMPNY
+--		AND CONVERT(datetime2(6), f.[Ord Date] ) between dp2.Start_Date and dp2.End_Date
 LEFT JOIN mtbl_EDW_DIM_Product dp2
 	ON COALESCE(x.D365_ProductID, f.Product) = dp2.Search_Name
 		AND COALESCE(X.To_Company_D365, 
@@ -768,8 +843,29 @@ LEFT JOIN mtbl_EDW_DIM_Product dp2
 		 WHEN f.CMPNY = '999' THEN '301'
 		 else f.Cmpny end) = dp2.CMPNY
 		AND CONVERT(datetime2(6), f.[Ord Date] ) between dp2.Start_Date and dp2.End_Date
+		AND NOT EXISTS (SELECT 1
+			FROM mtbl_EDW_DIM_Product p
+			WHERE p.Search_Name = dp2.Search_Name
+			  AND p.CMPNY = dp2.CMPNY
+			  AND CONVERT(datetime2(6), f.[Ord Date] ) between p.Start_Date and p.End_Date
+			  AND (p.Start_Date > dp2.Start_Date
+			       OR (p.Start_Date = dp2.Start_Date AND p.ProductKey > dp2.ProductKey)))
+		AND dp.ProductKey IS NULL
 
-LEFT JOIN mtbl_EDW_DIM_Product dpc
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dpc
+--	ON COALESCE(x.D365_ProductID, f.Product) = dpc.Product_ID
+--		AND COALESCE(X.To_Company_D365, 
+--		 CASE WHEN f.Cmpny in ('001','002') then '101' 
+--		 WHEN f.Cmpny = '101' THEN '301'  
+--		 WHEN f.Cmpny = '201' THEN '501'
+--		 WHEN f.CMPNY = '999' THEN '301'
+--		 else f.Cmpny end) = dpc.CMPNY
+--		AND dpc.Record_Status=1
+LEFT JOIN (SELECT *
+		, ROW_NUMBER() OVER (PARTITION BY Product_ID, CMPNY ORDER BY Start_Date DESC, ProductKey DESC) AS rn
+	FROM mtbl_EDW_DIM_Product
+	WHERE Record_Status = 1) dpc
 	ON COALESCE(x.D365_ProductID, f.Product) = dpc.Product_ID
 		AND COALESCE(X.To_Company_D365, 
 		 CASE WHEN f.Cmpny in ('001','002') then '101' 
@@ -778,8 +874,22 @@ LEFT JOIN mtbl_EDW_DIM_Product dpc
 		 WHEN f.CMPNY = '999' THEN '301'
 		 else f.Cmpny end) = dpc.CMPNY
 		AND dpc.Record_Status=1
+		AND dpc.rn = 1
 
-LEFT JOIN mtbl_EDW_DIM_Product dpc2
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dpc2
+--	ON COALESCE(x.D365_ProductID, f.Product) = dpc2.Search_Name
+--		AND COALESCE(X.To_Company_D365, 
+--		 CASE WHEN f.Cmpny in ('001','002') then '101' 
+--		 WHEN f.Cmpny = '101' THEN '301'  
+--		 WHEN f.Cmpny = '201' THEN '501'
+--		 WHEN f.CMPNY = '999' THEN '301'
+--		 else f.Cmpny end) = dpc2.CMPNY
+--		AND dpc2.Record_Status=1
+LEFT JOIN (SELECT *
+		, ROW_NUMBER() OVER (PARTITION BY Search_Name, CMPNY ORDER BY Start_Date DESC, ProductKey DESC) AS rn
+	FROM mtbl_EDW_DIM_Product
+	WHERE Record_Status = 1) dpc2
 	ON COALESCE(x.D365_ProductID, f.Product) = dpc2.Search_Name
 		AND COALESCE(X.To_Company_D365, 
 		 CASE WHEN f.Cmpny in ('001','002') then '101' 
@@ -788,6 +898,8 @@ LEFT JOIN mtbl_EDW_DIM_Product dpc2
 		 WHEN f.CMPNY = '999' THEN '301'
 		 else f.Cmpny end) = dpc2.CMPNY
 		AND dpc2.Record_Status=1
+		AND dpc2.rn = 1
+		AND dpc.ProductKey IS NULL
 
 LEFT JOIN mtbl_EDW_DIM_Legal_Entity dle
 	ON CASE WHEN f.Cmpny in ('001','002') then '101' 
@@ -819,8 +931,9 @@ LEFT JOIN [dbo].[tbl_DIM_Accounts] lda --Legacy Account data with Salesman neede
 		AND f.Cmpny = lda.CMPNY
 		AND lda.RecordStatus=1
 
-LEFT JOIN mtbl_EDW_DIM_Employee de
-	ON lda.Salesman = de.Employee_Name
+--  Replaced 2026-10-22 (employee joins by personnel number); previous joins kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Employee de
+--	ON lda.Salesman = de.Employee_Name
 
 --LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
 --	ON xrs.Apollo_SalesmanName = lda.Salesman
@@ -828,16 +941,32 @@ LEFT JOIN mtbl_EDW_DIM_Employee de
 --LEFT JOIN mtbl_EDW_DIM_Employee de2
 --	ON xrs.D365_SalesmanID = de2.Personnel_Number
 
-LEFT JOIN mtbl_EDW_DIM_Employee de2
+--LEFT JOIN mtbl_EDW_DIM_Employee de2
 	--ON xrs.D365_SalesmanID = de2.Personnel_Number
-	ON dcc.Salesman_ID = de2.Personnel_Number
+--	ON dcc.Salesman_ID = de2.Personnel_Number
+--	  AND de2.RecordStatus = 1
+
+--LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
+--	ON xrs.Apollo_SalesmanName = lda.Salesman
+
+--LEFT JOIN mtbl_EDW_DIM_Employee de3
+--	ON xrs.D365_SalesmanID = de3.Personnel_Number
+-- Employee joins by personnel number (2026-10-22): seller, owner of the legacy book, current D365 customer main contact.
+LEFT JOIN [dbo].[vw_Legacy_Salesman_Resolution] lsr
+	ON lsr.Legacy_Company = lda.CMPNY
+	  AND lsr.Salesman = lda.Salesman
+
+LEFT JOIN mtbl_EDW_DIM_Employee de
+	ON de.Personnel_Number = lsr.Seller_Personnel_Number
+	  AND de.RecordStatus = 1
+
+LEFT JOIN mtbl_EDW_DIM_Employee deo
+	ON deo.Personnel_Number = lsr.Owner_Personnel_Number
+	  AND deo.RecordStatus = 1
+
+LEFT JOIN mtbl_EDW_DIM_Employee de2
+	ON de2.Personnel_Number = dcc.Salesman_ID
 	  AND de2.RecordStatus = 1
-
-LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
-	ON xrs.Apollo_SalesmanName = lda.Salesman
-
-LEFT JOIN mtbl_EDW_DIM_Employee de3
-	ON xrs.D365_SalesmanID = de3.Personnel_Number
 
 --LEFT JOIN mtbl_EDW_DIM_MarketSegmentation dms  --Per Kevin Y 2026-02-02 historic value not needed
 --	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = dms.CustomerID  --Per Kevin Y 2026-02-02 historic value not needed
@@ -980,7 +1109,7 @@ SELECT  ABS(CAST(CAST(
 	,-1 as [SiteKey]
 	, ISNULL(de.EmployeeKey, -1) as [SalesLine_EmployeeKey]
 	--, COALESCE(de2.EmployeeKey, de.EmployeeKey, -1) as [CustAcct_EmployeeKey]
-	, COALESCE(de3.EmployeeKey, de2.EmployeeKey, de.EmployeeKey, -1) as [CustAcct_EmployeeKey]
+	, COALESCE(de2.EmployeeKey, deo.EmployeeKey, -1) as [CustAcct_EmployeeKey]
 	, -1 as [SalesTaker_EmployeeKey]
 	, ISNULL(dw.WarehouseKey, -1) WarehouseKey
 	,-1 as [SalesOrderKey]
@@ -1088,33 +1217,85 @@ LEFT JOIN mtbl_EDW_DIM_Account dcc
 		AND '501' = dcc.CMPNY  --Changed from 201 to 501 for D365
 		AND dcc.RecordStatus=1
 
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dp
+--	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp.Product_ID
+--		AND COALESCE(X.To_Company_D365,'101') = dp.CMPNY  --101 used as all legacy products come in under legal entity 101
+		--AND '501' = dp.CMPNY  --Changed from 201 to 501 for D365
+		--AND dp.Source = 'Legacy'
+--		AND CONVERT(datetime2(6), f.[Order Date] ) between dp.Start_Date and dp.End_Date
 LEFT JOIN mtbl_EDW_DIM_Product dp
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp.Product_ID
 		AND COALESCE(X.To_Company_D365,'101') = dp.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dp.CMPNY  --Changed from 201 to 501 for D365
 		--AND dp.Source = 'Legacy'
 		AND CONVERT(datetime2(6), f.[Order Date] ) between dp.Start_Date and dp.End_Date
+		AND NOT EXISTS (SELECT 1
+			FROM mtbl_EDW_DIM_Product p
+			WHERE p.Product_ID = dp.Product_ID
+			  AND p.CMPNY = dp.CMPNY
+			  AND CONVERT(datetime2(6), f.[Order Date] ) between p.Start_Date and p.End_Date
+			  AND (p.Start_Date > dp.Start_Date
+			       OR (p.Start_Date = dp.Start_Date AND p.ProductKey > dp.ProductKey)))
 
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dp2
+--	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp2.Search_Name
+--		AND COALESCE(X.To_Company_D365,'101') = dp2.CMPNY  --101 used as all legacy products come in under legal entity 101
+		--AND '501' = dp2.CMPNY  --Changed from 201 to 501 for D365
+		--AND dp2.Source = 'Legacy'
+--		AND CONVERT(datetime2(6), f.[Order Date] ) between dp2.Start_Date and dp2.End_Date
 LEFT JOIN mtbl_EDW_DIM_Product dp2
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp2.Search_Name
 		AND COALESCE(X.To_Company_D365,'101') = dp2.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dp2.CMPNY  --Changed from 201 to 501 for D365
 		--AND dp2.Source = 'Legacy'
 		AND CONVERT(datetime2(6), f.[Order Date] ) between dp2.Start_Date and dp2.End_Date
+		AND NOT EXISTS (SELECT 1
+			FROM mtbl_EDW_DIM_Product p
+			WHERE p.Search_Name = dp2.Search_Name
+			  AND p.CMPNY = dp2.CMPNY
+			  AND CONVERT(datetime2(6), f.[Order Date] ) between p.Start_Date and p.End_Date
+			  AND (p.Start_Date > dp2.Start_Date
+			       OR (p.Start_Date = dp2.Start_Date AND p.ProductKey > dp2.ProductKey)))
+		AND dp.ProductKey IS NULL
 
-LEFT JOIN mtbl_EDW_DIM_Product dpc
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dpc
+--	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc.Product_ID
+--		AND COALESCE(X.To_Company_D365,'101') = dpc.CMPNY  --101 used as all legacy products come in under legal entity 101
+		--AND '501' = dpc.CMPNY  --Changed from 201 to 501 for D365
+		--AND dpc.Source = 'Legacy'
+--		AND dpc.Record_Status=1
+LEFT JOIN (SELECT *
+		, ROW_NUMBER() OVER (PARTITION BY Product_ID, CMPNY ORDER BY Start_Date DESC, ProductKey DESC) AS rn
+	FROM mtbl_EDW_DIM_Product
+	WHERE Record_Status = 1) dpc
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc.Product_ID
 		AND COALESCE(X.To_Company_D365,'101') = dpc.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dpc.CMPNY  --Changed from 201 to 501 for D365
 		--AND dpc.Source = 'Legacy'
 		AND dpc.Record_Status=1
+		AND dpc.rn = 1
 
-LEFT JOIN mtbl_EDW_DIM_Product dpc2
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dpc2
+--	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc2.Search_Name
+--		AND COALESCE(X.To_Company_D365,'101') = dpc2.CMPNY  --101 used as all legacy products come in under legal entity 101
+		--AND '501' = dpc2.CMPNY  --Changed from 201 to 501 for D365
+		--AND dpc2.Source = 'Legacy'
+--		AND dpc2.Record_Status=1
+LEFT JOIN (SELECT *
+		, ROW_NUMBER() OVER (PARTITION BY Search_Name, CMPNY ORDER BY Start_Date DESC, ProductKey DESC) AS rn
+	FROM mtbl_EDW_DIM_Product
+	WHERE Record_Status = 1) dpc2
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc2.Search_Name
 		AND COALESCE(X.To_Company_D365,'101') = dpc2.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dpc2.CMPNY  --Changed from 201 to 501 for D365
 		--AND dpc2.Source = 'Legacy'
 		AND dpc2.Record_Status=1
+		AND dpc2.rn = 1
+		AND dpc.ProductKey IS NULL
 
 LEFT JOIN mtbl_EDW_DIM_Legal_Entity dle
 	ON '501' = dle.CMPNY  --Changed from 201 to 501 for D365
@@ -1129,8 +1310,9 @@ LEFT JOIN [dbo].[tbl_DIM_Accounts] lda --Legacy Account data with Salesman neede
 		AND '201' = lda.CMPNY  --Changed from 201 to 501 for D365 -- need to use the legacy company of 201
 		AND lda.RecordStatus=1
 
-LEFT JOIN mtbl_EDW_DIM_Employee de
-	ON lda.Salesman = de.Employee_Name
+--  Replaced 2026-10-22 (employee joins by personnel number); previous joins kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Employee de
+--	ON lda.Salesman = de.Employee_Name
 
 --LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
 --	ON xrs.Apollo_SalesmanName = lda.Salesman
@@ -1138,16 +1320,32 @@ LEFT JOIN mtbl_EDW_DIM_Employee de
 --LEFT JOIN mtbl_EDW_DIM_Employee de2
 --	ON xrs.D365_SalesmanID = de2.Personnel_Number
 
-LEFT JOIN mtbl_EDW_DIM_Employee de2
+--LEFT JOIN mtbl_EDW_DIM_Employee de2
 	--ON xrs.D365_SalesmanID = de2.Personnel_Number
-	ON dcc.Salesman_ID = de2.Personnel_Number
+--	ON dcc.Salesman_ID = de2.Personnel_Number
+--	  AND de2.RecordStatus = 1
+
+--LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
+--	ON xrs.Apollo_SalesmanName = lda.Salesman
+
+--LEFT JOIN mtbl_EDW_DIM_Employee de3
+--	ON xrs.D365_SalesmanID = de3.Personnel_Number
+-- Employee joins by personnel number (2026-10-22): seller, owner of the legacy book, current D365 customer main contact.
+LEFT JOIN [dbo].[vw_Legacy_Salesman_Resolution] lsr
+	ON lsr.Legacy_Company = lda.CMPNY
+	  AND lsr.Salesman = lda.Salesman
+
+LEFT JOIN mtbl_EDW_DIM_Employee de
+	ON de.Personnel_Number = lsr.Seller_Personnel_Number
+	  AND de.RecordStatus = 1
+
+LEFT JOIN mtbl_EDW_DIM_Employee deo
+	ON deo.Personnel_Number = lsr.Owner_Personnel_Number
+	  AND deo.RecordStatus = 1
+
+LEFT JOIN mtbl_EDW_DIM_Employee de2
+	ON de2.Personnel_Number = dcc.Salesman_ID
 	  AND de2.RecordStatus = 1
-
-LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
-	ON xrs.Apollo_SalesmanName = lda.Salesman
-
-LEFT JOIN mtbl_EDW_DIM_Employee de3
-	ON xrs.D365_SalesmanID = de3.Personnel_Number
 
 --LEFT JOIN mtbl_EDW_DIM_MarketSegmentation dms  --Per Kevin Y 2026-02-02 historic value not needed
 --	ON 'A201'+Trim(f.[Customer No])+'000000' = dms.CustomerID  --Per Kevin Y 2026-02-02 historic value not needed
@@ -1683,7 +1881,7 @@ SELECT  ABS(CAST(CAST(
 	,-1 as [SiteKey]
 	, ISNULL(de.EmployeeKey, -1) as [SalesLine_EmployeeKey]
 	--, COALESCE(de2.EmployeeKey, de.EmployeeKey, -1) as [CustAcct_EmployeeKey]
-	, COALESCE(de3.EmployeeKey, de2.EmployeeKey, de.EmployeeKey, -1) as [CustAcct_EmployeeKey]
+	, COALESCE(de2.EmployeeKey, deo.EmployeeKey, -1) as [CustAcct_EmployeeKey]
 	, -1 as [SalesTaker_EmployeeKey]
 	, ISNULL(dw.WarehouseKey, -1) WarehouseKey
 	,-1 as [SalesOrderKey]
@@ -1790,33 +1988,85 @@ LEFT JOIN mtbl_EDW_DIM_Account dcc
 		AND '501' = dcc.CMPNY  --Changed from 201 to 501 for D365
 		AND dcc.RecordStatus=1
 
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dp
+--	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp.Product_ID
+--		AND COALESCE(X.To_Company_D365,'101') = dp.CMPNY  --101 used as all legacy products come in under legal entity 101
+		--AND '501' = dp.CMPNY  --Changed from 201 to 501 for D365
+		--AND dp.Source = 'Legacy'
+--		AND CONVERT(datetime2(6), f.[Order Date] ) between dp.Start_Date and dp.End_Date
 LEFT JOIN mtbl_EDW_DIM_Product dp
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp.Product_ID
 		AND COALESCE(X.To_Company_D365,'101') = dp.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dp.CMPNY  --Changed from 201 to 501 for D365
 		--AND dp.Source = 'Legacy'
 		AND CONVERT(datetime2(6), f.[Order Date] ) between dp.Start_Date and dp.End_Date
+		AND NOT EXISTS (SELECT 1
+			FROM mtbl_EDW_DIM_Product p
+			WHERE p.Product_ID = dp.Product_ID
+			  AND p.CMPNY = dp.CMPNY
+			  AND CONVERT(datetime2(6), f.[Order Date] ) between p.Start_Date and p.End_Date
+			  AND (p.Start_Date > dp.Start_Date
+			       OR (p.Start_Date = dp.Start_Date AND p.ProductKey > dp.ProductKey)))
 
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dp2
+--	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp2.Search_Name
+--		AND COALESCE(X.To_Company_D365,'101') = dp2.CMPNY  --101 used as all legacy products come in under legal entity 101
+		--AND '501' = dp2.CMPNY  --Changed from 201 to 501 for D365
+		--AND dp2.Source = 'Legacy'
+--		AND CONVERT(datetime2(6), f.[Order Date] ) between dp2.Start_Date and dp2.End_Date
 LEFT JOIN mtbl_EDW_DIM_Product dp2
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp2.Search_Name
 		AND COALESCE(X.To_Company_D365,'101') = dp2.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dp2.CMPNY  --Changed from 201 to 501 for D365
 		--AND dp2.Source = 'Legacy'
 		AND CONVERT(datetime2(6), f.[Order Date] ) between dp2.Start_Date and dp2.End_Date
+		AND NOT EXISTS (SELECT 1
+			FROM mtbl_EDW_DIM_Product p
+			WHERE p.Search_Name = dp2.Search_Name
+			  AND p.CMPNY = dp2.CMPNY
+			  AND CONVERT(datetime2(6), f.[Order Date] ) between p.Start_Date and p.End_Date
+			  AND (p.Start_Date > dp2.Start_Date
+			       OR (p.Start_Date = dp2.Start_Date AND p.ProductKey > dp2.ProductKey)))
+		AND dp.ProductKey IS NULL
 
-LEFT JOIN mtbl_EDW_DIM_Product dpc
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dpc
+--	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc.Product_ID
+--		AND COALESCE(X.To_Company_D365,'101') = dpc.CMPNY  --101 used as all legacy products come in under legal entity 101
+		--AND '501' = dpc.CMPNY  --Changed from 201 to 501 for D365
+		--AND dpc.Source = 'Legacy'
+--		AND dpc.Record_Status=1
+LEFT JOIN (SELECT *
+		, ROW_NUMBER() OVER (PARTITION BY Product_ID, CMPNY ORDER BY Start_Date DESC, ProductKey DESC) AS rn
+	FROM mtbl_EDW_DIM_Product
+	WHERE Record_Status = 1) dpc
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc.Product_ID
 		AND COALESCE(X.To_Company_D365,'101') = dpc.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dpc.CMPNY  --Changed from 201 to 501 for D365
 		--AND dpc.Source = 'Legacy'
 		AND dpc.Record_Status=1
+		AND dpc.rn = 1
 
-LEFT JOIN mtbl_EDW_DIM_Product dpc2
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dpc2
+--	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc2.Search_Name
+--		AND COALESCE(X.To_Company_D365,'101') = dpc2.CMPNY  --101 used as all legacy products come in under legal entity 101
+		--AND '501' = dpc2.CMPNY  --Changed from 201 to 501 for D365
+		--AND dpc2.Source = 'Legacy'
+--		AND dpc2.Record_Status=1
+LEFT JOIN (SELECT *
+		, ROW_NUMBER() OVER (PARTITION BY Search_Name, CMPNY ORDER BY Start_Date DESC, ProductKey DESC) AS rn
+	FROM mtbl_EDW_DIM_Product
+	WHERE Record_Status = 1) dpc2
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc2.Search_Name
 		AND COALESCE(X.To_Company_D365,'101') = dpc2.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dpc2.CMPNY  --Changed from 201 to 501 for D365
 		--AND dpc2.Source = 'Legacy'
 		AND dpc2.Record_Status=1
+		AND dpc2.rn = 1
+		AND dpc.ProductKey IS NULL
 
 LEFT JOIN mtbl_EDW_DIM_Legal_Entity dle
 	ON '501' = dle.CMPNY  --Changed from 201 to 501 for D365
@@ -1831,8 +2081,9 @@ LEFT JOIN [dbo].[tbl_DIM_Accounts] lda --Legacy Account data with Salesman neede
 		AND '201' = lda.CMPNY  --Changed from 201 to 501 for D365 -- need to use the legacy company of 201
 		AND lda.RecordStatus=1
 
-LEFT JOIN mtbl_EDW_DIM_Employee de
-	ON lda.Salesman = de.Employee_Name
+--  Replaced 2026-10-22 (employee joins by personnel number); previous joins kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Employee de
+--	ON lda.Salesman = de.Employee_Name
 
 --LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
 --	ON xrs.Apollo_SalesmanName = lda.Salesman
@@ -1840,16 +2091,32 @@ LEFT JOIN mtbl_EDW_DIM_Employee de
 --LEFT JOIN mtbl_EDW_DIM_Employee de2
 --	ON xrs.D365_SalesmanID = de2.Personnel_Number
 
-LEFT JOIN mtbl_EDW_DIM_Employee de2
+--LEFT JOIN mtbl_EDW_DIM_Employee de2
 	--ON xrs.D365_SalesmanID = de2.Personnel_Number
-	ON dcc.Salesman_ID = de2.Personnel_Number
+--	ON dcc.Salesman_ID = de2.Personnel_Number
+--	  AND de2.RecordStatus = 1
+
+--LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
+--	ON xrs.Apollo_SalesmanName = lda.Salesman
+
+--LEFT JOIN mtbl_EDW_DIM_Employee de3
+--	ON xrs.D365_SalesmanID = de3.Personnel_Number
+-- Employee joins by personnel number (2026-10-22): seller, owner of the legacy book, current D365 customer main contact.
+LEFT JOIN [dbo].[vw_Legacy_Salesman_Resolution] lsr
+	ON lsr.Legacy_Company = lda.CMPNY
+	  AND lsr.Salesman = lda.Salesman
+
+LEFT JOIN mtbl_EDW_DIM_Employee de
+	ON de.Personnel_Number = lsr.Seller_Personnel_Number
+	  AND de.RecordStatus = 1
+
+LEFT JOIN mtbl_EDW_DIM_Employee deo
+	ON deo.Personnel_Number = lsr.Owner_Personnel_Number
+	  AND deo.RecordStatus = 1
+
+LEFT JOIN mtbl_EDW_DIM_Employee de2
+	ON de2.Personnel_Number = dcc.Salesman_ID
 	  AND de2.RecordStatus = 1
-
-LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
-	ON xrs.Apollo_SalesmanName = lda.Salesman
-
-LEFT JOIN mtbl_EDW_DIM_Employee de3
-	ON xrs.D365_SalesmanID = de3.Personnel_Number
 
 --LEFT JOIN mtbl_EDW_DIM_MarketSegmentation dms  --Per Kevin Y 2026-02-02 historic value not needed
 --	ON 'A201'+Trim(f.[Customer No])+'000000' = dms.CustomerID  --Per Kevin Y 2026-02-02 historic value not needed
@@ -2194,7 +2461,7 @@ SELECT  ABS(CAST(CAST(
 	,-1 as [SiteKey]
 	, ISNULL(de.EmployeeKey, -1) as [SalesLine_EmployeeKey]
 	--, COALESCE(de2.EmployeeKey, de.EmployeeKey, -1) as [CustAcct_EmployeeKey]
-	, COALESCE(de3.EmployeeKey, de2.EmployeeKey, de.EmployeeKey, -1) as [CustAcct_EmployeeKey]
+	, COALESCE(de2.EmployeeKey, deo.EmployeeKey, -1) as [CustAcct_EmployeeKey]
 	, -1 as [SalesTaker_EmployeeKey]
 	, ISNULL(dw.WarehouseKey, -1) WarehouseKey
 	,-1 as [SalesOrderKey]
@@ -2340,6 +2607,18 @@ LEFT JOIN mtbl_EDW_DIM_Account dcc
 		 else f.Cmpny end = dcc.CMPNY
 		AND dcc.RecordStatus=1
 
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dp
+	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
+--	ON COALESCE(x.D365_ProductID, f.Product) = dp.Product_ID
+		----AND f.Cmpny = dp.CMPNY
+--		AND COALESCE(X.To_Company_D365, 
+--		 CASE WHEN f.Cmpny in ('001','002') then '101' 
+--		 WHEN f.Cmpny = '101' THEN '301'  
+--		 WHEN f.Cmpny = '201' THEN '501'
+--		 WHEN f.CMPNY = '999' THEN '301'
+--		 else f.Cmpny end) = dp.CMPNY
+--		AND CONVERT(datetime2(6), [Ord Date] ) between dp.Start_Date and dp.End_Date
 LEFT JOIN mtbl_EDW_DIM_Product dp
 	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
 	ON COALESCE(x.D365_ProductID, f.Product) = dp.Product_ID
@@ -2350,8 +2629,27 @@ LEFT JOIN mtbl_EDW_DIM_Product dp
 		 WHEN f.Cmpny = '201' THEN '501'
 		 WHEN f.CMPNY = '999' THEN '301'
 		 else f.Cmpny end) = dp.CMPNY
-		AND CONVERT(datetime2(6), [Ord Date] ) between dp.Start_Date and dp.End_Date
+		AND CONVERT(datetime2(6), f.[Ord Date] ) between dp.Start_Date and dp.End_Date
+		AND NOT EXISTS (SELECT 1
+			FROM mtbl_EDW_DIM_Product p
+			WHERE p.Product_ID = dp.Product_ID
+			  AND p.CMPNY = dp.CMPNY
+			  AND CONVERT(datetime2(6), f.[Ord Date] ) between p.Start_Date and p.End_Date
+			  AND (p.Start_Date > dp.Start_Date
+			       OR (p.Start_Date = dp.Start_Date AND p.ProductKey > dp.ProductKey)))
 
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dp2
+	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
+--	ON COALESCE(x.D365_ProductID, f.Product) = dp2.Search_Name
+----		AND f.Cmpny = dp2.CMPNY
+--		AND COALESCE(X.To_Company_D365, 
+--		 CASE WHEN f.Cmpny in ('001','002') then '101' 
+--		 WHEN f.Cmpny = '101' THEN '301'  
+--		 WHEN f.Cmpny = '201' THEN '501'
+--		 WHEN f.CMPNY = '999' THEN '301'
+--		 else f.Cmpny end) = dp2.CMPNY
+--		AND CONVERT(datetime2(6), f.[Ord Date] ) between dp2.Start_Date and dp2.End_Date
 LEFT JOIN mtbl_EDW_DIM_Product dp2
 	--ON coalesce(x.D365_ProductID, s.Product) = dp.Product_ID
 	ON COALESCE(x.D365_ProductID, f.Product) = dp2.Search_Name
@@ -2363,8 +2661,31 @@ LEFT JOIN mtbl_EDW_DIM_Product dp2
 		 WHEN f.CMPNY = '999' THEN '301'
 		 else f.Cmpny end) = dp2.CMPNY
 		AND CONVERT(datetime2(6), f.[Ord Date] ) between dp2.Start_Date and dp2.End_Date
+		AND NOT EXISTS (SELECT 1
+			FROM mtbl_EDW_DIM_Product p
+			WHERE p.Search_Name = dp2.Search_Name
+			  AND p.CMPNY = dp2.CMPNY
+			  AND CONVERT(datetime2(6), f.[Ord Date] ) between p.Start_Date and p.End_Date
+			  AND (p.Start_Date > dp2.Start_Date
+			       OR (p.Start_Date = dp2.Start_Date AND p.ProductKey > dp2.ProductKey)))
+		AND dp.ProductKey IS NULL
 
-LEFT JOIN mtbl_EDW_DIM_Product dpc
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dpc
+	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
+--	ON COALESCE(x.D365_ProductID, f.Product) = dpc.Product_ID
+----		AND f.Cmpny = dpc.CMPNY
+--		AND COALESCE(X.To_Company_D365, 
+--		 CASE WHEN f.Cmpny in ('001','002') then '101' 
+--		 WHEN f.Cmpny = '101' THEN '301'  
+--		 WHEN f.Cmpny = '201' THEN '501'
+--		 WHEN f.CMPNY = '999' THEN '301'
+--		 else f.Cmpny end) = dpc.CMPNY
+--		AND dpc.Record_Status=1
+LEFT JOIN (SELECT *
+		, ROW_NUMBER() OVER (PARTITION BY Product_ID, CMPNY ORDER BY Start_Date DESC, ProductKey DESC) AS rn
+	FROM mtbl_EDW_DIM_Product
+	WHERE Record_Status = 1) dpc
 	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
 	ON COALESCE(x.D365_ProductID, f.Product) = dpc.Product_ID
 ----		AND f.Cmpny = dpc.CMPNY
@@ -2375,8 +2696,24 @@ LEFT JOIN mtbl_EDW_DIM_Product dpc
 		 WHEN f.CMPNY = '999' THEN '301'
 		 else f.Cmpny end) = dpc.CMPNY
 		AND dpc.Record_Status=1
+		AND dpc.rn = 1
 
-LEFT JOIN mtbl_EDW_DIM_Product dpc2
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dpc2
+	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
+--	ON COALESCE(x.D365_ProductID, f.Product) = dpc2.Search_Name
+		----AND f.Cmpny = dpc2.CMPNY
+--		AND COALESCE(X.To_Company_D365, 
+--		 CASE WHEN f.Cmpny in ('001','002') then '101' 
+--		 WHEN f.Cmpny = '101' THEN '301'  
+--		 WHEN f.Cmpny = '201' THEN '501'
+--		 WHEN f.CMPNY = '999' THEN '301'
+--		 else f.Cmpny end) = dpc2.CMPNY
+--		AND dpc2.Record_Status=1
+LEFT JOIN (SELECT *
+		, ROW_NUMBER() OVER (PARTITION BY Search_Name, CMPNY ORDER BY Start_Date DESC, ProductKey DESC) AS rn
+	FROM mtbl_EDW_DIM_Product
+	WHERE Record_Status = 1) dpc2
 	--ON coalesce(x.D365_ProductID, s.Product) = dpc.Product_ID
 	ON COALESCE(x.D365_ProductID, f.Product) = dpc2.Search_Name
 		----AND f.Cmpny = dpc2.CMPNY
@@ -2387,6 +2724,8 @@ LEFT JOIN mtbl_EDW_DIM_Product dpc2
 		 WHEN f.CMPNY = '999' THEN '301'
 		 else f.Cmpny end) = dpc2.CMPNY
 		AND dpc2.Record_Status=1
+		AND dpc2.rn = 1
+		AND dpc.ProductKey IS NULL
 
 LEFT JOIN mtbl_EDW_DIM_Legal_Entity dle
 	ON CASE WHEN f.Cmpny in ('001','002') then '101' 
@@ -2418,8 +2757,9 @@ LEFT JOIN [dbo].[tbl_DIM_Accounts] lda --Legacy Account data with Salesman neede
 		AND f.Cmpny = lda.CMPNY
 		AND lda.RecordStatus=1
 
-LEFT JOIN mtbl_EDW_DIM_Employee de
-	ON lda.Salesman = de.Employee_Name
+--  Replaced 2026-10-22 (employee joins by personnel number); previous joins kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Employee de
+--	ON lda.Salesman = de.Employee_Name
 
 --LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
 --	ON xrs.Apollo_SalesmanName = lda.Salesman
@@ -2427,16 +2767,32 @@ LEFT JOIN mtbl_EDW_DIM_Employee de
 --LEFT JOIN mtbl_EDW_DIM_Employee de2
 --	ON xrs.D365_SalesmanID = de2.Personnel_Number
 
-LEFT JOIN mtbl_EDW_DIM_Employee de2
+--LEFT JOIN mtbl_EDW_DIM_Employee de2
 	--ON xrs.D365_SalesmanID = de2.Personnel_Number
-	ON dcc.Salesman_ID = de2.Personnel_Number
+--	ON dcc.Salesman_ID = de2.Personnel_Number
+--	  AND de2.RecordStatus = 1
+
+--LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
+--	ON xrs.Apollo_SalesmanName = lda.Salesman
+
+--LEFT JOIN mtbl_EDW_DIM_Employee de3
+--	ON xrs.D365_SalesmanID = de3.Personnel_Number
+-- Employee joins by personnel number (2026-10-22): seller, owner of the legacy book, current D365 customer main contact.
+LEFT JOIN [dbo].[vw_Legacy_Salesman_Resolution] lsr
+	ON lsr.Legacy_Company = lda.CMPNY
+	  AND lsr.Salesman = lda.Salesman
+
+LEFT JOIN mtbl_EDW_DIM_Employee de
+	ON de.Personnel_Number = lsr.Seller_Personnel_Number
+	  AND de.RecordStatus = 1
+
+LEFT JOIN mtbl_EDW_DIM_Employee deo
+	ON deo.Personnel_Number = lsr.Owner_Personnel_Number
+	  AND deo.RecordStatus = 1
+
+LEFT JOIN mtbl_EDW_DIM_Employee de2
+	ON de2.Personnel_Number = dcc.Salesman_ID
 	  AND de2.RecordStatus = 1
-
-LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
-	ON xrs.Apollo_SalesmanName = lda.Salesman
-
-LEFT JOIN mtbl_EDW_DIM_Employee de3
-	ON xrs.D365_SalesmanID = de3.Personnel_Number
 
 --LEFT JOIN mtbl_EDW_DIM_MarketSegmentation dms  --Per Kevin Y 2026-02-02 historic value not needed
 --	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = dms.CustomerID  --Per Kevin Y 2026-02-02 historic value not needed
@@ -2579,7 +2935,7 @@ SELECT  ABS(CAST(CAST(
 	,-1 as [SiteKey]
 	, ISNULL(de.EmployeeKey, -1) as [SalesLine_EmployeeKey]
 	--, COALESCE(de2.EmployeeKey, de.EmployeeKey, -1) as [CustAcct_EmployeeKey]
-	, COALESCE(de3.EmployeeKey, de2.EmployeeKey, de.EmployeeKey, -1) as [CustAcct_EmployeeKey]
+	, COALESCE(de2.EmployeeKey, deo.EmployeeKey, -1) as [CustAcct_EmployeeKey]
 	, -1 as [SalesTaker_EmployeeKey]
 	, ISNULL(dw.WarehouseKey, -1) WarehouseKey
 	,-1 as [SalesOrderKey]
@@ -2687,33 +3043,85 @@ LEFT JOIN mtbl_EDW_DIM_Account dcc
 		AND '501' = dcc.CMPNY  --Changed from 201 to 501 for D365
 		AND dcc.RecordStatus=1
 
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dp
+--	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp.Product_ID
+--		AND COALESCE(X.To_Company_D365,'101') = dp.CMPNY  --101 used as all legacy products come in under legal entity 101
+		--AND '501' = dp.CMPNY  --Changed from 201 to 501 for D365
+		--AND dp.Source = 'Legacy'
+--		AND CONVERT(datetime2(6), f.[Order Date] ) between dp.Start_Date and dp.End_Date
 LEFT JOIN mtbl_EDW_DIM_Product dp
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp.Product_ID
 		AND COALESCE(X.To_Company_D365,'101') = dp.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dp.CMPNY  --Changed from 201 to 501 for D365
 		--AND dp.Source = 'Legacy'
 		AND CONVERT(datetime2(6), f.[Order Date] ) between dp.Start_Date and dp.End_Date
+		AND NOT EXISTS (SELECT 1
+			FROM mtbl_EDW_DIM_Product p
+			WHERE p.Product_ID = dp.Product_ID
+			  AND p.CMPNY = dp.CMPNY
+			  AND CONVERT(datetime2(6), f.[Order Date] ) between p.Start_Date and p.End_Date
+			  AND (p.Start_Date > dp.Start_Date
+			       OR (p.Start_Date = dp.Start_Date AND p.ProductKey > dp.ProductKey)))
 
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dp2
+--	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp2.Search_Name
+--		AND COALESCE(X.To_Company_D365,'101') = dp2.CMPNY  --101 used as all legacy products come in under legal entity 101
+		--AND '501' = dp2.CMPNY  --Changed from 201 to 501 for D365
+		--AND dp2.Source = 'Legacy'
+--		AND CONVERT(datetime2(6), f.[Order Date] ) between dp2.Start_Date and dp2.End_Date
 LEFT JOIN mtbl_EDW_DIM_Product dp2
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dp2.Search_Name
 		AND COALESCE(X.To_Company_D365,'101') = dp2.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dp2.CMPNY  --Changed from 201 to 501 for D365
 		--AND dp2.Source = 'Legacy'
 		AND CONVERT(datetime2(6), f.[Order Date] ) between dp2.Start_Date and dp2.End_Date
+		AND NOT EXISTS (SELECT 1
+			FROM mtbl_EDW_DIM_Product p
+			WHERE p.Search_Name = dp2.Search_Name
+			  AND p.CMPNY = dp2.CMPNY
+			  AND CONVERT(datetime2(6), f.[Order Date] ) between p.Start_Date and p.End_Date
+			  AND (p.Start_Date > dp2.Start_Date
+			       OR (p.Start_Date = dp2.Start_Date AND p.ProductKey > dp2.ProductKey)))
+		AND dp.ProductKey IS NULL
 
-LEFT JOIN mtbl_EDW_DIM_Product dpc
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dpc
+--	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc.Product_ID
+--		AND COALESCE(X.To_Company_D365,'101') = dpc.CMPNY  --101 used as all legacy products come in under legal entity 101
+		--AND '501' = dpc.CMPNY  --Changed from 201 to 501 for D365
+		--AND dpc.Source = 'Legacy'
+--		AND dpc.Record_Status=1
+LEFT JOIN (SELECT *
+		, ROW_NUMBER() OVER (PARTITION BY Product_ID, CMPNY ORDER BY Start_Date DESC, ProductKey DESC) AS rn
+	FROM mtbl_EDW_DIM_Product
+	WHERE Record_Status = 1) dpc
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc.Product_ID
 		AND COALESCE(X.To_Company_D365,'101') = dpc.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dpc.CMPNY  --Changed from 201 to 501 for D365
 		--AND dpc.Source = 'Legacy'
 		AND dpc.Record_Status=1
+		AND dpc.rn = 1
 
-LEFT JOIN mtbl_EDW_DIM_Product dpc2
+--  Replaced 2026-10-23 (product lookup returns one row, latest start first; search name only when the product code found nothing); previous join kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Product dpc2
+--	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc2.Search_Name
+--		AND COALESCE(X.To_Company_D365,'101') = dpc2.CMPNY  --101 used as all legacy products come in under legal entity 101
+		--AND '501' = dpc2.CMPNY  --Changed from 201 to 501 for D365
+		--AND dpc2.Source = 'Legacy'
+--		AND dpc2.Record_Status=1
+LEFT JOIN (SELECT *
+		, ROW_NUMBER() OVER (PARTITION BY Search_Name, CMPNY ORDER BY Start_Date DESC, ProductKey DESC) AS rn
+	FROM mtbl_EDW_DIM_Product
+	WHERE Record_Status = 1) dpc2
 	ON COALESCE(x.D365_ProductID, f.[Product Name]) = dpc2.Search_Name
 		AND COALESCE(X.To_Company_D365,'101') = dpc2.CMPNY  --101 used as all legacy products come in under legal entity 101
 		--AND '501' = dpc2.CMPNY  --Changed from 201 to 501 for D365
 		--AND dpc2.Source = 'Legacy'
 		AND dpc2.Record_Status=1
+		AND dpc2.rn = 1
+		AND dpc.ProductKey IS NULL
 
 LEFT JOIN mtbl_EDW_DIM_Legal_Entity dle
 	ON '501' = dle.CMPNY  --Changed from 201 to 501 for D365
@@ -2728,8 +3136,9 @@ LEFT JOIN [dbo].[tbl_DIM_Accounts] lda --Legacy Account data with Salesman neede
 		AND '201' = lda.CMPNY  --Changed from 201 to 501 for D365 -- need to use the legacy company of 201
 		AND lda.RecordStatus=1
 
-LEFT JOIN mtbl_EDW_DIM_Employee de
-	ON lda.Salesman = de.Employee_Name
+--  Replaced 2026-10-22 (employee joins by personnel number); previous joins kept below as comments.
+--LEFT JOIN mtbl_EDW_DIM_Employee de
+--	ON lda.Salesman = de.Employee_Name
 
 --LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
 --	ON xrs.Apollo_SalesmanName = lda.Salesman
@@ -2737,16 +3146,32 @@ LEFT JOIN mtbl_EDW_DIM_Employee de
 --LEFT JOIN mtbl_EDW_DIM_Employee de2
 --	ON xrs.D365_SalesmanID = de2.Personnel_Number
 
-LEFT JOIN mtbl_EDW_DIM_Employee de2
+--LEFT JOIN mtbl_EDW_DIM_Employee de2
 	--ON xrs.D365_SalesmanID = de2.Personnel_Number
-	ON dcc.Salesman_ID = de2.Personnel_Number
+--	ON dcc.Salesman_ID = de2.Personnel_Number
+--	  AND de2.RecordStatus = 1
+
+--LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
+--	ON xrs.Apollo_SalesmanName = lda.Salesman
+
+--LEFT JOIN mtbl_EDW_DIM_Employee de3
+--	ON xrs.D365_SalesmanID = de3.Personnel_Number
+-- Employee joins by personnel number (2026-10-22): seller, owner of the legacy book, current D365 customer main contact.
+LEFT JOIN [dbo].[vw_Legacy_Salesman_Resolution] lsr
+	ON lsr.Legacy_Company = lda.CMPNY
+	  AND lsr.Salesman = lda.Salesman
+
+LEFT JOIN mtbl_EDW_DIM_Employee de
+	ON de.Personnel_Number = lsr.Seller_Personnel_Number
+	  AND de.RecordStatus = 1
+
+LEFT JOIN mtbl_EDW_DIM_Employee deo
+	ON deo.Personnel_Number = lsr.Owner_Personnel_Number
+	  AND deo.RecordStatus = 1
+
+LEFT JOIN mtbl_EDW_DIM_Employee de2
+	ON de2.Personnel_Number = dcc.Salesman_ID
 	  AND de2.RecordStatus = 1
-
-LEFT JOIN [dbo].[XREF_Salesman_ID] xrs
-	ON xrs.Apollo_SalesmanName = lda.Salesman
-
-LEFT JOIN mtbl_EDW_DIM_Employee de3
-	ON xrs.D365_SalesmanID = de3.Personnel_Number
 
 --LEFT JOIN mtbl_EDW_DIM_MarketSegmentation dms  --Per Kevin Y 2026-02-02 historic value not needed
 --	ON 'A201'+Trim(f.[Customer No])+'000000' = dms.CustomerID  --Per Kevin Y 2026-02-02 historic value not needed

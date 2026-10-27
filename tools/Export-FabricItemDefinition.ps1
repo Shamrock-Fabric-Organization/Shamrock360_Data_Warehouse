@@ -157,7 +157,9 @@ if (-not $OutFolder -and -not $OutFile) {
 if ($OutFile -and $OutFolder) {
     throw "Give -OutFolder or -OutFile, not both."
 }
-if ($OutFile -and @($ItemName).Count -ne 1) {
+# An unbound [string[]] is $null, and @($null).Count is 1, so the count alone let
+# -OutFile with no -ItemName through: every item of -ItemType then overwrote one file.
+if ($OutFile -and (-not $ItemName -or @($ItemName).Count -ne 1)) {
     throw "-OutFile names one exact file, so it needs exactly one -ItemName. Use -OutFolder for several."
 }
 if (-not $ItemName -and -not $ItemType) {
@@ -405,6 +407,33 @@ function Invoke-Fabric {
 }
 
 
+function Get-FabricList {
+    # ⛔ LIST CALLS ARE PAGED. List Workspaces and List Items return continuationToken /
+    # continuationUri when the result spans pages, and reading .value from the first
+    # response alone silently dropped every item past page 1. Follows the pages until the
+    # API stops returning a continuation.
+    param([string] $Path, [hashtable] $Headers)
+
+    $all = @()
+    $page = Invoke-Fabric -Method GET -Path $Path -Headers $Headers
+    while ($true) {
+        if ($page -and $page.PSObject.Properties.Name -contains 'value') { $all += @($page.value) }
+        $next = $null
+        if ($page -and $page.PSObject.Properties.Name -contains 'continuationUri' -and $page.continuationUri) {
+            $next = [string]$page.continuationUri
+        }
+        elseif ($page -and $page.PSObject.Properties.Name -contains 'continuationToken' -and $page.continuationToken) {
+            $sep = if ($Path.Contains('?')) { '&' } else { '?' }
+            $next = "$FabricApi/v1$Path$sep" + 'continuationToken=' +
+                    [uri]::EscapeDataString([string]$page.continuationToken)
+        }
+        if (-not $next) { break }
+        $page = Invoke-Fabric -Method GET -Uri $next -Headers $Headers
+    }
+    return ,$all
+}
+
+
 function Get-SafeFileName {
     # A Fabric display name may contain characters Windows will not accept in a path.
     param([string] $Name)
@@ -428,7 +457,7 @@ $headers = @{ Authorization = "Bearer $(Get-FabricToken)" }
 
 if (-not $WorkspaceId) {
     Write-Host "Resolving workspace '$WorkspaceName'..."
-    $workspaces = (Invoke-Fabric -Method GET -Path '/workspaces' -Headers $headers).value
+    $workspaces = Get-FabricList -Path '/workspaces' -Headers $headers
     $ws = @($workspaces | Where-Object { $_.displayName -eq $WorkspaceName })
 
     if ($ws.Count -eq 0) {
@@ -447,7 +476,7 @@ if (-not $WorkspaceId) {
 Write-Host "Workspace id : $WorkspaceId"
 Write-Host ''
 
-$allItems = @((Invoke-Fabric -Method GET -Path "/workspaces/$WorkspaceId/items" -Headers $headers).value)
+$allItems = @(Get-FabricList -Path "/workspaces/$WorkspaceId/items" -Headers $headers)
 
 $targets = $allItems
 if ($ItemType) { $targets = @($targets | Where-Object { $_.type -eq $ItemType }) }

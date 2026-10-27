@@ -61,7 +61,9 @@
     .\Compare-FabricEnvironment.ps1 -Root ..\fabric -Brief
 
 .OUTPUTS
-    Exit code 0 when nothing differs and nothing is unpaired, 1 otherwise.
+    Exit code 0 when nothing differs, nothing is unpaired and CHECK 2 finds no shared
+    targeting value; 1 otherwise. A CHECK 2 failure fails the run on its own, because a
+    production activity still pointing at development is what this script exists to catch.
 
 .NOTES
     A dataflow CAN be exported, but its definition is Power Query (mashup.pq) rather than
@@ -150,6 +152,7 @@ $embeddedTotal = 0
 $check2Examined = 0
 $check2SharedTarget = 0
 $check2Unclassified = 0
+$check2SameEnv = 0
 $expectedObjectReasons = @{}
 
 foreach ($typeFolder in $typeFolders) {
@@ -311,6 +314,7 @@ foreach ($typeFolder in $typeFolders) {
         $check2Examined++
         if (@($r.SharedTargeting).Count -gt 0)     { $check2SharedTarget++ }
         if (@($r.SharedUnclassified).Count -gt 0)  { $check2Unclassified++ }
+        if ($r.SameEnvironmentSuspected)           { $check2SameEnv++ }
 
         $shared   = $r.SharedTargeting.Count
         $diffs    = $r.Findings.Count
@@ -402,6 +406,15 @@ else {
         Write-Host ("  FAIL - {0} object(s) share a targeting value. Listed below." -f
                     $check2SharedTarget) -ForegroundColor Red
         Write-Host '  These decide which warehouse is read, so production may be reading development.'
+        Write-Host '  This fails the run.'
+    }
+    if ($check2SameEnv -gt 0) {
+        # Surfaced here as well as in Compare-FabricDefinition: when EVERY targeting value
+        # matches, the two folders were probably exported from the SAME workspace, and a
+        # "match" on CHECK 1 then means nothing.
+        Write-Host ("  {0} object(s) share EVERY targeting value - the {1} and {2} exports are probably" -f
+                    $check2SameEnv, $DevName, $ProdName) -ForegroundColor Red
+        Write-Host '  from the SAME workspace. Check the export commands before reading anything above.' -ForegroundColor Red
     }
     if ($check2Unclassified -gt 0) {
         Write-Host ("  {0} object(s) also share a value this script cannot classify - judge those yourself." -f
@@ -463,13 +476,22 @@ foreach ($d in $details) {
     }
 }
 
+# ⛔ A CHECK 2 FAILURE FAILS THE RUN. It used to print FAIL above and still close with
+# "Everything matched." and exit 0, because only CHECK 1 and pairing counted. A shared
+# targeting value is the one finding CHECK 1 is blind to by design, so it counts here.
 Write-Host ''
-if ($problems -eq 0) {
+if ($problems -eq 0 -and $check2SharedTarget -eq 0) {
     Write-Host 'Everything matched.' -ForegroundColor Green
 }
 else {
-    Write-Host ("{0} object(s) need attention." -f $problems) -ForegroundColor Yellow
+    if ($problems -gt 0) {
+        Write-Host ("{0} object(s) need attention." -f $problems) -ForegroundColor Yellow
+    }
+    if ($check2SharedTarget -gt 0) {
+        Write-Host ("CHECK 2 FAILED - {0} object(s) share a targeting value with development." -f
+                    $check2SharedTarget) -ForegroundColor Red
+    }
 }
 Write-Host ''
 
-exit ($(if ($problems -gt 0) { 1 } else { 0 }))
+exit ($(if ($problems -gt 0 -or $check2SharedTarget -gt 0) { 1 } else { 0 }))

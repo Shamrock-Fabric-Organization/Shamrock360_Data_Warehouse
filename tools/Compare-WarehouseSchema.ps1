@@ -264,7 +264,9 @@
     .\Compare-WarehouseSchema.ps1 -DevFile dev-WH_Curated.json -ProdFile prod-WH_Curated.json -ShowRoutineDiff
 
 .OUTPUTS
-    Exit code 0 when the environments match, 1 when they do not.
+    Exit code 0 when the environments match, 1 when they do not, 2 when any pair was
+    exported from the SAME endpoint on both sides (one environment compared with itself,
+    so no verdict is possible).
 #>
 
 [CmdletBinding()]
@@ -1545,8 +1547,10 @@ foreach ($pv in $provenance) {
 
     # ⛔ THE MISLABELED-FILE TRAP, MADE VISIBLE. -Endpoint decides which warehouse is
     # READ and -Environment decides what the file is NAMED, so the two can disagree and
-    # nothing downstream would ever notice. These checks report; they do not change the
-    # verdict, because a name is evidence about the export, not about the schema.
+    # nothing downstream would ever notice. The NAME checks report; they do not change the
+    # verdict, because a name is evidence about the export, not about the schema. The
+    # SAME-ENDPOINT check does change it (see the closing verdict): when both files record
+    # the same endpoint, the run compared one environment with itself.
     if ($pv.DevEndpoint -eq $pv.ProdEndpoint) {
         Write-Host '    WARNING: both sides were exported from the SAME endpoint. This run is' -ForegroundColor Red
         Write-Host '             comparing one environment with itself, and a match means nothing.' -ForegroundColor Red
@@ -2124,7 +2128,21 @@ $tolHeadings = @()
 if ($toleratedRuns.Count  -gt 0) { $tolHeadings += 'TOLERATED TYPE DIFFERENCES' }
 if ($whitespaceRuns.Count -gt 0) { $tolHeadings += 'ROUTINE BODIES THAT DIFFER IN WHITESPACE ONLY' }
 
+# ⛔ A SELF-COMPARE IS NOT A MATCH. Two files recording the SAME endpoint compared one
+# environment with itself; the WARNING above used to be followed by "The two environments
+# match" and exit 0. The endpoint is written by Export-WarehouseSchema from the server it
+# connected to, so equality is a reliable signal. An export that recorded no endpoint is
+# not judged here - '(not recorded)' on both sides proves nothing either way.
+$selfCompared = @($provenance | Where-Object {
+    $_.DevEndpoint -and $_.DevEndpoint -ne '(not recorded)' -and $_.DevEndpoint -eq $_.ProdEndpoint })
+
 Write-Host ''
+if ($selfCompared.Count -gt 0) {
+    Write-Host ("{0} compared one environment with itself (same endpoint on both sides): {1}." -f
+                (Format-Count $selfCompared.Count 'warehouse pair' 'warehouse pairs'),
+                (@($selfCompared | ForEach-Object { $_.Database }) -join ', ')) -ForegroundColor Red
+    Write-Host 'No verdict is possible for this run. Re-export one side from the other environment.' -ForegroundColor Red
+}
 if ($unpaired -gt 0) {
     # ⛔ AN UNPAIRED WAREHOUSE IS A FAILURE, NOT A WARNING. It used to print a yellow line
     # and let the run exit 0, so "the two environments match" could be said about a folder
@@ -2133,7 +2151,7 @@ if ($unpaired -gt 0) {
                 (Format-Count $unpaired 'warehouse exists' 'warehouses exist'),
                 $(if ($unpaired -eq 1) { 'was' } else { 'were' })) -ForegroundColor Yellow
 }
-if ($problems -eq 0 -and $unpaired -eq 0) {
+if ($problems -eq 0 -and $unpaired -eq 0 -and $selfCompared.Count -eq 0) {
     # The two environments are named in the EXPORTS COMPARED block at the top, endpoint
     # and all, so this line can stay short without leaving the reader guessing.
     #
@@ -2186,4 +2204,4 @@ elseif ($problems -gt 0) {
 }
 Write-Host ''
 
-exit ($(if (($problems + $unpaired) -gt 0) { 1 } else { 0 }))
+exit ($(if ($selfCompared.Count -gt 0) { 2 } elseif (($problems + $unpaired) -gt 0) { 1 } else { 0 }))

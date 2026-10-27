@@ -41,9 +41,11 @@
     .\Compare-FabricDefinition.ps1 fabric\pipelines\dev\pl_dimension_logic.json fabric\pipelines\prod\pl_dimension_logic.json
 
 .OUTPUTS
-    Exit code 0 when CHECK 1 finds no differences, 1 when it does, so this can be used
-    as a gate later. CHECK 2 findings are reported but do not fail the run, because a
-    shared GUID is not always wrong - see the note it prints.
+    Exit code 0 when CHECK 1 finds no differences AND CHECK 2 finds no shared targeting
+    value; 1 otherwise, so this can be used as a gate later. A shared TARGETING value
+    (workspaceId, endpoint, artifactId) fails the run. Shared credential, metadata and
+    unclassified values are reported but do not, because a shared GUID of those kinds is
+    not always wrong - see the note it prints.
 
 .NOTES
     Requires PowerShell 5.1 or later. No modules, no network, no authentication.
@@ -102,7 +104,7 @@ if ($result.Findings.Count -eq 0) {
         Write-Host '  (Brief mode: activity bodies were NOT compared. Re-run without -Brief for that.)'
     }
     else {
-        Write-Host '  IDENTICAL - same activities, same states, same definitions.'
+        Write-Host '  IDENTICAL - same activities, same states, same definitions. (CHECK 1 only - see CHECK 2.)'
     }
 }
 else {
@@ -164,5 +166,21 @@ else {
     }
 }
 
+# A SHARED TARGETING VALUE FAILS THE RUN. It used to print SHARED TARGET in red and
+# still exit 0 after CHECK 1 said IDENTICAL, which is the exact case this script exists
+# for: an activity pasted into production with development's connection attached.
+# A suspected same-workspace comparison has every targeting value shared, so it fails too.
+$check2Failed = (@($result.SharedTargeting).Count -gt 0)
+
 Write-Host ''
-exit ($(if ($result.Findings.Count -gt 0) { 1 } else { 0 }))
+if ($result.Findings.Count -eq 0 -and -not $check2Failed) {
+    Write-Host 'RESULT: PASS - CHECK 1 found no differences and CHECK 2 found no shared targeting value.' -ForegroundColor Green
+}
+else {
+    $why = @()
+    if ($result.Findings.Count -gt 0) { $why += ("CHECK 1 found {0} difference(s)" -f $result.Findings.Count) }
+    if ($check2Failed) { $why += ("CHECK 2 found {0} shared targeting value(s)" -f @($result.SharedTargeting).Count) }
+    Write-Host ("RESULT: FAIL - {0}." -f ($why -join '; ')) -ForegroundColor Red
+}
+Write-Host ''
+exit ($(if ($result.Findings.Count -gt 0 -or $check2Failed) { 1 } else { 0 }))

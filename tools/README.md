@@ -33,6 +33,12 @@ does less. There is no error and no signal.
 | `Compare-FabricEnvironment.ps1` | **Compares every object in the tree at once.** The one to run after a promotion | Nothing |
 | `Compare-FabricDefinition.ps1` | Compares a single pair, with full detail | Nothing |
 | `FabricDefinition.psm1` | Shared logic. Not run directly | — |
+| `Compare-SemanticModels.ps1` | Compares exported semantic models (the TMDL set) between dev and prod | PowerShell 7 |
+| `Compare-RoutineLogic.ps1` | Sorts the warehouse routines both environments share into same / comments only / logic differs | PowerShell 7, ScriptDom |
+
+The last two are described under [Semantic models and routine logic](#semantic-models-and-routine-logic).
+The warehouse schema scripts (`Export-WarehouseSchema.ps1`, `Compare-WarehouseSchema.ps1`) are run
+from the procedure in Document 5.
 
 **`Compare-FabricEnvironment.ps1` is the everyday one.** It prints a line per object and the
 detail only for what differs, so a clean run is short enough to actually read — which is what makes
@@ -62,6 +68,8 @@ tools/
   Export-FabricItemDefinition.ps1
   Compare-FabricDefinition.ps1
   Compare-FabricEnvironment.ps1
+  Compare-SemanticModels.ps1
+  Compare-RoutineLogic.ps1
 ```
 
 **Object type first, then environment.** The two versions of the same object end up as siblings,
@@ -288,10 +296,18 @@ the check shout about the harmless value and stay silent about the dangerous one
 An earlier version called that "production may be reading development", which was wrong and would
 have sent someone hunting a defect that did not exist.
 
-**Only a shared *targeting* value counts against a run.** A reference the script cannot classify is
-reported as `unclassified` rather than assumed safe.
+**Only a shared *targeting* value counts against a run, and it fails the run.** Both
+`Compare-FabricEnvironment.ps1` and `Compare-FabricDefinition.ps1` exit `1` when CHECK 2 finds a
+shared targeting value, even when CHECK 1 found nothing. Neither then prints "Everything matched." or
+a PASS result. A shared credential or metadata value does not fail the run. A reference the script
+cannot classify is reported as `unclassified` rather than assumed safe; it is listed for review and
+does not fail the run.
 
-Exit code is `0` when CHECK 1 finds nothing and `1` when it does, so it can become a gate later.
+When every targeting value is shared, the two exports probably came from the same workspace. Both
+scripts say so, and the run fails through the shared-targeting rule.
+
+Exit code is `0` when CHECK 1 finds nothing, nothing is unpaired and CHECK 2 finds no shared
+targeting value. It is `1` otherwise.
 
 ---
 
@@ -370,9 +386,66 @@ them — semantic models by way of the long-running-operation path described abo
 comparison is pipeline-shaped, so for those item types the script reports what it can and the
 definition comparison is the useful half.
 
-⛔ **A semantic model can be EXPORTED but cannot usefully be COMPARED today.**
-`Compare-FabricEnvironment.ps1` pairs on `<display name>.json` and walks pipeline `activities`. For a
-semantic model that file is `definition.pbism`, a settings stub, and there are no activities to walk —
-so it is reported as an error, the same way a dataflow is. **Capture is solved; comparison is not.**
-Meaningfully diffing two models means comparing the TMDL set — tables, measures, relationships — which
-is new per-type logic, not a parameter. Nothing about that was in scope for the export fix.
+⛔ **Semantic models are compared by `Compare-SemanticModels.ps1`, not by
+`Compare-FabricEnvironment.ps1`.** `Compare-FabricEnvironment.ps1` pairs on `<display name>.json` and
+walks pipeline `activities`. For a semantic model that file is `definition.pbism`, a settings stub,
+and there are no activities to walk, so it reports a semantic-model folder as an error, the same way
+as a dataflow. Keep `semantic-models\` out of the `-Root` that `Compare-FabricEnvironment.ps1` reads,
+or expect those ERROR rows. `Compare-SemanticModels.ps1` compares the TMDL set: tables, columns,
+measures, relationships, hierarchies, roles and M expressions.
+
+---
+
+## Semantic models and routine logic
+
+### `Compare-SemanticModels.ps1`
+
+Compares models exported with `Export-FabricItemDefinition.ps1 -ItemType SemanticModel -AllParts`.
+Reads `<Root>\<DevName>\<model>.parts\definition\` and the same under `<ProdName>`. Reads files only;
+no sign-in, no network. Requires PowerShell 7.
+
+| Parameter | Default | Meaning |
+|---|---|---|
+| `-Root` | `fabric\semantic-models` | Folder holding the dev and prod subfolders |
+| `-DevName` | `dev` | Development subfolder under `-Root` |
+| `-ProdName` | `prod` | Production subfolder under `-Root` |
+| `-ConfigPath` | `compare-config.json` in the parent of `-Root` | Explicit pairs, same file and shape as `Compare-FabricEnvironment.ps1`. Entries with a `type` are used only when it is `semantic-models` |
+| `-Pair` | none | One or more `'dev=prod'` pairs for a one-off run. Takes precedence over `-DevSuffix` |
+| `-DevSuffix` | off | Suffix only the dev model carries, for example `' - DEV'`. Each pairing it makes is labeled in the report |
+| `-Preview` | off | Print the pairing and stop without comparing |
+| `-Detail` | off | Print every differing property under its grouped finding |
+| `-CountsOnly` | off | Print finding counts without the name lists |
+
+Exit code `0` when no paired model differs, `1` otherwise. Models present on one side only do not
+set the exit code.
+
+```powershell
+.\tools\Compare-SemanticModels.ps1 -Root fabric\semantic-models -DevSuffix ' - DEV' -Preview
+.\tools\Compare-SemanticModels.ps1 -Root fabric\semantic-models -DevSuffix ' - DEV'
+.\tools\Compare-SemanticModels.ps1 -Pair 'Sales Model - DEV=Sales Model'
+```
+
+### `Compare-RoutineLogic.ps1`
+
+Classifies the routine bodies both warehouse environments share as the same,
+the same apart from comments, or different in logic. Reads `.full.json` exports written by
+`Export-WarehouseSchema.ps1 -IncludeDefinitions`. Uses the ScriptDom lexer, not regular expressions.
+Requires PowerShell 7 (`#Requires -Version 7.0`).
+
+| Parameter | Parameter set | Meaning |
+|---|---|---|
+| `-Folder` | Folder (default) | Pairs `dev-<database>.full.json` with `prod-<database>.full.json` and compares every pair |
+| `-DevFile` | Files | One development `.full.json` export |
+| `-ProdFile` | Files | The production `.full.json` export to compare it with |
+| `-IgnoreIdentifierCase` | both | Also treat identifiers (object, column, built-in function and type names) as case-insensitive. String literals and bracketed names stay case-sensitive. The run reports how many routines this moved |
+| `-ScriptDomPath` | both | Path to `Microsoft.SqlServer.TransactSql.ScriptDom.dll` when the `tools/qa-validator` build and the NuGet cache copies are both absent |
+
+Exit code `0` nothing differs in logic, `1` at least one routine differs in logic, `2` the comparison
+could not run (no tokenizer, no definitions, no file pair, or a truncated body in the export).
+
+```powershell
+.\tools\Export-WarehouseSchema.ps1 -Environment dev  -OutFolder warehouse-schema -IncludeDefinitions
+.\tools\Export-WarehouseSchema.ps1 -Environment prod -OutFolder warehouse-schema -IncludeDefinitions
+.\tools\Compare-RoutineLogic.ps1 -Folder warehouse-schema
+.\tools\Compare-RoutineLogic.ps1 -DevFile dev-WH_Curated.full.json -ProdFile prod-WH_Curated.full.json -IgnoreIdentifierCase
+```

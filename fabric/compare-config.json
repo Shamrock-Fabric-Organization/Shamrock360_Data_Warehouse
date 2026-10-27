@@ -52,6 +52,14 @@
       "prod": "Active",
       "reason": "Email activities are deliberately disabled in development, so development runs do not notify the production distribution list. Confirmed 2026-09-02.",
       "label": "dev email activities are switched off"
+    },
+    {
+      "kind": "STATE DIFFERS",
+      "activityType": "Office365Email",
+      "dev": "Inactive",
+      "prod": "Active",
+      "reason": "The per-entity snapshot pipelines (pl_snapshot_logic_101, _301, _501, added 2026-10-16) send mail with the Office365Email activity type, not Office365Outlook. Their email activities are disabled in development for the same reason as the rule above. Added 2026-10-27.",
+      "label": "dev email activities are switched off (Office365Email)"
     }
   ]
 }

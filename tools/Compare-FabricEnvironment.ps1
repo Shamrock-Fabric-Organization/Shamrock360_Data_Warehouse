@@ -168,8 +168,13 @@ foreach ($typeFolder in $typeFolders) {
         continue
     }
 
-    $devFiles  = if ($haveDev)  { @(Get-ChildItem -LiteralPath $devDir  -Filter *.json -File) } else { @() }
-    $prodFiles = if ($haveProd) { @(Get-ChildItem -LiteralPath $prodDir -Filter *.json -File) } else { @() }
+    # The @() wraps the WHOLE if-statement, not the Get-ChildItem inside it. Assigning the
+    # result of an if-statement UNROLLS it: a folder holding exactly one .json came back as a
+    # bare FileInfo rather than a one-element array, and the $devFiles + $prodFiles below then
+    # failed with "[System.IO.FileInfo] does not contain a method named 'op_Addition'". Wrapping
+    # inside the branch does not help, because the unroll happens on assignment, after it.
+    $devFiles  = @(if ($haveDev)  { Get-ChildItem -LiteralPath $devDir  -Filter *.json -File })
+    $prodFiles = @(if ($haveProd) { Get-ChildItem -LiteralPath $prodDir -Filter *.json -File })
 
     # A Fabric export downloads as a zip containing the definition AND a manifest.json,
     # which holds the item name and a thumbnail image rather than any logic. Someone

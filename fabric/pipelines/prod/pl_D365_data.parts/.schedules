@@ -3,6 +3,7 @@
   "schedules": [
     {
       "enabled": true,
+      "enabledControlType": "UserEnabled",
       "jobType": "Execute",
       "configuration": {
         "type": "Daily",
@@ -10,9 +11,10 @@
         "endDateTime": "2154-12-31T23:59:00",
         "localTimeZoneId": "Eastern Standard Time",
         "times": [
-          "05:20",
-          "11:20",
-          "17:20"
+          "05:00",
+          "11:00",
+          "17:00",
+          "23:00"
         ]
       },
       "parameters": []

@@ -605,9 +605,9 @@ SELECT  ABS(CAST(CAST(
 		 else f.Cmpny end as [Legal_Entity_ID]
 --  , 'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6) as CustomerID -- KY 4/8/26
 --	, 'A'+f.Cmpny+trim([Customer No])+'000000' as CustomerID -- KY 6/15/26
-	, 'A' + f.Cmpny 
+	, COALESCE(y.D365_CustomerID, 'A' + f.Cmpny 
        + TRIM(f.[Customer No])
-       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) as CustomerID
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6)) as CustomerID
 	, null as [InvoiceAccount]
 	, COALESCE(x.D365_ProductID, f.Product)  ProductID
 	----,[CPCID]  ----replaced with CASE logic code below
@@ -616,7 +616,7 @@ SELECT  ABS(CAST(CAST(
 		 WHEN f.Cmpny = '201' THEN '501'
 		 WHEN f.CMPNY = '999' THEN '301'
 		 else f.Cmpny end
-			+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+			+'-'+ COALESCE(y.D365_CustomerID, Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
 			+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 	CPCID
 	----, 'A' + Trim(f.Cmpny) + Trim([Customer No]) + Trim([Ship To No]) + '---' + Trim(f.Product) AS CPCID
 	, [Invoice No]  InvoiceNo
@@ -674,7 +674,7 @@ SELECT  ABS(CAST(CAST(
 				 WHEN f.Cmpny = '201' THEN '501'
 				 WHEN f.CMPNY = '999' THEN '301'
 				 else f.Cmpny end
-					+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+					+'-'+ COALESCE(y.D365_CustomerID, Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
 					+'-'+ Trim(f.Product) 
 		ELSE 
 			CASE WHEN f.Cmpny in ('001','002') then '101' 
@@ -682,7 +682,7 @@ SELECT  ABS(CAST(CAST(
 				 WHEN f.Cmpny = '201' THEN '501'
 				 WHEN f.CMPNY = '999' THEN '301'
 				 else f.Cmpny end
-					+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+					+'-'+ COALESCE(y.D365_CustomerID, Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
 					+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 
 		END CPCID2
 		,TRIM(case when isnull(dpc.isphantom,'') = 'Yes'	
@@ -770,9 +770,13 @@ LEFT JOIN mtbl_EDW_DIM_Account dc
 --	ON f.[Customer No]  = dc.Customer_ID
 --	ON 'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No]  as varchar(6)),6) = dc.Customer_ID -- KY 4/8/26
 --	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = dc.Customer_ID -- KY 6/15/26
-	ON 'A' + f.Cmpny 
+--	ON 'A' + f.Cmpny 
+--       + TRIM(f.[Customer No])
+--       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dc.Customer_ID
+	ON coalesce(y.D365_CustomerID
+		, 'A' + f.Cmpny 
        + TRIM(f.[Customer No])
-       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dc.Customer_ID
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) ) = dc.Customer_ID
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
@@ -979,9 +983,13 @@ LEFT JOIN mtbl_EDW_DIM_Employee de2
 --		AND CONVERT(datetime2(6), [Ord Date] ) between dms.RecordEffectiveStartDate and dms.RecordEffectiveEndDate  --Per Kevin Y 2026-02-02 historic value not needed
 
 LEFT JOIN mtbl_EDW_DIM_MarketSegmentation dmsc
-	ON 'A' + f.Cmpny 
+--	ON 'A' + f.Cmpny 
+--       + TRIM(f.[Customer No])
+--       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dmsc.CustomerID
+	ON coalesce(y.D365_CustomerID
+		, 'A' + f.Cmpny 
        + TRIM(f.[Customer No])
-       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dmsc.CustomerID
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) ) = dmsc.CustomerID
 		AND COALESCE(x.D365_ProductID, f.Product) = dmsc.ProductID
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
@@ -2414,9 +2422,9 @@ SELECT  ABS(CAST(CAST(
 --	, 'A'+f.Cmpny+trim([Customer No])+'000000' as CustomerID
 
 --	, 'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No] as varchar(6)),6) as CustomerID - KY 4/8/26
-	, 'A' + f.Cmpny 
+	, COALESCE(y.D365_CustomerID, 'A' + f.Cmpny 
        + TRIM(f.[Customer No])
-       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) as CustomerID
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6)) as CustomerID
 	
 	, null as [InvoiceAccount]
 	, COALESCE(x.D365_ProductID, f.Product)  ProductID
@@ -2426,7 +2434,7 @@ SELECT  ABS(CAST(CAST(
 		 WHEN f.Cmpny = '201' THEN '501'
 		 WHEN f.CMPNY = '999' THEN '301'
 		 else f.Cmpny end
-			+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+			+'-'+ COALESCE(y.D365_CustomerID, Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
 			+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 	CPCID
 	--, 'A' + Trim(f.Cmpny) + Trim([Customer No]) + Trim([Ship To No]) + '---' + Trim(f.Product) AS CPCID
 	, [Invoice No]  InvoiceNo
@@ -2484,7 +2492,7 @@ SELECT  ABS(CAST(CAST(
 				 WHEN f.Cmpny = '201' THEN '501'
 				 WHEN f.CMPNY = '999' THEN '301'
 				 else f.Cmpny end
-					+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+					+'-'+ COALESCE(y.D365_CustomerID, Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
 					+'-'+ Trim(f.Product) 
 		ELSE 
 			CASE WHEN f.Cmpny in ('001','002') then '101' 
@@ -2492,7 +2500,7 @@ SELECT  ABS(CAST(CAST(
 				 WHEN f.Cmpny = '201' THEN '501'
 				 WHEN f.CMPNY = '999' THEN '301'
 				 else f.Cmpny end
-					+'-'+ COALESCE(Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
+					+'-'+ COALESCE(y.D365_CustomerID, Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
 					+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 
 		END CPCID2
 		,TRIM(case when isnull(dpc.isphantom,'') = 'Yes'	
@@ -2581,9 +2589,13 @@ LEFT JOIN mtbl_EDW_DIM_Account dc
 --	ON f.[Customer No]  = dc.Customer_ID
 --	ON 'A'+f.Cmpny+trim([Customer No])+RIGHT('000000'+CAST([Ship To No]  as varchar(6)),6) = dc.Customer_ID -- KY 4/8/26
 --	ON 'A'+f.Cmpny+trim([Customer No])+'000000' = dc.Customer_ID -- KY 6/15/26
-	ON 'A' + f.Cmpny 
+--	ON 'A' + f.Cmpny 
+--       + TRIM(f.[Customer No])
+--       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dc.Customer_ID
+	ON coalesce(y.D365_CustomerID
+		, 'A' + f.Cmpny 
        + TRIM(f.[Customer No])
-       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dc.Customer_ID
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) ) = dc.Customer_ID
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  
 		 WHEN f.Cmpny = '201' THEN '501'
@@ -2805,9 +2817,13 @@ LEFT JOIN mtbl_EDW_DIM_Employee de2
 --		AND CONVERT(datetime2(6), [Ord Date] ) between dms.RecordEffectiveStartDate and dms.RecordEffectiveEndDate  --Per Kevin Y 2026-02-02 historic value not needed
 
 LEFT JOIN mtbl_EDW_DIM_MarketSegmentation dmsc
-	ON 'A' + f.Cmpny 
+--	ON 'A' + f.Cmpny 
+--       + TRIM(f.[Customer No])
+--       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dmsc.CustomerID
+	ON coalesce(y.D365_CustomerID
+		, 'A' + f.Cmpny 
        + TRIM(f.[Customer No])
-       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) = dmsc.CustomerID
+       + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6) ) = dmsc.CustomerID
 		AND COALESCE(x.D365_ProductID, f.Product) = dmsc.ProductID
 		AND CASE WHEN f.Cmpny in ('001','002') then '101' 
 		 WHEN f.Cmpny = '101' THEN '301'  

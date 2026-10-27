@@ -428,32 +428,6 @@
         }
       },
       {
-        "name": "Success Email",
-        "description": "Send success email.",
-        "type": "Office365Outlook",
-        "dependsOn": [
-          {
-            "activity": "ForEach Fact managed table to load With Prereqs",
-            "dependencyConditions": [
-              "Succeeded"
-            ]
-          }
-        ],
-        "typeProperties": {
-          "inputs": {
-            "method": "post",
-            "path": "/v2/Mail",
-            "body": {
-              "To": "@activity('Lkup Fact Managed Tables to Load').output.value[0].SuccessEMails",
-              "Subject": "Managed Table Load Successful",
-              "Body": "<p>Managed Table Load Successful</p>",
-              "Sensitivity": "",
-              "Importance": "Normal"
-            }
-          }
-        }
-      },
-      {
         "name": "Lkup Fact Managed Tables to Load",
         "description": "This lookup gets the list of fact tables that need to be processed, table is active, refresh frequency elapsed, and a stored procedure is NOT needed to process the data.",
         "type": "Lookup",
@@ -1312,6 +1286,68 @@
                   },
                   "externalReferences": {
                     "connection": "e7b4e8b4-bdca-4fac-a60a-6ba925e51986"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Remove blank email list",
+        "type": "Filter",
+        "dependsOn": [
+          {
+            "activity": "ForEach Fact managed table to load With Prereqs",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "items": {
+            "value": "@createArray( first(activity('Lkup Dim Managed Tables to Load').output.value)?.SuccessEMails, first(activity('Lkup Fact Managed Tables to Load').output.value)?.SuccessEMails, first(activity('Lkup Fact Managed Tables to Load With Prereqs').output.value)?.SuccessEMails )",
+            "type": "Expression"
+          },
+          "condition": {
+            "value": "@not(empty(trim(coalesce(item(), ''))))",
+            "type": "Expression"
+          }
+        }
+      },
+      {
+        "name": "Check for any valid email addresses",
+        "type": "IfCondition",
+        "dependsOn": [
+          {
+            "activity": "Remove blank email list",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "typeProperties": {
+          "expression": {
+            "value": "@greater(activity('Remove blank email list').output.FilteredItemsCount, 0)",
+            "type": "Expression"
+          },
+          "ifFalseActivities": [],
+          "ifTrueActivities": [
+            {
+              "name": "Success Email",
+              "description": "Send success email.",
+              "type": "Office365Outlook",
+              "dependsOn": [],
+              "typeProperties": {
+                "inputs": {
+                  "method": "post",
+                  "path": "/v2/Mail",
+                  "body": {
+                    "To": "@join(union(activity('Remove blank email list').output.Value, activity('Remove blank email list').output.Value), ';')",
+                    "Subject": "Managed Table Load Successful",
+                    "Body": "<p>Managed Table Load Successful</p>",
+                    "Sensitivity": "",
+                    "Importance": "Normal"
                   }
                 }
               }

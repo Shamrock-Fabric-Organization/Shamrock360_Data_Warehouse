@@ -17,7 +17,7 @@
         "typeProperties": {
           "source": {
             "type": "FabricSqlDatabaseSource",
-            "sqlReaderQuery": "select m.*, e.SuccessEMails, e.FailureEMails\nfrom ingestion_metadata m\n  join load_emails e\n     on m.DataSource = e.DataSource\nwhere m.Active=1\nand (DATEDIFF(MINUTE, isnull(m.LastLoadDateTime, '01/01/1900'), GETDATE()) / 60.0) >= m.RefreshFrequencyHours\nand m.ProcessingStoredProcedure is not null\n",
+            "sqlReaderQuery": "select m.*, e.SuccessEMails, e.FailureEMails\nfrom ingestion_metadata m\n  join load_emails e\n     on m.DataSource = e.DataSource\nwhere m.Active=1\nand m.DataSource = 'WH_Raw'\nand (DATEDIFF(MINUTE, isnull(m.LastLoadDateTime, '01/01/1900'), GETDATE()) / 60.0) >= m.RefreshFrequencyHours\nand m.ProcessingStoredProcedure is not null\n",
             "queryTimeout": "02:00:00",
             "partitionOption": "None"
           },

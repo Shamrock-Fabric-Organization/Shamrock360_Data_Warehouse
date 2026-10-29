@@ -476,7 +476,9 @@ if (-not $WorkspaceId) {
 Write-Host "Workspace id : $WorkspaceId"
 Write-Host ''
 
-$allItems = @(Get-FabricList -Path "/workspaces/$WorkspaceId/items" -Headers $headers)
+# No @() here: Get-FabricList already returns an array (return ,$all), and @() around it
+# nests that array as a single element, so nothing would match.
+$allItems = Get-FabricList -Path "/workspaces/$WorkspaceId/items" -Headers $headers
 
 $targets = $allItems
 if ($ItemType) { $targets = @($targets | Where-Object { $_.type -eq $ItemType }) }

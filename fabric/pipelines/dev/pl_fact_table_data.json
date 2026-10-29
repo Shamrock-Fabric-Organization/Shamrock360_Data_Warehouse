@@ -176,7 +176,7 @@
                   "method": "post",
                   "path": "/v2/Mail",
                   "body": {
-                    "To": "@activity('Lookup Fact Tables to Load').output.value[0].SuccessEMails",
+                    "To": "@activity('Lookup Fact Tables to Load').output.value[0].FailureEMails",
                     "Subject": "Fact Load Failure",
                     "Body": "<p>Fact Load Failure - copy to curated</p>",
                     "Sensitivity": "",
@@ -639,7 +639,7 @@
                   "method": "post",
                   "path": "/v2/Mail",
                   "body": {
-                    "To": "@activity('Lookup Fact Tables to Load').output.value[0].SuccessEMails",
+                    "To": "@activity('Lookup Fact Tables to Load').output.value[0].FailureEMails",
                     "Subject": "Fact Load Failure",
                     "Body": "<p>Fact Load Failure - copy to curated</p>",
                     "Sensitivity": "",
@@ -946,7 +946,7 @@
                   "method": "post",
                   "path": "/v2/Mail",
                   "body": {
-                    "To": "@activity('Lookup Fact Tables to Load').output.value[0].SuccessEMails",
+                    "To": "@activity('Lookup Fact Tables to Load').output.value[0].FailureEMails",
                     "Subject": "Fact Load Failure",
                     "Body": "<p>Fact Load Failure - stored procedure execution</p>",
                     "Sensitivity": "",

@@ -281,9 +281,8 @@ param(
 
 # ⛔ THE FOLDED-DIFFERENCE LISTING RIDES ON -Verbose, WHICH IS DELIBERATE AND NOT LAZINESS.
 # It wants to be a switch of its own, but every declared parameter of every script in this
-# folder is checked against Document 5's parameter reference by
-# tools/sql-column-check/verify-param-docs.py, and that reference is a client deliverable
-# held under change control. -Verbose comes from [CmdletBinding()], is not a declared
+# folder is listed in the Comparison Scripts Parameter Reference, and that reference is a
+# client deliverable held under change control. -Verbose comes from [CmdletBinding()], is not a declared
 # parameter, and so adds the capability without silently putting that reference out of
 # step. It is gated on the preference rather than routed through Write-Verbose because the
 # whole report is written with Write-Host and a listing split across two streams is worse

@@ -379,8 +379,11 @@ if ($rows.Count -gt 0) {
 }
 
 foreach ($row in $rows) {
-    $color = switch -Wildcard ($row.Status) {
+    # -CaseSensitive: switch is case-insensitive by default, so 'differs*' (a difference
+    # accepted by design) would also catch 'DIFFERS (n)', a real difference, and print it grey.
+    $color = switch -Wildcard -CaseSensitive ($row.Status) {
         'match'     { 'Green' }
+        'DIFFERS*'  { 'Yellow' }
         'differs*'  { 'DarkGray' }
         'SKIPPED'   { 'DarkGray' }
         default     { 'Yellow' }

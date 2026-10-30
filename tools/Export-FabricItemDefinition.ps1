@@ -124,6 +124,15 @@ param(
     [string]   $WorkspaceName,
     [string]   $WorkspaceId,
     [string[]] $ItemName,
+    # Fabric item types are an open list, so this checks the shape and not the spelling:
+    # one type name, letters only. "DataPipeline,Notebook" and "Data Pipeline" stop here,
+    # before sign-in. A type the workspace does not hold still stops later with "Nothing matched".
+    [ValidateScript({
+        if ($_ -notmatch '^[A-Za-z]+$') {
+            throw "-ItemType takes one Fabric item type name, letters only, for example DataPipeline. Got '$_'. To export several types, run the script once per type."
+        }
+        $true
+    })]
     [string]   $ItemType,
     [string]   $OutFolder,
     [string]   $OutFile,

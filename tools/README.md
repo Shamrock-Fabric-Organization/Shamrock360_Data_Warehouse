@@ -38,7 +38,7 @@ does less. There is no error and no signal.
 
 The last two are described under [Semantic models and routine logic](#semantic-models-and-routine-logic).
 The warehouse schema scripts (`Export-WarehouseSchema.ps1`, `Compare-WarehouseSchema.ps1`) are run
-from the procedure in Document 5.
+from the procedure in the Promotion Verification Guide.
 
 **`Compare-FabricEnvironment.ps1` is the everyday one.** It prints a line per object and the
 detail only for what differs, so a clean run is short enough to actually read — which is what makes
@@ -438,7 +438,7 @@ Requires PowerShell 7 (`#Requires -Version 7.0`).
 | `-DevFile` | Files | One development `.full.json` export |
 | `-ProdFile` | Files | The production `.full.json` export to compare it with |
 | `-IgnoreIdentifierCase` | both | Also treat identifiers (object, column, built-in function and type names) as case-insensitive. String literals and bracketed names stay case-sensitive. The run reports how many routines this moved |
-| `-ScriptDomPath` | both | Path to `Microsoft.SqlServer.TransactSql.ScriptDom.dll` when the `tools/qa-validator` build and the NuGet cache copies are both absent |
+| `-ScriptDomPath` | both | Path to `Microsoft.SqlServer.TransactSql.ScriptDom.dll` when the copy in the NuGet package cache is absent |
 
 Exit code `0` nothing differs in logic, `1` at least one routine differs in logic, `2` the comparison
 could not run (no tokenizer, no definitions, no file pair, or a truncated body in the export).

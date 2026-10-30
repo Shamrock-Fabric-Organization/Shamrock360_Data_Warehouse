@@ -26,7 +26,8 @@
     regex gets both of those wrong, and gets them wrong SILENTLY - it would delete real
     code and then report the routine as identical, which is the one outcome worse than no
     tool at all. If the tokenizer cannot be loaded this script stops rather than falling
-    back. The assembly already lives in the repository, under tools/qa-validator.
+    back. The assembly is not in the repository. It is restored from NuGet into the
+    NuGet package cache once per machine, or passed with -ScriptDomPath.
 
     ⛔ A COMMENT DIFFERENCE IS ITS OWN CLASS, LISTED BY NAME, NEVER FOLDED INTO
     "IDENTICAL". A commented-out WHERE clause or JOIN is a real behavioral difference
@@ -113,8 +114,8 @@
     [Order Date] against [ORDER DATE], remain differences with this switch on.
 
 .PARAMETER ScriptDomPath
-    Path to Microsoft.SqlServer.TransactSql.ScriptDom.dll, if the copies under
-    tools/qa-validator and the NuGet cache are both absent. Normally unnecessary.
+    Path to Microsoft.SqlServer.TransactSql.ScriptDom.dll, if the copy in the NuGet
+    package cache is absent. Normally unnecessary.
 
 .EXAMPLE
     # Both environments, all four warehouses, then the cleanup worklist.
@@ -169,8 +170,7 @@ $ErrorActionPreference = 'Stop'
 function Import-ScriptDom {
     <#
         Loads Microsoft's T-SQL lexer, or stops. There is no regex fallback by design -
-        see the header. The search order is: an explicit path, the qa-validator build
-        output, then the NuGet cache that build restores into.
+        see the header. The search order is: an explicit path, then the NuGet package cache.
     #>
     param([string] $Explicit)
 
@@ -178,14 +178,6 @@ function Import-ScriptDom {
 
     $candidates = @()
     if ($Explicit) { $candidates += $Explicit }
-
-    $qa = Join-Path (Split-Path -Parent $PSScriptRoot) 'qa-validator'
-    foreach ($cfg in 'Release', 'Debug') {
-        $candidates += Get-ChildItem -Path (Join-Path $qa "bin/$cfg") -Recurse -ErrorAction SilentlyContinue `
-                            -Filter 'Microsoft.SqlServer.TransactSql.ScriptDom.dll' |
-                       Where-Object { $_.Directory.Name -notmatch '^[a-z]{2}(-[A-Za-z]+)?$' } |
-                       Select-Object -ExpandProperty FullName
-    }
 
     # The NuGet cache. net6.0 first: this script requires PowerShell 7, which is .NET 6
     # or later, and the netstandard build is only there for older hosts.
@@ -772,8 +764,10 @@ if (-not $loaded) {
     Write-Host 'regex. A regex cannot tell a comment from the text ''-- not a comment'' inside a'
     Write-Host 'string literal, so it would delete real code and then call the routine identical.'
     Write-Host ''
-    Write-Host 'Build the validator once, which restores the assembly:'
-    Write-Host '    dotnet build tools/qa-validator/QaValidator.csproj'
+    Write-Host 'Restore the NuGet package Microsoft.SqlServer.TransactSql.ScriptDom into the NuGet'
+    Write-Host 'package cache once, for example:'
+    Write-Host '    dotnet new classlib -o $env:TEMP\scriptdom-restore'
+    Write-Host '    dotnet add $env:TEMP\scriptdom-restore package Microsoft.SqlServer.TransactSql.ScriptDom'
     Write-Host 'or pass -ScriptDomPath <Microsoft.SqlServer.TransactSql.ScriptDom.dll>.'
     exit 2
 }

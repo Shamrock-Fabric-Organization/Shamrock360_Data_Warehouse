@@ -141,6 +141,7 @@
 param(
     [ValidateSet('dev', 'prod')] [string] $Environment,
     [string]   $Endpoint,
+    [ValidateSet('WH_Raw', 'WH_Transform', 'WH_Curated', 'WH_Metadata')]
     [string[]] $Database = @('WH_Raw', 'WH_Transform', 'WH_Curated', 'WH_Metadata'),
     [Parameter(Mandatory)] [string] $OutFolder,
     [string]   $TenantId = '80726221-f16a-4d23-87e7-7e389dde5a25',
@@ -346,7 +347,7 @@ if ($IncludeDefinitions) {
     Write-Host '⛔ These files carry the FULL SQL TEXT and duplicate database_projects/.'
     Write-Host '   They are named <environment>-<database>.full.json so they do not overwrite'
     Write-Host '   the small hash exports. Use them to locate a difference, then DELETE them.'
-    Write-Host '   .gitignore refuses them, but delete them anyway - they go stale immediately.'
+    Write-Host '   .gitignore does not list them. Never commit them, and delete them - they go stale immediately.'
     Write-Host ''
 }
 Write-Host 'Export the other environment, then compare with:'

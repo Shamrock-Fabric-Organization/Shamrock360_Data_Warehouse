@@ -76,6 +76,12 @@ FROM (
 
         UNION ALL
 
+        SELECT 'dbo', 'tbl_DIM_ForecastModel', 'ForecastModelKey'
+            ,COUNT(1), ISNULL(MAX(cnt), 0)
+        FROM (SELECT ForecastModelKey, COUNT(1) AS cnt FROM dbo.tbl_DIM_ForecastModel GROUP BY ForecastModelKey HAVING COUNT(1) > 1) x
+
+        UNION ALL
+
         SELECT 'dbo', 'tbl_DIM_GL_Account', 'GL_AccountKey'
             ,COUNT(1), ISNULL(MAX(cnt), 0)
         FROM (SELECT GL_AccountKey, COUNT(1) AS cnt FROM dbo.tbl_DIM_GL_Account GROUP BY GL_AccountKey HAVING COUNT(1) > 1) x
@@ -187,6 +193,12 @@ FROM (
         SELECT 'dbo', 'tbl_DIM_WorkCenter', 'WorkCenterKey'
             ,COUNT(1), ISNULL(MAX(cnt), 0)
         FROM (SELECT WorkCenterKey, COUNT(1) AS cnt FROM dbo.tbl_DIM_WorkCenter GROUP BY WorkCenterKey HAVING COUNT(1) > 1) x
+
+        UNION ALL
+
+        SELECT 'dbo', 'tbl_DIM_WorkOrder', 'WorkOrderKey'
+            ,COUNT(1), ISNULL(MAX(cnt), 0)
+        FROM (SELECT WorkOrderKey, COUNT(1) AS cnt FROM dbo.tbl_DIM_WorkOrder GROUP BY WorkOrderKey HAVING COUNT(1) > 1) x
 
         ------UNION ALL
 

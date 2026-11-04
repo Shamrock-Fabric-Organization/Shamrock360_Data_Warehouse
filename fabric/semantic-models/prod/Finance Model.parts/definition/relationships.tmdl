@@ -198,4 +198,12 @@ relationship 662713b0-7fb2-ddab-2169-8387b8a57662
 	fromColumn: Fact_SalesBudget.ProductKey
 	toColumn: Dim_Product.ProductKey
 
+relationship 6a4e579d-f7d0-631b-9be1-1f5a4bdf36fe
+	fromColumn: Fact_Sales.DeliveryAddressKey
+	toColumn: Dim_Address.AddressKey
+
+relationship edacb7df-fee1-5782-1d89-7cb16432c4b5
+	fromColumn: Fact_Customer_Invoices.DeliveryAddressKey
+	toColumn: Dim_Address.AddressKey
+
 

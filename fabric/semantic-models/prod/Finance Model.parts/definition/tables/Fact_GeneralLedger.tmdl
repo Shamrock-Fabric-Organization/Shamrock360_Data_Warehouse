@@ -2,7 +2,7 @@ table Fact_GeneralLedger
 	lineageTag: 6b40e92b-1e3b-4114-bf4c-949dd958788c
 	sourceLineageTag: [dbo].[mtbl_EDW_Fact_GeneralLedger]
 
-	measure 'Accounting Currency Amount' = SUM(Fact_GeneralLedger[accountingcurrencyamount])
+	measure 'Accounting Currency Amount' = [Base GL - AcctCurrAmt]
 		lineageTag: 5f17427c-5cec-4af4-952f-e69206041565
 
 		changedProperty = Name
@@ -16,7 +16,7 @@ table Fact_GeneralLedger
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Transaction Currency Amount' = SUM(Fact_GeneralLedger[transactioncurrencyamount])
+	measure 'Transaction Currency Amount' = [Base GL - TransCurrAmt]
 		lineageTag: 385428a5-ec90-4c54-b8fc-179279db5b26
 
 		changedProperty = Name
@@ -39,7 +39,7 @@ table Fact_GeneralLedger
 	/// Returns the signed sum of reporting currency amounts in the current filter context (date, site, dept, GL account, etc.). This is the base building block for all “net” amounts.
 	measure 'ER - Amount (Signed)' = ```
 			
-			SUM ( Fact_GeneralLedger[reportingcurrencyamount] )
+			[Base GL - AcctCurrAmt]
 			
 			```
 		lineageTag: 16998b5e-7b26-4edb-ba95-c5439ba3ceb3
@@ -54,7 +54,7 @@ table Fact_GeneralLedger
 	measure 'ER - Debit (Period)' =
 			
 			CALCULATE (
-			    SUM ( Fact_GeneralLedger[reportingcurrencyamount]),
+			    [Base GL - AcctCurrAmt],
 			    Fact_GeneralLedger[iscredit] = 0
 			)
 		lineageTag: 8aab7f3e-9364-4023-9efb-492ab8fc61ce
@@ -69,7 +69,7 @@ table Fact_GeneralLedger
 	measure 'ER - Credit (Period)' =
 			
 			- CALCULATE (
-			    SUM ( Fact_GeneralLedger[reportingcurrencyamount] ),
+			    [Base GL - AcctCurrAmt],
 			    Fact_GeneralLedger[iscredit] = 1
 			)
 		lineageTag: db5cc04f-c2f1-4fe7-95b3-a56ed126c65e
@@ -1249,7 +1249,6 @@ table Fact_GeneralLedger
 
 	column reportingcurrencyamount
 		dataType: double
-		isHidden
 		sourceProviderType: decimal(38, 6)
 		lineageTag: a12d22a9-97c8-4c37-aaed-d275cc32ae42
 		sourceLineageTag: reportingcurrencyamount
@@ -1401,11 +1400,14 @@ table Fact_GeneralLedger
 
 	column transactioncurrencyamount_USD
 		dataType: double
+		isHidden
 		sourceProviderType: numeric(38, 6)
 		lineageTag: 878d2265-abe2-4267-bb1d-74e4546f0833
 		sourceLineageTag: transactioncurrencyamount_USD
 		summarizeBy: sum
 		sourceColumn: transactioncurrencyamount_USD
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -1413,11 +1415,14 @@ table Fact_GeneralLedger
 
 	column transactioncurrencyamount_EUR
 		dataType: double
+		isHidden
 		sourceProviderType: numeric(38, 6)
 		lineageTag: 43b13aff-62ef-4b62-9c84-6650009acf07
 		sourceLineageTag: transactioncurrencyamount_EUR
 		summarizeBy: sum
 		sourceColumn: transactioncurrencyamount_EUR
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -1425,11 +1430,14 @@ table Fact_GeneralLedger
 
 	column transactioncurrencyamount_CNY
 		dataType: double
+		isHidden
 		sourceProviderType: numeric(38, 6)
 		lineageTag: eaaf4bba-61e0-45f4-9985-f5daff03e085
 		sourceLineageTag: transactioncurrencyamount_CNY
 		summarizeBy: sum
 		sourceColumn: transactioncurrencyamount_CNY
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -1437,11 +1445,14 @@ table Fact_GeneralLedger
 
 	column accountingcurrencyamount_USD
 		dataType: double
+		isHidden
 		sourceProviderType: numeric(38, 6)
 		lineageTag: e649b9ca-b0ec-4ba6-8677-ae51d50e5b84
 		sourceLineageTag: accountingcurrencyamount_USD
 		summarizeBy: sum
 		sourceColumn: accountingcurrencyamount_USD
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -1449,11 +1460,14 @@ table Fact_GeneralLedger
 
 	column accountingcurrencyamount_EUR
 		dataType: double
+		isHidden
 		sourceProviderType: numeric(38, 6)
 		lineageTag: 431b97c0-4333-4724-b76d-df7fb5be819a
 		sourceLineageTag: accountingcurrencyamount_EUR
 		summarizeBy: sum
 		sourceColumn: accountingcurrencyamount_EUR
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -1461,11 +1475,14 @@ table Fact_GeneralLedger
 
 	column accountingcurrencyamount_CNY
 		dataType: double
+		isHidden
 		sourceProviderType: numeric(38, 6)
 		lineageTag: 40acfba0-d92f-403c-a0af-99fe91831a0a
 		sourceLineageTag: accountingcurrencyamount_CNY
 		summarizeBy: sum
 		sourceColumn: accountingcurrencyamount_CNY
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -1473,11 +1490,14 @@ table Fact_GeneralLedger
 
 	column Txn_Source_Currency
 		dataType: string
+		isHidden
 		sourceProviderType: varchar(8000)
 		lineageTag: b008bf28-5b9d-465f-a6f0-c9f4be377a6c
 		sourceLineageTag: Txn_Source_Currency
 		summarizeBy: none
 		sourceColumn: Txn_Source_Currency
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -1493,6 +1513,7 @@ table Fact_GeneralLedger
 
 	column Txn_USD_Rate_Missing
 		dataType: int64
+		isHidden
 		formatString: 0
 		sourceProviderType: int
 		lineageTag: 3523a12e-1f37-4c34-9ceb-50ba868eca35
@@ -1500,10 +1521,13 @@ table Fact_GeneralLedger
 		summarizeBy: sum
 		sourceColumn: Txn_USD_Rate_Missing
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column Txn_EUR_Rate_Missing
 		dataType: int64
+		isHidden
 		formatString: 0
 		sourceProviderType: int
 		lineageTag: 78c73fee-5e1d-42be-9999-3f8139e2bbd7
@@ -1511,10 +1535,13 @@ table Fact_GeneralLedger
 		summarizeBy: sum
 		sourceColumn: Txn_EUR_Rate_Missing
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column Txn_CNY_Rate_Missing
 		dataType: int64
+		isHidden
 		formatString: 0
 		sourceProviderType: int
 		lineageTag: 56f0b6f8-059a-4dab-82a7-29a3f8aecb09
@@ -1522,10 +1549,13 @@ table Fact_GeneralLedger
 		summarizeBy: sum
 		sourceColumn: Txn_CNY_Rate_Missing
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column Acct_USD_Rate_Missing
 		dataType: int64
+		isHidden
 		formatString: 0
 		sourceProviderType: int
 		lineageTag: 6dfa9f81-d742-4bf5-9a16-8886b3c14f2c
@@ -1533,10 +1563,13 @@ table Fact_GeneralLedger
 		summarizeBy: sum
 		sourceColumn: Acct_USD_Rate_Missing
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column Acct_EUR_Rate_Missing
 		dataType: int64
+		isHidden
 		formatString: 0
 		sourceProviderType: int
 		lineageTag: b5c54653-012d-426c-8ddf-a58f925fdc60
@@ -1544,16 +1577,21 @@ table Fact_GeneralLedger
 		summarizeBy: sum
 		sourceColumn: Acct_EUR_Rate_Missing
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column Acct_CNY_Rate_Missing
 		dataType: int64
+		isHidden
 		formatString: 0
 		sourceProviderType: int
 		lineageTag: 9b2031a6-75a6-45ee-9021-4a86f6b16ab4
 		sourceLineageTag: Acct_CNY_Rate_Missing
 		summarizeBy: sum
 		sourceColumn: Acct_CNY_Rate_Missing
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 

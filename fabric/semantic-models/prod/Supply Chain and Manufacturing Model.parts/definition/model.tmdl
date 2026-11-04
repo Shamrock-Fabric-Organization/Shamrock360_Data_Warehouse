@@ -11,7 +11,7 @@ annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_QueryOrder = ["DatabaseQuery"]
 
-annotation PBI_ProTooling = ["WebModelingEdit","RemoteModeling","MCP-PBIModeling-Hosted"]
+annotation PBI_ProTooling = ["WebModelingEdit","RemoteModeling","MCP-PBIModeling-Hosted","DaxQueryView_Desktop"]
 
 ref table Dim_Legal_Entity
 ref table Dim_ProductionBatchOrder
@@ -49,5 +49,6 @@ ref table Fact_ProductionBatchOrderVariance
 ref table 'Production Measures'
 ref table Dim_ProductionVarianceCostLevelHelper
 ref table Dim_Product
+ref table 'UI View'
 
 

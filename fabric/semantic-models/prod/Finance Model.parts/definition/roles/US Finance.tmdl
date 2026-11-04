@@ -1,0 +1,8 @@
+role 'US Finance'
+	modelPermission: read
+
+	tablePermission Dim_Legal_Entity = [CMPNY] == "101"
+
+	annotation PBI_Id = 19179c965d0f402cbf51297e6f1c9bd0
+
+

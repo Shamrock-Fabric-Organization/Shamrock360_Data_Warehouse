@@ -2,7 +2,7 @@ table Fact_Sales
 	lineageTag: 18292f5f-02e3-4abd-ae00-a94bbd7a44f3
 	sourceLineageTag: [dbo].[mtbl_EDW_Fact_Sales]
 
-	measure SalesAmount = SUM(Fact_Sales[Amount])
+	measure SalesAmount = [Sales Amount Base]
 		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
 		lineageTag: 9d7c265e-9b1e-4e31-8227-95cc8a50a12f
 
@@ -12,21 +12,21 @@ table Fact_Sales
 
 		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
-	measure SalesPricePerLB = Divide([SalesAmount] , [Quantity LBs])
+	measure SalesPrice = Divide([SalesAmount] , [Quantity LBs])
 		lineageTag: b63ee997-6415-464a-be4b-149dbc94f3b1
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Quantity LBs' = SUM(Fact_Sales[Quantity_LBs])
+	measure 'Quantity LBs' = [Sales Quantity Base]
 		lineageTag: 7b73a9ab-e381-48f4-9495-a1fa017d7072
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Sales Quantity' = SUM(Fact_Sales[Quantity])
+	measure 'Sales Quantity' = [Sales Quantity Base]
 		lineageTag: c889a734-30a3-4ce3-a312-83364ee7d719
 
 		changedProperty = Name
@@ -56,11 +56,11 @@ table Fact_Sales
 	measure MTD_Revenue_Open = ```
 			
 			CALCULATE(
-			    SUM('Fact_Sales'[Amount]),
+			    [SalesAmount],
 			
 			    -- Activate the inactive relationship for this calculation
 			    USERELATIONSHIP(
-			        'Fact_Sales'[SalesLine_RequestedShipDateKey],
+			        'Fact_Sales'[SalesLine_DeliveryDateKey],
 			        'Dim_Date'[DateKey]
 			    ),
 			
@@ -76,23 +76,23 @@ table Fact_Sales
 			)
 			
 			```
-		formatString: \$#,0;(\$#,0);\$#,0
+		formatString: #,0.00
 		lineageTag: 6b25ec26-5580-4945-af93-14e773e1540b
 
 		changedProperty = Name
 
 		changedProperty = FormatString
 
-		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+		changedProperty = FormatStringDefinition
 
 	measure MTD_Volume_Open = ```
 			
 			CALCULATE(
-			    SUM('Fact_Sales'[Quantity_LBs]),
+			    [Sales Quantity],
 			
 			    -- Activate the inactive relationship for this calculation
 			    USERELATIONSHIP(
-			        'Fact_Sales'[SalesLine_RequestedShipDateKey],
+			        'Fact_Sales'[SalesLine_DeliveryDateKey],
 			        'Dim_Date'[DateKey]
 			    ),
 			
@@ -118,11 +118,11 @@ table Fact_Sales
 	measure YTD_Volume_Open = ```
 			
 			CALCULATE(
-			    SUM('Fact_Sales'[Quantity_LBs]),
+			    [Sales Quantity],
 			
 			    -- Activate the inactive relationship for this calculation
 			    USERELATIONSHIP(
-			        'Fact_Sales'[SalesLine_RequestedShipDateKey],
+			        'Fact_Sales'[SalesLine_DeliveryDateKey],
 			        'Dim_Date'[DateKey]
 			    ),
 			
@@ -148,11 +148,11 @@ table Fact_Sales
 	measure YTD_Revenue_Open = ```
 			
 			CALCULATE(
-			    SUM('Fact_Sales'[Amount]),
+			    [SalesAmount],
 			
 			    -- Activate the inactive relationship for this calculation
 			    USERELATIONSHIP(
-			        'Fact_Sales'[SalesLine_RequestedShipDateKey],
+			        'Fact_Sales'[SalesLine_DeliveryDateKey],
 			        'Dim_Date'[DateKey]
 			    ),
 			
@@ -168,19 +168,17 @@ table Fact_Sales
 			)
 			
 			```
-		formatString: \$#,0;(\$#,0);\$#,0
+		formatString: #,0.00
 		lineageTag: 7cf06421-727e-4294-83f4-2b3b69c3ff40
 
 		changedProperty = Name
 
 		changedProperty = FormatString
 
-		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
-
 	measure MTD_Revenue_Shipped = ```
 			
 			CALCULATE(
-			    SUM('Fact_Sales'[Amount]),
+			    [Invoiced Amount],
 			
 			    -- Activate the inactive relationship for this calculation
 			    USERELATIONSHIP(
@@ -200,19 +198,17 @@ table Fact_Sales
 			)
 			
 			```
-		formatString: \$#,0;(\$#,0);\$#,0
+		formatString: #,0.00
 		lineageTag: 490a53ac-d47e-4a5f-8089-9e08afb958fd
 
 		changedProperty = Name
 
 		changedProperty = FormatString
 
-		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
-
 	measure YTD_Revenue_Shipped = ```
 			
 			CALCULATE(
-			    SUM('Fact_Sales'[Amount]),
+			    [Invoiced Amount],
 			
 			    -- Activate the inactive relationship for this calculation
 			    USERELATIONSHIP(
@@ -232,19 +228,17 @@ table Fact_Sales
 			)
 			
 			```
-		formatString: \$#,0;(\$#,0);\$#,0
+		formatString: #,0.00
 		lineageTag: 89d93dac-5bdd-4383-ac7b-3e43cf229ffc
 
 		changedProperty = Name
 
 		changedProperty = FormatString
 
-		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
-
 	measure MTD_Volume_Shipped = ```
 			
 			CALCULATE (
-			    SUM ( 'Fact_Sales'[Quantity_LBs] ),
+			    [Invoiced Quantity],
 			
 			    -- Activate inactive relationship using InvoiceDate
 			    USERELATIONSHIP (
@@ -274,7 +268,7 @@ table Fact_Sales
 	measure YTD_Volume_Shipped = ```
 			
 			CALCULATE(
-			    SUM('Fact_Sales'[Quantity_LBs]),
+			    [Invoiced Quantity],
 			
 			    -- Activate the inactive relationship for this calculation
 			    USERELATIONSHIP(
@@ -304,14 +298,12 @@ table Fact_Sales
 	measure MTD_Revenue_Total =
 			
 			[MTD_Revenue_Open] + [MTD_Revenue_Shipped]
-		formatString: \$#,0;(\$#,0);\$#,0
+		formatString: #,0.00
 		lineageTag: f6228d2e-27c9-4e09-83b1-729be7baed86
 
 		changedProperty = Name
 
 		changedProperty = FormatString
-
-		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
 	measure MTD_Volume_Total =
 			
@@ -326,14 +318,12 @@ table Fact_Sales
 	measure YTD_Revenue_Total =
 			
 			[YTD_Revenue_Open] + [YTD_Revenue_Shipped]
-		formatString: \$#,0;(\$#,0);\$#,0
+		formatString: #,0.00
 		lineageTag: 0b0c2831-f2bb-4333-993a-6949e8aec012
 
 		changedProperty = Name
 
 		changedProperty = FormatString
-
-		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
 	measure YTD_Volume_Total =
 			
@@ -555,7 +545,7 @@ table Fact_Sales
 			
 			VAR ClosedAmtNextMonth =
 			    CALCULATE (
-			        SUM ( Fact_Sales[Amount] ),
+			        [Invoiced Sales Amount Base],
 			        Fact_Sales[SalesLine_Status] = "Invoiced",
 			        USERELATIONSHIP (
 			            Fact_Sales[InvoiceDateKey],
@@ -566,7 +556,7 @@ table Fact_Sales
 			
 			VAR OpenAmtNextMonth_ReqShip =
 			    CALCULATE (
-			        SUM ( Fact_Sales[Amount] ),
+			        [Sales Amount Base],
 			        Fact_Sales[SalesLine_Status] = "Open",
 			        USERELATIONSHIP ( Fact_Sales[SalesLine_ShipDateKey], Dim_Date[DateKey] ),
 			        FILTER (
@@ -596,7 +586,7 @@ table Fact_Sales
 			-- Only this month's invoiced amount (by invoice date)
 			VAR ClosedAmtSelectedPeriod =
 			    CALCULATE (
-			        SUM ( Fact_Sales[Amount] ),
+			        [Invoiced Sales Amount Base],
 			        Fact_Sales[SalesLine_Status] = "Invoiced",
 			        USERELATIONSHIP (
 			            Fact_Sales[InvoiceDateKey],
@@ -612,7 +602,7 @@ table Fact_Sales
 			-- Open amount for all orders with requested ship date up to *end* of month
 			VAR OpenAmtUpToPeriod_ReqShip =
 			    CALCULATE (
-			        SUM ( Fact_Sales[Amount] ),
+			        [Sales Amount Base],
 			        Fact_Sales[SalesLine_Status] = "Open",
 			        USERELATIONSHIP (
 			            Fact_Sales[SalesLine_ShipDateKey],
@@ -649,7 +639,7 @@ table Fact_Sales
 			
 			VAR ClosedVolNextMonth =
 			    CALCULATE (
-			        SUM ( Fact_Sales[Quantity_LBs] ),
+			        [Invoiced Sales Quantity Base],
 			        Fact_Sales[SalesLine_Status] = "Invoiced",
 			        USERELATIONSHIP (
 			            Fact_Sales[InvoiceDateKey],
@@ -660,7 +650,7 @@ table Fact_Sales
 			
 			VAR OpenVolNextMonth_ReqShip =
 			    CALCULATE (
-			        SUM ( Fact_Sales[Quantity_LBs] ),
+			        [Sales Quantity Base],
 			        Fact_Sales[SalesLine_Status] = "Open",
 			        USERELATIONSHIP ( Fact_Sales[SalesLine_ShipDateKey], Dim_Date[DateKey] ),
 			        FILTER (
@@ -690,7 +680,7 @@ table Fact_Sales
 			-- Only this month's invoiced amount (by invoice date)
 			VAR ClosedAmtSelectedPeriod =
 			    CALCULATE (
-			        SUM ( Fact_Sales[Quantity_LBs] ),
+			        [Invoiced Sales Quantity Base],
 			        Fact_Sales[SalesLine_Status] = "Invoiced",
 			        USERELATIONSHIP (
 			            Fact_Sales[InvoiceDateKey],
@@ -706,7 +696,7 @@ table Fact_Sales
 			-- Open amount for all orders with requested ship date up to *end* of month
 			VAR OpenAmtUpToPeriod_ReqShip =
 			    CALCULATE (
-			        SUM ( Fact_Sales[Quantity_LBs] ),
+			        [Sales Quantity Base],
 			        Fact_Sales[SalesLine_Status] = "Open",
 			        USERELATIONSHIP (
 			            Fact_Sales[SalesLine_ShipDateKey],
@@ -741,7 +731,7 @@ table Fact_Sales
 			    )
 			RETURN
 			CALCULATE (
-			    SUM ( Fact_Sales[Amount] ),
+			    [Invoiced Sales Amount Base],
 			    Fact_Sales[SalesLine_Status] = "Invoiced",
 			    USERELATIONSHIP (
 			            Fact_Sales[InvoiceDateKey],
@@ -754,6 +744,8 @@ table Fact_Sales
 		lineageTag: 6d3878a8-18ef-443e-bd38-2d99aab4604f
 
 		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	measure 'Invoiced Quantity – Selected Period' = ```
 			
@@ -768,7 +760,7 @@ table Fact_Sales
 			    )
 			RETURN
 			CALCULATE (
-			    SUM ( Fact_Sales[Quantity_LBs] ),
+			    [Invoiced Sales Quantity Base],
 			    Fact_Sales[SalesLine_Status] = "Invoiced",
 			    USERELATIONSHIP (
 			            Fact_Sales[InvoiceDateKey],
@@ -782,10 +774,12 @@ table Fact_Sales
 
 		changedProperty = Name
 
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	measure SalesAmountCard =
 			
 			COALESCE (
-			    SUM ( Fact_Sales[Amount] ),
+			    [Sales Amount Base],
 			    0
 			)
 		lineageTag: 66b377d0-1330-4b2f-8801-cb9155803caa
@@ -812,7 +806,7 @@ table Fact_Sales
 			
 			VAR Total12M =
 			    CALCULATE (
-			        SUM ( 'Fact_Sales'[Amount] ),
+			        [Invoiced Sales Amount Base],
 			        USERELATIONSHIP (
 			            'Fact_Sales'[InvoiceDateKey],
 			            'Dim_Date'[DateKey]
@@ -839,7 +833,7 @@ table Fact_Sales
 	measure '360 - Invoiced Amount' =
 			
 			CALCULATE (
-			    SUM ( Fact_Sales[Amount] ),
+			    [Invoiced Sales Amount Base],
 			    Fact_Sales[SalesLine_Status] = "Invoiced",
 			    USERELATIONSHIP (
 			            Fact_Sales[InvoiceDateKey],
@@ -999,7 +993,7 @@ table Fact_Sales
 			
 			VAR Total12M =
 			    CALCULATE (
-			        SUM ( 'Fact_Sales'[Quantity_LBs] ),
+			        [Invoiced Sales Quantity Base],
 			        USERELATIONSHIP (
 			            'Fact_Sales'[InvoiceDateKey],
 			            'Dim_Date'[DateKey]
@@ -1028,7 +1022,7 @@ table Fact_Sales
 			
 			
 			CALCULATE (
-			    SUM ( Fact_Sales[Quantity_LBs] ),
+			    [Invoiced Sales Quantity Base],
 			    Fact_Sales[SalesLine_Status] = "Invoiced",
 			    USERELATIONSHIP (
 			            Fact_Sales[InvoiceDateKey],
@@ -1055,7 +1049,7 @@ table Fact_Sales
 			    )
 			RETURN
 			CALCULATE (
-			    SUM ( Fact_Sales[Amount] ),
+			    [Invoiced Sales Amount Base],
 			    Fact_Sales[SalesLine_Status] = "Invoiced",
 			    USERELATIONSHIP ( Fact_Sales[InvoiceDateKey], Dim_Date[DateKey] ),
 			    FILTER (
@@ -1085,7 +1079,7 @@ table Fact_Sales
 			    )
 			RETURN
 			CALCULATE (
-			    SUM ( Fact_Sales[Quantity_LBs] ),
+			    [Invoiced Sales Quantity Base],
 			    Fact_Sales[SalesLine_Status] = "Invoiced",
 			    USERELATIONSHIP ( Fact_Sales[InvoiceDateKey], Dim_Date[DateKey] ),
 			    FILTER (
@@ -1117,7 +1111,7 @@ table Fact_Sales
 			    )
 			RETURN
 			CALCULATE (
-			    SUM ( Fact_Sales[Amount] ),
+			    [Invoiced Sales Amount Base],
 			    Fact_Sales[SalesLine_Status] = "Invoiced",
 			    USERELATIONSHIP ( Fact_Sales[InvoiceDateKey], Dim_Date[DateKey] ),
 			    FILTER (
@@ -1147,7 +1141,7 @@ table Fact_Sales
 			    )
 			RETURN
 			CALCULATE (
-			    SUM ( Fact_Sales[Quantity_LBs] ),
+			    [Invoiced Sales Quantity Base],
 			    Fact_Sales[SalesLine_Status] = "Invoiced",
 			    USERELATIONSHIP ( Fact_Sales[InvoiceDateKey], Dim_Date[DateKey] ),
 			    FILTER (
@@ -1210,7 +1204,7 @@ table Fact_Sales
 			VAR CurrDay = MAX ( Dim_Date[CurrentFiscalDayNum] )
 			RETURN
 			CALCULATE (
-			    SUM ( Fact_Sales[Amount] ),
+			    [Sales Amount Base],
 			    Fact_Sales[SalesLine_Status] = "Budget 2025",
 			    USERELATIONSHIP ( Fact_Sales[InvoiceDateKey], Dim_Date[DateKey] ),
 			    FILTER (
@@ -1233,7 +1227,7 @@ table Fact_Sales
 			VAR CurrDay = MAX ( Dim_Date[CurrentFiscalDayNum] )
 			RETURN
 			CALCULATE (
-			    SUM ( Fact_Sales[Quantity_LBs] ),
+			    [Sales Quantity Base],
 			    Fact_Sales[SalesLine_Status] = "Budget 2025",
 			    USERELATIONSHIP ( Fact_Sales[InvoiceDateKey], Dim_Date[DateKey] ),
 			    FILTER (
@@ -1298,7 +1292,7 @@ table Fact_Sales
 			
 			
 			CALCULATE(
-				SUM('Fact_Sales'[Amount]),
+				[Invoiced Sales Amount Base],
 			    USERELATIONSHIP (
 			            Fact_Sales[InvoiceDateKey],
 			            Dim_Date[DateKey]
@@ -1319,7 +1313,7 @@ table Fact_Sales
 			
 			
 			CALCULATE (
-			    SUM ( Fact_Sales[Amount] ),
+			    [Sales Amount Base],
 			
 			    -- use InvoiceDateKey -> Dim_Date[DateKey]
 			    USERELATIONSHIP (
@@ -1346,7 +1340,7 @@ table Fact_Sales
 			
 			
 			CALCULATE (
-			    SUM ( Fact_Sales[Quantity_LBs] ),
+			    [Sales Quantity Base],
 			
 			    -- use InvoiceDateKey -> Dim_Date[DateKey]
 			    USERELATIONSHIP (
@@ -1368,26 +1362,27 @@ table Fact_Sales
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Is Confirmed Open Order' = ```
+	measure 'Is Confirmed Open Order' =
 			
-			VAR EndDate  = [BaseMonthEnd]
-			VAR NullDate = DATE ( 2025, 10, 1 )
+			CALCULATE (
+			    VAR _ConfirmedDate =
+			        [Confirmed Ship Date]
 			
-			VAR ConfirmedRows =
-			    CALCULATE (
-			        COUNTROWS ( Fact_Sales ),
-			        Fact_Sales[SalesLine_Status] = "Open",
-			        USERELATIONSHIP ( Fact_Sales[SalesLine_ShipDateKey], Dim_Date[DateKey] ),
-			        FILTER (
-			            ALL ( Dim_Date ),
-			            Dim_Date[Date] >= NullDate
-			                && Dim_Date[Date] <= EndDate
-			        )
+			    VAR _IsOpen =
+			        SELECTEDVALUE ( Fact_Sales[SalesLine_Status] ) = "Open"
+			
+			    RETURN
+			        IF (
+			            _IsOpen
+			                && NOT ISBLANK ( _ConfirmedDate ),
+			            1,
+			            BLANK ()
+			        ),
+			
+			    KEEPFILTERS (
+			        'Dim_Legal_Entity'[CMPNY] IN { "101", "301" }
 			    )
-			RETURN
-			IF ( ConfirmedRows > 0, 1, BLANK () )
-			
-			```
+			)
 		formatString: 0
 		lineageTag: 1ef1eea1-8878-4890-ac43-5805c5ad6883
 
@@ -1414,7 +1409,7 @@ table Fact_Sales
 	measure '360 - Revenue running total in FISCAL Period' = ```
 			
 			CALCULATE( 
-			    SUM('Fact_Sales'[Amount]), 
+			    [Invoiced Sales Amount Base], 
 			    USERELATIONSHIP ( 
 			        Fact_Sales[InvoiceDateKey], 
 			        Dim_Date[DateKey] 
@@ -1435,7 +1430,7 @@ table Fact_Sales
 	measure '360 - Volume running total in FISCAL Period' = ```
 			
 			CALCULATE( 
-			    SUM('Fact_Sales'[Quantity_LBs]), 
+			    [Invoiced Sales Quantity Base], 
 			    USERELATIONSHIP ( 
 			        Fact_Sales[InvoiceDateKey], 
 			        Dim_Date[DateKey] 
@@ -1481,6 +1476,47 @@ table Fact_Sales
 		lineageTag: fe0065f7-688c-4119-a720-e2ddf0b0d555
 
 		changedProperty = Name
+
+	measure SalesAmount_USD = SUM(Fact_Sales[Amount_USD])
+		lineageTag: 0ed5c6ec-7760-4c65-86f5-21e1c257c76d
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure SalesAmount_EUR = SUM(Fact_Sales[Amount_EUR])
+		lineageTag: acf254b2-b058-4f96-9493-4882943fbf6b
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure SalesAmount_CNY = SUM(Fact_Sales[Amount_CNY])
+		lineageTag: e0a94851-654d-4eec-a5b4-d53bfdf38648
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure SalesAmount_Trans = SUM(Fact_Sales[Amount_Currency])
+		formatString: 0
+		lineageTag: 077303a4-3fa5-4f09-a130-ea8389cbc18f
+
+		changedProperty = Name
+
+	measure 'Invoiced Amount' = [Invoiced Sales Amount Base]
+		lineageTag: 36d32991-5f9c-43e2-a1f8-f9b95462641e
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Invoiced Quantity' = [Invoiced Sales Quantity Base]
+		lineageTag: 6e49376c-8abd-40dd-b5ec-89c240b86a5f
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	column RecordID
 		dataType: int64
@@ -1568,7 +1604,7 @@ table Fact_Sales
 		sourceProviderType: int
 		lineageTag: 1e92daf2-3186-4cce-99b3-0c0c2f20e186
 		sourceLineageTag: OrderDateKey
-		summarizeBy: none
+		summarizeBy: count
 		sourceColumn: OrderDateKey
 
 		changedProperty = IsHidden
@@ -2348,11 +2384,14 @@ table Fact_Sales
 
 	column SalesPrice_USD
 		dataType: double
+		isHidden
 		sourceProviderType: numeric(38, 6)
 		lineageTag: 04aa191b-c3d8-4112-8546-31e903028dc0
 		sourceLineageTag: SalesPrice_USD
 		summarizeBy: sum
 		sourceColumn: SalesPrice_USD
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -2360,11 +2399,14 @@ table Fact_Sales
 
 	column SalesPrice_EUR
 		dataType: double
+		isHidden
 		sourceProviderType: numeric(38, 6)
 		lineageTag: a06f982c-1bde-4f30-9012-559bd470d4c1
 		sourceLineageTag: SalesPrice_EUR
 		summarizeBy: sum
 		sourceColumn: SalesPrice_EUR
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -2372,11 +2414,14 @@ table Fact_Sales
 
 	column SalesPrice_CNY
 		dataType: double
+		isHidden
 		sourceProviderType: numeric(38, 6)
 		lineageTag: 8b1a0e8e-fa93-432c-a938-7add08dc1fd4
 		sourceLineageTag: SalesPrice_CNY
 		summarizeBy: sum
 		sourceColumn: SalesPrice_CNY
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 

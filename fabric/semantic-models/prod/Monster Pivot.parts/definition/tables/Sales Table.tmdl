@@ -1324,7 +1324,7 @@ table 'Sales Table'
 		formatString: 0
 		lineageTag: 4dc394cc-f39d-497c-924d-af4101341859
 		sourceLineageTag: CustAcct_EmployeeKey
-		summarizeBy: none
+		summarizeBy: count
 		sourceColumn: CustAcct_EmployeeKey
 
 		changedProperty = IsHidden

@@ -829,9 +829,13 @@ table Dim_Date
 	hierarchy 'Fiscal Hierarchy'
 		lineageTag: d12aab9e-1927-41a4-abcb-0376001aec0c
 
-		level Date
-			lineageTag: 80fe726f-12ea-44e3-a8b9-2a57214a3e5e
-			column: Date
+		level FiscalYear
+			lineageTag: dfe13c12-dd9b-46b2-b1d1-c9860376c3a6
+			column: FiscalYear
+
+		level FiscalPeriodLabel
+			lineageTag: a1a96ffc-917d-4e79-bbfa-95380d02beef
+			column: FiscalPeriodLabel
 
 		changedProperty = Name
 

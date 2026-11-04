@@ -1,66 +1,69 @@
 table 'Procurement Measures'
 	lineageTag: c4a3d1e2-c9b6-4ab0-a698-335ea6b2a7b1
 
-	measure 'SF - Actual Demand Quantity LBs' =
+	measure 'SF - Actual Demand Quantity LBs (New)' =
 			
 			VAR TodayDate =
 			    TODAY ()
 			
-			RETURN
-			    COALESCE (
-			        CALCULATE (
-			            SUM (
-			                'Fact_SalesAndForecastData'[Sales_Quantity_LBs]
-			            ),
-			            FILTER (
-			                ALL (
-			                    'Fact_SalesAndForecastData'[ModelID]
-			                ),
-			                'Fact_SalesAndForecastData'[ModelID]
-			                    = "SalesActual"
-			            ),
-			            KEEPFILTERS (
-			                'Dim_Date'[Date] <= TodayDate
-			            )
+			VAR ForecastStartMonth =
+			    [SF2 - Forecast Start Month]
+			
+			VAR Result =
+			    CALCULATE (
+			        SUM (
+			            'Fact_SalesAndForecastData'[Sales_Quantity_LBs]
 			        ),
-			        0
+			        'Fact_SalesAndForecastData'[ModelID] = "SalesActual",
+			        KEEPFILTERS (
+			            'Dim_Date'[Date] <= TodayDate
+			        ),
+			        KEEPFILTERS (
+			            'Dim_Date'[Date] < ForecastStartMonth
+			        )
 			    )
+			
+			RETURN
+			    COALESCE ( Result, 0 )
 		lineageTag: ead0e577-e16c-4516-a878-d9eb8192e4a5
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'SF - Forecast Demand Quantity LBs' =
+	measure 'SF - Forecast Demand Quantity LBs (New)' =
 			
-			VAR ForecastStartDate =
-			    EOMONTH ( TODAY (), 0 ) + 1
+			VAR ForecastStartMonth =
+			    [SF2 - Forecast Start Month]
+			
+			VAR ForecastMonthsInContext =
+			    FILTER (
+			        VALUES ( 'Dim_Date'[MonthStartDate] ),
+			        NOT ISBLANK ( 'Dim_Date'[MonthStartDate] )
+			            && 'Dim_Date'[MonthStartDate] >= ForecastStartMonth
+			    )
+			
+			VAR Result =
+			    CALCULATE (
+			        SUM (
+			            'Fact_SalesAndForecastData'[Sales_Quantity_LBs]
+			        ),
+			        'Fact_SalesAndForecastData'[ModelID] = "Forecast",
+			        REMOVEFILTERS ( 'Dim_Date' ),
+			        TREATAS (
+			            ForecastMonthsInContext,
+			            'Dim_Date'[MonthStartDate]
+			        )
+			    )
 			
 			RETURN
-			    COALESCE (
-			        CALCULATE (
-			            SUM (
-			                'Fact_SalesAndForecastData'[Sales_Quantity_LBs]
-			            ),
-			            FILTER (
-			                ALL (
-			                    'Fact_SalesAndForecastData'[ModelID]
-			                ),
-			                'Fact_SalesAndForecastData'[ModelID]
-			                    = "Forecast"
-			            ),
-			            KEEPFILTERS (
-			                'Dim_Date'[Date] >= ForecastStartDate
-			            )
-			        ),
-			        0
-			    )
+			    COALESCE ( Result, 0 )
 		lineageTag: cecf5cb1-d70b-4335-a661-6809066630c8
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	measure 'SF - Demand Quantity LBs' =
 			
-			[SF - Actual Demand Quantity LBs]
-			    + [SF - Forecast Demand Quantity LBs]
+			[SF - Actual Demand Quantity LBs (New)]
+			    + [SF - Forecast Demand Quantity LBs (New)]
 		lineageTag: 0b615be5-d8fe-4844-84f9-df9c0abbb4f8
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
@@ -648,6 +651,195 @@ table 'Procurement Measures'
 			        "RM Demand | Current-Month Forecast Not Included"
 			    )
 		lineageTag: 62c2c5f8-6df9-4f5d-bb5e-a50d151436eb
+
+	measure 'SF2 - Forecast Start Month' =
+			
+			VAR TodayDate =
+			    TODAY ()
+			
+			VAR CurrentMonthStart =
+			    EOMONTH ( TodayDate, -1 ) + 1
+			
+			VAR CurrentMonthEnd =
+			    EOMONTH ( TodayDate, 0 )
+			
+			VAR HasForwardDatesInCurrentMonth =
+			    COUNTROWS (
+			        FILTER (
+			            ALLSELECTED ( 'Dim_Date' ),
+			            'Dim_Date'[Date] > TodayDate
+			                && 'Dim_Date'[Date] <= CurrentMonthEnd
+			        )
+			    ) > 0
+			
+			RETURN
+			    IF (
+			        HasForwardDatesInCurrentMonth,
+			        CurrentMonthStart,
+			        CurrentMonthEnd + 1
+			    )
+		formatString: General Date
+		lineageTag: 2d4b5b9d-cef8-491d-98ff-8a7cac614e53
+
+	measure 'SF - Actual Demand Quantity LBs (Legacy)' =
+			
+			VAR TodayDate =
+			    TODAY ()
+			
+			RETURN
+			    COALESCE (
+			        CALCULATE (
+			            SUM (
+			                'Fact_SalesAndForecastData'[Sales_Quantity_LBs]
+			            ),
+			            FILTER (
+			                ALL (
+			                    'Fact_SalesAndForecastData'[ModelID]
+			                ),
+			                'Fact_SalesAndForecastData'[ModelID]
+			                    = "SalesActual"
+			            ),
+			            KEEPFILTERS (
+			                'Dim_Date'[Date] <= TodayDate
+			            )
+			        ),
+			        0
+			    )
+		lineageTag: b5472825-d9c6-4622-a703-c9e6927d170c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF - Forecast Demand Quantity LBs (Legacy)' =
+			
+			VAR ForecastStartDate =
+			    EOMONTH ( TODAY (), 0 ) + 1
+			
+			RETURN
+			    COALESCE (
+			        CALCULATE (
+			            SUM (
+			                'Fact_SalesAndForecastData'[Sales_Quantity_LBs]
+			            ),
+			            FILTER (
+			                ALL (
+			                    'Fact_SalesAndForecastData'[ModelID]
+			                ),
+			                'Fact_SalesAndForecastData'[ModelID]
+			                    = "Forecast"
+			            ),
+			            KEEPFILTERS (
+			                'Dim_Date'[Date] >= ForecastStartDate
+			            )
+			        ),
+			        0
+			    )
+		lineageTag: 67b49161-73c4-4952-aba1-f3f98a743413
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'SF2 - Show Product for Selected Entities' =
+			
+			VAR SelectedCompanyCodes =
+			    VALUES ( 'Dim_Legal_Entity'[CMPNY] )
+			
+			VAR MatchingProductRows =
+			    CALCULATE (
+			        COUNTROWS ( 'Dim_Product' ),
+			        KEEPFILTERS (
+			            TREATAS (
+			                SelectedCompanyCodes,
+			                'Dim_Product'[CMPNY]
+			            )
+			        )
+			    )
+			
+			RETURN
+			    IF (
+			        MatchingProductRows > 0,
+			        1,
+			        0
+			    )
+		formatString: 0
+		lineageTag: 85c14deb-9bd6-4e1a-acea-30cf4f686769
+
+	measure 'SF2 - Show FG Detail for Selected Entities' =
+			
+			VAR SelectedCompanyCodes =
+			    VALUES ( 'Dim_Legal_Entity'[CMPNY] )
+			
+			RETURN
+			    CALCULATE (
+			        IF (
+			            HASONEVALUE ( 'Dim_Product'[Product_ID] )
+			                || HASONEVALUE ( 'Dim_Product'[ProductKey] ),
+			            1
+			        ),
+			        KEEPFILTERS (
+			            TREATAS (
+			                SelectedCompanyCodes,
+			                'Dim_Product'[CMPNY]
+			            )
+			        )
+			    )
+		formatString: 0
+		lineageTag: f5eafee9-8a07-4729-a73d-5d11f95f706f
+
+	measure 'Forecast Drillthrough - Show FG' =
+			
+			VAR SelectedFG =
+			    CALCULATE (
+			        SELECTEDVALUE (
+			            'Fact_FinishedGoodsRawMaterials'[FgItemId]
+			        ),
+			        REMOVEFILTERS ( 'Dim_Product' )
+			    )
+			
+			VAR CurrentFG =
+			    SELECTEDVALUE ( 'Dim_Product'[Product_ID] )
+			
+			RETURN
+			    IF (
+			        NOT ISBLANK ( SelectedFG )
+			            && SelectedFG = CurrentFG,
+			        1
+			    )
+		formatString: 0
+		lineageTag: 3ac44ee4-fec8-445f-a120-69c10ec7368b
+
+	measure 'Forecast Drillthrough Context Is Valid' =
+			
+			VAR FinishedGoodSelected =
+			    HASONEFILTER (
+			        'Fact_FinishedGoodsRawMaterials'[FgItemId]
+			    )
+			        && HASONEVALUE (
+			            'Fact_FinishedGoodsRawMaterials'[FgItemId]
+			        )
+			
+			RETURN
+			    IF (
+			        FinishedGoodSelected,
+			        1,
+			        0
+			    )
+		formatString: 0
+		lineageTag: 7ef0412a-97ec-494b-942a-0af1ac4134f6
+
+	measure 'Forecast Drillthrough Color' =
+			
+			VAR DrillthroughAvailable =
+			    COALESCE (
+			        [Forecast Drillthrough Context Is Valid],
+			        0
+			    ) = 1
+			
+			RETURN
+			    IF (
+			        DrillthroughAvailable,
+			        "#08911f",   -- Available: Gold
+			        "#E6E6E6"    -- Unavailable: Light gray
+			    )
+		lineageTag: dfd3ebc5-a820-415c-a427-4a59f5b4851d
 
 	column 'Measure Group'
 		isHidden

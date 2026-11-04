@@ -2,179 +2,99 @@ table Fact_Inventory_Snapshot
 	lineageTag: 4c94b953-daaa-481a-8477-ff2bb2697be6
 	sourceLineageTag: [dbo].[mtbl_EDW_Fact_Inventory_Snapshot]
 
-	measure 'Available for Reservation' = (([Posted Quantity] + [Received Qty] - [Deducted Qty] + [Registered Qty] - [Picked Qty]) - [Physical Reserved])
+	measure 'Available for Reservation' = (([Posted Qty] + [Received Qty] - [Deducted Qty] + [Registered Qty] - [Picked Qty]) - [Physical Reserved Qty])
 		lineageTag: ff152987-6b06-4759-a9f4-19196c3121d5
-
-		changedProperty = Name
-
-	measure 'Available for Reservation LBs' = (([Posted Quantity LBs] + [Received Qty LBs] - [Deducted Qty LBs] + [Registered Qty LBs] - [Picked Qty LBs]) - [Physical Reserved LBs])
-		lineageTag: 3855a1cc-11d4-469f-ae67-d4d1e24d420c
-
-		changedProperty = Name
-
-	measure 'Available Physical' = SUM(Fact_Inventory_Snapshot[availphysical])
-		lineageTag: 1c333752-6631-43b9-a856-80dc3fd6dd8d
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Available Physical LBs' = SUM(Fact_Inventory_Snapshot[availphysical_LBs])
+	measure 'Available for Reservation Qty' = (([Posted Qty] + [Received Qty] - [Deducted Qty] + [Registered Qty] - [Picked Qty]) - [Physical Reserved Qty])
+		lineageTag: 3855a1cc-11d4-469f-ae67-d4d1e24d420c
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Available Physical Qty' = [Base InvSna - AvailPhy Qty]
 		lineageTag: c80d7dc9-02c2-4b10-8c55-c15c275616d5
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Deducted Qty' = SUM(Fact_Inventory_Snapshot[deducted])
-		lineageTag: 11c8e566-f04c-499b-8760-ddfd9b5aa42d
-
-		changedProperty = Name
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Deducted Qty LBs' = SUM(Fact_Inventory_Snapshot[deducted_LBs])
+	measure 'Deducted Qty' = [Base InvSna - Deducted Qty]
 		lineageTag: 9e608690-dbb7-40c5-a808-68d80ccfb77d
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'On Order' = SUM(Fact_Inventory_Snapshot[onorder])
+	measure 'On Order Qty' = [Base InvSna - OnOrder Qty]
 		lineageTag: 22d1224f-e453-4c89-bcff-5d7d2c48535c
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'On Order LBs' = SUM(Fact_Inventory_Snapshot[onorder_LBs])
-		lineageTag: aea4c34d-ae8f-4a65-8b7c-c6d0900cb491
-
-		changedProperty = Name
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Ordered Qty' = SUM(Fact_Inventory_Snapshot[ordered])
-		lineageTag: 971a56b9-f9ef-411f-b84b-70cb2117385f
-
-		changedProperty = Name
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Ordered Qty LBs' = SUM(Fact_Inventory_Snapshot[ordered_LBs])
+	measure 'Ordered Qty' = [Base InvSna - Ordered Qty]
 		lineageTag: bedd6390-c0fc-48e9-b80e-141717b0739f
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Ordered Reserved' = SUM(Fact_Inventory_Snapshot[reservordered])
+	measure 'Ordered Reserved Qty' = [Base InvSna - ResOrd Qty]
 		lineageTag: 8ea53f41-21c9-40e0-851a-2a4a847fc052
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Ordered Reserved LBs' = SUM(Fact_Inventory_Snapshot[reservordered_LBs])
-		lineageTag: 54a6abb6-250a-47a6-aef4-56c228a03d17
-
-		changedProperty = Name
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Physical Inventory' = SUM(Fact_Inventory_Snapshot[physicalinvent])
+	measure 'Physical Inventory Qty' = [Base InvSna - PhyInv Qty]
 		lineageTag: 90f43f67-26a9-4067-84dc-c1ead121c605
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Physical Inventory LBs' = SUM(Fact_Inventory_Snapshot[physicalinvent_LBs])
-		lineageTag: 9f836e13-dd3c-4ac7-8257-ba963b77864f
-
-		changedProperty = Name
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Physical Reserved' = SUM(Fact_Inventory_Snapshot[reservphysical])
+	measure 'Physical Reserved Qty' = [Base InvSna - ResPhy Qty]
 		lineageTag: a15a5708-7877-448f-b60a-6eeb14da3b10
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Physical Reserved LBs' = SUM(Fact_Inventory_Snapshot[reservphysical_LBs])
-		lineageTag: f3c1ee13-b7b0-44df-b45c-b4984e1e36c7
-
-		changedProperty = Name
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Picked Qty' = SUM(Fact_Inventory_Snapshot[picked])
-		lineageTag: edff1894-9fd9-4c22-ae4a-17d127d55247
-
-		changedProperty = Name
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Picked Qty LBs' = SUM(Fact_Inventory_Snapshot[picked_LBs])
+	measure 'Picked Qty' = [Base InvSna - Picked Qty]
 		lineageTag: 1ee43ab9-3b56-48c9-b561-372f64687eaf
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Posted Quantity' = SUM(Fact_Inventory_Snapshot[postedqty])
-		lineageTag: 33a1f75b-d20b-4fa5-a167-3598b919d37a
-
-		changedProperty = Name
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Posted Quantity LBs' = SUM(Fact_Inventory_Snapshot[postedqty_LBs])
+	measure 'Posted Qty' = [Base InvSna - Posted Qty]
 		lineageTag: 018964fc-aad4-4a8d-be09-d4e607debbf2
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Received Qty' = SUM(Fact_Inventory_Snapshot[received])
-		lineageTag: 3dc9dc6f-7114-4a74-9059-ec7527bb403d
-
-		changedProperty = Name
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Received Qty LBs' = SUM(Fact_Inventory_Snapshot[received_LBs])
+	measure 'Received Qty' = [Base InvSna - Received Qty]
 		lineageTag: a6060db8-2bd5-4170-93ee-43d8956e9eb0
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Registered Qty' = SUM(Fact_Inventory_Snapshot[registered])
-		lineageTag: 510f148d-59d6-4156-b8fe-60d968c41e2e
-
-		changedProperty = Name
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Registered Qty LBs' = SUM(Fact_Inventory_Snapshot[registered_LBs])
+	measure 'Registered Qty' = [Base InvSna - Registered Qty]
 		lineageTag: de549284-98ae-4353-a02f-f24fad2ca734
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Total Available' = ([Available for Reservation] + [Ordered Qty] - [On Order] - [Ordered Reserved])
+	measure 'Total Available Qty' = ([Available for Reservation] + [Ordered Qty] - [On Order Qty] - [Ordered Reserved Qty])
 		lineageTag: 23996d66-c731-4c3e-a307-459c6cad6489
-
-		changedProperty = Name
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	measure 'Total Available LBs' = ([Available for Reservation LBs] + [Ordered Qty LBs] - [On Order LBs] - [Ordered Reserved LBs])
-		lineageTag: 504a2b16-bfa3-4f29-8512-9fd7076f7fda
 
 		changedProperty = Name
 
@@ -186,10 +106,10 @@ table Fact_Inventory_Snapshot
 
 		changedProperty = Name
 
-	measure 'Posted Avg Cost / LB' =
+	measure 'Posted Avg Cost' =
 			
 			VAR _Qty =
-			    [Posted Quantity LBs]
+			    [Posted Qty]
 			VAR _Cost =
 			    [TotalCostAmount_OnH_Pos]
 			RETURN
@@ -200,10 +120,10 @@ table Fact_Inventory_Snapshot
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Physical Avg Cost / LB' =
+	measure 'Physical Avg Cost' =
 			
 			VAR _Qty =
-			    [Physical Inventory LBs]
+			    [Physical Inventory Qty]
 			VAR _Cost =
 			    [TotalCostAmount_OnH_Phy]
 			RETURN
@@ -851,12 +771,15 @@ table Fact_Inventory_Snapshot
 
 	column inventorySnapshotKey
 		dataType: int64
+		isHidden
 		formatString: 0
 		sourceProviderType: bigint
 		lineageTag: 16b1d93e-3abb-4006-8707-a5b0c683c5a8
 		sourceLineageTag: inventorySnapshotKey
 		summarizeBy: count
 		sourceColumn: inventorySnapshotKey
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -885,11 +808,14 @@ table Fact_Inventory_Snapshot
 
 	column availordered_KGs
 		dataType: double
+		isHidden
 		sourceProviderType: numeric(38, 6)
 		lineageTag: 14455033-fa72-4faa-aa13-65ac4b492aec
 		sourceLineageTag: availordered_KGs
 		summarizeBy: sum
 		sourceColumn: availordered_KGs
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -897,11 +823,14 @@ table Fact_Inventory_Snapshot
 
 	column availphysical_KGs
 		dataType: double
+		isHidden
 		sourceProviderType: numeric(38, 6)
 		lineageTag: ad9020e1-1aaf-4b35-84a1-b3ebd4e50c86
 		sourceLineageTag: availphysical_KGs
 		summarizeBy: sum
 		sourceColumn: availphysical_KGs
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -909,11 +838,14 @@ table Fact_Inventory_Snapshot
 
 	column deducted_KGs
 		dataType: double
+		isHidden
 		sourceProviderType: numeric(38, 6)
 		lineageTag: 7673dead-3f5e-49b3-9007-e05bfd1d80e0
 		sourceLineageTag: deducted_KGs
 		summarizeBy: sum
 		sourceColumn: deducted_KGs
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -921,11 +853,14 @@ table Fact_Inventory_Snapshot
 
 	column onorder_KGs
 		dataType: double
+		isHidden
 		sourceProviderType: numeric(38, 6)
 		lineageTag: 34190846-27f3-40fd-9a35-14f8e124f5e9
 		sourceLineageTag: onorder_KGs
 		summarizeBy: sum
 		sourceColumn: onorder_KGs
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -933,11 +868,14 @@ table Fact_Inventory_Snapshot
 
 	column ordered_KGs
 		dataType: double
+		isHidden
 		sourceProviderType: numeric(38, 6)
 		lineageTag: 3f1f4f35-40ac-4f2d-a74e-6ff6ba65aafe
 		sourceLineageTag: ordered_KGs
 		summarizeBy: sum
 		sourceColumn: ordered_KGs
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -945,11 +883,14 @@ table Fact_Inventory_Snapshot
 
 	column physicalinvent_KGs
 		dataType: double
+		isHidden
 		sourceProviderType: numeric(38, 6)
 		lineageTag: e45b1bad-b2b4-4471-b9ac-38d4b2d1de8a
 		sourceLineageTag: physicalinvent_KGs
 		summarizeBy: sum
 		sourceColumn: physicalinvent_KGs
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -969,11 +910,14 @@ table Fact_Inventory_Snapshot
 
 	column postedqty_KGs
 		dataType: double
+		isHidden
 		sourceProviderType: numeric(38, 6)
 		lineageTag: 90b97d34-fda9-414f-8400-9283057898c3
 		sourceLineageTag: postedqty_KGs
 		summarizeBy: sum
 		sourceColumn: postedqty_KGs
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 

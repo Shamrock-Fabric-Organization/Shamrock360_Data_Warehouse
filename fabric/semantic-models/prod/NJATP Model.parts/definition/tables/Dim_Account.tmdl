@@ -218,9 +218,8 @@ table Dim_Account
 		annotation SummarizationSetBy = Automatic
 
 	column EffectiveCountry
-		dataType: int64
-		formatString: 0
-		sourceProviderType: int
+		dataType: string
+		sourceProviderType: varchar(8000)
 		lineageTag: 3de88044-3388-42e8-adb0-321ee87e72cf
 		sourceLineageTag: EffectiveCountry
 		summarizeBy: none
@@ -363,6 +362,26 @@ table Dim_Account
 		sourceLineageTag: RecordStatus
 		summarizeBy: none
 		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column PrimaryEmail
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 3bd9fc26-476b-4915-9983-df34730f571f
+		sourceLineageTag: PrimaryEmail
+		summarizeBy: none
+		sourceColumn: PrimaryEmail
+
+		annotation SummarizationSetBy = Automatic
+
+	column PrimaryEmailDescription
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 01180a44-a60d-426b-b712-e5f30a0aaa37
+		sourceLineageTag: PrimaryEmailDescription
+		summarizeBy: none
+		sourceColumn: PrimaryEmailDescription
 
 		annotation SummarizationSetBy = Automatic
 

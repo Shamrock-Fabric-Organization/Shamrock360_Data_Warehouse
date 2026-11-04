@@ -7,6 +7,7 @@ relationship a64b49f3-cca3-6a60-61a8-91b38d276719
 	toColumn: Dim_Site.SiteKey
 
 relationship 9b4af558-2d2d-1066-8ed4-b629bead1da2
+	isActive: false
 	fromColumn: Fact_Sales.OrderDateKey
 	toColumn: Dim_Date.DateKey
 
@@ -85,14 +86,6 @@ relationship 2d5dbb36-fc67-9f44-c4c0-228b177bb558
 	fromColumn: Fact_TradeAgreementDetails.PostedDateKey
 	toColumn: Dim_Date.DateKey
 
-relationship 82e7bbb9-32f5-3034-2c18-1611f755d5fb
-	fromColumn: BIDataSet_Opportunity.Manager
-	toColumn: Dim_Salesperson.PersonKey
-
-relationship 5b8f8ad3-5291-2367-3cab-7c36ffc600b3
-	fromColumn: Dim_Employee.Employee_Name
-	toColumn: Dim_Salesperson.PersonName
-
 relationship 82c148a1-566c-ffb8-38ae-48608e6334a9
 	fromColumn: Fact_TradeAgreementDetails.CustAcct_EmployeeKey
 	toColumn: Dim_Employee.EmployeeKey
@@ -116,5 +109,22 @@ relationship 60d0295e-76e6-5d08-7ee9-725cb928a8b6
 relationship 3d807e73-5cd8-de77-8801-7f851e4466d0
 	fromColumn: Fact_TradeAgreementDetails.ProductKey
 	toColumn: Dim_Product.ProductKey
+
+relationship f087b62f-5498-ed6f-5473-ebe9a2eb8e5c
+	fromColumn: Fact_Sales.DATEKey
+	toColumn: Dim_Date.DateKey
+
+relationship 285a8adf-1da6-f93b-8312-d4783a17de7d
+	isActive: false
+	fromColumn: Fact_Sales.HistoricCustomerKey
+	toColumn: Dim_Account.CustomerKey
+
+relationship 82e7bbb9-32f5-3034-2c18-1611f755d5fb
+	fromColumn: BIDataSet_Opportunity.Manager
+	toColumn: Dim_Salesperson.PersonKey
+
+relationship 5b8f8ad3-5291-2367-3cab-7c36ffc600b3
+	fromColumn: Dim_Employee.Employee_Name
+	toColumn: Dim_Salesperson.PersonName
 
 

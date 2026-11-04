@@ -10,8 +10,6 @@ role 'Shichiu NAKAM'
 			'Date Table'[Fiscal Year] >= 2023
 			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
 
-	tablePermission 'Employee Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
-
 	tablePermission 'Legal Entity Table' = ```
 			'Legal Entity Table'[Legal Entity ID] IN {"101"}   
 			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0

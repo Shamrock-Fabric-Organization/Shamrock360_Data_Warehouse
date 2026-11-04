@@ -1,25 +1,21 @@
 table 'Finance Measures'
 	lineageTag: 0c76d0e6-73c3-471d-8846-57074e279772
 
-	measure 'Budget Revenue' =
-			
-			SUM ( 'Fact_SalesBudget'[Amount] )
+	measure 'Budget Revenue' = [Base Sales Bud - Amt]
 		lineageTag: 0743a1a1-885e-4e89-b57a-e36f62f5eabe
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Budget Quantity (LBs)' =
-			
-			SUM ( 'Fact_SalesBudget'[Quantity_LBs] )
+	measure 'Budget Qty' = [Base Sales Bud - Qty]
 		lineageTag: 58afea50-603e-4151-8119-bc78f3b29361
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Budget Price per LB' =
+	measure 'Budget Price' =
 			
 			DIVIDE (
 			    [Budget Revenue],
-			    [Budget Quantity (LBs)]
+			    [Budget Qty]
 			)
 		lineageTag: 347b50e0-d85e-4ba5-b851-bc55953739f6
 
@@ -27,23 +23,63 @@ table 'Finance Measures'
 
 	measure 'Revenue PVM Baseline Revenue' =
 			
-			[Budget Revenue]
+			SUMX (
+			    VALUES (
+			        'Dim_Legal_Entity'[Legal_EntityKey]
+			    ),
+			
+			    VAR EligibleMonths =
+			        FILTER (
+			            VALUES (
+			                'Dim_Date'[MonthStartDate]
+			            ),
+			            CALCULATE (
+			                [Revenue PVM Invoice Coverage Rows]
+			            ) > 0
+			        )
+			
+			    RETURN
+			        CALCULATE (
+			            [Budget Revenue],
+			            KEEPFILTERS ( EligibleMonths )
+			        )
+			)
 		lineageTag: 4611c71c-4940-4d17-9eb2-64cc3df93484
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Revenue PVM Baseline Quantity (LBs)' =
+	measure 'Revenue PVM Baseline Quantity' =
 			
-			[Budget Quantity (LBs)]
+			SUMX (
+			    VALUES (
+			        'Dim_Legal_Entity'[Legal_EntityKey]
+			    ),
+			
+			    VAR EligibleMonths =
+			        FILTER (
+			            VALUES (
+			                'Dim_Date'[MonthStartDate]
+			            ),
+			            CALCULATE (
+			                [Revenue PVM Invoice Coverage Rows]
+			            ) > 0
+			        )
+			
+			    RETURN
+			        CALCULATE (
+			            [Budget Qty],
+			            KEEPFILTERS ( EligibleMonths )
+			        )
+			)
 		lineageTag: f371e303-c515-4fa1-8475-73cfe3c94364
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Revenue PVM Baseline Price per LB' =
+	measure 'Revenue PVM Baseline Price' =
 			
 			DIVIDE (
 			    [Revenue PVM Baseline Revenue],
-			    [Revenue PVM Baseline Quantity (LBs)]
+			    [Revenue PVM Baseline Quantity]
 			)
 		lineageTag: 79f698cb-6380-4149-aa69-b454688d79a0
 
@@ -53,12 +89,12 @@ table 'Finance Measures'
 			
 			VAR PortfolioBaselineQuantity =
 			    CALCULATE (
-			        [Revenue PVM Baseline Quantity (LBs)],
+			        [Revenue PVM Baseline Quantity],
 			        ALLSELECTED ( 'Dim_Product' )
 			    )
 			RETURN
 			    DIVIDE (
-			        [Revenue PVM Baseline Quantity (LBs)],
+			        [Revenue PVM Baseline Quantity],
 			        PortfolioBaselineQuantity
 			    )
 		lineageTag: 56204d8d-c7a8-4c6f-bb2a-d25c1b337e3d
@@ -69,12 +105,12 @@ table 'Finance Measures'
 			
 			VAR PortfolioActualQuantity =
 			    CALCULATE (
-			        [Invoice Quantity (LBs)],
+			        [Invoice Quantity],
 			        ALLSELECTED ( 'Dim_Product' )
 			    )
 			RETURN
 			    DIVIDE (
-			        [Invoice Quantity (LBs)],
+			        [Invoice Quantity],
 			        PortfolioActualQuantity
 			    )
 		lineageTag: d2c9cf3f-74f8-4a65-bdbf-b8d99ef0e83e
@@ -86,11 +122,11 @@ table 'Finance Measures'
 			VAR HasBaselineData =
 			    NOT ISBLANK ( [Revenue PVM Baseline Revenue] )
 			        || NOT ISBLANK (
-			            [Revenue PVM Baseline Quantity (LBs)]
+			            [Revenue PVM Baseline Quantity]
 			        )
 			VAR HasActualData =
 			    NOT ISBLANK ( [Invoice Line Amount] )
-			        || NOT ISBLANK ( [Invoice Quantity (LBs)] )
+			        || NOT ISBLANK ( [Invoice Quantity] )
 			RETURN
 			    IF (
 			        HasBaselineData || HasActualData,
@@ -99,16 +135,16 @@ table 'Finance Measures'
 		formatString: 0
 		lineageTag: 8d439e7d-5823-4292-bd88-ecf581bdd25f
 
-	measure 'Revenue PVM Reference Price per LB' =
+	measure 'Revenue PVM Reference Price' =
 			
 			VAR BaselineQuantity =
 			    COALESCE (
-			        [Revenue PVM Baseline Quantity (LBs)],
+			        [Revenue PVM Baseline Quantity],
 			        0
 			    )
 			VAR ActualQuantity =
 			    COALESCE (
-			        [Invoice Quantity (LBs)],
+			        [Invoice Quantity],
 			        0
 			    )
 			RETURN
@@ -116,10 +152,10 @@ table 'Finance Measures'
 			        TRUE (),
 			
 			        BaselineQuantity <> 0,
-			            [Revenue PVM Baseline Price per LB],
+			            [Revenue PVM Baseline Price],
 			
 			        ActualQuantity <> 0,
-			            [InvoicePricePerLB],
+			            [Invoice Price],
 			
 			        BLANK ()
 			    )
@@ -144,14 +180,14 @@ table 'Finance Measures'
 			
 			                COALESCE (
 			                    CALCULATE (
-			                        [Revenue PVM Baseline Quantity (LBs)]
+			                        [Revenue PVM Baseline Quantity]
 			                    ),
 			                    0
 			                ) <> 0
 			
 			                    || COALESCE (
 			                        CALCULATE (
-			                            [Invoice Quantity (LBs)]
+			                            [Invoice Quantity]
 			                        ),
 			                        0
 			                    ) <> 0
@@ -178,7 +214,7 @@ table 'Finance Measures'
 			                VAR ActualQuantity =
 			                    COALESCE (
 			                        CALCULATE (
-			                            [Invoice Quantity (LBs)]
+			                            [Invoice Quantity]
 			                        ),
 			                        0
 			                    )
@@ -186,7 +222,7 @@ table 'Finance Measures'
 			                VAR ReferencePrice =
 			                    COALESCE (
 			                        CALCULATE (
-			                            [Revenue PVM Reference Price per LB]
+			                            [Revenue PVM Reference Price]
 			                        ),
 			                        0
 			                    )
@@ -231,13 +267,13 @@ table 'Finance Measures'
 			
 			        VAR ActualPortfolioQuantity =
 			            CALCULATE (
-			                [Invoice Quantity (LBs)],
+			                [Invoice Quantity],
 			                ALLSELECTED ( 'Dim_Product' )
 			            )
 			
 			        VAR BaselinePortfolioQuantity =
 			            CALCULATE (
-			                [Revenue PVM Baseline Quantity (LBs)],
+			                [Revenue PVM Baseline Quantity],
 			                ALLSELECTED ( 'Dim_Product' )
 			            )
 			
@@ -446,31 +482,46 @@ table 'Finance Measures'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Revenue PVM Step Interpretation' =
+	measure 'Revenue PVM Step Interpretation' = ```
 			
 			VAR SelectedStep =
-			    SELECTEDVALUE (
-			        'Revenue PVM Steps'[Step]
+			    SELECTEDVALUE ( 'Revenue PVM Steps'[Step] )
+			VAR WeightName =
+			    SWITCH (
+			        [Selected Display Weight],
+			        "KGs", "kilograms",
+			        "LBs", "pounds",
+			        "weight units"
+			    )
+			VAR PriceUnit =
+			    SWITCH (
+			        [Selected Display Weight],
+			        "KGs", "kilogram",
+			        "LBs", "pound",
+			        "weight unit"
 			    )
 			RETURN
 			    SWITCH (
 			        TRUE (),
-			
 			        ISBLANK ( SelectedStep ),
 			            "Actual invoice-line revenue after applying the Volume, Mix, and Price effects to Budget Revenue.",
-			
 			        SelectedStep = "Budget Revenue",
 			            "Budgeted invoice-line revenue for the selected period.",
-			
 			        SelectedStep = "Volume Effect",
-			            "Impact of Actual total pounds differing from Budget, holding Budget mix and Budget price per pound constant.",
-			
+			            "Impact of Actual total " & WeightName
+			                & " differing from Budget, holding Budget mix and Budget price per "
+			                & PriceUnit & " constant.",
 			        SelectedStep = "Mix Effect",
-			            "Impact of Actual pounds shifting toward products with higher or lower Budget prices per pound.",
-			
+			            "Impact of Actual " & WeightName
+			                & " shifting toward products with higher or lower Budget prices per "
+			                & PriceUnit & ".",
 			        SelectedStep = "Price Effect",
-			            "Impact of Actual realized invoice price per pound differing from the Budget reference price on Actual pounds."
+			            "Impact of Actual realized invoice price per " & PriceUnit
+			                & " differing from the Budget reference price on Actual " & WeightName & "."
 			    )
+			
+			
+			```
 		lineageTag: e8eb6dd2-4238-4173-b843-d902d35bc501
 
 	measure 'Revenue PVM Subtitle' =
@@ -519,6 +570,761 @@ table 'Finance Measures'
 			    "Actual vs Budget:  "
 			        & PeriodLabel
 		lineageTag: afda8525-4834-4979-98fa-b443a96f13de
+
+	measure 'Selected Display Weight' =
+			
+			SELECTEDVALUE (
+			    'Dim_QuantityUnitHelper'[Quantity_Unit_Code],
+			    "LBs"
+			)
+		lineageTag: a3535b81-c650-4753-ab77-a8696a5dcc3f
+
+	measure 'Selected Display Currency' =
+			
+			SELECTEDVALUE (
+			    'Dim_ReportCurrencyHelper'[Report_Currency_Code],
+			    "USD"
+			)
+		lineageTag: a1e09274-496b-4ff5-bd93-e5b7d988537d
+
+	measure 'Base CustInv - Comms' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Customer_Invoices[Comms_USD] ),
+			    "EUR", SUM ( Fact_Customer_Invoices[Comms_EUR] ),
+			    "CNY", SUM ( Fact_Customer_Invoices[Comms_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: 2eb99ad8-0f1b-438a-82f1-9472efda69ad
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base CustInv - CRM' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Customer_Invoices[Cost_USD_Rate_Missing] ),
+			    "EUR", SUM ( Fact_Customer_Invoices[Cost_EUR_Rate_Missing] ),
+			    "CNY", SUM ( Fact_Customer_Invoices[Cost_CNY_Rate_Missing] ),
+			    BLANK ()
+			)
+		formatString: 0
+		lineageTag: fc5a0f5b-19f0-446b-8fed-431878391b13
+
+	measure 'Base CustInv - CostAmt' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Customer_Invoices[CostAmount_USD] ),
+			    "EUR", SUM ( Fact_Customer_Invoices[CostAmount_EUR] ),
+			    "CNY", SUM ( Fact_Customer_Invoices[CostAmount_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: f2ff9327-342f-4bfe-b8f8-ed7d8c2d8add
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base CustInv - CostAmtPhy' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Customer_Invoices[CostAmountPhysical_USD] ),
+			    "EUR", SUM ( Fact_Customer_Invoices[CostAmountPhysical_EUR] ),
+			    "CNY", SUM ( Fact_Customer_Invoices[CostAmountPhysical_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: 108bafef-fe14-4e90-b97e-f34d1d7b6d59
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base CustInv - Freight' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Customer_Invoices[Freight_USD] ),
+			    "EUR", SUM ( Fact_Customer_Invoices[Freight_EUR] ),
+			    "CNY", SUM ( Fact_Customer_Invoices[Freight_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: 75e8653c-e7dc-4df2-8305-f93dd6619541
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base CustInv - FuelCharge' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Customer_Invoices[Fuel_Charge_USD] ),
+			    "EUR", SUM ( Fact_Customer_Invoices[Fuel_Charge_EUR] ),
+			    "CNY", SUM ( Fact_Customer_Invoices[Fuel_Charge_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: def322ac-4be3-4e4d-8277-8f6849e9b311
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base CustInv - Amt' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Customer_Invoices[InvoiceAmount_USD] ),
+			    "EUR", SUM ( Fact_Customer_Invoices[InvoiceAmount_EUR] ),
+			    "CNY", SUM ( Fact_Customer_Invoices[InvoiceAmount_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: ce5939b1-845e-4682-bd6d-06be2b3c4f70
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base CustInv - LineAmt' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Customer_Invoices[LineAmount_USD] ),
+			    "EUR", SUM ( Fact_Customer_Invoices[LineAmount_EUR] ),
+			    "CNY", SUM ( Fact_Customer_Invoices[LineAmount_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: 696d5592-8279-40d5-bd3f-81443d886d85
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base CustInv - Margin' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Customer_Invoices[Margin_USD] ),
+			    "EUR", SUM ( Fact_Customer_Invoices[Margin_EUR] ),
+			    "CNY", SUM ( Fact_Customer_Invoices[Margin_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: f25c4c7c-20c7-4f02-aebc-42e9b2b25bcd
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base CustInv - PltBrk' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Customer_Invoices[PLT_Brk_Ch_USD] ),
+			    "EUR", SUM ( Fact_Customer_Invoices[PLT_Brk_Ch_EUR] ),
+			    "CNY", SUM ( Fact_Customer_Invoices[PLT_Brk_Ch_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: 0b755765-ff71-438f-920d-10127153fae5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base CustInv - SalesPrice' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Customer_Invoices[SalesPrice_USD] ),
+			    "EUR", SUM ( Fact_Customer_Invoices[SalesPrice_EUR] ),
+			    "CNY", SUM ( Fact_Customer_Invoices[SalesPrice_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: 02aeeafd-0767-4f9c-a911-24c8edfec56a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base CustInv - TariffSC' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Customer_Invoices[Tariff_SC_USD] ),
+			    "EUR", SUM ( Fact_Customer_Invoices[Tariff_SC_EUR] ),
+			    "CNY", SUM ( Fact_Customer_Invoices[Tariff_SC_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: e1a40942-3b0d-4300-8d8c-ba7bed45fe54
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base CustInv - TRM' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Customer_Invoices[Txn_USD_Rate_Missing] ),
+			    "EUR", SUM ( Fact_Customer_Invoices[Txn_EUR_Rate_Missing] ),
+			    "CNY", SUM ( Fact_Customer_Invoices[Txn_CNY_Rate_Missing] ),
+			    BLANK ()
+			)
+		formatString: 0
+		lineageTag: 4e5fe0e9-49be-4b68-bf31-e385229a9fd7
+
+	measure 'Base CustInv - Qty' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Customer_Invoices[Quantity_LBs] ),
+			    "KGs", SUM ( Fact_Customer_Invoices[Quantity_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: f92bce39-992c-4d67-8e44-915544ff7c66
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base GL - ARM' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_GeneralLedger[Acct_USD_Rate_Missing] ),
+			    "EUR", SUM ( Fact_GeneralLedger[Acct_EUR_Rate_Missing] ),
+			    "CNY", SUM ( Fact_GeneralLedger[Acct_CNY_Rate_Missing] ),
+			    BLANK ()
+			)
+		formatString: 0
+		lineageTag: bdf3695e-b797-4747-bafa-645eed86d502
+
+	measure 'Base GL - TransCurrAmt' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_GeneralLedger[transactioncurrencyamount_USD] ),
+			    "EUR", SUM ( Fact_GeneralLedger[transactioncurrencyamount_EUR] ),
+			    "CNY", SUM ( Fact_GeneralLedger[transactioncurrencyamount_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: 42bd111d-ce26-48cf-92bd-da16adf3f31b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base GL - TRM' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_GeneralLedger[Txn_USD_Rate_Missing] ),
+			    "EUR", SUM ( Fact_GeneralLedger[Txn_EUR_Rate_Missing] ),
+			    "CNY", SUM ( Fact_GeneralLedger[Txn_CNY_Rate_Missing] ),
+			    BLANK ()
+			)
+		formatString: 0
+		lineageTag: 4711bda2-732d-4503-b76c-f0f1b9b3c899
+
+	measure 'Base InvSna - Arrived Qty' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Inventory_Snapshot[arrived_LBs] ),
+			    "KGs", SUM ( Fact_Inventory_Snapshot[arrived_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: d76219d8-4e09-433c-a769-1f1dc58b7aec
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base InvSna - AvailOrd Qty' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Inventory_Snapshot[availordered_LBs] ),
+			    "KGs", SUM ( Fact_Inventory_Snapshot[availordered_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: 23a74d98-8136-4064-a18d-9b3488e11713
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base InvSna - AvailPhy Qty' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Inventory_Snapshot[availphysical_LBs] ),
+			    "KGs", SUM ( Fact_Inventory_Snapshot[availphysical_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: e6ae2e6a-4078-46cc-8ab2-7184bdfc9987
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base InvSna - Deducted Qty' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Inventory_Snapshot[deducted_LBs] ),
+			    "KGs", SUM ( Fact_Inventory_Snapshot[deducted_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: 11605609-8ad1-46c1-8a88-ee09dc5e794d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base InvSna - OnOrder Qty' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Inventory_Snapshot[onorder_LBs] ),
+			    "KGs", SUM ( Fact_Inventory_Snapshot[onorder_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: 71b20fee-bf6a-45b0-8cfd-47cf1e62a80f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base InvSna - Ordered Qty' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Inventory_Snapshot[ordered_LBs] ),
+			    "KGs", SUM ( Fact_Inventory_Snapshot[ordered_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: ca62b942-520a-4da3-812c-29cf8c461d36
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base InvSna - PhyInv Qty' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Inventory_Snapshot[physicalinvent_LBs] ),
+			    "KGs", SUM ( Fact_Inventory_Snapshot[physicalinvent_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: a911c731-a9fb-48df-aaff-9f1c09e8d74d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base InvSna - Picked Qty' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Inventory_Snapshot[picked_LBs] ),
+			    "KGs", SUM ( Fact_Inventory_Snapshot[picked_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: 150038c5-6453-4f4f-bcba-2e03091a2e14
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base InvSna - Posted Qty' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Inventory_Snapshot[postedqty_LBs] ),
+			    "KGs", SUM ( Fact_Inventory_Snapshot[postedqty_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: 7f6f8f5e-c193-441e-861b-f6c43c1c49c4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base InvSna - Received Qty' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Inventory_Snapshot[received_LBs] ),
+			    "KGs", SUM ( Fact_Inventory_Snapshot[received_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: eeb291a0-d7a0-44e4-9981-b2a2a5ffbbd2
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base InvSna - Registered Qty' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Inventory_Snapshot[registered_LBs] ),
+			    "KGs", SUM ( Fact_Inventory_Snapshot[registered_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: 98431003-30a7-43e2-82ef-9fd06d39164b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base InvSna - ResOrd Qty' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Inventory_Snapshot[reservordered_LBs] ),
+			    "KGs", SUM ( Fact_Inventory_Snapshot[reservordered_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: 2c2fc9ff-ed5a-4db4-b0f1-9f52d4dc5fe1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base InvSna - ResPhy Qty' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Inventory_Snapshot[reservphysical_LBs] ),
+			    "KGs", SUM ( Fact_Inventory_Snapshot[reservphysical_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: 107a10a8-0275-4e22-b6ab-2894510fd8a4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base Sales - Amt' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Sales[Amount_USD] ),
+			    "EUR", SUM ( Fact_Sales[Amount_EUR] ),
+			    "CNY", SUM ( Fact_Sales[Amount_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: f4143289-02f0-41c8-9405-3daaa5e1767f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base Sales - CRM' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Sales[Cost_USD_Rate_Missing] ),
+			    "EUR", SUM ( Fact_Sales[Cost_EUR_Rate_Missing] ),
+			    "CNY", SUM ( Fact_Sales[Cost_CNY_Rate_Missing] ),
+			    BLANK ()
+			)
+		formatString: 0
+		lineageTag: 1500e62b-2505-4cd0-b8d5-506b17052869
+
+	measure 'Base Sales - InvAmt' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Sales[InvoiceLineAmount_USD] ),
+			    "EUR", SUM ( Fact_Sales[InvoiceLineAmount_EUR] ),
+			    "CNY", SUM ( Fact_Sales[InvoiceLineAmount_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: cd9adc0c-f9e7-442b-b846-4791e90b23fc
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base Sales - InvTRM' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Sales[InvoiceTxn_USD_Rate_Missing] ),
+			    "EUR", SUM ( Fact_Sales[InvoiceTxn_EUR_Rate_Missing] ),
+			    "CNY", SUM ( Fact_Sales[InvoiceTxn_CNY_Rate_Missing] ),
+			    BLANK ()
+			)
+		formatString: 0
+		lineageTag: 02a7ecb2-72ea-46e0-9d34-de88ee939f23
+
+	measure 'Base Sales - TRM' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Sales[Txn_USD_Rate_Missing] ),
+			    "EUR", SUM ( Fact_Sales[Txn_EUR_Rate_Missing] ),
+			    "CNY", SUM ( Fact_Sales[Txn_CNY_Rate_Missing] ),
+			    BLANK ()
+			)
+		formatString: 0
+		lineageTag: 37b49c5f-49b6-42c8-8986-d876a5c15482
+
+	measure 'Base Sales - RetAmt' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Sales[Returned_Amount_USD] ),
+			    "EUR", SUM ( Fact_Sales[Returned_Amount_EUR] ),
+			    "CNY", SUM ( Fact_Sales[Returned_Amount_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: 370fddb9-4c49-47d9-b747-e17e09b74a63
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base Sales - Inv Qty' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Sales[InvoiceQuantity_LBs] ),
+			    "KGs", SUM ( Fact_Sales[InvoiceQuantity_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: 27288992-41a2-4071-96c5-b088666d9aa4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base Sales - Qty' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Sales[Quantity_LBs] ),
+			    "KGs", SUM ( Fact_Sales[Quantity_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: 476d1770-3540-4a1f-a821-b56db9ca0ecf
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base Sales Bud - Amt' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_SalesBudget[Amount_USD] ),
+			    "EUR", SUM ( Fact_SalesBudget[Amount_EUR] ),
+			    "CNY", SUM ( Fact_SalesBudget[Amount_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: 16655f1d-4349-4622-ae3f-9b015fda6e6e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Base Sales Bud - TRM' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_SalesBudget[Txn_USD_Rate_Missing] ),
+			    "EUR", SUM ( Fact_SalesBudget[Txn_EUR_Rate_Missing] ),
+			    "CNY", SUM ( Fact_SalesBudget[Txn_CNY_Rate_Missing] ),
+			    BLANK ()
+			)
+		formatString: 0
+		lineageTag: ae69ea9b-931c-40ae-a3a4-332efee0452c
+
+	measure 'Base Sales Bud - Qty' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_SalesBudget[Quantity_LBs] ),
+			    "KGs", SUM ( Fact_SalesBudget[Quantity_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: 348b9276-7d0e-4a8e-a4b1-bf31971841ec
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Display Settings HTML' =
+			
+			VAR _Currency =
+			    [Selected Display Currency]
+			
+			VAR _Weight =
+			    [Selected Display Weight]
+			
+			VAR _LabelStyle =
+			    "color:#191919;"
+			
+			VAR _CurrencyStyle =
+			    "color:#85BB65;font-weight:600;"
+			
+			VAR _WeightStyle =
+			    "color:#118DFF;font-weight:600;"
+			
+			RETURN
+			    "<div style='font-family:Segoe UI,Arial,sans-serif;
+			                 font-size:20px;
+			                 line-height:22px;
+			                 white-space:nowrap;
+			                 text-align:right;'>"
+			
+			        & "<span style='" & _LabelStyle & "'>Currency: </span>"
+			
+			        & "<span style='" & _CurrencyStyle & "'>"
+			        & _Currency
+			        & "</span>"
+			
+			        & "<span style='" & _LabelStyle & "'>&nbsp;|&nbsp;Weight: </span>"
+			
+			        & "<span style='" & _WeightStyle & "'>"
+			        & _Weight
+			        & "</span>"
+			
+			    & "</div>"
+		lineageTag: 324d7d2a-58cf-4ff0-b7cb-2a6088de0f5e
+
+	measure 'Global Filter Summary HTML' =
+			
+			VAR _EntityFilters =
+			    FILTERS ( 'Dim_Legal_Entity'[CMPNY] )
+			
+			VAR _EmployeeFilters =
+			    FILTERS ( 'Dim_Employee'[Employee_Name] )
+			
+			VAR _CountryFilters =
+			    FILTERS ( 'Dim_Address'[Country] )
+			
+			VAR _IndustryFilters =
+			    FILTERS ( 'DIM_MarketSegmentation'[Industry] )
+			
+			// Legal entity selections
+			VAR _Entity =
+			    IF (
+			        ISFILTERED ( 'Dim_Legal_Entity'[CMPNY] ),
+			        IF (
+			            COUNTROWS ( _EntityFilters ) <= 2,
+			            CONCATENATEX (
+			                _EntityFilters,
+			                'Dim_Legal_Entity'[CMPNY],
+			                ", ",
+			                'Dim_Legal_Entity'[CMPNY],
+			                ASC
+			            ),
+			            COUNTROWS ( _EntityFilters ) & " selected"
+			        ),
+			        "All"
+			    )
+			
+			
+			// Escape special HTML characters in dynamic values
+			VAR _EntityHTML =
+			    SUBSTITUTE (
+			        SUBSTITUTE ( SUBSTITUTE ( _Entity, "&", "&amp;" ), "<", "&lt;" ),
+			        ">", "&gt;"
+			    )
+			
+			
+			// Formatting
+			VAR _LabelStyle =
+			    "color:#191919;"
+			
+			VAR _ValueStyle =
+			    "color:#08911f;font-weight:600;"
+			
+			VAR _Separator =
+			    "<span style='color:#191919;'>&nbsp;|&nbsp;</span>"
+			
+			RETURN
+			    "<div style='font-family:Segoe UI,Arial,sans-serif;
+			                 font-size:20px;
+			                 line-height:22px;
+			                 text-align:left;'>"
+			
+			        & "<span style='white-space:nowrap;'>"
+			        & "<span style='" & _LabelStyle & "'>Entity: </span>"
+			        & "<span style='" & _ValueStyle & "'>" & _EntityHTML & "</span>"
+			        & "</span>"
+			
+			
+			    & "</div>"
+		lineageTag: aa689eaf-0e2b-4537-a729-47f57715e959
+
+	measure 'Profitability Y-Axis Unit' =
+			
+			VAR _Currency =
+			    SWITCH (
+			        [Selected Display Currency],
+			        "USD", "$",
+			        "EUR", "€",
+			        "CNY", "¥",
+			        "$"
+			    )
+			
+			VAR _Weight =
+			    SWITCH (
+			        [Selected Display Weight],
+			        "LBs", "lb",
+			        "KGs", "kg",
+			        "lb"
+			    )
+			
+			RETURN
+			    _Currency & "/" & _Weight
+		lineageTag: b8b0223d-b7f8-41df-8a70-14347f826eb8
+
+	measure 'Profitability Chart Title' =
+			
+			VAR _Weight =
+			    SWITCH (
+			        [Selected Display Weight],
+			        "LBs", "lb",
+			        "KGs", "kg",
+			        "lb"
+			    )
+			
+			RETURN
+			    "Margin % and Profitability per " & _Weight
+		lineageTag: 886e719f-2dd2-47c3-b0a4-f6d3e46d8319
+
+	measure 'Cost Settings Valid' =
+			
+			VAR _Company =
+			    CALCULATE (
+			        SELECTEDVALUE ( 'Dim_Legal_Entity'[CMPNY] ),
+			        ALLSELECTED ( 'Dim_Legal_Entity' )
+			    )
+			
+			VAR _Currency =
+			    SELECTEDVALUE (
+			        'Dim_ReportCurrencyHelper'[Report_Currency_Code]
+			    )
+			
+			VAR _Weight =
+			    SELECTEDVALUE (
+			        'Dim_QuantityUnitHelper'[Quantity_Unit_Code]
+			    )
+			
+			VAR _ValidUS =
+			    _Company = "101"
+			        && _Currency = "USD"
+			        && _Weight = "LBs"
+			
+			VAR _ValidBelgium =
+			    _Company = "301"
+			        && _Currency = "EUR"
+			        && _Weight = "KGs"
+			
+			RETURN
+			    IF ( _ValidUS || _ValidBelgium, 1, 0 )
+		formatString: 0
+		lineageTag: 73578935-36b3-4406-8855-8a48ee2562d6
+
+	measure 'Cost Settings Message' =
+			
+			IF (
+			    [Cost Settings Valid] = 1,
+			    "Standard-cost settings match the selected company's currency and weight basis.",
+			    "Standard-cost results are not valid for these settings. "
+			        & "Select one company: 101 with USD and LBs, "
+			        & "or 301 with EUR and KGs."
+			)
+		lineageTag: 4f3cda63-2306-4c75-922b-4d93bdcecebf
+
+	measure 'Cost Settings Message Color' =
+			
+			IF (
+			    [Cost Settings Valid] = 1,
+			    "#191919",   -- Valid settings: dark gray
+			    "#C62828"    -- Invalid settings: crimson red
+			)
+		lineageTag: 10bf33fc-8284-439e-87dd-b8145bc4840f
+
+	measure 'Revenue PVM Invoice Coverage Rows' =
+			
+			CALCULATE (
+			    CALCULATE (
+			        [Total Invoices],
+			
+			        -- Exclude the preloaded invoices without a usable product.
+			        KEEPFILTERS (
+			            'Dim_Product'[Product_ID] <> "Unknown"
+			                && NOT ISBLANK (
+			                    'Dim_Product'[Product_ID]
+			                )
+			        )
+			    ),
+			
+			    -- Determine coverage for the entity, not the current product
+			    -- or market-segmentation selection.
+			    REMOVEFILTERS ( 'Dim_Product' ),
+			    REMOVEFILTERS ( 'Dim_MarketSegmentation' )
+			)
+		formatString: 0
+		lineageTag: 21ed0dcd-e773-432d-9faf-ebebd0d91926
+
+	measure 'Base GL - AcctCurrAmt' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_GeneralLedger[accountingcurrencyamount_USD] ),
+			    "EUR", SUM ( Fact_GeneralLedger[accountingcurrencyamount_EUR] ),
+			    "CNY", SUM ( Fact_GeneralLedger[accountingcurrencyamount_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: e21c178b-61ac-4cf8-b383-2cee8c910ea4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	column 'Measure Group'
 		isHidden

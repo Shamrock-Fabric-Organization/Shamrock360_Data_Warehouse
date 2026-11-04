@@ -11,7 +11,7 @@ annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_QueryOrder = ["DatabaseQuery"]
 
-annotation PBI_ProTooling = ["WebModelingEdit","DaxQueryView_Desktop"]
+annotation PBI_ProTooling = ["WebModelingEdit","DaxQueryView_Desktop","DevMode","RemoteModeling"]
 
 annotation __TEdtr = 1
 
@@ -32,5 +32,10 @@ ref table Dim_Account
 ref table Fact_SalesAndForecastData
 ref table Dim_Product
 ref table 'Procurement Measures'
+
+ref role Leadership
+ref role 'Leadership BVBA'
+ref role 'Procurement BVBA'
+ref role 'Procurement US'
 
 

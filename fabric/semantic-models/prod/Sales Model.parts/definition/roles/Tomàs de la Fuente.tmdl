@@ -1,0 +1,10 @@
+role 'Tomàs de la Fuente'
+	modelPermission: read
+
+	tablePermission BIDataSet_Opportunity = [Manager] IN {"TDELAFUE"}
+
+	tablePermission Dim_Employee = [Personnel_Number] IN {"1246"}
+
+	annotation PBI_Id = 673782eff3244488853642b2bbd9d653
+
+

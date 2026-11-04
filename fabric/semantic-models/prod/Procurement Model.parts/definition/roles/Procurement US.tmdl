@@ -1,0 +1,8 @@
+role 'Procurement US'
+	modelPermission: read
+
+	tablePermission DIM_Legal_Entity = [CMPNY] == "101"
+
+	annotation PBI_Id = 626f0ecbb58b43e2baef5a918001e01f
+
+

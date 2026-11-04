@@ -1,0 +1,10 @@
+role 'Michael Keller'
+	modelPermission: read
+
+	tablePermission BIDataSet_Opportunity = [Manager] IN {"MKELLER"}
+
+	tablePermission Dim_Employee = [Personnel_Number] IN {"1248"}
+
+	annotation PBI_Id = b522b01c80ff4bde9e167195ec74d56b
+
+

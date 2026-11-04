@@ -8,10 +8,6 @@ role 'Ming & Virgil APAC'
 			'Date Table'[Fiscal Year] >= 2023
 			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
 
-	tablePermission 'Employee Table' =
-			'Employee Table'[Salesperson] IN {"Ming Chong","Virgil Yu","Steve Lin","Leslie Luo","Andrew Yuan","Will Kang"}
-			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
-
 	tablePermission 'Legal Entity Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
 
 	tablePermission 'Product Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0

@@ -1,0 +1,10 @@
+role 'Daan Dewulf'
+	modelPermission: read
+
+	tablePermission BIDataSet_Opportunity = [Manager] IN {"DDEWULF"}
+
+	tablePermission Dim_Employee = [Personnel_Number] IN {"1247"}
+
+	annotation PBI_Id = f405e6152e79494fa28fc035d89d5e6c
+
+

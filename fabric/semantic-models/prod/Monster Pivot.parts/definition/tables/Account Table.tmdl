@@ -229,8 +229,7 @@ table 'Account Table'
 		annotation SummarizationSetBy = Automatic
 
 	column 'Effective Country'
-		dataType: int64
-		formatString: 0
+		dataType: string
 		lineageTag: d3cd6751-dc45-4bba-b253-87e7555bedd1
 		sourceLineageTag: EffectiveCountry
 		summarizeBy: none
@@ -410,6 +409,24 @@ table 'Account Table'
 		sourceColumn: InvoicingEmail
 
 		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column PrimaryEmail
+		dataType: string
+		lineageTag: 9fcf75bc-4e47-4ba6-bc0a-fa52a953801a
+		sourceLineageTag: PrimaryEmail
+		summarizeBy: none
+		sourceColumn: PrimaryEmail
+
+		annotation SummarizationSetBy = Automatic
+
+	column PrimaryEmailDescription
+		dataType: string
+		lineageTag: 5134f0c5-6157-417d-8253-e632024ce7ed
+		sourceLineageTag: PrimaryEmailDescription
+		summarizeBy: none
+		sourceColumn: PrimaryEmailDescription
 
 		annotation SummarizationSetBy = Automatic
 

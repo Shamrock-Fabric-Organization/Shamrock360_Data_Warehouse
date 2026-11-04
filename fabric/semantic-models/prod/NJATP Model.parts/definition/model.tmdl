@@ -18,5 +18,6 @@ ref table Dim_Date
 ref table Dim_Account
 ref table Dim_Address
 ref table Dim_Product
+ref table Dim_Legal_Entity
 
 

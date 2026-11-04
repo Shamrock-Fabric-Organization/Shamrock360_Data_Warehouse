@@ -225,6 +225,560 @@ table 'Production Measures'
 		formatString: 0
 		lineageTag: 39f987e7-477b-4f14-ab01-187663ac2e01
 
+	measure 'UI Snapshot Ext Date' =
+			
+			VAR VisibleDates =
+			    VALUES ( 'Dim_Date'[Date] )
+			RETURN
+			    CALCULATE (
+			        MAX (
+			            'Fact_Inventory_Snapshot_Extended'[Snapshot_Date]
+			        ),
+			        REMOVEFILTERS (),
+			        TREATAS (
+			            VisibleDates,
+			            'Fact_Inventory_Snapshot_Extended'[Snapshot_Date]
+			        )
+			    )
+		formatString: General Date
+		lineageTag: d3f6c486-541b-413f-9b9d-edf4442c32c0
+
+	measure 'UI Snapshot Date' = ```
+			
+			VAR VisibleDates =
+			    VALUES ( 'Dim_Date'[Date] )
+			RETURN
+			    CALCULATE (
+			        MAX ( 'Fact_Inventory_Snapshot_Extended'[Snapshot_Date] ),
+			        REMOVEFILTERS (),
+			        TREATAS (
+			            VisibleDates,
+			            'Fact_Inventory_Snapshot_Extended'[Snapshot_Date]
+			        )
+			    )
+			
+			```
+		formatString: General Date
+		lineageTag: b1de9060-13a4-44f8-9a3f-0b685b0043b9
+
+	measure 'UI Unproductive Qty (Single Date)' =
+			
+			VAR SnapshotDate =
+			    SELECTEDVALUE ( 'Dim_Date'[Date] )
+			
+			RETURN
+			    IF (
+			        ISBLANK ( SnapshotDate ),
+			        BLANK (),
+			
+			        VAR NonOffSpecStatuses =
+			            FILTER (
+			                VALUES (
+			                    'Fact_Inventory_Snapshot_Extended'[inventstatusid]
+			                ),
+			                NOT (
+			                    UPPER (
+			                        TRIM (
+			                            COALESCE (
+			                                'Fact_Inventory_Snapshot_Extended'[inventstatusid],
+			                                ""
+			                            )
+			                        )
+			                    ) IN {
+			                        "BLOCKED",
+			                        "REWORK",
+			                        "NC",
+			                        "EXPIRED-BL"
+			                    }
+			                )
+			            )
+			
+			        VAR AgedOutsideOffSpec =
+			            CALCULATE (
+			                [UI Aged Qty (Single Date)],
+			                KEEPFILTERS ( NonOffSpecStatuses )
+			            )
+			
+			        RETURN
+			            [UI Off-Spec Qty (Single Date)]
+			                + AgedOutsideOffSpec
+			    )
+		lineageTag: 17e983f1-9055-4470-8fed-9367efbaa7f5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'UI Unproductive Qty' =
+			
+			VAR SnapshotDate =
+			    [UI Snapshot Date]
+			
+			VAR SelectedView =
+			    [UI Selected View]
+			
+			RETURN
+			    IF (
+			        ISBLANK ( SnapshotDate )
+			            || ISBLANK ( SelectedView ),
+			        BLANK (),
+			
+			        CALCULATE (
+			            SWITCH (
+			                SelectedView,
+			
+			                "Aged",
+			                    [UI Aged Qty (Single Date)],
+			
+			                "Off-Spec",
+			                    [UI Off-Spec Qty (Single Date)],
+			
+			                "All",
+			                    [UI Unproductive Qty (Single Date)],
+			
+			                BLANK ()
+			            ),
+			            REMOVEFILTERS ( 'Dim_Date' ),
+			            TREATAS (
+			                { SnapshotDate },
+			                'Dim_Date'[Date]
+			            )
+			        )
+			    )
+		lineageTag: 1cb01a0b-1065-40a5-b2c6-514ac3700490
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'UI Unproductive Qty (Display)' =
+			
+			IF (
+			    ISBLANK ( [UI Snapshot Date] )
+			        || ISBLANK ( [UI Selected View] ),
+			    BLANK (),
+			    COALESCE (
+			        [UI Unproductive Qty],
+			        0
+			    )
+			)
+		lineageTag: f3d9ee5e-291d-4c81-87ac-a5bde78e4ebf
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'UI Inventory Qty' =
+			
+			VAR SnapshotDate =
+			    [UI Snapshot Date]
+			
+			RETURN
+			    IF (
+			        ISBLANK ( SnapshotDate ),
+			        BLANK (),
+			
+			        CALCULATE (
+			            [UI Scoped Physical Qty],
+			            REMOVEFILTERS ( 'Dim_Date' ),
+			            TREATAS (
+			                { SnapshotDate },
+			                'Dim_Date'[Date]
+			            )
+			        )
+			    )
+		lineageTag: f14e757c-96e6-48da-a5e6-7db90c8d544c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'UI Unproductive %' = ```
+			
+			DIVIDE (
+			    [UI Unproductive Qty (Display)],
+			    [UI Inventory Qty]
+			)
+			
+			```
+		lineageTag: b4e1ef45-fa12-49b5-be75-6f41df42307f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'UI As Of Label' =
+			
+			VAR SnapshotDate = [UI Snapshot Date]
+			RETURN
+			    IF (
+			        ISBLANK ( SnapshotDate ),
+			        "No snapshot in selected dates",
+			        "Snapshot: " & FORMAT ( SnapshotDate, "dd mmm yyyy" )
+			    )
+		lineageTag: 4e87062b-acfe-4c96-9ebb-f6430c369723
+
+	measure 'UI Detail Title' = ```
+			
+			VAR SnapshotDate = [UI Snapshot Date]
+			RETURN
+			    IF (
+			        ISBLANK ( SnapshotDate ),
+			        "Inventory detail - no snapshot in selected dates",
+			        "Inventory detail as of " & FORMAT ( SnapshotDate, "dd mmm yyyy" )
+			    )
+			
+			```
+		lineageTag: 8bcf58b4-a69b-479c-be68-9857943b45a5
+
+	measure 'UI Rule Caption' =
+			
+			SWITCH (
+			    [UI Selected View],
+			
+			    "Aged",
+			        "Raw materials and intermediates: over 12 months old. Finished goods: over 6 months old. Age is measured at the snapshot date.",
+			
+			    "Off-Spec",
+			        "Groups 10, 20 and 30 with status Blocked, Rework, NC or Expired-BL, regardless of age.",
+			
+			    "All",
+			        "Groups 10, 20 and 30 meeting the Aged or Off-Spec definition. Inventory meeting both is counted once.",
+			
+			    "Clear the view selection."
+			)
+		lineageTag: 6d2ae539-f504-4071-828f-5cc02ccf5078
+
+	measure 'UI Share Label' =
+			
+			SWITCH (
+			    [UI Selected View],
+			
+			    "Aged",
+			        "Aged % of total inventory",
+			
+			    "Off-Spec",
+			        "Off-spec % of total inventory",
+			
+			    "All",
+			        "Unproductive % of total inventory",
+			
+			    "Clear the view selection"
+			)
+		lineageTag: 9c039d20-c204-48e1-8847-bd516038ab44
+
+	measure 'UI Selected View' =
+			
+			VAR VisibleViews =
+			    VALUES ( 'UI View'[View] )
+			
+			RETURN
+			    IF (
+			        ISEMPTY ( VisibleViews ),
+			        BLANK (),
+			        SELECTEDVALUE (
+			            'UI View'[View],
+			            "All"
+			        )
+			    )
+		lineageTag: 744b1e07-11ce-42e5-aa8f-4de427bb0a70
+
+	measure 'UI Scoped Physical Qty' =
+			
+			CALCULATE (
+			    [UI Physical Qty (Batch Checked)],
+			
+			    KEEPFILTERS (
+			        FILTER (
+			            VALUES ( 'Dim_Product'[itemgroupid] ),
+			
+			            TRIM (
+			                COALESCE (
+			                    'Dim_Product'[itemgroupid],
+			                    ""
+			                )
+			            ) IN { "10", "20", "30" }
+			        )
+			    )
+			)
+		lineageTag: 8a757fde-2bab-48d2-b9b7-3ad97937c4d6
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'UI Aged Qty (Single Date)' =
+			
+			VAR SnapshotDate =
+			    SELECTEDVALUE ( 'Dim_Date'[Date] )
+			
+			RETURN
+			    IF (
+			        NOT ISBLANK ( SnapshotDate ),
+			
+			        VAR SixMonthCutoff =
+			            EDATE ( SnapshotDate, -6 )
+			
+			        VAR TwelveMonthCutoff =
+			            EDATE ( SnapshotDate, -12 )
+			
+			        VAR InScopeItemGroups =
+			            FILTER (
+			                VALUES ( 'Dim_Product'[itemgroupid] ),
+			
+			                TRIM (
+			                    COALESCE (
+			                        'Dim_Product'[itemgroupid],
+			                        ""
+			                    )
+			                ) IN { "10", "20", "30" }
+			            )
+			
+			        VAR ProductBatchGroups =
+			            CALCULATETABLE (
+			                SUMMARIZE (
+			                    'Fact_Inventory_Snapshot_Extended',
+			
+			                    'Fact_Inventory_Snapshot_Extended'[CMPNY],
+			                    'Fact_Inventory_Snapshot_Extended'[Product_ID],
+			                    'Fact_Inventory_Snapshot_Extended'[inventbatchid],
+			
+			                    'Dim_Product'[itemgroupid]
+			                ),
+			
+			                KEEPFILTERS ( InScopeItemGroups )
+			            )
+			
+			        VAR AgedGroups =
+			            FILTER (
+			                ProductBatchGroups,
+			
+			                VAR ItemGroup =
+			                    TRIM (
+			                        COALESCE (
+			                            'Dim_Product'[itemgroupid],
+			                            ""
+			                        )
+			                    )
+			
+			                VAR MfgDate =
+			                    CALCULATE (
+			                        [UI Matched Mfg Date (Helper)]
+			                    )
+			
+			                VAR AgeCutoff =
+			                    IF (
+			                        ItemGroup = "30",
+			                        SixMonthCutoff,
+			                        TwelveMonthCutoff
+			                    )
+			
+			                RETURN
+			                    NOT ISBLANK ( MfgDate )
+			                        && MfgDate < AgeCutoff
+			            )
+			
+			        RETURN
+			            CALCULATE (
+			                [UI Scoped Physical Qty],
+			
+			                KEEPFILTERS ( AgedGroups )
+			            )
+			    )
+		lineageTag: 06812ccc-b829-45e1-b8ad-032a743df35a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'UI Off-Spec Qty (Single Date)' =
+			
+			VAR SnapshotDate =
+			    SELECTEDVALUE ( 'Dim_Date'[Date] )
+			
+			RETURN
+			    IF (
+			        ISBLANK ( SnapshotDate ),
+			        BLANK (),
+			
+			        CALCULATE (
+			            [UI Scoped Physical Qty],
+			            KEEPFILTERS (
+			                FILTER (
+			                    VALUES (
+			                        'Fact_Inventory_Snapshot_Extended'[inventstatusid]
+			                    ),
+			                    UPPER (
+			                        TRIM (
+			                            COALESCE (
+			                                'Fact_Inventory_Snapshot_Extended'[inventstatusid],
+			                                ""
+			                            )
+			                        )
+			                    ) IN {
+			                        "BLOCKED",
+			                        "REWORK",
+			                        "NC",
+			                        "EXPIRED-BL"
+			                    }
+			                )
+			            )
+			        )
+			    )
+		lineageTag: 0b22b68b-ff50-40e9-8657-4033c5f711c3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'UI Matched Mfg Date (Helper)' =
+			
+			VAR CompanyCode =
+			    SELECTEDVALUE (
+			        'Fact_Inventory_Snapshot_Extended'[CMPNY]
+			    )
+			VAR ProductCode =
+			    SELECTEDVALUE (
+			        'Fact_Inventory_Snapshot_Extended'[Product_ID]
+			    )
+			VAR BatchCode =
+			    SELECTEDVALUE (
+			        'Fact_Inventory_Snapshot_Extended'[inventbatchid]
+			    )
+			RETURN
+			    IF (
+			        NOT ISBLANK ( CompanyCode )
+			            && CompanyCode <> ""
+			            && NOT ISBLANK ( ProductCode )
+			            && ProductCode <> ""
+			            && NOT ISBLANK ( BatchCode )
+			            && BatchCode <> "",
+			
+			        CALCULATE (
+			            SELECTEDVALUE (
+			                'Dim_Batch'[ProductionDate]
+			            ),
+			
+			            REMOVEFILTERS ( 'Dim_Batch' ),
+			
+			            TREATAS (
+			                { ( CompanyCode, ProductCode, BatchCode ) },
+			                'Dim_Batch'[CMPNY],
+			                'Dim_Batch'[ProductID],
+			                'Dim_Batch'[BatchID]
+			            )
+			        )
+			    )
+		formatString: General Date
+		lineageTag: f9dcda4a-2c52-47d7-bd86-80e91b0eb2ae
+
+	measure 'UI Matched Mfg Date' =
+			
+			VAR SnapshotDate =
+			    [UI Snapshot Date]
+			
+			RETURN
+			    IF (
+			        ISINSCOPE (
+			            'Fact_Inventory_Snapshot_Extended'[inventbatchid]
+			        )
+			            && NOT ISBLANK ( SnapshotDate ),
+			
+			        CALCULATE (
+			            [UI Matched Mfg Date (Helper)],
+			
+			            REMOVEFILTERS ( 'Dim_Date' ),
+			
+			            TREATAS (
+			                { SnapshotDate },
+			                'Dim_Date'[Date]
+			            )
+			        )
+			    )
+		formatString: General Date
+		lineageTag: 4d19f99f-986a-4d72-8147-e1e0b13a8164
+
+	measure 'UI Physical Qty (Batch Checked)' =
+			
+			VAR StockByIdentity =
+			    SUMMARIZE (
+			        'Fact_Inventory_Snapshot_Extended',
+			
+			        'Fact_Inventory_Snapshot_Extended'[CMPNY],
+			        'Fact_Inventory_Snapshot_Extended'[Product_ID],
+			        'Fact_Inventory_Snapshot_Extended'[inventbatchid],
+			
+			        'Dim_Batch'[CMPNY],
+			        'Dim_Batch'[ProductID],
+			        'Dim_Batch'[BatchID],
+			
+			        "@PhysicalQty",
+			            SUM (
+			                'Fact_Inventory_Snapshot_Extended'[physicalinvent_LBs]
+			            )
+			    )
+			
+			RETURN
+			    SUMX (
+			        FILTER (
+			            StockByIdentity,
+			
+			            VAR StockCompany =
+			                TRIM (
+			                    COALESCE (
+			                        'Fact_Inventory_Snapshot_Extended'[CMPNY],
+			                        ""
+			                    )
+			                )
+			
+			            VAR StockProduct =
+			                TRIM (
+			                    COALESCE (
+			                        'Fact_Inventory_Snapshot_Extended'[Product_ID],
+			                        ""
+			                    )
+			                )
+			
+			            VAR StockBatch =
+			                TRIM (
+			                    COALESCE (
+			                        'Fact_Inventory_Snapshot_Extended'[inventbatchid],
+			                        ""
+			                    )
+			                )
+			
+			            VAR LinkedCompany =
+			                TRIM (
+			                    COALESCE (
+			                        'Dim_Batch'[CMPNY],
+			                        ""
+			                    )
+			                )
+			
+			            VAR LinkedProduct =
+			                TRIM (
+			                    COALESCE (
+			                        'Dim_Batch'[ProductID],
+			                        ""
+			                    )
+			                )
+			
+			            VAR LinkedBatch =
+			                TRIM (
+			                    COALESCE (
+			                        'Dim_Batch'[BatchID],
+			                        ""
+			                    )
+			                )
+			
+			            VAR IdentityCanBeChecked =
+			                StockCompany <> ""
+			                    && StockProduct <> ""
+			                    && StockBatch <> ""
+			                    && LinkedCompany <> ""
+			                    && LinkedProduct <> ""
+			                    && LinkedBatch <> ""
+			
+			            VAR IdentityMatches =
+			                StockCompany = LinkedCompany
+			                    && StockProduct = LinkedProduct
+			                    && StockBatch = LinkedBatch
+			
+			            RETURN
+			                NOT ( IdentityCanBeChecked )
+			                    || IdentityMatches
+			        ),
+			
+			        [@PhysicalQty]
+			    )
+		lineageTag: 60788177-271f-4a65-b9e5-f3ee853a3878
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	column 'Measure Group'
 		isHidden
 		lineageTag: e81b4b7a-a600-44cb-bf9a-b4d77c98b785

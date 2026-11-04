@@ -3,8 +3,6 @@ role Everyone
 
 	tablePermission 'Sales Table' = [Sales Status] == "Invoiced"
 
-	tablePermission 'Employee Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
-
 	tablePermission 'Product Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
 
 	tablePermission 'Date Table' =

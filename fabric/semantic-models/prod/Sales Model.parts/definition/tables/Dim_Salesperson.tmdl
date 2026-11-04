@@ -24,6 +24,16 @@ table Dim_Salesperson
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [DisplayName]
+		sortByColumn: 'Sort Order'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sort Order'
+		formatString: 0
+		lineageTag: 1de8b0c0-f03a-40a8-9087-f8ff05dcaa0c
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Sort Order]
 
 		annotation SummarizationSetBy = Automatic
 
@@ -35,14 +45,21 @@ table Dim_Salesperson
 				    "PersonKey", STRING,
 				    "PersonName", STRING,
 				    "DisplayName", STRING,
+				    "Sort Order", INTEGER,
 				    {
-				        { "AHAQQ", "Alecia Haqq", "Alecia H" },
-				        { "CMOSELEY", "Chris Moseley", "Chris M" },
-				        { "JPADDOCK", "Jarrod Paddock", "Jarrod P" },
-				        { "JVERA", "Jonatan Vera", "Jon V" },
-				        { "JWOLFE", "Joshua Wolfe", "Josh W" },
-				        { "MARKV", "Mark Vitrone", "Mark V" },
-				        { "SKWAN", "Shichiu Kwan", "Shichiu K" }
+				        { "AHAQQ", "Alecia Haqq", "Alecia H" , 1},
+				        { "CMOSELEY", "Chris Moseley", "Chris M", 2 },
+				        { "JPADDOCK", "Jarrod Paddock", "Jarrod P", 3 },
+				        { "JVERA", "Jonatan Vera", "Jon V", 4 },
+				        { "JWOLFE", "Joshua Wolfe", "Josh W", 5 },
+				        { "MARKV", "Mark Vitrone", "Mark V", 6 },
+				        { "SKWAN", "Shichiu Kwan", "Shichiu K", 7 },
+				
+				        { "DDEWULF", "Daan Dewulf", "Daan D", 8 },
+				        { "JSTEMMLE", "Jutta Stemmler", "Jutta S", 9 },
+				        { "MKELLER", "Michael Keller", "Michael K", 10 },
+				        { "MOLEJNIC", "Mikolaj Olejnicki", "Mikolaj O", 11 },
+				        { "TDELAFUE", "Tomas De La Fuente", "Tomàs F", 12 }
 				    }
 				)
 				

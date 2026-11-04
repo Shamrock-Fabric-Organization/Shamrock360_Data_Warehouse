@@ -1,5 +1,4 @@
 table DIM_MarketSegmentation
-	isHidden
 	lineageTag: 83455976-1b60-4fce-ac37-cb28a7d1ce78
 	sourceLineageTag: [dbo].[mtbl_EDW_DIM_MarketSegmentation]
 
@@ -19,7 +18,6 @@ table DIM_MarketSegmentation
 
 	column CMPNY
 		dataType: string
-		isHidden
 		sourceProviderType: varchar(8000)
 		lineageTag: 09ac559b-86b7-4240-a87e-2c8e6ca2f14d
 		sourceLineageTag: CMPNY
@@ -32,7 +30,6 @@ table DIM_MarketSegmentation
 
 	column CustomerID
 		dataType: string
-		isHidden
 		sourceProviderType: varchar(8000)
 		lineageTag: dfea8183-2852-4d7f-a014-a4222e29432c
 		sourceLineageTag: CustomerID
@@ -45,7 +42,6 @@ table DIM_MarketSegmentation
 
 	column ProductID
 		dataType: string
-		isHidden
 		sourceProviderType: varchar(8000)
 		lineageTag: 83c5af41-cb8c-416d-9d54-5e11d3cf82e7
 		sourceLineageTag: ProductID
@@ -58,7 +54,6 @@ table DIM_MarketSegmentation
 
 	column CPCID
 		dataType: string
-		isHidden
 		sourceProviderType: varchar(8000)
 		lineageTag: 639ab974-b794-4772-a449-350ef7cedd44
 		sourceLineageTag: CPCID
@@ -71,7 +66,6 @@ table DIM_MarketSegmentation
 
 	column LegacyCPCID
 		dataType: string
-		isHidden
 		sourceProviderType: varchar(8000)
 		lineageTag: 31eda861-8f6a-4e4e-b54e-3caf00687b18
 		sourceLineageTag: LegacyCPCID
@@ -84,7 +78,6 @@ table DIM_MarketSegmentation
 
 	column Industry
 		dataType: string
-		isHidden
 		sourceProviderType: varchar(8000)
 		lineageTag: 786b733f-be5a-44d0-9573-1496111a082f
 		sourceLineageTag: Industry
@@ -97,7 +90,6 @@ table DIM_MarketSegmentation
 
 	column SubIndustry
 		dataType: string
-		isHidden
 		sourceProviderType: varchar(8000)
 		lineageTag: 16b2d4ed-4175-40c3-962d-6ce1d1ac9cf4
 		sourceLineageTag: SubIndustry
@@ -110,7 +102,6 @@ table DIM_MarketSegmentation
 
 	column AccountTranslatedToD365
 		dataType: string
-		isHidden
 		sourceProviderType: varchar(3)
 		lineageTag: 070f2d64-3ac0-4749-8bc1-409101a711ce
 		sourceLineageTag: AccountTranslatedToD365
@@ -123,7 +114,6 @@ table DIM_MarketSegmentation
 
 	column ProductTranslatedToD365
 		dataType: string
-		isHidden
 		sourceProviderType: varchar(3)
 		lineageTag: 2332a7a2-564e-40ee-b867-277ff67d9145
 		sourceLineageTag: ProductTranslatedToD365
@@ -136,7 +126,6 @@ table DIM_MarketSegmentation
 
 	column RecordEffectiveStartDate
 		dataType: dateTime
-		isHidden
 		formatString: General Date
 		sourceProviderType: datetime2
 		lineageTag: 6f4e3812-aa22-4afb-9a34-3b124dfeb2cc
@@ -150,7 +139,6 @@ table DIM_MarketSegmentation
 
 	column RecordEffectiveEndDate
 		dataType: dateTime
-		isHidden
 		formatString: General Date
 		sourceProviderType: datetime2
 		lineageTag: c79fa8ff-db4d-4f56-bbf9-66e83e7256a3
@@ -164,7 +152,6 @@ table DIM_MarketSegmentation
 
 	column RecordStatus
 		dataType: int64
-		isHidden
 		formatString: 0
 		sourceProviderType: int
 		lineageTag: 6dd907a9-b52e-42ad-b994-a05926044081
@@ -178,7 +165,6 @@ table DIM_MarketSegmentation
 
 	column Source
 		dataType: string
-		isHidden
 		sourceProviderType: varchar(25)
 		lineageTag: b92ac1d8-ed1d-4d6a-b6b8-747a15c4d00f
 		sourceLineageTag: Source

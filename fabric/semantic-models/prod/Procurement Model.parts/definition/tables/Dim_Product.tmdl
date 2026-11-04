@@ -665,6 +665,18 @@ table Dim_Product
 
 		annotation SummarizationSetBy = Automatic
 
+	column BaseSalesPricePerKG
+		dataType: double
+		sourceProviderType: decimal(38, 6)
+		lineageTag: a860452f-cec8-4f0c-95b8-4c41a8b3a483
+		sourceLineageTag: BaseSalesPricePerKG
+		summarizeBy: sum
+		sourceColumn: BaseSalesPricePerKG
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	partition Dim_Product = entity
 		mode: directLake
 		source

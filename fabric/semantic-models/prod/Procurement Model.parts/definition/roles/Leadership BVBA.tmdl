@@ -1,0 +1,8 @@
+role 'Leadership BVBA'
+	modelPermission: read
+
+	tablePermission DIM_Legal_Entity = [CMPNY] == "301"
+
+	annotation PBI_Id = bb425a99a727461da338b5c324d28910
+
+

@@ -1,7 +1,7 @@
 table Dim_StandardCost
 	isHidden
 	lineageTag: 86bade1c-c71b-4cf4-9746-95a4b0ee7ba6
-	sourceLineageTag: [dbo].[mtbl_EDW_DIM_StandardCost]
+	sourceLineageTag: [dbo].[mtbl_EDW_Dim_StandardCost]
 
 	measure TotalOverheadStandardCost = ```
 			
@@ -49,7 +49,7 @@ table Dim_StandardCost
 		dataType: int64
 		isHidden
 		formatString: 0
-		lineageTag: 701d2b70-25b7-4abc-8f99-a37e5a35f37c
+		lineageTag: be5dd898-160c-42b7-9a93-1c47fbce4e78
 		sourceLineageTag: StandardCostKey
 		summarizeBy: none
 		sourceColumn: StandardCostKey
@@ -61,7 +61,7 @@ table Dim_StandardCost
 	column CMPNY
 		dataType: string
 		isHidden
-		lineageTag: 09a89d69-6c5a-48d9-bea4-18dfc5fe366f
+		lineageTag: bd7ea986-bb79-46ce-91fc-8af41f5da821
 		sourceLineageTag: CMPNY
 		summarizeBy: none
 		sourceColumn: CMPNY
@@ -73,7 +73,7 @@ table Dim_StandardCost
 	column Product_ID
 		dataType: string
 		isHidden
-		lineageTag: f6d565a8-4c9e-42aa-aabf-2e6661f50783
+		lineageTag: 898e4b84-32b1-4f0b-bf4c-605b7cb8ab64
 		sourceLineageTag: Product_ID
 		summarizeBy: none
 		sourceColumn: Product_ID
@@ -82,10 +82,22 @@ table Dim_StandardCost
 
 		annotation SummarizationSetBy = Automatic
 
+	column LegacyProductCode
+		dataType: string
+		isHidden
+		lineageTag: 6f6fb6e9-9913-4f16-a9fc-49d3299fc7d8
+		sourceLineageTag: LegacyProductCode
+		summarizeBy: none
+		sourceColumn: LegacyProductCode
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
 	column SiteID
 		dataType: string
 		isHidden
-		lineageTag: 28e9fef3-70ad-4365-a63c-701948c23863
+		lineageTag: 0f8835bc-6535-483d-bc19-30fa705365fc
 		sourceLineageTag: SiteID
 		summarizeBy: none
 		sourceColumn: SiteID
@@ -94,10 +106,36 @@ table Dim_StandardCost
 
 		annotation SummarizationSetBy = Automatic
 
+	column ActivationDate
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: fc041a8f-0511-43bc-adb5-1c93b8d66658
+		sourceLineageTag: ActivationDate
+		summarizeBy: none
+		sourceColumn: ActivationDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column EndDate
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 0a633058-cf9c-4aed-9373-42bd553c6270
+		sourceLineageTag: EndDate
+		summarizeBy: none
+		sourceColumn: EndDate
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
 	column Costing_Version
 		dataType: string
 		isHidden
-		lineageTag: 6a5fcc2d-bd92-4e84-a0f8-bf9033c7fcdb
+		lineageTag: 7068b1b6-a91e-4d8e-954e-b40a6b569e69
 		sourceLineageTag: Costing_Version
 		summarizeBy: none
 		sourceColumn: Costing_Version
@@ -110,7 +148,7 @@ table Dim_StandardCost
 		dataType: int64
 		isHidden
 		formatString: 0
-		lineageTag: 1e386867-4ddf-448a-9933-97621aafb1fa
+		lineageTag: fa597d38-6956-476b-abad-b5a5c4a97515
 		sourceLineageTag: CurrentActiveCost
 		summarizeBy: none
 		sourceColumn: CurrentActiveCost
@@ -119,10 +157,34 @@ table Dim_StandardCost
 
 		annotation SummarizationSetBy = Automatic
 
+	column ProductName
+		dataType: string
+		isHidden
+		lineageTag: c5a68f52-e44c-4bb1-ac31-7d075d98c15b
+		sourceLineageTag: ProductName
+		summarizeBy: none
+		sourceColumn: ProductName
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductSearchName
+		dataType: string
+		isHidden
+		lineageTag: 518bb28c-f574-4d29-bfd6-90e39bed6b7d
+		sourceLineageTag: ProductSearchName
+		summarizeBy: none
+		sourceColumn: ProductSearchName
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
 	column Direct_Material_Cost_Standard
 		dataType: double
 		isHidden
-		lineageTag: 91b3eedf-7c4b-4bed-88cc-6d3b8cd254b3
+		lineageTag: aac6924e-061e-4a5b-91ed-d2d9faf87b16
 		sourceLineageTag: Direct_Material_Cost_Standard
 		summarizeBy: none
 		sourceColumn: Direct_Material_Cost_Standard
@@ -136,7 +198,7 @@ table Dim_StandardCost
 	column Packaging_Cost_Standard
 		dataType: double
 		isHidden
-		lineageTag: 983ed710-7327-4d1e-9c62-57b04cba4360
+		lineageTag: 59dda35c-e9d1-4fcf-b486-8db1bcf9f538
 		sourceLineageTag: Packaging_Cost_Standard
 		summarizeBy: none
 		sourceColumn: Packaging_Cost_Standard
@@ -150,7 +212,7 @@ table Dim_StandardCost
 	column Direct_Labor_Cost_Standard
 		dataType: double
 		isHidden
-		lineageTag: 68e7a284-244a-4748-8a82-63b1b365305a
+		lineageTag: 8ed3df98-63e6-4bd8-be30-f32f1c5444a3
 		sourceLineageTag: Direct_Labor_Cost_Standard
 		summarizeBy: none
 		sourceColumn: Direct_Labor_Cost_Standard
@@ -164,7 +226,7 @@ table Dim_StandardCost
 	column Direct_Utility_Cost_Standard
 		dataType: double
 		isHidden
-		lineageTag: c8763b96-48a1-4211-b4f9-0dc142d21dd1
+		lineageTag: 6c7f7c72-cc78-4570-9169-ab63e956fd65
 		sourceLineageTag: Direct_Utility_Cost_Standard
 		summarizeBy: none
 		sourceColumn: Direct_Utility_Cost_Standard
@@ -178,7 +240,7 @@ table Dim_StandardCost
 	column Overhead_Warehouse_Cost_Standard
 		dataType: double
 		isHidden
-		lineageTag: 6b511a10-d79f-47ab-b5d9-c94ecd1938bc
+		lineageTag: 8ebee0f5-f733-44cb-914b-4db53934ca5f
 		sourceLineageTag: Overhead_Warehouse_Cost_Standard
 		summarizeBy: none
 		sourceColumn: Overhead_Warehouse_Cost_Standard
@@ -192,7 +254,7 @@ table Dim_StandardCost
 	column Overhead_Indirect_Supervisor_Cost_Standard
 		dataType: double
 		isHidden
-		lineageTag: 970242c7-7185-42a4-afe1-3ab9a5a9f17e
+		lineageTag: 4b7e3ac0-ff84-4efa-ae64-14b6193e0f41
 		sourceLineageTag: Overhead_Indirect_Supervisor_Cost_Standard
 		summarizeBy: none
 		sourceColumn: Overhead_Indirect_Supervisor_Cost_Standard
@@ -206,7 +268,7 @@ table Dim_StandardCost
 	column Overhead_Quality_Cost_Standard
 		dataType: double
 		isHidden
-		lineageTag: 8c215128-319b-4e39-9cf2-9deaba3f179f
+		lineageTag: 69500960-31b4-4abf-8645-30bbd4cfa20b
 		sourceLineageTag: Overhead_Quality_Cost_Standard
 		summarizeBy: none
 		sourceColumn: Overhead_Quality_Cost_Standard
@@ -220,7 +282,7 @@ table Dim_StandardCost
 	column Overhead_Maintenance_Cost_Standard
 		dataType: double
 		isHidden
-		lineageTag: e2fcc78e-8fb5-4799-9877-faff09775ae7
+		lineageTag: 7d5234a4-e189-41d2-bc9d-c15e5ac06fd0
 		sourceLineageTag: Overhead_Maintenance_Cost_Standard
 		summarizeBy: none
 		sourceColumn: Overhead_Maintenance_Cost_Standard
@@ -234,7 +296,7 @@ table Dim_StandardCost
 	column Overhead_Manufacturing_Admin_Cost_Standard
 		dataType: double
 		isHidden
-		lineageTag: cc910734-4ac3-4391-abb2-6d72884bc892
+		lineageTag: 26b9066b-4596-4013-a7d5-34e8a4807c22
 		sourceLineageTag: Overhead_Manufacturing_Admin_Cost_Standard
 		summarizeBy: none
 		sourceColumn: Overhead_Manufacturing_Admin_Cost_Standard
@@ -248,7 +310,7 @@ table Dim_StandardCost
 	column Overhead_Depreciation_Cost_Standard
 		dataType: double
 		isHidden
-		lineageTag: 0bd7849a-5785-40bd-95c0-ea0bfd06531d
+		lineageTag: 23235046-908d-4a46-86f7-0867c35a12a3
 		sourceLineageTag: Overhead_Depreciation_Cost_Standard
 		summarizeBy: none
 		sourceColumn: Overhead_Depreciation_Cost_Standard
@@ -262,7 +324,7 @@ table Dim_StandardCost
 	column Overhead_Miscellaneous_Manufacturing_Cost_Standard
 		dataType: double
 		isHidden
-		lineageTag: a465d216-02d3-45bf-b866-3dc712a6d5b6
+		lineageTag: 92661a6a-e322-4edd-9ce9-dbe68836f1c5
 		sourceLineageTag: Overhead_Miscellaneous_Manufacturing_Cost_Standard
 		summarizeBy: none
 		sourceColumn: Overhead_Miscellaneous_Manufacturing_Cost_Standard
@@ -273,10 +335,52 @@ table Dim_StandardCost
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	column Outside_Processing_Cost_Standard
+		dataType: double
+		isHidden
+		lineageTag: 3dfc90eb-6bb1-4845-8c5c-8a3bfeec8555
+		sourceLineageTag: Outside_Processing_Cost_Standard
+		summarizeBy: none
+		sourceColumn: Outside_Processing_Cost_Standard
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Total_Direct_Cost_Standard
+		dataType: double
+		isHidden
+		lineageTag: b90791a4-cdb3-48e8-9882-99ea6af0a127
+		sourceLineageTag: Total_Direct_Cost_Standard
+		summarizeBy: none
+		sourceColumn: Total_Direct_Cost_Standard
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Total_Overhead_Cost_Standard
+		dataType: double
+		isHidden
+		lineageTag: 194ee92e-4cde-4a16-8627-ec5bbb7c1f09
+		sourceLineageTag: Total_Overhead_Cost_Standard
+		summarizeBy: none
+		sourceColumn: Total_Overhead_Cost_Standard
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	column TotalCost
 		dataType: double
 		isHidden
-		lineageTag: 110c8e71-56ae-49af-915d-6dadd9c9a1e7
+		lineageTag: 4ade5ee9-8efd-4927-8e22-53bbfaf8cbd3
 		sourceLineageTag: TotalCost
 		summarizeBy: none
 		sourceColumn: TotalCost
@@ -290,7 +394,7 @@ table Dim_StandardCost
 	column accountingcurrency
 		dataType: string
 		isHidden
-		lineageTag: ad72f689-d9f3-4f8e-842a-d12b44ae3ab3
+		lineageTag: 07e2dce2-f8ca-4254-b4fb-9b8837efadff
 		sourceLineageTag: accountingcurrency
 		summarizeBy: none
 		sourceColumn: accountingcurrency
@@ -303,7 +407,7 @@ table Dim_StandardCost
 		dataType: dateTime
 		isHidden
 		formatString: General Date
-		lineageTag: 09ef331f-3cd5-4bf9-8009-da8f91e3d732
+		lineageTag: 2d2749ee-48af-4358-ac63-55bd07581fa0
 		sourceLineageTag: RecordEffectiveStartDate
 		summarizeBy: none
 		sourceColumn: RecordEffectiveStartDate
@@ -316,7 +420,7 @@ table Dim_StandardCost
 		dataType: dateTime
 		isHidden
 		formatString: General Date
-		lineageTag: 945bf4c9-f201-4d03-be89-e18d82df7ef2
+		lineageTag: 4c33a268-a502-454b-a9fc-b608bc9f6624
 		sourceLineageTag: RecordEffectiveEndDate
 		summarizeBy: none
 		sourceColumn: RecordEffectiveEndDate
@@ -329,7 +433,7 @@ table Dim_StandardCost
 		dataType: int64
 		isHidden
 		formatString: 0
-		lineageTag: a6f55e1e-f317-42b5-a1bf-db7bb3b15a44
+		lineageTag: 8aaacdbf-2060-4487-acad-35950caf6e66
 		sourceLineageTag: RecordStatus
 		summarizeBy: none
 		sourceColumn: RecordStatus
@@ -341,104 +445,12 @@ table Dim_StandardCost
 	column Source
 		dataType: string
 		isHidden
-		lineageTag: 8a7638e0-4b66-49ff-b34d-5d64e3674284
+		lineageTag: 226727eb-1822-44e8-8fda-171f64bffdb1
 		sourceLineageTag: Source
 		summarizeBy: none
 		sourceColumn: Source
 
 		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column Total_Overhead_Cost_Standard
-		dataType: double
-		isHidden
-		lineageTag: 5eff8b81-415e-4604-9c41-5dfef33db1d3
-		sourceLineageTag: Total_Overhead_Cost_Standard
-		summarizeBy: none
-		sourceColumn: Total_Overhead_Cost_Standard
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column Total_Direct_Cost_Standard
-		dataType: double
-		isHidden
-		lineageTag: ff803496-58fc-4eb5-8aa0-031421b77891
-		sourceLineageTag: Total_Direct_Cost_Standard
-		summarizeBy: none
-		sourceColumn: Total_Direct_Cost_Standard
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column Outside_Processing_Cost_Standard
-		dataType: double
-		isHidden
-		lineageTag: c5ccd7e5-0ae6-41ed-8d3b-97e801a4a92e
-		sourceLineageTag: Outside_Processing_Cost_Standard
-		summarizeBy: none
-		sourceColumn: Outside_Processing_Cost_Standard
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
-
-	column LegacyProductCode
-		dataType: string
-		isHidden
-		lineageTag: e2abac6e-f421-41c1-97ef-fa5a1d9fa819
-		sourceLineageTag: LegacyProductCode
-		summarizeBy: none
-		sourceColumn: LegacyProductCode
-
-		changedProperty = IsHidden
-
-		annotation SummarizationSetBy = Automatic
-
-	column ActivationDate
-		dataType: dateTime
-		formatString: General Date
-		lineageTag: 99e2c2af-4ec9-4a9f-9d95-302690a03bba
-		sourceLineageTag: ActivationDate
-		summarizeBy: none
-		sourceColumn: ActivationDate
-
-		annotation SummarizationSetBy = Automatic
-
-	column EndDate
-		dataType: dateTime
-		formatString: General Date
-		lineageTag: 25a751f7-63dd-47bf-8ae1-5425bc6d9730
-		sourceLineageTag: EndDate
-		summarizeBy: none
-		sourceColumn: EndDate
-
-		annotation SummarizationSetBy = Automatic
-
-	column ProductName
-		dataType: string
-		lineageTag: a19d03cc-f2b2-460a-9b7e-f30429c2eaab
-		sourceLineageTag: ProductName
-		summarizeBy: none
-		sourceColumn: ProductName
-
-		annotation SummarizationSetBy = Automatic
-
-	column ProductSearchName
-		dataType: string
-		lineageTag: cc047c55-1f09-44c6-a6cb-d82bf3e5a372
-		sourceLineageTag: ProductSearchName
-		summarizeBy: none
-		sourceColumn: ProductSearchName
 
 		annotation SummarizationSetBy = Automatic
 

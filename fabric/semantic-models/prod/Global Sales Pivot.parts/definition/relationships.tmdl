@@ -6,10 +6,6 @@ relationship 9c36cde9-435d-abd6-fd97-d2d18101e8fe
 	fromColumn: 'Sales Table'.DATEKey
 	toColumn: 'Date Table'.DateKey
 
-relationship 6a9a9b80-4f0f-4fee-30f7-6f09d8afc060
-	fromColumn: 'Sales Table'.CustAcct_EmployeeKey
-	toColumn: 'Employee Table'.EmployeeKey
-
 relationship f01a2d56-9687-72e6-6631-a89e13ad1c24
 	fromColumn: 'Sales Table'.Legal_EntityKey
 	toColumn: 'Legal Entity Table'.Legal_EntityKey
@@ -25,5 +21,9 @@ relationship ef7762e9-f1ee-22e3-9cab-d340d426adfc
 relationship bc7e8600-8ced-e031-fe94-434d3c7be21a
 	fromColumn: 'Sales Table'.WarehouseKey
 	toColumn: 'Warehouse Table'.WarehouseKey
+
+relationship 07d94164-0442-7408-2f33-715624f5511e
+	fromColumn: 'Sales Table'.CustAcct_EmployeeKey
+	toColumn: 'Employee Table'.EmployeeKey
 
 

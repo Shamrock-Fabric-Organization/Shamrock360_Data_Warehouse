@@ -2,6 +2,12 @@ table Fact_SalesBudget
 	lineageTag: b3fccc98-d488-4233-ae2b-72d53cfc1045
 	sourceLineageTag: [dbo].[mtbl_EDW_Fact_SalesBudget]
 
+	measure 'Total Budget Rows' = COUNTROWS(Fact_SalesBudget)
+		formatString: 0
+		lineageTag: c2a7032b-567a-4415-9cbb-6306ef2701a5
+
+		changedProperty = Name
+
 	column CMPNY
 		dataType: string
 		sourceProviderType: varchar(8000)
@@ -331,6 +337,17 @@ table Fact_SalesBudget
 		sourceLineageTag: Txn_CNY_Rate_Missing
 		summarizeBy: sum
 		sourceColumn: Txn_CNY_Rate_Missing
+
+		annotation SummarizationSetBy = Automatic
+
+	column StandardCostKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 48fa70c7-0d54-4f25-92d9-864cd3c5365d
+		sourceLineageTag: StandardCostKey
+		summarizeBy: count
+		sourceColumn: StandardCostKey
 
 		annotation SummarizationSetBy = Automatic
 

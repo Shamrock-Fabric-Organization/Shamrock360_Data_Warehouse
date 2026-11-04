@@ -193,8 +193,7 @@ table Dim_Account
 		annotation SummarizationSetBy = Automatic
 
 	column EffectiveCountry
-		dataType: int64
-		formatString: 0
+		dataType: string
 		lineageTag: e4f51dc4-1370-4732-952d-82107aa4bf18
 		sourceLineageTag: EffectiveCountry
 		summarizeBy: none
@@ -333,6 +332,24 @@ table Dim_Account
 		sourceLineageTag: InvoicingEmail
 		summarizeBy: none
 		sourceColumn: InvoicingEmail
+
+		annotation SummarizationSetBy = Automatic
+
+	column PrimaryEmail
+		dataType: string
+		lineageTag: 99ec7504-c948-4b90-b510-91f0d1aacd2b
+		sourceLineageTag: PrimaryEmail
+		summarizeBy: none
+		sourceColumn: PrimaryEmail
+
+		annotation SummarizationSetBy = Automatic
+
+	column PrimaryEmailDescription
+		dataType: string
+		lineageTag: badab538-ec93-4fe5-8a4c-a4c6364c8782
+		sourceLineageTag: PrimaryEmailDescription
+		summarizeBy: none
+		sourceColumn: PrimaryEmailDescription
 
 		annotation SummarizationSetBy = Automatic
 

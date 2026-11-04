@@ -10,7 +10,7 @@ annotation PBI_QueryOrder = ["DirectLake - WH_Curated","Source Quality Order","Q
 
 annotation __PBI_TimeIntelligenceEnabled = 1
 
-annotation PBI_ProTooling = ["DirectLakeOnOneLakeInWeb","WebModelingEdit","DaxQueryView_Desktop"]
+annotation PBI_ProTooling = ["DirectLakeOnOneLakeInWeb","WebModelingEdit","DaxQueryView_Desktop","TMDLView_Desktop"]
 
 ref table Fact_QualityOrderLineResults
 ref table Dim_Account

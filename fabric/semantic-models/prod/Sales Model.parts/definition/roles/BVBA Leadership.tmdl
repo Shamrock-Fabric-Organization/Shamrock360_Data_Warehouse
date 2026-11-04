@@ -1,0 +1,10 @@
+role 'BVBA Leadership'
+	modelPermission: read
+
+	tablePermission BIDataSet_Opportunity = [Office] == "BVBA"
+
+	tablePermission Dim_Employee = [Employee_Name] IN {"Daan Dewulf","Jutta Stemmler","Michael Keller","Mikolaj Olejnicki","Tomas De La Fuente","Willem Kuipers"}
+
+	annotation PBI_Id = ff1107720e11404a9abc5e08ce8790b8
+
+

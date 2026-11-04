@@ -1,0 +1,10 @@
+role 'Jutta Stemmler'
+	modelPermission: read
+
+	tablePermission BIDataSet_Opportunity = [Manager] IN {"JSTEMMLE"}
+
+	tablePermission Dim_Employee = [Personnel_Number] IN {"1245"}
+
+	annotation PBI_Id = c48b6d25715c4ceb92560f989fc1ab80
+
+

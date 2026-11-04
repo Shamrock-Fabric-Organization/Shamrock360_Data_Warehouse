@@ -1,0 +1,56 @@
+table Dim_QuantityUnitHelper
+	lineageTag: bf134490-300b-4631-948e-92c0f295d386
+	sourceLineageTag: [dbo].[mtbl_EDW_Dim_QuantityUnitHelper]
+
+	column Quantity_Unit_Code
+		dataType: string
+		sourceProviderType: varchar(11)
+		lineageTag: 98e426a1-323d-49d8-9605-4cfa8315f2d8
+		sourceLineageTag: Quantity_Unit_Code
+		summarizeBy: none
+		sourceColumn: Quantity_Unit_Code
+		sortByColumn: Sort_Order
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantity_Unit_Name
+		dataType: string
+		sourceProviderType: varchar(17)
+		lineageTag: 2f956bb0-5425-442d-9a4e-eecec9238603
+		sourceLineageTag: Quantity_Unit_Name
+		summarizeBy: none
+		sourceColumn: Quantity_Unit_Name
+		sortByColumn: Sort_Order
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sort_Order
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: ea68e89c-5779-4015-8fc9-131b990742a2
+		sourceLineageTag: Sort_Order
+		summarizeBy: sum
+		sourceColumn: Sort_Order
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_QuantityUnitHelper = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Dim_QuantityUnitHelper
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+
+

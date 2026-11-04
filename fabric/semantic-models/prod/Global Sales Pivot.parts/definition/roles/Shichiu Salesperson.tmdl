@@ -8,10 +8,6 @@ role 'Shichiu Salesperson'
 			'Date Table'[Fiscal Year] >= 2023
 			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
 
-	tablePermission 'Employee Table' =
-			'Employee Table'[Salesperson] = "Shichiu Kwan"
-			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
-
 	tablePermission 'Legal Entity Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
 
 	tablePermission 'Product Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0

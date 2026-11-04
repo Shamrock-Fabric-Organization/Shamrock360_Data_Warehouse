@@ -1,0 +1,56 @@
+table Dim_ReportCurrencyHelper
+	lineageTag: 8154c8df-e734-4324-b668-3769e317f62c
+	sourceLineageTag: [dbo].[mtbl_EDW_Dim_ReportCurrencyHelper]
+
+	column Report_Currency_Code
+		dataType: string
+		sourceProviderType: varchar(11)
+		lineageTag: ad0b7c1a-c221-45b9-8bac-85ad54c5fcd7
+		sourceLineageTag: Report_Currency_Code
+		summarizeBy: none
+		sourceColumn: Report_Currency_Code
+		sortByColumn: Sort_Order
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Report_Currency_Name
+		dataType: string
+		sourceProviderType: varchar(21)
+		lineageTag: 34cb0b5e-1009-4422-b8cb-9b23eabbb1de
+		sourceLineageTag: Report_Currency_Name
+		summarizeBy: none
+		sourceColumn: Report_Currency_Name
+		sortByColumn: Sort_Order
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sort_Order
+		dataType: int64
+		isHidden
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 970a5888-b3dc-49f3-a36a-28e0583a5f00
+		sourceLineageTag: Sort_Order
+		summarizeBy: sum
+		sourceColumn: Sort_Order
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_ReportCurrencyHelper = entity
+		mode: directLake
+		source
+			entityName: mtbl_EDW_Dim_ReportCurrencyHelper
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	changedProperty = Name
+
+	annotation PBI_ResultType = Table
+
+

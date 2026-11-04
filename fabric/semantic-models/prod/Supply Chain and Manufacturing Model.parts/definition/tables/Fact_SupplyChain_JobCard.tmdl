@@ -485,6 +485,28 @@ table Fact_SupplyChain_JobCard
 
 		annotation SummarizationSetBy = User
 
+	column TransDateKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: a37fb39c-ad41-4b31-be0b-d6cfae410606
+		sourceLineageTag: TransDateKey
+		summarizeBy: count
+		sourceColumn: TransDateKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkCenterKey
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: e8e8093e-5749-4cda-8ce2-7ed2f2883752
+		sourceLineageTag: WorkCenterKey
+		summarizeBy: count
+		sourceColumn: WorkCenterKey
+
+		annotation SummarizationSetBy = Automatic
+
 	partition Fact_SupplyChain_JobCard = entity
 		mode: directLake
 		source

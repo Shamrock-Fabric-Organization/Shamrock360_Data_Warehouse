@@ -14,4 +14,8 @@ relationship cb870247-0740-6355-a7e6-2bc8bcbc66bb
 	fromColumn: Fact_Customer_Invoices.ProductKey
 	toColumn: Dim_Product.ProductKey
 
+relationship 1433ae19-6bc6-d520-45e9-6d6d59de9383
+	fromColumn: Fact_Customer_Invoices.Legal_EntityKey
+	toColumn: Dim_Legal_Entity.Legal_EntityKey
+
 

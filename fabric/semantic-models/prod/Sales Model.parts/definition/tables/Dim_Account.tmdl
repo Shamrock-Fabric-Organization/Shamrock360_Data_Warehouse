@@ -71,21 +71,30 @@ table Dim_Account
 			
 			VAR _Grain =
 			    [Customer Selection Grain]
+			
 			VAR _DateKey =
 			    [Last Purchase DateKey]
+			
+			VAR _PurchaseDate =
+			    CALCULATE (
+			        MAX ( 'Dim_Date'[Date] ),
+			        REMOVEFILTERS ( 'Dim_Date' ),
+			        TREATAS ( { _DateKey }, 'Dim_Date'[DateKey] )
+			    )
+			
+			VAR _DateFormat =
+			    IF (
+			        USERCULTURE () = "en-US",
+			        "MM/dd/yyyy",
+			        "dd/MM/yyyy"
+			    )
+			
 			RETURN
 			    SWITCH (
 			        TRUE (),
 			        _Grain = "None", "Select a customer",
-			        ISBLANK ( _DateKey ), "No purchases",
-			        FORMAT (
-			            CALCULATE (
-			                MAX ( 'Dim_Date'[Date] ),
-			                REMOVEFILTERS ( 'Dim_Date' ),
-			                TREATAS ( { _DateKey }, 'Dim_Date'[DateKey] )
-			            ),
-			            "MM/dd/yyyy"
-			        )
+			        ISBLANK ( _DateKey ) || ISBLANK ( _PurchaseDate ), "No purchases",
+			        FORMAT ( _PurchaseDate, _DateFormat )
 			    )
 		lineageTag: 01d62b38-fa24-4bce-a8df-40e5ec59edc6
 
@@ -95,21 +104,47 @@ table Dim_Account
 			
 			VAR _Grain =
 			    [Customer Selection Grain]
+			
 			VAR _DateKey =
 			    [Last Purchase DateKey]
+			
+			VAR _Weight =
+			    [Selected Display Weight]
+			
+			VAR _Locale =
+			    USERCULTURE ()
+			
+			VAR _Volume =
+			    CALCULATE (
+			        [Sales Quantity Base],
+			        REMOVEFILTERS ( 'Dim_Date' ),
+			        TREATAS (
+			            { _DateKey },
+			            'Fact_Sales'[OrderDateKey]
+			        )
+			    )
+			
 			RETURN
 			    SWITCH (
 			        TRUE (),
-			        _Grain = "None", "Select a customer",
-			        ISBLANK ( _DateKey ), "No purchases",
+			
+			        _Grain = "None",
+			            "Select a customer",
+			
+			        ISBLANK ( _DateKey ),
+			            "No purchases",
+			
+			        NOT ( _Weight IN { "LBs", "KGs" } ),
+			            "Select LBs or KGs",
+			
+			        ISBLANK ( _Volume ),
+			            "No volume available",
+			
 			        FORMAT (
-			            CALCULATE (
-			                SUM ( 'Fact_Sales'[Quantity_LBs] ),
-			                REMOVEFILTERS ( 'Dim_Date' ),
-			                TREATAS ( { _DateKey }, 'Fact_Sales'[OrderDateKey] )
-			            ),
-			            "#,0"
-			        ) & " LBs"
+			            _Volume,
+			            "#,##0",
+			            _Locale
+			        ) & " " & _Weight
 			    )
 		lineageTag: 97a48d1e-6fdf-4752-8588-59184bdfac0c
 
@@ -149,6 +184,19 @@ table Dim_Account
 			            )
 			    )
 		lineageTag: 954d99e7-569b-4987-b36f-bb5da333f2b0
+
+		changedProperty = Name
+
+	measure 'Customer ID (Historic)' =
+			
+			CALCULATE(
+			    SELECTEDVALUE('Dim_Account'[Customer_ID]),
+			    USERELATIONSHIP(
+			        'Fact_Sales'[HistoricCustomerKey],
+			        'Dim_Account'[CustomerKey]
+			    )
+			)
+		lineageTag: c3094e04-333f-4be9-8935-c29da00c8f68
 
 		changedProperty = Name
 
@@ -371,12 +419,11 @@ table Dim_Account
 		annotation SummarizationSetBy = Automatic
 
 	column EffectiveCountry
-		dataType: int64
-		formatString: 0
-		sourceProviderType: int
+		dataType: string
+		sourceProviderType: varchar(8000)
 		lineageTag: ee064463-4c11-41ea-8067-d87d60eb407c
 		sourceLineageTag: EffectiveCountry
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: EffectiveCountry
 
 		annotation SummarizationSetBy = Automatic
@@ -516,6 +563,26 @@ table Dim_Account
 		sourceLineageTag: RecordStatus
 		summarizeBy: sum
 		sourceColumn: RecordStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column PrimaryEmail
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: e5e9f852-1f6c-4395-9bc0-78019aab53d8
+		sourceLineageTag: PrimaryEmail
+		summarizeBy: none
+		sourceColumn: PrimaryEmail
+
+		annotation SummarizationSetBy = Automatic
+
+	column PrimaryEmailDescription
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 77944655-0b25-4798-881e-e0e94ec5a18e
+		sourceLineageTag: PrimaryEmailDescription
+		summarizeBy: none
+		sourceColumn: PrimaryEmailDescription
 
 		annotation SummarizationSetBy = Automatic
 

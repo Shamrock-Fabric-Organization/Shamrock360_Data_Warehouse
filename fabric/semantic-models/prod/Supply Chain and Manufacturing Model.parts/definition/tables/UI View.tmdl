@@ -1,0 +1,37 @@
+table 'UI View'
+	lineageTag: e778f23c-dc54-4aca-9eb4-09fa6e04239b
+
+	column View
+		lineageTag: b2c3d9e6-9e2e-480a-8278-a196a1c1786a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [View]
+		sortByColumn: 'Sort Order'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sort Order'
+		formatString: 0
+		lineageTag: 0b47649f-3141-4a8c-a140-b53ecf1acb1e
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Sort Order]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'UI View' = calculated
+		mode: import
+		source =
+				
+				DATATABLE (
+				    "View", STRING,
+				    "Sort Order", INTEGER,
+				    {
+				        { "Aged", 1 },
+				        { "Off-Spec", 2 }
+				    }
+				)
+
+	annotation PBI_Id = bfb27ded11264e039c00ac79052e26cd
+
+

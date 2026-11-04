@@ -1,0 +1,6 @@
+role Leadership
+	modelPermission: read
+
+	annotation PBI_Id = be23ca0409e94ae89b1efef84bcd50c4
+
+

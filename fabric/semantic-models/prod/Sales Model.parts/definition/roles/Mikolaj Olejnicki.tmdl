@@ -1,0 +1,10 @@
+role 'Mikolaj Olejnicki'
+	modelPermission: read
+
+	tablePermission BIDataSet_Opportunity = [Manager] IN {"MOLEJNIC"}
+
+	tablePermission Dim_Employee = [Personnel_Number] IN {"1243"}
+
+	annotation PBI_Id = 69d49acbb8fe4bdb807ede4f19e1d25d
+
+

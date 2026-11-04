@@ -10,11 +10,6 @@ role 'Chris NA'
 			'Date Table'[Fiscal Year] >= 2023
 			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
 
-	tablePermission 'Employee Table' = ```
-			'Employee Table'[Salesperson] IN {"Alecia Haqq","Jarrod Paddock","Joe Sankovic","Jonatan Vera","Joshua Wolfe","Mark Vitrone","Shichiu Kwan","Chris Moseley"}    
-			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
-			```
-
 	tablePermission 'Legal Entity Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
 
 	tablePermission 'Product Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0

@@ -1,0 +1,12 @@
+role 'BVBA Leadership V2'
+	modelPermission: read
+
+	tablePermission BIDataSet_Opportunity
+
+	tablePermission Dim_Employee
+
+	tablePermission Dim_Legal_Entity = [CMPNY] == "301"
+
+	annotation PBI_Id = b59b0ad6529c48d8baf12fe51a9e4a5c
+
+

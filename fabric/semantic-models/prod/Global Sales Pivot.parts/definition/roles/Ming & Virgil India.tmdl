@@ -11,8 +11,6 @@ role 'Ming & Virgil India'
 			'Date Table'[Fiscal Year] >= 2023
 			    && COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
 
-	tablePermission 'Employee Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
-
 	tablePermission 'Legal Entity Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0
 
 	tablePermission 'Product Table' = COUNTROWS ( RELATEDTABLE ( 'Sales Table' ) ) > 0

@@ -34,6 +34,8 @@ ref table Dim_TradeAgreement
 ref table Dim_Address
 ref table 'Sales Measures'
 ref table Dim_Product
+ref table Dim_ReportCurrencyHelper
+ref table Dim_QuantityUnitHelper
 
 ref role 'Jarrod Paddock'
 ref role 'Jonatan Vera'
@@ -50,5 +52,12 @@ ref role 'Alecia Haqq NAKAM'
 ref role 'Mark Vitrone NAKAM'
 ref role 'Jarrod Paddock NAKAM'
 ref role 'All Access (US)'
+ref role 'Daan Dewulf'
+ref role 'Michael Keller'
+ref role 'Mikolaj Olejnicki'
+ref role 'Tomàs de la Fuente'
+ref role 'Jutta Stemmler'
+ref role 'BVBA Leadership'
+ref role 'BVBA Leadership V2'
 
 

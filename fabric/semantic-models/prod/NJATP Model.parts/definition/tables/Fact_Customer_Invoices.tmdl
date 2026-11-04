@@ -495,7 +495,7 @@ table Fact_Customer_Invoices
 		sourceProviderType: bigint
 		lineageTag: 16c2e549-38f0-4f3a-909f-7b7874e8e2e7
 		sourceLineageTag: Legal_EntityKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: Legal_EntityKey
 
 		annotation SummarizationSetBy = Automatic

@@ -2,35 +2,35 @@ table Fact_Customer_Invoices
 	lineageTag: a246b910-9a90-49d3-9957-03ccfde4ac67
 	sourceLineageTag: [dbo].[mtbl_EDW_Fact_Customer_Invoices]
 
-	measure 'Invoice Cost Amount' = sum(Fact_Customer_Invoices[CostAmount])
+	measure 'Invoice Cost Amount' = [Base CustInv - CostAmt]
 		lineageTag: bb8daf25-e72f-40e1-8625-cfcf23404ee0
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Invoice Cost Amount Physical' = SUM(Fact_Customer_Invoices[CostAmountPhysical])
+	measure 'Invoice Cost Amount Physical' = [Base CustInv - CostAmtPhy]
 		lineageTag: 5c8f88ec-f2a1-44f7-950d-334b35b88a53
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Invoice Freight' = SUM(Fact_Customer_Invoices[Freight])
+	measure 'Invoice Freight' = [Base CustInv - Freight]
 		lineageTag: c6cb93b2-2841-4db9-a6ff-89413cf99048
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Invoice Fuel Charge' = SUM(Fact_Customer_Invoices[Fuel_Charge])
+	measure 'Invoice Fuel Charge' = [Base CustInv - FuelCharge]
 		lineageTag: 7999fe6b-bfc7-477e-ad20-9690f83fe1ff
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Invoice Amount' = SUM(Fact_Customer_Invoices[InvoiceAmount])
+	measure 'Invoice Amount' = [Base CustInv - LineAmt]
 		lineageTag: b6c5f462-a607-4cd6-928e-a072b4392409
 
 		changedProperty = Name
@@ -44,7 +44,7 @@ table Fact_Customer_Invoices
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Invoice Line Amount' = SUM(Fact_Customer_Invoices[LineAmount])
+	measure 'Invoice Line Amount' = [Base CustInv - LineAmt]
 		lineageTag: cdbf67de-f91d-4da1-9326-6aaaf1b97a56
 
 		changedProperty = Name
@@ -58,35 +58,35 @@ table Fact_Customer_Invoices
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Invoice Margin' = SUM(Fact_Customer_Invoices[Margin])
+	measure 'Invoice Margin' = [Base CustInv - Margin]
 		lineageTag: a01b1bf1-91ce-49e7-a8b9-95754b3a9c51
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Invoice Qty' = SUM(Fact_Customer_Invoices[Qty])
+	measure 'Invoice Qty' = [Base CustInv - Qty]
 		lineageTag: 0d08d4cc-bd26-46b2-be56-85937a03d4a2
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Invoice Tariff Surcharge' = SUM(Fact_Customer_Invoices[Tariff_SC])
+	measure 'Invoice Tariff Surcharge' = [Base CustInv - TariffSC]
 		lineageTag: 5ed6042e-1f08-4781-bf69-b894fe53ff59
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Invoice Commission' = SUM(Fact_Customer_Invoices[Comms])
+	measure 'Invoice Commission' = [Base CustInv - Comms]
 		lineageTag: f3e6795a-7fce-4fb8-8189-47c9a622e74c
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Invoice Pallet Break' = SUM(Fact_Customer_Invoices[PLT_Brk_Ch])
+	measure 'Invoice Pallet Break' = [Base CustInv - PltBrk]
 		lineageTag: 121417c7-da0d-4d0c-a2db-b25b047a6976
 
 		changedProperty = Name
@@ -100,7 +100,7 @@ table Fact_Customer_Invoices
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Invoice Quantity (LBs)' = SUM(Fact_Customer_Invoices[Quantity_LBs])
+	measure 'Invoice Quantity' = [Base CustInv - Qty]
 		lineageTag: aff7fe1e-9602-464b-9116-0b917459c1b1
 
 		changedProperty = Name
@@ -113,15 +113,13 @@ table Fact_Customer_Invoices
 
 		changedProperty = Name
 
-	measure InvoicePricePerLB = Divide([Invoice Line Amount] , [Invoice Quantity (LBs)])
-		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+	measure 'Invoice Price' = Divide([Invoice Line Amount] , [Invoice Quantity])
+		formatString: #,0.00
 		lineageTag: c6d4fa59-144a-4d87-915c-275a2b7e9c4a
 
 		changedProperty = Name
 
 		changedProperty = FormatString
-
-		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
 	measure 'Invoice Line Sum (Customer)' = ```
 			
@@ -776,7 +774,7 @@ table Fact_Customer_Invoices
 		sourceProviderType: bigint
 		lineageTag: d1ee9cde-272d-4a47-b9dd-7a2f032a43d7
 		sourceLineageTag: DeliveryAddressKey
-		summarizeBy: count
+		summarizeBy: none
 		sourceColumn: DeliveryAddressKey
 
 		annotation SummarizationSetBy = Automatic

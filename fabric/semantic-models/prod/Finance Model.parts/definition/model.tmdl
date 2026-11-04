@@ -39,5 +39,12 @@ ref table Fact_SalesBudget
 ref table 'Finance Measures'
 ref table 'Revenue PVM Steps'
 ref table Dim_Product
+ref table Dim_Address
+ref table Dim_ReportCurrencyHelper
+ref table Dim_QuantityUnitHelper
+
+ref role Leadership
+ref role 'Leadership BVBA'
+ref role 'US Finance'
 
 

@@ -129,6 +129,15 @@ table Dim_SerialNumber
 
 		annotation SummarizationSetBy = Automatic
 
+	column ProductID
+		dataType: string
+		lineageTag: 30a712eb-cbb4-4c53-bf30-20b0b634e44d
+		sourceLineageTag: ProductID
+		summarizeBy: none
+		sourceColumn: ProductID
+
+		annotation SummarizationSetBy = Automatic
+
 	partition Dim_SerialNumber = entity
 		mode: directLake
 		source

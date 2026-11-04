@@ -5,7 +5,7 @@ table Fact_Budget
 	measure MTD_Volume_Budget = ```
 			
 			CALCULATE(
-			    SUM('Fact_Budget'[Quantity_LBs]),
+			    [Budget Quantity Base],
 			
 			    -- Current month filter
 			    FILTER(
@@ -37,7 +37,7 @@ table Fact_Budget
 	measure YTD_Volume_Budget = ```
 			
 			CALCULATE(
-			    SUM('Fact_Budget'[Quantity_LBs]),
+			    [Budget Quantity Base],
 			
 			    -- Current month filter
 			    FILTER(
@@ -58,7 +58,7 @@ table Fact_Budget
 	measure MTD_Revenue_Budget = ```
 			
 			CALCULATE(
-			    SUM('Fact_Budget'[Amount]),
+			    [Budget Amount Base],
 			
 			    -- Current month filter
 			    FILTER(
@@ -80,7 +80,7 @@ table Fact_Budget
 	measure YTD_Revenue_Budget = ```
 			
 			CALCULATE(
-			    SUM('Fact_Budget'[Amount]),
+			    [Budget Amount Base],
 			
 			
 			    -- Current month filter
@@ -92,14 +92,12 @@ table Fact_Budget
 			)
 			
 			```
-		formatString: \$#,0;(\$#,0);\$#,0
+		formatString: #,0
 		lineageTag: 81d5185e-4442-438d-988f-dcba6ea29339
 
 		changedProperty = Name
 
 		changedProperty = FormatString
-
-		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
 
 	measure MTD_Revenue_Variance =
 			
@@ -140,14 +138,14 @@ table Fact_Budget
 
 		changedProperty = FormatString
 
-	measure 'Budget Quantity' = SUM(Fact_Budget[Quantity_LBs])
+	measure 'Budget Quantity' = [Budget Quantity Base]
 		lineageTag: b62d0e38-b5ee-441c-b665-aeb621af0bc8
 
 		changedProperty = Name
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
-	measure 'Budget Amount' = SUM(Fact_Budget[Amount])
+	measure 'Budget Amount' = [Budget Amount Base]
 		lineageTag: 75982aaa-872c-427e-ab6f-7b53e70b0c4d
 
 		changedProperty = Name

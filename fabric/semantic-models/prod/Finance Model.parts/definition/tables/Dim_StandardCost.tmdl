@@ -48,7 +48,7 @@ table Dim_StandardCost
 
 	measure ContributionPerLB_Inv = ```
 			
-			[InvoicePricePerLB] - [DirectCostPerLB_Inv]
+			[Invoice Price] - [DirectCostPerLB_Inv]
 			
 			```
 		lineageTag: 8c07dd9c-e3e9-407f-86e6-f8cfe8d01581
@@ -70,7 +70,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Customer_Invoices,
-			    Fact_Customer_Invoices[Quantity_LBs] * CALCULATE ( [TotalDirectStandardCost] )
+			    [Invoice Quantity] * CALCULATE ( [TotalDirectStandardCost] )
 			)
 		lineageTag: 95f909e0-3e45-444e-a864-25e2f4341486
 
@@ -82,7 +82,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Inventory_Snapshot,
-			    Fact_Inventory_Snapshot[physicalinvent_LBs] * CALCULATE ( [TotalDirectStandardCost] )
+			    [Physical Inventory Qty] * CALCULATE ( [TotalDirectStandardCost] )
 			)
 		lineageTag: 10a6a70d-c464-4596-836c-fad857489d66
 
@@ -94,7 +94,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Inventory_Snapshot,
-			    Fact_Inventory_Snapshot[postedqty_LBs] * CALCULATE ( [TotalDirectStandardCost] )
+			    [Posted Qty] * CALCULATE ( [TotalDirectStandardCost] )
 			)
 		lineageTag: af815cd6-09e1-4751-a4a7-2a5bcc48cad8
 
@@ -106,7 +106,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Sales,
-			    Fact_Sales[Quantity_LBs] * CALCULATE ( [TotalDirectStandardCost] )
+			    [Base Sales - Qty] * CALCULATE ( [TotalDirectStandardCost] )
 			)
 			
 			```
@@ -118,7 +118,7 @@ table Dim_StandardCost
 
 	measure DirectCostPerLB_Inv = ```
 			
-			DIVIDE ( [DirectCostAmount_Inv], [Invoice Quantity (LBs)] )
+			DIVIDE ( [DirectCostAmount_Inv], [Invoice Quantity] )
 			
 			```
 		lineageTag: 489d9bf1-7634-486d-b5c4-f2c30e389841
@@ -156,7 +156,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Customer_Invoices,
-			    Fact_Customer_Invoices[Quantity_LBs] * CALCULATE ( [DirectLaborCostStandard] )
+			    [Invoice Quantity] * CALCULATE ( [DirectLaborCostStandard] )
 			)
 			
 			```
@@ -173,7 +173,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Sales,
-			    Fact_Sales[Quantity_LBs] * CALCULATE ( [DirectLaborCostStandard] )
+			    [Base Sales - Qty] * CALCULATE ( [DirectLaborCostStandard] )
 			)
 			
 			```
@@ -201,7 +201,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Customer_Invoices,
-			    Fact_Customer_Invoices[Quantity_LBs] * CALCULATE ( [DirectMaterialCostStandard] )
+			    [Invoice Quantity] * CALCULATE ( [DirectMaterialCostStandard] )
 			)
 			
 			```
@@ -218,7 +218,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Sales,
-			    Fact_Sales[Quantity_LBs] * CALCULATE ( [DirectMaterialCostStandard] )
+			    [Base Sales - Qty] * CALCULATE ( [DirectMaterialCostStandard] )
 			)
 			
 			```
@@ -246,7 +246,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Customer_Invoices,
-			    Fact_Customer_Invoices[Quantity_LBs] * CALCULATE ( [DirectUtilityCostStandard] )
+			    [Invoice Quantity] * CALCULATE ( [DirectUtilityCostStandard] )
 			)
 			
 			```
@@ -263,7 +263,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Sales,
-			    Fact_Sales[Quantity_LBs] * CALCULATE ( [DirectUtilityCostStandard] )
+			    [Base Sales - Qty] * CALCULATE ( [DirectUtilityCostStandard] )
 			)
 			
 			```
@@ -299,7 +299,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Customer_Invoices,
-			    Fact_Customer_Invoices[Quantity_LBs] * CALCULATE ( [TotalStandardCost] )
+			    [Invoice Quantity] * CALCULATE ( [TotalStandardCost] )
 			)
 			
 			```
@@ -313,7 +313,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Sales,
-			    Fact_Sales[Quantity_LBs] * CALCULATE ( [TotalStandardCost] )
+			    [Base Sales - Qty] * CALCULATE ( [TotalStandardCost] )
 			)
 			
 			```
@@ -361,7 +361,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Customer_Invoices,
-			    Fact_Customer_Invoices[Quantity_LBs] * CALCULATE ( [OutsideProcessingCostStandard] )
+			    [Invoice Quantity] * CALCULATE ( [OutsideProcessingCostStandard] )
 			)
 			
 			```
@@ -378,7 +378,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Sales,
-			    Fact_Sales[Quantity_LBs] * CALCULATE ( [OutsideProcessingCostStandard] )
+			    [Base Sales - Qty] * CALCULATE ( [OutsideProcessingCostStandard] )
 			)
 			
 			```
@@ -392,7 +392,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Customer_Invoices,
-			    Fact_Customer_Invoices[Quantity_LBs] * CALCULATE ( [TotalOverheadStandardCost] )
+			    [Invoice Quantity] * CALCULATE ( [TotalOverheadStandardCost] )
 			)
 			
 			```
@@ -400,11 +400,13 @@ table Dim_StandardCost
 
 		changedProperty = Name
 
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	measure OverheadCostAmount_OnH_Phy = ```
 			
 			SUMX (
 			    Fact_Inventory_Snapshot,
-			    Fact_Inventory_Snapshot[physicalinvent_LBs] * CALCULATE ( [TotalOverheadStandardCost] )
+			    [Physical Inventory Qty] * CALCULATE ( [TotalOverheadStandardCost] )
 			)
 			
 			```
@@ -418,7 +420,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Inventory_Snapshot,
-			    Fact_Inventory_Snapshot[postedqty_LBs] * CALCULATE ( [TotalOverheadStandardCost] )
+			    [Posted Qty] * CALCULATE ( [TotalOverheadStandardCost] )
 			)
 			
 			```
@@ -432,7 +434,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Sales,
-			    Fact_Sales[Quantity_LBs] * CALCULATE ( [TotalOverheadStandardCost] )
+			    [Base Sales - Qty] * CALCULATE ( [TotalOverheadStandardCost] )
 			)
 			
 			```
@@ -444,7 +446,7 @@ table Dim_StandardCost
 
 	measure OverheadCostPerLB_Inv = ```
 			
-			DIVIDE ( [OverheadCostAmount_Inv], [Invoice Quantity (LBs)] )
+			DIVIDE ( [OverheadCostAmount_Inv], [Invoice Quantity] )
 			
 			```
 		lineageTag: 14716def-0d50-44a6-8e78-d7017355bd0b
@@ -468,7 +470,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Customer_Invoices,
-			    Fact_Customer_Invoices[Quantity_LBs] * CALCULATE ( [OverheadDepreciationCostStandard] )
+			    [Invoice Quantity] * CALCULATE ( [OverheadDepreciationCostStandard] )
 			)
 			
 			```
@@ -499,7 +501,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Customer_Invoices,
-			    Fact_Customer_Invoices[Quantity_LBs] * CALCULATE ( [OverheadIndirectSupervisorCostStandard] )
+			    [Invoice Quantity] * CALCULATE ( [OverheadIndirectSupervisorCostStandard] )
 			)
 			
 			```
@@ -530,7 +532,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Customer_Invoices,
-			    Fact_Customer_Invoices[Quantity_LBs] * CALCULATE ( [OverheadMaintenanceCostStandard] )
+			    [Invoice Quantity] * CALCULATE ( [OverheadMaintenanceCostStandard] )
 			)
 			
 			```
@@ -561,7 +563,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Customer_Invoices,
-			    Fact_Customer_Invoices[Quantity_LBs] * CALCULATE ( [OverheadManufacturingAdminCostStandard] )
+			    [Invoice Quantity] * CALCULATE ( [OverheadManufacturingAdminCostStandard] )
 			)
 			
 			```
@@ -592,7 +594,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Customer_Invoices,
-			    Fact_Customer_Invoices[Quantity_LBs] * CALCULATE ( [OverheadMiscellaneousManufacturingCostStandard] )
+			    [Invoice Quantity] * CALCULATE ( [OverheadMiscellaneousManufacturingCostStandard] )
 			)
 			
 			```
@@ -623,7 +625,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Customer_Invoices,
-			    Fact_Customer_Invoices[Quantity_LBs] * CALCULATE ( [OverheadQualityCostStandard] )
+			    [Invoice Quantity] * CALCULATE ( [OverheadQualityCostStandard] )
 			)
 			
 			```
@@ -654,7 +656,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Customer_Invoices,
-			    Fact_Customer_Invoices[Quantity_LBs] * CALCULATE ( [OverheadWarehouseCostStandard] )
+			    [Invoice Quantity] * CALCULATE ( [OverheadWarehouseCostStandard] )
 			)
 			
 			```
@@ -699,7 +701,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Customer_Invoices,
-			    Fact_Customer_Invoices[Quantity_LBs] * CALCULATE ( [PackagingCostStandard] )
+			    [Invoice Quantity] * CALCULATE ( [PackagingCostStandard] )
 			)
 			
 			```
@@ -716,7 +718,7 @@ table Dim_StandardCost
 			
 			SUMX (
 			    Fact_Sales,
-			    Fact_Sales[Quantity_LBs] * CALCULATE ( [PackagingCostStandard] )
+			    [Base Sales - Qty] * CALCULATE ( [PackagingCostStandard] )
 			)
 			
 			```
@@ -748,7 +750,7 @@ table Dim_StandardCost
 
 	measure ProfitPerLB_Inv = ```
 			
-			DIVIDE ( [ProfitAmount_Inv], [Invoice Quantity (LBs)] )
+			DIVIDE ( [ProfitAmount_Inv], [Invoice Quantity] )
 			
 			```
 		lineageTag: 71cc3be5-74c1-4d9a-9790-c1e446ce4e2e
@@ -825,7 +827,7 @@ table Dim_StandardCost
 
 	measure TotalCostPerLB_Inv = ```
 			
-			DIVIDE ( [TotalCostAmount_Inv], [Invoice Quantity (LBs)] )
+			DIVIDE ( [TotalCostAmount_Inv], [Invoice Quantity] )
 			
 			```
 		lineageTag: b0eac69f-5b5e-4399-9a3b-a50d5984734b

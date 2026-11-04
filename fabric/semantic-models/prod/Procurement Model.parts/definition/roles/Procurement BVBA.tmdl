@@ -1,0 +1,8 @@
+role 'Procurement BVBA'
+	modelPermission: read
+
+	tablePermission DIM_Legal_Entity = [CMPNY] == "301"
+
+	annotation PBI_Id = 96cf26bcdea9469d85d260c5ece213aa
+
+

@@ -380,4 +380,8 @@ relationship 793a9a95-12aa-eac5-81d2-99ff0882b553
 	fromColumn: Fact_ProductionBatchOrderVariance.CoProductKey
 	toColumn: Dim_Product.ProductKey
 
+relationship e7e5524c-419b-b8bd-dd1b-dd5620fdb116
+	fromColumn: Fact_Production_Batch_Orders.Legal_EntityKey
+	toColumn: Dim_Legal_Entity.Legal_EntityKey
+
 

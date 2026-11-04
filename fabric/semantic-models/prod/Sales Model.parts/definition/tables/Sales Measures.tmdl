@@ -1,20 +1,44 @@
 table 'Sales Measures'
 	lineageTag: 221a0c4b-a5d1-4e8d-9e53-cb8238a4a525
 
-	measure 'Base Sales Price Per LB Display' = ```
+	measure 'Base Sales Price Per LB Display' =
 			
 			VAR _OneProduct =
 			    HASONEVALUE ( 'Dim_Product'[Product_ID] )
+			
+			VAR _Weight =
+			    [Selected Display Weight]
+			
 			VAR _BaseSalesPrice =
-			    SELECTEDVALUE ( 'Dim_Product'[BaseSalesPricePerLB] )
-			RETURN
-			    IF (
-			        _OneProduct,
-			        FORMAT ( _BaseSalesPrice, "$#,0.00" ),
-			        "Select a product"
+			    SWITCH (
+			        _Weight,
+			        "LBs", SELECTEDVALUE ( 'Dim_Product'[BaseSalesPricePerLB] ),
+			        "KGs", SELECTEDVALUE ( 'Dim_Product'[BaseSalesPricePerKG] ),
+			        BLANK ()
 			    )
 			
-			```
+			VAR _Locale =
+			    USERCULTURE ()
+			
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			
+			        NOT _OneProduct,
+			            "Select a product",
+			
+			        NOT ( _Weight IN { "LBs", "KGs" } ),
+			            "Select LBs or KGs",
+			
+			        ISBLANK ( _BaseSalesPrice ),
+			            "No base price",
+			
+			        FORMAT (
+			            _BaseSalesPrice,
+			            "#,##0.00",
+			            _Locale
+			        )
+			    )
 		lineageTag: fb669bd0-5d9b-46f0-9087-54334f515622
 
 	measure 'Base Price ($/LB)' = ```
@@ -95,6 +119,340 @@ table 'Sales Measures'
 			
 			```
 		lineageTag: 9ea9b40c-5cf5-498e-a171-aff7320f9b5a
+
+	measure 'Selected Display Currency' =
+			
+			SELECTEDVALUE (
+			    'Dim_ReportCurrencyHelper'[Report_Currency_Code],
+			    "USD"
+			)
+		lineageTag: 5a079c50-86fa-402b-9c90-4935bad7253e
+
+	measure 'Selected Display Weight' =
+			
+			SELECTEDVALUE (
+			    'Dim_QuantityUnitHelper'[Quantity_Unit_Code],
+			    "LBs"
+			)
+		lineageTag: 9955876c-ff4d-45e4-830d-a017daf6bb7a
+
+	measure 'Sales Amount Base' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Sales[Amount_USD] ),
+			    "EUR", SUM ( Fact_Sales[Amount_EUR] ),
+			    "CNY", SUM ( Fact_Sales[Amount_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: 1b590073-f072-4f62-87df-9a2e79ba0cd0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Sales Quantity Base' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Sales[Quantity_LBs] ),
+			    "KGs", SUM ( Fact_Sales[Quantity_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: 694e4252-9140-4da7-9c6a-4059889ea6f5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Budget Amount Base' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Budget[Amount_USD] ),
+			    "EUR", SUM ( Fact_Budget[Amount_EUR] ),
+			    "CNY", SUM ( Fact_Budget[Amount_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: 67260143-b09f-42d5-844a-1ee214c73126
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Budget Quantity Base' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Budget[Quantity_LBs] ),
+			    "KGs", SUM ( Fact_Budget[Quantity_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: 060eac58-73c1-42d2-8e2e-294c67f842c3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Invoiced Sales Quantity Base' =
+			
+			SWITCH (
+			    [Selected Display Weight],
+			    "LBs", SUM ( Fact_Sales[InvoiceQuantity_LBs] ),
+			    "KGs", SUM ( Fact_Sales[InvoiceQuantity_KGs] ),
+			    BLANK ()
+			)
+		lineageTag: 171a8802-b61f-44f3-b224-f7d2e0b8a3da
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Invoiced Sales Amount Base' =
+			
+			SWITCH (
+			    [Selected Display Currency],
+			    "USD", SUM ( Fact_Sales[InvoiceLineAmount_USD] ),
+			    "EUR", SUM ( Fact_Sales[InvoiceLineAmount_EUR] ),
+			    "CNY", SUM ( Fact_Sales[InvoiceLineAmount_CNY] ),
+			    BLANK ()
+			)
+		lineageTag: 4611eea2-9a57-454f-875f-19a365239280
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Display Settings Label' = ```
+			
+			"Currency: " & [Selected Display Currency] & 
+			" | Weight: " & [Selected Display Weight]
+			```
+		lineageTag: 4597396b-d99e-46bc-871f-ba8aa9fe48e3
+
+	measure 'Base Price Display' =
+			
+			VAR _IsDetailRow =
+			    ISINSCOPE ( 'Dim_Product'[Product_ID] )
+			
+			VAR _Weight =
+			    [Selected Display Weight]
+			
+			VAR _BaseSalesPrice =
+			    SWITCH (
+			        _Weight,
+			        "LBs", SELECTEDVALUE ( 'Dim_Product'[BaseSalesPricePerLB] ),
+			        "KGs", SELECTEDVALUE ( 'Dim_Product'[BaseSalesPricePerKG] ),
+			        BLANK ()
+			    )
+			
+			VAR _Locale =
+			    USERCULTURE ()
+			
+			RETURN
+			    IF (
+			        NOT _IsDetailRow,
+			        BLANK (),
+			        SWITCH (
+			            TRUE (),
+			
+			            NOT ( _Weight IN { "LBs", "KGs" } ),
+			                "Select LBs or KGs",
+			
+			            ISBLANK ( _BaseSalesPrice ),
+			                "Missing",
+			
+			            FORMAT (
+			                _BaseSalesPrice,
+			                "#,##0.00",
+			                _Locale
+			            )
+			        )
+			    )
+		lineageTag: c6135050-26d5-4723-8ca8-1cab2cd3a243
+
+	measure 'Global Filter Summary HTML' =
+			
+			VAR _EntityFilters =
+			    FILTERS ( 'Dim_Legal_Entity'[CMPNY] )
+			
+			VAR _EmployeeFilters =
+			    FILTERS ( 'Dim_Employee'[Employee_Name] )
+			
+			VAR _CountryFilters =
+			    FILTERS ( 'Dim_Address'[Country] )
+			
+			VAR _IndustryFilters =
+			    FILTERS ( 'DIM_MarketSegmentation'[Industry] )
+			
+			// Legal entity selections
+			VAR _Entity =
+			    IF (
+			        ISFILTERED ( 'Dim_Legal_Entity'[CMPNY] ),
+			        IF (
+			            COUNTROWS ( _EntityFilters ) <= 2,
+			            CONCATENATEX (
+			                _EntityFilters,
+			                'Dim_Legal_Entity'[CMPNY],
+			                ", ",
+			                'Dim_Legal_Entity'[CMPNY],
+			                ASC
+			            ),
+			            COUNTROWS ( _EntityFilters ) & " selected"
+			        ),
+			        "All"
+			    )
+			
+			// Salesperson selections
+			VAR _Employee =
+			    IF (
+			        ISFILTERED ( 'Dim_Employee'[Employee_Name] ),
+			        IF (
+			            COUNTROWS ( _EmployeeFilters ) <= 2,
+			            CONCATENATEX (
+			                _EmployeeFilters,
+			                'Dim_Employee'[Employee_Name],
+			                ", ",
+			                'Dim_Employee'[Employee_Name],
+			                ASC
+			            ),
+			            COUNTROWS ( _EmployeeFilters ) & " selected"
+			        ),
+			        "All"
+			    )
+			
+			// Country selections
+			VAR _Country =
+			    IF (
+			        ISFILTERED ( 'Dim_Address'[Country] ),
+			        IF (
+			            COUNTROWS ( _CountryFilters ) <= 2,
+			            CONCATENATEX (
+			                _CountryFilters,
+			                'Dim_Address'[Country],
+			                ", ",
+			                'Dim_Address'[Country],
+			                ASC
+			            ),
+			            COUNTROWS ( _CountryFilters ) & " selected"
+			        ),
+			        "All"
+			    )
+			
+			// Industry selections
+			VAR _Industry =
+			    IF (
+			        ISFILTERED ( 'DIM_MarketSegmentation'[Industry] ),
+			        IF (
+			            COUNTROWS ( _IndustryFilters ) <= 2,
+			            CONCATENATEX (
+			                _IndustryFilters,
+			                'DIM_MarketSegmentation'[Industry],
+			                ", ",
+			                'DIM_MarketSegmentation'[Industry],
+			                ASC
+			            ),
+			            COUNTROWS ( _IndustryFilters ) & " selected"
+			        ),
+			        "All"
+			    )
+			
+			// Escape special HTML characters in dynamic values
+			VAR _EntityHTML =
+			    SUBSTITUTE (
+			        SUBSTITUTE ( SUBSTITUTE ( _Entity, "&", "&amp;" ), "<", "&lt;" ),
+			        ">", "&gt;"
+			    )
+			
+			VAR _EmployeeHTML =
+			    SUBSTITUTE (
+			        SUBSTITUTE ( SUBSTITUTE ( _Employee, "&", "&amp;" ), "<", "&lt;" ),
+			        ">", "&gt;"
+			    )
+			
+			VAR _CountryHTML =
+			    SUBSTITUTE (
+			        SUBSTITUTE ( SUBSTITUTE ( _Country, "&", "&amp;" ), "<", "&lt;" ),
+			        ">", "&gt;"
+			    )
+			
+			VAR _IndustryHTML =
+			    SUBSTITUTE (
+			        SUBSTITUTE ( SUBSTITUTE ( _Industry, "&", "&amp;" ), "<", "&lt;" ),
+			        ">", "&gt;"
+			    )
+			
+			// Formatting
+			VAR _LabelStyle =
+			    "color:#191919;"
+			
+			VAR _ValueStyle =
+			    "color:#08911f;font-weight:600;"
+			
+			VAR _Separator =
+			    "<span style='color:#191919;'>&nbsp;|&nbsp;</span>"
+			
+			RETURN
+			    "<div style='font-family:Segoe UI,Arial,sans-serif;
+			                 font-size:20px;
+			                 line-height:22px;
+			                 text-align:left;'>"
+			
+			        & "<span style='white-space:nowrap;'>"
+			        & "<span style='" & _LabelStyle & "'>Entity: </span>"
+			        & "<span style='" & _ValueStyle & "'>" & _EntityHTML & "</span>"
+			        & "</span>"
+			
+			        & _Separator
+			
+			        & "<span style='white-space:nowrap;'>"
+			        & "<span style='" & _LabelStyle & "'>Salesperson: </span>"
+			        & "<span style='" & _ValueStyle & "'>" & _EmployeeHTML & "</span>"
+			        & "</span>"
+			
+			        & _Separator
+			
+			        & "<span style='white-space:nowrap;'>"
+			        & "<span style='" & _LabelStyle & "'>Country: </span>"
+			        & "<span style='" & _ValueStyle & "'>" & _CountryHTML & "</span>"
+			        & "</span>"
+			
+			        & _Separator
+			
+			        & "<span style='white-space:nowrap;'>"
+			        & "<span style='" & _LabelStyle & "'>Industry: </span>"
+			        & "<span style='" & _ValueStyle & "'>" & _IndustryHTML & "</span>"
+			        & "</span>"
+			
+			    & "</div>"
+		lineageTag: a224740d-35fb-4a36-ab8c-df530deb9825
+
+	measure 'Display Settings HTML' =
+			
+			VAR _Currency =
+			    [Selected Display Currency]
+			
+			VAR _Weight =
+			    [Selected Display Weight]
+			
+			VAR _LabelStyle =
+			    "color:#191919;"
+			
+			VAR _CurrencyStyle =
+			    "color:#85BB65;font-weight:600;"
+			
+			VAR _WeightStyle =
+			    "color:#118DFF;font-weight:600;"
+			
+			RETURN
+			    "<div style='font-family:Segoe UI,Arial,sans-serif;
+			                 font-size:20px;
+			                 line-height:22px;
+			                 white-space:nowrap;
+			                 text-align:right;'>"
+			
+			        & "<span style='" & _LabelStyle & "'>Currency: </span>"
+			
+			        & "<span style='" & _CurrencyStyle & "'>"
+			        & _Currency
+			        & "</span>"
+			
+			        & "<span style='" & _LabelStyle & "'>&nbsp;|&nbsp;Weight: </span>"
+			
+			        & "<span style='" & _WeightStyle & "'>"
+			        & _Weight
+			        & "</span>"
+			
+			    & "</div>"
+		lineageTag: c324f757-1f4d-45b8-8347-e9d1d8d1d439
 
 	column 'Measure Group'
 		isHidden

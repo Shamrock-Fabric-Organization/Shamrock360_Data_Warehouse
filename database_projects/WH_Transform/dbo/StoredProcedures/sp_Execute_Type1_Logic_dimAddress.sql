@@ -201,11 +201,30 @@ BEGIN
 
     UNION ALL
 
-    SELECT *
-    FROM tbl_DIM_Address
-    WHERE RecordStatus = 1
-        AND [Source] <> 'D365FO'
+    -- Legacy rows D365 does not cover: carried forward unchanged (current and already expired)
+    SELECT l.*
+    FROM tbl_DIM_Address AS l
+    WHERE l.[Source] <> 'D365FO'
+        AND NOT (l.RecordStatus = 1
+                 AND EXISTS (SELECT 1 FROM stage_tbl_DIM_Address_Final AS d
+                             WHERE d.[Source] = 'D365FO' AND d.RecordStatus = 1 AND d.AddressRecId <> -1
+                               AND d.Street = l.Street AND d.City = l.City AND d.State = l.State
+                               AND d.ZipCode = l.ZipCode AND d.Country = l.Country))
 
+    UNION ALL
+
+    -- Legacy rows a current D365 row now covers: expired, key kept
+    SELECT l.[AddressKey], l.[AddressRecId], l.[Location], l.[Street], l.[City], l.[State], l.[ZipCode], l.[Country]
+        , l.[ValidFrom], l.[ValidTo], l.[LocationName], l.[Source], l.[RecordEffectiveStartDate]
+        , GETDATE() AS RecordEffectiveEndDate
+        , 0 AS RecordStatus
+    FROM tbl_DIM_Address AS l
+    WHERE l.[Source] <> 'D365FO'
+        AND l.RecordStatus = 1
+        AND EXISTS (SELECT 1 FROM stage_tbl_DIM_Address_Final AS d
+                    WHERE d.[Source] = 'D365FO' AND d.RecordStatus = 1 AND d.AddressRecId <> -1
+                      AND d.Street = l.Street AND d.City = l.City AND d.State = l.State
+                      AND d.ZipCode = l.ZipCode AND d.Country = l.Country)
 
     UNION ALL
 

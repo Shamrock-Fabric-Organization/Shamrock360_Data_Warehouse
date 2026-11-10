@@ -5,7 +5,7 @@
 /****** Object:  View [dbo].[vw_stage_NewAddress] ******/
 --DROP VIEW IF EXISTS [dbo].[vw_stage_NewAddress]
 
-CREATE   VIEW [dbo].[vw_stage_NewAddress]
+CREATE OR ALTER   VIEW [dbo].[vw_stage_NewAddress]
 AS
 
 SELECT
@@ -29,12 +29,15 @@ FROM [dbo].[vw_stage_DIM_Address_incoming] Source
 WHERE NOT EXISTS (
     SELECT 1
     FROM [dbo].[tbl_DIM_Address] Target
-    WHERE Target.[AddressRecId] = Source.[AddressRecId]
+    WHERE Source.[Source] = 'D365FO'
         AND Target.Source='D365FO'
+        AND Target.[AddressRecId] = Source.[AddressRecId]
+        AND Target.[RecordStatus] = 1
     UNION
      SELECT 1
     FROM [dbo].[tbl_DIM_Address] Target
-    WHERE Target.[Street] = Source.[Street]
+    WHERE Source.[Source] <> 'D365FO'
+        AND Target.[Street] = Source.[Street]
         AND Target.[City] = Source.[City]
         AND Target.[State] = Source.[State]
         AND Target.[ZipCode] = Source.[ZipCode]

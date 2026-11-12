@@ -167,27 +167,40 @@ left JOIN WH_Raw.dbo.InventTable IT
 		AND cit.dataareaid = IT.dataareaid
 
 left join (WH_Raw.dbo.custinvoicejour cij2
-        left JOIN WH_Raw.dbo.markuptrans mt_freight
+        -- markuptrans can hold more than one row per journal and markupcode (e.g. two Freight rows on one invoice).
+        -- Each join below sums to one row per journal (transrecid), so the first invoice line is not repeated.
+        -- Amounts are summed, so a repeated markupcode shows its total.
+        left JOIN (select transrecid, sum(calculatedamount) calculatedamount
+                   from WH_Raw.dbo.markuptrans
+                   where markupcode = 'Freight'
+                     and transtableid = 11259
+                   group by transrecid) mt_freight
           on cij2.recid = mt_freight.transrecid
-            and mt_freight.markupcode = 'Freight'
-            and mt_freight.transtableid = 11259
-        left JOIN WH_Raw.dbo.markuptrans mt_fuelchg
+        left JOIN (select transrecid, sum(calculatedamount) calculatedamount
+                   from WH_Raw.dbo.markuptrans
+                   where markupcode = 'Fuel Chrg'
+                     and transtableid = 11259
+                   group by transrecid) mt_fuelchg
           on cij2.recid = mt_fuelchg.transrecid
-            and mt_fuelchg.markupcode = 'Fuel Chrg'
-            and mt_fuelchg.transtableid = 11259
 
-        left JOIN WH_Raw.dbo.markuptrans mt_Comms
+        left JOIN (select transrecid, sum(calculatedamount) calculatedamount
+                   from WH_Raw.dbo.markuptrans
+                   where markupcode = 'Comms'
+                     and transtableid = 11259
+                   group by transrecid) mt_Comms
           on cij2.recid = mt_Comms.transrecid
-            and mt_Comms.markupcode = 'Comms'
-            and mt_Comms.transtableid = 11259
-        left JOIN WH_Raw.dbo.markuptrans mt_PLT_Brk_Ch
+        left JOIN (select transrecid, sum(calculatedamount) calculatedamount
+                   from WH_Raw.dbo.markuptrans
+                   where markupcode = 'PLT Brk Ch'
+                     and transtableid = 11259
+                   group by transrecid) mt_PLT_Brk_Ch
           on cij2.recid = mt_PLT_Brk_Ch.transrecid
-            and mt_PLT_Brk_Ch.markupcode = 'PLT Brk Ch'
-            and mt_PLT_Brk_Ch.transtableid = 11259
-        left JOIN WH_Raw.dbo.markuptrans mt_Tariff_SC
+        left JOIN (select transrecid, sum(calculatedamount) calculatedamount
+                   from WH_Raw.dbo.markuptrans
+                   where markupcode = 'Tariff SC'
+                     and transtableid = 11259
+                   group by transrecid) mt_Tariff_SC
           on cij2.recid = mt_Tariff_SC.transrecid
-            and mt_Tariff_SC.markupcode = 'Tariff SC'
-            and mt_Tariff_SC.transtableid = 11259
             )
   on cit.dataareaid = cij2.dataareaid
     and cit.invoiceid = cij2.invoiceid

@@ -44,6 +44,23 @@ select  cit.dataareaid CMPNY
 , CASE WHEN cit.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * mt_Tariff_SC.calculatedamount Tariff_SC_USD
 , CASE WHEN cit.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * mt_Tariff_SC.calculatedamount Tariff_SC_EUR
 , CASE WHEN cit.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * mt_Tariff_SC.calculatedamount Tariff_SC_CNY
+-- custinvoicejour header fields: first invoice line only (via cij2, matches cit.linenum = min_ln.min_linenumber), NULL on other lines
+
+, cij2.summarkup SumMarkup
+-- Txn basis (FROM cit.currencycode) — converted SumMarkup
+, CASE WHEN cit.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * cij2.summarkup SumMarkup_USD
+, CASE WHEN cit.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * cij2.summarkup SumMarkup_EUR
+, CASE WHEN cit.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * cij2.summarkup SumMarkup_CNY
+, cij2.sumtax SumTax
+-- Txn basis (FROM cit.currencycode) — converted SumTax
+, CASE WHEN cit.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * cij2.sumtax SumTax_USD
+, CASE WHEN cit.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * cij2.sumtax SumTax_EUR
+, CASE WHEN cit.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * cij2.sumtax SumTax_CNY
+, cij2.salesbalance SalesBalance
+-- Txn basis (FROM cit.currencycode) — converted SalesBalance
+, CASE WHEN cit.currencycode = 'USD' THEN 1.0 ELSE erTxnUSD.ExchangeRate END * cij2.salesbalance SalesBalance_USD
+, CASE WHEN cit.currencycode = 'EUR' THEN 1.0 ELSE erTxnEUR.ExchangeRate END * cij2.salesbalance SalesBalance_EUR
+, CASE WHEN cit.currencycode = 'CNY' THEN 1.0 ELSE erTxnCNY.ExchangeRate END * cij2.salesbalance SalesBalance_CNY
 
 
 , cit.linenum LineNumber
@@ -323,7 +340,7 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_Employee dect
 
 -- =========================== ADDED: exchange-rate joins (currency conversion) ===========================
 -- TXN-BASIS joins: fromcurrencycode = cit.currencycode (transaction/document currency).
--- Shared by InvoiceAmount, LineAmount, SalesPrice, Freight, Fuel_Charge, Comms, PLT_Brk_Ch, Tariff_SC.
+-- Shared by InvoiceAmount, LineAmount, SalesPrice, Freight, Fuel_Charge, Comms, PLT_Brk_Ch, Tariff_SC, SumMarkup, SumTax, SalesBalance.
 LEFT JOIN WH_Raw.dbo.vwExchangeRate erTxnUSD
     ON erTxnUSD.fromcurrencycode = cit.currencycode
    AND erTxnUSD.tocurrencycode   = 'USD'
@@ -358,3 +375,4 @@ LEFT JOIN WH_Raw.dbo.vwExchangeRate erCostCNY
    AND convert(date, convert(char(8), cit.invoicedate, 112)) between erCostCNY.validfrom and erCostCNY.validto
    AND erCostCNY.exchangeratetype = 'Default global rate'
 -- ========================================================================================================
+

@@ -1,7 +1,7 @@
 
 ----drop VIEW [dbo].[vw_stage_DIM_CustomerPackingSlip_incoming]
 
-CREATE          VIEW [dbo].[vw_stage_DIM_CustomerPackingSlip_incoming]
+CREATE OR ALTER VIEW [dbo].[vw_stage_DIM_CustomerPackingSlip_incoming]
 as
 SELECT
 
@@ -50,6 +50,9 @@ SELECT
 	,CONVERT(int, NULL)	 RecordStatus
 
 FROM WH_Raw.dbo.CustPackingSlipJour cpsj
+-- A journal with no packing slip number cannot match on the natural key (NULL = NULL is false), so the Type 1 procedure
+-- re-appended it with an extra expired copy on every run (duplicate CustomerPackingSlipKey, 2026-11-13). Exclude it.
+WHERE cpsj.PACKINGSLIPID IS NOT NULL
 
 UNION ALL
 

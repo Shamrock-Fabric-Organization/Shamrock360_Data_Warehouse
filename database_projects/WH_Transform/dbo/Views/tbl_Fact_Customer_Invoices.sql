@@ -131,6 +131,7 @@ select  cit.dataareaid CMPNY
 , ISNULL(dso.SalesOrderKey, -1) SalesOrderKey
 	, ISNULL(da.AddressKey, -1) DeliveryAddressKey
 	, ISNULL(dect.EmployeeKey, -1) CustAcct_EmployeeKey
+	, ISNULL(dinv.InvoiceKey, -1) InvoiceKey
 
 -- =========================== ADDED: currency-conversion audit columns ===========================
 -- FROM-currency audit columns (one per basis) so converted values are self-documenting.
@@ -330,7 +331,15 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_SalesOrder dso
 
 LEFT JOIN WH_Transform.dbo.tbl_DIM_Address da
 	ON cit.deliverypostaladdress = da.AddressRecID
-		AND dso.RecordStatus=1
+		AND da.RecordStatus=1 -- was dso.RecordStatus=1: the filter belongs to the address dimension (2026-11-13)
+
+-- =========================== ADDED: invoice dimension key =====================================
+LEFT JOIN WH_Transform.dbo.tbl_DIM_Invoice dinv
+	ON cit.dataareaid = dinv.CMPNY
+		AND cit.invoiceid = dinv.Invoice_ID
+		AND cit.invoicedate = dinv.InvoiceDate
+		AND isnull(cit.salesid,'none') = dinv.Sales_ID
+		AND dinv.RecordStatus=1
 
 -- =========================== ADDED: Salestable Customer CustomerAccount EmployeeKey =====================
 LEFT JOIN WH_Raw.dbo.salestable ST

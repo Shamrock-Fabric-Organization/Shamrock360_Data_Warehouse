@@ -1,3 +1,4 @@
+
 /*
 ================================================================================
   Script  : DIM_SurrogateKey_DuplicateCheck.sql
@@ -85,6 +86,18 @@ FROM (
         SELECT 'dbo', 'tbl_DIM_GL_Account', 'GL_AccountKey'
             ,COUNT(1), ISNULL(MAX(cnt), 0)
         FROM (SELECT GL_AccountKey, COUNT(1) AS cnt FROM dbo.tbl_DIM_GL_Account GROUP BY GL_AccountKey HAVING COUNT(1) > 1) x
+
+        UNION ALL
+
+        SELECT 'dbo', 'tbl_DIM_Invoice', 'InvoiceKey'
+            ,COUNT(1), ISNULL(MAX(cnt), 0)
+        FROM (SELECT InvoiceKey, COUNT(1) AS cnt FROM dbo.tbl_DIM_Invoice GROUP BY InvoiceKey HAVING COUNT(1) > 1) x
+
+        UNION ALL
+
+        SELECT 'dbo', 'tbl_DIM_InvoiceCharge', 'InvoiceChargeKey'
+            ,COUNT(1), ISNULL(MAX(cnt), 0)
+        FROM (SELECT InvoiceChargeKey, COUNT(1) AS cnt FROM dbo.tbl_DIM_InvoiceCharge GROUP BY InvoiceChargeKey HAVING COUNT(1) > 1) x
 
         UNION ALL
 

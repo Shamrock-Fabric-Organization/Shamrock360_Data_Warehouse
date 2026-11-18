@@ -1,6 +1,4 @@
-
-
-CREATE        VIEW [dbo].[tbl_Fact_FinishedGoodsRawMaterials] as
+CREATE OR ALTER        VIEW [dbo].[tbl_Fact_FinishedGoodsRawMaterials] as
 SELECT [ExplodedFormulaKey]
 	,[DataAreaId]
 	,[FgItemId]
@@ -10,6 +8,7 @@ SELECT [ExplodedFormulaKey]
 	,[RmSiteId]
 	----,[LbsPerLbFG]
 	,[NativeLbsPerLbFG]  RawMaterialAmtPerLbFG
+	,[NativeLbsPerKgFG]  RawMaterialAmtPerKgFG
 	--,[RmNativeUomId]
 	--,[UomConverted]
 	--,[UomConversionMissing]
@@ -61,41 +60,3 @@ LEFT JOIN tbl_DIM_Site rmds
 	AND rmds.RecordStatus = 1
 
 WHERE [IsCurrentPeriod] = 1
-
-/*
-select distinct FgItemId
-FROM tbl_ExplodedFormula_ByVersion  f
-where bomlevel = 10
-
-
-
-select *
-FROM tbl_ExplodedFormula_ByVersion  f
-WHERE FGitemid in
-(
-'11334',
-'11427',
-'11802',
-'11339'
-)
-order by 2,3,4,6
-*/
-
-/*
-select distinct FgItemId
-FROM tbl_ExplodedFormula_ByVersion  f
-where bomlevel = 10
-
-
-
-select *
-FROM tbl_ExplodedFormula_ByVersion  f
-WHERE FGitemid in
-(
-'11334',
-'11427',
-'11802',
-'11339'
-)
-order by 2,3,4,6
-*/

@@ -11,6 +11,7 @@ CREATE TABLE [dbo].[tbl_ExplodedFormula_ByVersion] (
 	[RmSiteId] varchar(8000) NULL, 
 	[LbsPerLbFG] decimal(28,8) NULL, 
 	[NativeLbsPerLbFG] decimal(28,8) NULL, 
+	[NativeLbsPerKgFG] decimal(28,8) NULL, 
 	[RmNativeUomId] varchar(8000) NULL, 
 	[UomConverted] int NULL, 
 	[UomConversionMissing] int NULL, 

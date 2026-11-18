@@ -8,6 +8,7 @@ CREATE TABLE [dbo].[tbl_Fact_FinishedGoodsRawMaterials] (
 	[RawMaterialProductID] varchar(8000) NULL, 
 	[RmSiteId] varchar(8000) NULL, 
 	[RawMaterialAmtPerLbFG] decimal(28,8) NULL, 
+	[RawMaterialAmtPerKgFG] decimal(28,8) NULL, 
 	[BomPath] varchar(8000) NULL, 
 	[BomLevel] int NULL, 
 	[PeriodFromDate] datetime2(3) NULL, 

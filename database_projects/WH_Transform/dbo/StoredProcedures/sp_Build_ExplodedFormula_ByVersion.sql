@@ -1053,6 +1053,9 @@ BEGIN
     --   yield bags per FG-formula-UOM.  Stored in LbsPerLbFG; UomConversionMissing=1
     --   identifies these rows.  NULL if FG conversion factor is missing.
     -- =========================================================================
+    -- D365 kilogram unit symbol: the literal 'kg' appears once, in the uc_fg_kg_to_lb join below (collation is case-insensitive).
+    -- NativeLbsPerLbFG and NativeLbsPerKgFG are NULL when the finished good's own formula unit
+    -- has no LB conversion (the root flag; same rule as Step 1 FormulaUomConversionMissing).
     CREATE TABLE stage_fml_Result_New AS
     SELECT ex.[DATAAREAID]
         , ex.[FgItemId]
@@ -1074,7 +1077,24 @@ BEGIN
               AS DECIMAL(28,8))
             ELSE ex.[QtyLbsPerLbFG]
           END                                       AS LbsPerLbFG
-        , ex.[NativeQtyPerLbFG]         AS NativeLbsPerLbFG
+        , CASE
+            WHEN fg_it.[BOMUNITID] <> 'LB'
+             AND uc_fg_lb.[UOMConversionFactor] IS NULL    THEN CAST(NULL AS DECIMAL(28,8))
+            ELSE ex.[NativeQtyPerLbFG]
+          END                                       AS NativeLbsPerLbFG
+        -- Same quantity per 1 kg of FG = per lb FG x lb per kg. D365 stores kg -> lb, so multiply by that stored factor.
+        -- NULL when the FG has no LB conversion, or the kg -> lb factor is missing, NULL or <= 0.
+        -- Both inputs are narrowed so the product stays at precision 37 / scale 18; otherwise SQL cuts the scale to 6 before rounding to 8 decimals.
+        , CASE
+            WHEN fg_it.[BOMUNITID] <> 'LB'
+             AND uc_fg_lb.[UOMConversionFactor] IS NULL    THEN CAST(NULL AS DECIMAL(28,8))
+            WHEN uc_fg_kg_to_lb.[UOMConversionFactor] IS NULL    THEN CAST(NULL AS DECIMAL(28,8))
+            WHEN uc_fg_kg_to_lb.[UOMConversionFactor] <= 0       THEN CAST(NULL AS DECIMAL(28,8))
+            ELSE CAST(
+                    CAST(ex.[NativeQtyPerLbFG] AS DECIMAL(20,8))
+                  * CAST(uc_fg_kg_to_lb.[UOMConversionFactor] AS DECIMAL(16,10))
+                 AS DECIMAL(28,8))
+          END                                       AS NativeLbsPerKgFG
         , ex.[ComponentNativeUomId]     AS RmNativeUomId
         , ex.[UomConverted]
         , ex.[UomConversionMissing]
@@ -1112,6 +1132,16 @@ BEGIN
         ON  uc_fg_result.[Product]    = fg_it.[PRODUCT]
         AND uc_fg_result.[SymbolFrom] = ex.[FormulaUomId]
         AND uc_fg_result.[SymbolTo]   = ex.[ComponentNativeUomId]
+    -- FG root unit conversion: the FG's own BOM unit -> LB (same join as Step 1)
+    LEFT JOIN WH_Raw.dbo.[vwUnitOfMeasureConversion] uc_fg_lb
+        ON  uc_fg_lb.[Product]    = fg_it.[PRODUCT]
+        AND uc_fg_lb.[SymbolFrom] = fg_it.[BOMUNITID]
+        AND uc_fg_lb.[SymbolTo]   = 'LB'
+    -- kg -> LB for the FG product (the row D365 stores); product-specific rules win per the view's precedence
+    LEFT JOIN WH_Raw.dbo.[vwUnitOfMeasureConversion] uc_fg_kg_to_lb
+        ON  uc_fg_kg_to_lb.[Product]    = fg_it.[PRODUCT]
+        AND uc_fg_kg_to_lb.[SymbolFrom] = 'kg'   -- D365 kilogram unit symbol (D365 stores kg -> lb)
+        AND uc_fg_kg_to_lb.[SymbolTo]   = 'LB'
     -- Leaf nodes only
     WHERE NOT EXISTS (
         SELECT 1
@@ -1138,6 +1168,7 @@ BEGIN
         , [RmSiteId]
         , [LbsPerLbFG]
         , [NativeLbsPerLbFG]
+        , [NativeLbsPerKgFG]
         , [RmNativeUomId]
         , [UomConverted]
         , [UomConversionMissing]
@@ -1181,6 +1212,7 @@ BEGIN
         , r.[RmSiteId]
         , r.[LbsPerLbFG]
         , r.[NativeLbsPerLbFG]
+        , r.[NativeLbsPerKgFG]
         , r.[RmNativeUomId]
         , r.[UomConverted]
         , r.[UomConversionMissing]
@@ -1296,3 +1328,4 @@ BEGIN
     DROP TABLE IF EXISTS stage_fml_Result_New;
 
 END;
+GO

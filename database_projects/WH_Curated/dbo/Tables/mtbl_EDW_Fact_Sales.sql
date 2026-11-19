@@ -13,14 +13,16 @@ CREATE TABLE [dbo].[mtbl_EDW_Fact_Sales] (
 	[SalesLine_ShipDateKey] int NULL, 
 	[SalesLine_DeliveryDate] datetime2(6) NULL, 
 	[SalesLine_DeliveryDateKey] int NULL, 
-	[InvoiceDate] datetime2(6) NULL, 
-	[InvoiceDateKey] int NULL, 
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	[InvoiceDate] datetime2(6) NULL, 
+--	[InvoiceDateKey] int NULL, 
 	[Legal_Entity_ID] varchar(8000) NULL, 
 	[CustomerID] varchar(8000) NULL, 
 	[InvoiceAccount] varchar(8000) NULL, 
 	[ProductID] varchar(8000) NULL, 
 	[CPCID] varchar(8000) NULL, 
-	[InvoiceNo] varchar(8000) NULL, 
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	[InvoiceNo] varchar(8000) NULL, 
 	[Customer_Order_Number] varchar(8000) NULL, 
 	[Quantity] decimal(38,6) NULL, 
 	[Quantity_UoM] varchar(8000) NULL, 
@@ -66,7 +68,7 @@ CREATE TABLE [dbo].[mtbl_EDW_Fact_Sales] (
 
 	[CPCID2] varchar(8000) NULL, 
 	[ProductID2] varchar(8000) NULL, 
-	[IsPhantom2] varchar(3) NULL
+	[IsPhantom2] varchar(3) NULL,
 
 	-- === ADDED: multi-currency conversion columns ===
 	-- Audit: FROM-currency for each conversion basis

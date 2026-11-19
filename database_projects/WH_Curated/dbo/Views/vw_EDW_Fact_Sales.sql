@@ -15,15 +15,17 @@ SELECT f.[RecordID]
 	,f.[SalesLine_DeliveryDate]
 	,f.[SalesLine_DeliveryDateKey]
 
-	,f.[InvoiceDate]
-	,f.[InvoiceDateKey]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	,f.[InvoiceDate]
+--	,f.[InvoiceDateKey]
 	,f.[Legal_Entity_ID]
 	,f.[CustomerID]
 	,f.[InvoiceAccount]
 	,TRIM(f.[ProductID]) AS [ProductID]
 
 	,f.[CPCID]
-	,f.[InvoiceNo]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	,f.[InvoiceNo]
 	,f.[Customer_Order_Number]
 	,f.[Quantity]
 	,f.[Quantity_UoM]
@@ -108,16 +110,17 @@ SELECT f.[RecordID]
 	--, f.[TotalCost_EUR]
 	--, f.[TotalCost_CNY]
 
-	, f.[InvoiceLineAmount]
-	, f.[InvoiceLineAmount_USD]
-	, f.[InvoiceLineAmount_EUR]
-	, f.[InvoiceLineAmount_CNY]
-	, f.[InvoiceLineAmountMST]
-	, f.[InvoiceCurrency_Code]
-	, f.[InvoiceSalesUnit]
-	, f.[InvoiceQty]
-	, f.[InvoiceQuantity_LBs]
-	, f.[InvoiceQuantity_KGs]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, f.[InvoiceLineAmount]
+--	, f.[InvoiceLineAmount_USD]
+--	, f.[InvoiceLineAmount_EUR]
+--	, f.[InvoiceLineAmount_CNY]
+--	, f.[InvoiceLineAmountMST]
+--	, f.[InvoiceCurrency_Code]
+--	, f.[InvoiceSalesUnit]
+--	, f.[InvoiceQty]
+--	, f.[InvoiceQuantity_LBs]
+--	, f.[InvoiceQuantity_KGs]
 
 	-- Rate-missing flags (1 = real conversion needed but no rate row found)
 	, f.[Txn_USD_Rate_Missing]
@@ -127,9 +130,10 @@ SELECT f.[RecordID]
 	, f.[Cost_EUR_Rate_Missing]
 	, f.[Cost_CNY_Rate_Missing]
 
-	, f.[InvoiceTxn_USD_Rate_Missing]
-	, f.[InvoiceTxn_EUR_Rate_Missing]
-	, f.[InvoiceTxn_CNY_Rate_Missing]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, f.[InvoiceTxn_USD_Rate_Missing]
+--	, f.[InvoiceTxn_EUR_Rate_Missing]
+--	, f.[InvoiceTxn_CNY_Rate_Missing]
 
 
 
@@ -175,8 +179,9 @@ Union ALL
 	,CONVERT(datetime2(6), '01/01/1900') as [SalesLine_DeliveryDate]
 	,convert(int, 19000101) as [SalesLine_DeliveryDateKey]
 
-	,isnull(case when [InvoiceDate]<'01/01/1900' then '01/01/1900' else [InvoiceDate] end, '01/01/1900') AS [InvoiceDate]
-	,convert(int, convert(char(8),case when [InvoiceDate]<'01/01/1900' then '01/01/1900' else [InvoiceDate] end,112)) as [InvoiceDateKey]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	,isnull(case when [InvoiceDate]<'01/01/1900' then '01/01/1900' else [InvoiceDate] end, '01/01/1900') AS [InvoiceDate]
+--	,convert(int, convert(char(8),case when [InvoiceDate]<'01/01/1900' then '01/01/1900' else [InvoiceDate] end,112)) as [InvoiceDateKey]
 	,CASE WHEN s.Cmpny='001' then '101' else s.Cmpny end as [Legal_Entity_ID]
 	,COALESCE(y.D365_CustomerID, s.CustomerID)  as CustomerID
 	,null as [InvoiceAccount]
@@ -196,7 +201,8 @@ Union ALL
 		 --else s.Cmpny end
 			--+'-'+ COALESCE(y.D365_CustomerID, s.CustomerID, 'UnknownCustomer')
 			--+'-'+ COALESCE(x.D365_ProductID, s.Product, 'UnknownProduct') 	CPCID
-	,[Invoice No] as [InvoiceNo]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	,[Invoice No] as [InvoiceNo]
 	,[Order No] as [Customer_Order_Number]
 	,[Volume] as [Quantity]
 	,'LB' as [Quantity_UoM]
@@ -302,16 +308,17 @@ Union ALL
 	--, null as [TotalCost_EUR]
 	--, null as [TotalCost_CNY]
 
-	, CONVERT(decimal(38,6), [Revenue]) [InvoiceLineAmount]
-	, CONVERT(decimal(38,6), [Revenue]) as [InvoiceLineAmount_USD]
-	, erTxnEUR.ExchangeRate * CONVERT(decimal(38,6), [Revenue]) as [InvoiceLineAmount_EUR]
-	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,6), [Revenue]) as [InvoiceLineAmount_CNY]
-	, NULL [InvoiceLineAmountMST]
-	, 'USD' [InvoiceCurrency_Code]
-	,'LB' as [InvoiceSalesUnit]
-	,[Volume] as [InvoiceQty]
-	,CONVERT(decimal(38,6), [Volume]) as [InvoiceQuantity_LBs]
-	,CONVERT(decimal(38,6), [Volume]) * 0.45359237 as [InvoiceQuantity_KGs]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, CONVERT(decimal(38,6), [Revenue]) [InvoiceLineAmount]
+--	, CONVERT(decimal(38,6), [Revenue]) as [InvoiceLineAmount_USD]
+--	, erTxnEUR.ExchangeRate * CONVERT(decimal(38,6), [Revenue]) as [InvoiceLineAmount_EUR]
+--	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,6), [Revenue]) as [InvoiceLineAmount_CNY]
+--	, NULL [InvoiceLineAmountMST]
+--	, 'USD' [InvoiceCurrency_Code]
+--	,'LB' as [InvoiceSalesUnit]
+--	,[Volume] as [InvoiceQty]
+--	,CONVERT(decimal(38,6), [Volume]) as [InvoiceQuantity_LBs]
+--	,CONVERT(decimal(38,6), [Volume]) * 0.45359237 as [InvoiceQuantity_KGs]
 
 
 	-- Rate-missing flags (1 = real conversion needed but no rate row found)
@@ -322,9 +329,10 @@ Union ALL
 	, null as [Cost_EUR_Rate_Missing]
 	, null as [Cost_CNY_Rate_Missing]
 
-	, 0 as [InvoiceTxn_USD_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_EUR_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_CNY_Rate_Missing]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, 0 as [InvoiceTxn_USD_Rate_Missing]
+--	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_EUR_Rate_Missing]
+--	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_CNY_Rate_Missing]
 
 FROM [dbo].[legacy_tbl_Fact_Sales] s
 
@@ -593,8 +601,9 @@ SELECT  ABS(CAST(CAST(
 	,CONVERT(datetime2(6), '01/01/1900') as [SalesLine_DeliveryDate]
 	,convert(int, 19000101) as [SalesLine_DeliveryDateKey]
 
-	, case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end AS InvoiceDate
-	, convert(int, convert(char(8), case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end,112))	InvoiceDateDateKey
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end AS InvoiceDate
+--	, convert(int, convert(char(8), case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end,112))	InvoiceDateDateKey
 
 	
 
@@ -619,7 +628,8 @@ SELECT  ABS(CAST(CAST(
 			+'-'+ COALESCE(y.D365_CustomerID, Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
 			+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 	CPCID
 	----, 'A' + Trim(f.Cmpny) + Trim([Customer No]) + Trim([Ship To No]) + '---' + Trim(f.Product) AS CPCID
-	, [Invoice No]  InvoiceNo
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, [Invoice No]  InvoiceNo
 	, [Order No]  Customer_Order_Number
 	, [Lbs Shipped] as [Quantity]
 	, 'LB' as [Quantity_UoM]
@@ -725,16 +735,17 @@ SELECT  ABS(CAST(CAST(
 	--, null as [TotalCost_EUR]
 	--, null as [TotalCost_CNY]
 	
-	, CONVERT(decimal(38,2), Extension) [InvoiceLineAmount]
-	, erTxnUSD.ExchangeRate * CONVERT(decimal(38,2), Extension)   as [InvoiceLineAmount_USD]
-	, CONVERT(decimal(38,2), Extension)                           as [InvoiceLineAmount_EUR]
-	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,2), Extension)   as [InvoiceLineAmount_CNY]
-	, NULL [InvoiceLineAmountMST]
-	, 'EUR' [InvoiceCurrency_Code]
-	,'LB' as [InvoiceSalesUnit]
-	,[Lbs Shipped] as [InvoiceQty]
-	,CONVERT(decimal(38,6), [Lbs Shipped]) as [InvoiceQuantity_LBs]
-	,CONVERT(decimal(38,6), [Lbs Shipped]) * 0.45359237 as [InvoiceQuantity_KGs]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, CONVERT(decimal(38,2), Extension) [InvoiceLineAmount]
+--	, erTxnUSD.ExchangeRate * CONVERT(decimal(38,2), Extension)   as [InvoiceLineAmount_USD]
+--	, CONVERT(decimal(38,2), Extension)                           as [InvoiceLineAmount_EUR]
+--	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,2), Extension)   as [InvoiceLineAmount_CNY]
+--	, NULL [InvoiceLineAmountMST]
+--	, 'EUR' [InvoiceCurrency_Code]
+--	,'LB' as [InvoiceSalesUnit]
+--	,[Lbs Shipped] as [InvoiceQty]
+--	,CONVERT(decimal(38,6), [Lbs Shipped]) as [InvoiceQuantity_LBs]
+--	,CONVERT(decimal(38,6), [Lbs Shipped]) * 0.45359237 as [InvoiceQuantity_KGs]
 
 	-- Rate-missing flags (1 = real conversion needed but no rate row found)
 	, CASE WHEN erTxnUSD.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [Txn_USD_Rate_Missing]
@@ -744,9 +755,10 @@ SELECT  ABS(CAST(CAST(
 	, null as [Cost_EUR_Rate_Missing]
 	, null as [Cost_CNY_Rate_Missing]
 
-	, CASE WHEN erTxnUSD.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_USD_Rate_Missing]
-	, 0 as [InvoiceTxn_EUR_Rate_Missing]
-	, CASE WHEN erTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_CNY_Rate_Missing]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, CASE WHEN erTxnUSD.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_USD_Rate_Missing]
+--	, 0 as [InvoiceTxn_EUR_Rate_Missing]
+--	, CASE WHEN erTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_CNY_Rate_Missing]
 
 FROM tbl_RESULTSSLSBYYR_BVBA f
 
@@ -1073,8 +1085,9 @@ SELECT  ABS(CAST(CAST(
 	,CONVERT(datetime2(6), '01/01/1900') as [SalesLine_DeliveryDate]
 	,convert(int, 19000101) as [SalesLine_DeliveryDateKey]
 
-	, CONVERT(datetime2(6), f.[Invoice Date] ) AS InvoiceDate
-	, convert(int, convert(char(8), CONVERT(datetime2(6), f.[Invoice Date] ),112))	InvoiceDateDateKey
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, CONVERT(datetime2(6), f.[Invoice Date] ) AS InvoiceDate
+--	, convert(int, convert(char(8), CONVERT(datetime2(6), f.[Invoice Date] ),112))	InvoiceDateDateKey
 	, '501' as [Legal_Entity_ID]  --Changed from 201 to 501 for D365
 
 	, 'A201'+Trim(f.[Customer No])+'000000'  CustomerID
@@ -1085,7 +1098,8 @@ SELECT  ABS(CAST(CAST(
 			+'-'+ COALESCE(Trim(f.[Customer No]) + '000000', 'UnknownCustomer')
 			+'-'+ COALESCE(x.D365_ProductID, Trim(f.[Product Name]), 'UnknownProduct') 	CPCID
 	----, 'A201'+Trim(f.[Customer No])+'000000'+'---'+Trim(f.[Product Name]) AS CPCID
-	, [Invoice No]  InvoiceNo
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, [Invoice No]  InvoiceNo
 	, [Order No]  Customer_Order_Number
 	, [Net Weight LBS] as [Quantity]
 	, 'LB' as [Quantity_UoM]
@@ -1184,16 +1198,17 @@ SELECT  ABS(CAST(CAST(
 	--, null as [TotalCost_EUR]
 	--, null as [TotalCost_CNY]
 		
-	, CONVERT(decimal(38,6), [Net Amount]) [InvoiceLineAmount]
-	, CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_USD]
-	, erTxnEUR.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_EUR]
-	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_CNY]
-	, NULL [InvoiceLineAmountMST]
-	, 'USD' [InvoiceCurrency_Code]
-	,'LB' as [InvoiceSalesUnit]
-	,[Net Weight LBS] as [InvoiceQty]
-	,CONVERT(decimal(38,6), [Net Weight LBS]) as [InvoiceQuantity_LBs]
-	,CONVERT(decimal(38,6), [Net Weight LBS]) * 0.45359237 as [InvoiceQuantity_KGs]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, CONVERT(decimal(38,6), [Net Amount]) [InvoiceLineAmount]
+--	, CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_USD]
+--	, erTxnEUR.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_EUR]
+--	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_CNY]
+--	, NULL [InvoiceLineAmountMST]
+--	, 'USD' [InvoiceCurrency_Code]
+--	,'LB' as [InvoiceSalesUnit]
+--	,[Net Weight LBS] as [InvoiceQty]
+--	,CONVERT(decimal(38,6), [Net Weight LBS]) as [InvoiceQuantity_LBs]
+--	,CONVERT(decimal(38,6), [Net Weight LBS]) * 0.45359237 as [InvoiceQuantity_KGs]
 
 	-- Rate-missing flags (1 = real conversion needed but no rate row found)
 	, 0 as [Txn_USD_Rate_Missing]
@@ -1203,9 +1218,10 @@ SELECT  ABS(CAST(CAST(
 	, null as [Cost_EUR_Rate_Missing]
 	, null as [Cost_CNY_Rate_Missing]
 	
-	, 0 as [InvoiceTxn_USD_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_EUR_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_CNY_Rate_Missing]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, 0 as [InvoiceTxn_USD_Rate_Missing]
+--	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_EUR_Rate_Missing]
+--	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_CNY_Rate_Missing]
 
 from tbl_RESULTSSLSBYYR_TEDA f
 left join [dbo].[XREF_Product_ID] X 
@@ -1845,8 +1861,9 @@ SELECT  ABS(CAST(CAST(
 	,CONVERT(datetime2(6), '01/01/1900') as [SalesLine_DeliveryDate]
 	,convert(int, 19000101) as [SalesLine_DeliveryDateKey]
 
-	, CONVERT(datetime2(6), f.[expected Ship Date] ) AS InvoiceDate
-	, convert(int, convert(char(8), CONVERT(datetime2(6), f.[expected Ship Date] ),112))	InvoiceDateDateKey
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, CONVERT(datetime2(6), f.[expected Ship Date] ) AS InvoiceDate
+--	, convert(int, convert(char(8), CONVERT(datetime2(6), f.[expected Ship Date] ),112))	InvoiceDateDateKey
 	, '501' as [Legal_Entity_ID]  --Changed from 201 to 501 for D365
 
 	, 'A201'+Trim(f.[Customer No])+'000000' CustomerID
@@ -1857,7 +1874,8 @@ SELECT  ABS(CAST(CAST(
 			+'-'+ COALESCE(Trim(f.[Customer No]) + '000000', 'UnknownCustomer')
 			+'-'+ COALESCE(x.D365_ProductID, Trim(f.[Product Name]), 'UnknownProduct') 	CPCID
 	--, 'A201'+Trim([Customer No])+'000000'+'---'+Trim([Product Name]) AS CPCID
-	, [Invoice No]  InvoiceNo
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, [Invoice No]  InvoiceNo
 	, [Order No]  Customer_Order_Number
 	, [Net Weight LBS] as [Quantity]
 	, 'LB' as [Quantity_UoM]
@@ -1955,16 +1973,17 @@ SELECT  ABS(CAST(CAST(
 	--, null as [TotalCost_EUR]
 	--, null as [TotalCost_CNY]
 
-	, CONVERT(decimal(38,6), [Net Amount]) [InvoiceLineAmount]
-	, CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_USD]
-	, erTxnEUR.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_EUR]
-	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_CNY]
-	, NULL [InvoiceLineAmountMST]
-	, 'USD' [InvoiceCurrency_Code]
-	,'LB' as [InvoiceSalesUnit]
-	,[Net Weight LBS] as [InvoiceQty]
-	,CONVERT(decimal(38,6), [Net Weight LBS]) as [InvoiceQuantity_LBs]
-	,CONVERT(decimal(38,6), [Net Weight LBS]) * 0.45359237 as [InvoiceQuantity_KGs]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, CONVERT(decimal(38,6), [Net Amount]) [InvoiceLineAmount]
+--	, CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_USD]
+--	, erTxnEUR.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_EUR]
+--	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_CNY]
+--	, NULL [InvoiceLineAmountMST]
+--	, 'USD' [InvoiceCurrency_Code]
+--	,'LB' as [InvoiceSalesUnit]
+--	,[Net Weight LBS] as [InvoiceQty]
+--	,CONVERT(decimal(38,6), [Net Weight LBS]) as [InvoiceQuantity_LBs]
+--	,CONVERT(decimal(38,6), [Net Weight LBS]) * 0.45359237 as [InvoiceQuantity_KGs]
 
 	-- Rate-missing flags (1 = real conversion needed but no rate row found)
 	, 0 as [Txn_USD_Rate_Missing]
@@ -1974,9 +1993,10 @@ SELECT  ABS(CAST(CAST(
 	, null as [Cost_EUR_Rate_Missing]
 	, null as [Cost_CNY_Rate_Missing]
 	
-	, 0 as [InvoiceTxn_USD_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_EUR_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_CNY_Rate_Missing]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, 0 as [InvoiceTxn_USD_Rate_Missing]
+--	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_EUR_Rate_Missing]
+--	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_CNY_Rate_Missing]
 
 from tbl_RESULTSSLSBYYR_TEDA f
 left join [dbo].[XREF_Product_ID] X 
@@ -2215,8 +2235,9 @@ UNION ALL
 	,19000101 as [SalesLine_ShipDateKey]
 	,'01/01/1900' as [SalesLine_DeliveryDate]
 	,19000101 as [SalesLine_DeliveryDateKey]
-	,'01/01/1900' AS [InvoiceDate]
-	,19000101 as [InvoiceDateKey]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	,'01/01/1900' AS [InvoiceDate]
+--	,19000101 as [InvoiceDateKey]
 	,CASE WHEN s.Cmpny='001' then '101' else s.Cmpny end as [Legal_Entity_ID]
 	,null as CustomerID
 	,s.[Reconciliation_Year]  as [InvoiceAccount]
@@ -2227,7 +2248,8 @@ UNION ALL
 		 WHEN s.CMPNY = '999' THEN '301'
 		 else s.Cmpny end
 			+'-'+  'ADJUSTMENT' as CPCID
-	,null as [InvoiceNo]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	,null as [InvoiceNo]
 	,null as [Customer_Order_Number]
 	,0 as [Quantity]
 	,null as [Quantity_UoM]
@@ -2308,16 +2330,17 @@ UNION ALL
 	--, null as [TotalCost_EUR]
 	--, null as [TotalCost_CNY]
 
-	, CONVERT(decimal(38,6), s.[Total_Adjustments]) [InvoiceLineAmount]
-	, CONVERT(decimal(38,6), s.[Total_Adjustments]) as [InvoiceLineAmount_USD]
-	, erTxnEUR.ExchangeRate * CONVERT(decimal(38,6), s.[Total_Adjustments]) as [InvoiceLineAmount_EUR]
-	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,6), s.[Total_Adjustments]) as [InvoiceLineAmount_CNY]
-	, NULL [InvoiceLineAmountMST]
-	, 'USD' [InvoiceCurrency_Code]
-	,NULL as [InvoiceSalesUnit]
-	,0 as [InvoiceQty]
-	,0 [InvoiceQuantity_LBs]
-	,0 [InvoiceQuantity_KGs]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, CONVERT(decimal(38,6), s.[Total_Adjustments]) [InvoiceLineAmount]
+--	, CONVERT(decimal(38,6), s.[Total_Adjustments]) as [InvoiceLineAmount_USD]
+--	, erTxnEUR.ExchangeRate * CONVERT(decimal(38,6), s.[Total_Adjustments]) as [InvoiceLineAmount_EUR]
+--	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,6), s.[Total_Adjustments]) as [InvoiceLineAmount_CNY]
+--	, NULL [InvoiceLineAmountMST]
+--	, 'USD' [InvoiceCurrency_Code]
+--	,NULL as [InvoiceSalesUnit]
+--	,0 as [InvoiceQty]
+--	,0 [InvoiceQuantity_LBs]
+--	,0 [InvoiceQuantity_KGs]
 
 
 
@@ -2329,9 +2352,10 @@ UNION ALL
 	, null as [Cost_EUR_Rate_Missing]
 	, null as [Cost_CNY_Rate_Missing]
 	
-	, 0 as [InvoiceTxn_USD_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_EUR_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_CNY_Rate_Missing]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, 0 as [InvoiceTxn_USD_Rate_Missing]
+--	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_EUR_Rate_Missing]
+--	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_CNY_Rate_Missing]
 
 FROM [dbo].[tbl_Reconciliation_Adjustments] s
 left outer join (select [Reconciliation Year], min(date) Date, min(datekey) DateKey FROM [dbo].[tbl_Dim_Date] group by [Reconciliation Year]) d on
@@ -2409,8 +2433,9 @@ SELECT  ABS(CAST(CAST(
 	,CONVERT(datetime2(6), '01/01/1900') as [SalesLine_DeliveryDate]
 	,convert(int, 19000101) as [SalesLine_DeliveryDateKey]
 
-	, case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end AS InvoiceDate
-	, convert(int, convert(char(8), case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end,112))	InvoiceDateDateKey
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end AS InvoiceDate
+--	, convert(int, convert(char(8), case when CONVERT(datetime2(6), [Invoice Date] )<'01/01/1900' then '01/01/1900' else CONVERT(datetime2(6), [Invoice Date] ) end,112))	InvoiceDateDateKey
 
 	
 
@@ -2437,7 +2462,8 @@ SELECT  ABS(CAST(CAST(
 			+'-'+ COALESCE(y.D365_CustomerID, Trim(f.[Customer No]) + RIGHT('000000' + TRIM(CAST(f.[Ship to No] AS varchar(20))), 6), 'UnknownCustomer')
 			+'-'+ COALESCE(x.D365_ProductID, Trim(f.Product), 'UnknownProduct') 	CPCID
 	--, 'A' + Trim(f.Cmpny) + Trim([Customer No]) + Trim([Ship To No]) + '---' + Trim(f.Product) AS CPCID
-	, [Invoice No]  InvoiceNo
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, [Invoice No]  InvoiceNo
 	, [Order No]  Customer_Order_Number
 	, [Lbs Shipped] as [Quantity]
 	, 'LB' as [Quantity_UoM]
@@ -2543,16 +2569,17 @@ SELECT  ABS(CAST(CAST(
 	--, null as [TotalCost_EUR]
 	--, null as [TotalCost_CNY]
 		
-	, CONVERT(decimal(38,2), Extension) [InvoiceLineAmount]
-	, erTxnUSD.ExchangeRate * CONVERT(decimal(38,2), Extension)   as [InvoiceLineAmount_USD]
-	, CONVERT(decimal(38,2), Extension)                           as [InvoiceLineAmount_EUR]
-	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,2), Extension)   as [InvoiceLineAmount_CNY]
-	, NULL [InvoiceLineAmountMST]
-	, 'EUR' [InvoiceCurrency_Code]
-	, 'LB' as [InvoiceSalesUnit]
-	, [Lbs Shipped] as [InvoiceQty]
-	, CONVERT(decimal(38,6), [Lbs Shipped]) as [InvoiceQuantity_LBs]
-	, CONVERT(decimal(38,6), [Lbs Shipped]) * 0.45359237 as [InvoiceQuantity_KGs]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, CONVERT(decimal(38,2), Extension) [InvoiceLineAmount]
+--	, erTxnUSD.ExchangeRate * CONVERT(decimal(38,2), Extension)   as [InvoiceLineAmount_USD]
+--	, CONVERT(decimal(38,2), Extension)                           as [InvoiceLineAmount_EUR]
+--	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,2), Extension)   as [InvoiceLineAmount_CNY]
+--	, NULL [InvoiceLineAmountMST]
+--	, 'EUR' [InvoiceCurrency_Code]
+--	, 'LB' as [InvoiceSalesUnit]
+--	, [Lbs Shipped] as [InvoiceQty]
+--	, CONVERT(decimal(38,6), [Lbs Shipped]) as [InvoiceQuantity_LBs]
+--	, CONVERT(decimal(38,6), [Lbs Shipped]) * 0.45359237 as [InvoiceQuantity_KGs]
 
 
 	-- Rate-missing flags (1 = real conversion needed but no rate row found)
@@ -2563,9 +2590,10 @@ SELECT  ABS(CAST(CAST(
 	, null as [Cost_EUR_Rate_Missing]
 	, null as [Cost_CNY_Rate_Missing]
 	
-	, CASE WHEN erTxnUSD.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_USD_Rate_Missing]
-	, 0 as [InvoiceTxn_EUR_Rate_Missing]
-	, CASE WHEN erTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_CNY_Rate_Missing]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, CASE WHEN erTxnUSD.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_USD_Rate_Missing]
+--	, 0 as [InvoiceTxn_EUR_Rate_Missing]
+--	, CASE WHEN erTxnCNY.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_CNY_Rate_Missing]
 
 FROM tbl_RESULTSSLSBYYR_BVBA_Thru2025 f
 
@@ -2907,8 +2935,9 @@ SELECT  ABS(CAST(CAST(
 	,CONVERT(datetime2(6), '01/01/1900') as [SalesLine_DeliveryDate]
 	,convert(int, 19000101) as [SalesLine_DeliveryDateKey]
 
-	, CONVERT(datetime2(6), f.[Invoice Date] ) AS InvoiceDate
-	, convert(int, convert(char(8), CONVERT(datetime2(6), f.[Invoice Date] ),112))	InvoiceDateDateKey
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, CONVERT(datetime2(6), f.[Invoice Date] ) AS InvoiceDate
+--	, convert(int, convert(char(8), CONVERT(datetime2(6), f.[Invoice Date] ),112))	InvoiceDateDateKey
 	, '501' as [Legal_Entity_ID]  --Changed from 201 to 501 for D365
 
 	, 'A201'+Trim(f.[Customer No])+'000000'  CustomerID
@@ -2919,7 +2948,8 @@ SELECT  ABS(CAST(CAST(
 			+'-'+ COALESCE(Trim(f.[Customer No]) + '000000', 'UnknownCustomer')
 			+'-'+ COALESCE(x.D365_ProductID, Trim(f.[Product Name]), 'UnknownProduct') 	CPCID
 	--, 'A201'+Trim(f.[Customer No])+'000000'+'---'+Trim(f.[Product Name]) AS CPCID
-	, [Invoice No]  InvoiceNo
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, [Invoice No]  InvoiceNo
 	, [Order No]  Customer_Order_Number
 	, [Net Weight LBS] as [Quantity]
 	, 'LB' as [Quantity_UoM]
@@ -3017,16 +3047,17 @@ SELECT  ABS(CAST(CAST(
 	--, null as [TotalCost_EUR]
 	--, null as [TotalCost_CNY]
 
-	, CONVERT(decimal(38,6), [Net Amount]) [InvoiceLineAmount]
-	, CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_USD]
-	, erTxnEUR.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_EUR]
-	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_CNY]
-	, NULL [InvoiceLineAmountMST]
-	, 'USD' [InvoiceCurrency_Code]
-	, 'LB' as [InvoiceSalesUnit]
-	, [Net Weight LBS] as [InvoiceQty]
-	, CONVERT(decimal(38,6), [Net Weight LBS]) as [InvoiceQuantity_LBs]
-	, CONVERT(decimal(38,6), [Net Weight LBS]) * 0.45359237 as [InvoiceQuantity_KGs]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, CONVERT(decimal(38,6), [Net Amount]) [InvoiceLineAmount]
+--	, CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_USD]
+--	, erTxnEUR.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_EUR]
+--	, erTxnCNY.ExchangeRate * CONVERT(decimal(38,6), [Net Amount]) as [InvoiceLineAmount_CNY]
+--	, NULL [InvoiceLineAmountMST]
+--	, 'USD' [InvoiceCurrency_Code]
+--	, 'LB' as [InvoiceSalesUnit]
+--	, [Net Weight LBS] as [InvoiceQty]
+--	, CONVERT(decimal(38,6), [Net Weight LBS]) as [InvoiceQuantity_LBs]
+--	, CONVERT(decimal(38,6), [Net Weight LBS]) * 0.45359237 as [InvoiceQuantity_KGs]
 
 
 	-- Rate-missing flags (1 = real conversion needed but no rate row found)
@@ -3037,9 +3068,10 @@ SELECT  ABS(CAST(CAST(
 	, null as [Cost_EUR_Rate_Missing]
 	, null as [Cost_CNY_Rate_Missing]
 	
-	, 0 as [InvoiceTxn_USD_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_EUR_Rate_Missing]
-	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_CNY_Rate_Missing]
+-- As of 2026-11-18, removed due to duplicates when combining invoice and sales data.
+--	, 0 as [InvoiceTxn_USD_Rate_Missing]
+--	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_EUR_Rate_Missing]
+--	, CASE WHEN erTxnEUR.ExchangeRate  IS NULL THEN 1 ELSE 0 END as [InvoiceTxn_CNY_Rate_Missing]
 
 from tbl_RESULTSSLSBYYR_TEDA_Thru2025 f
 left join [dbo].[XREF_Product_ID] X 

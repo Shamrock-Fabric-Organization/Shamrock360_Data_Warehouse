@@ -17,7 +17,7 @@ SELECT
 	,IT.ItemID	 Product_ID
 	,ERPT.name	 ProductName	
 	,ERP.searchname	 ProductSearchName	
-	,COALESCE(IT.STICommertialName,ERPT.name)	Commercial_Name
+	,COALESCE(CASE WHEN IT.STICommertialName = '' THEN NULL ELSE IT.STICommertialName END,ERPT.name)	Commercial_Name   -- a blank counts as NULL. The D365 link can store a blank as '' instead of NULL.
 	,SC_t.Level3Category	 Technology	 --Type 2 from product attributes
 	,SC_t.Level4Category	 Material	 --Type 2 from product attributes
 	,SC_bl.Level3Category	 Business_Line	 --Type 2 from product attributes

@@ -1,5 +1,4 @@
 
-
 CREATE OR ALTER VIEW [dbo].[vw_stage_DIM_Invoice_incoming]
 as
 SELECT
@@ -23,7 +22,7 @@ SELECT
     cij.dataareaid                                      AS CMPNY,
     cij.invoiceid                                       AS Invoice_ID,
     cij.invoicedate                                     AS InvoiceDate,
-    ISNULL(cij.salesid, 'none')                         AS Sales_ID,
+    ISNULL(CASE WHEN cij.salesid = '' THEN NULL ELSE cij.salesid END, 'none') AS Sales_ID,   -- a blank counts as NULL. The D365 link can store a blank as '' instead of NULL.
 
     cij.orderaccount                                    AS Order_Account,
     cij.invoiceaccount                                  AS Invoice_Account,

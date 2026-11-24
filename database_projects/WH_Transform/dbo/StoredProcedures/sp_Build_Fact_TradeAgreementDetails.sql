@@ -1,5 +1,4 @@
 
-
 --USE WH_Transform
 
 
@@ -275,7 +274,8 @@ SELECT
     ,cv.[DATAAREAID]
     ,LTRIM(RTRIM(s.[value]))                                         AS [value]
 FROM stage_TradeAgreement_customer_cte cv
-CROSS APPLY STRING_SPLIT(REPLACE(cv.InvoiceAccount, ';', ','), ',') AS s;
+CROSS APPLY STRING_SPLIT(REPLACE(cv.InvoiceAccount, ';', ','), ',') AS s
+WHERE LTRIM(RTRIM(s.[value])) <> '';   -- a blank counts as NULL. The D365 link can store a blank as '' instead of NULL.
 
 ------------------------------------------------------------------------------
 -- 2) CustomerAccount explosion  (was: correlated OUTER APPLY cust_split)
@@ -290,8 +290,9 @@ SELECT
     ,LTRIM(RTRIM(s.[value]))                                         AS [value]
 FROM stage_TradeAgreement_customer_cte cv
 CROSS APPLY STRING_SPLIT(REPLACE(cv.CustomerAccount, ';', ','), ',') AS s
-WHERE cv.InvoiceAccount IS NULL
-   OR LTRIM(RTRIM(cv.InvoiceAccount)) = '';
+WHERE LTRIM(RTRIM(s.[value])) <> ''   -- a blank counts as NULL. The D365 link can store a blank as '' instead of NULL.
+  AND (cv.InvoiceAccount IS NULL
+   OR LTRIM(RTRIM(cv.InvoiceAccount)) = '');
 
 ------------------------------------------------------------------------------
 -- 3) ItemNumber explosion  (was: CROSS APPLY item_split)
@@ -304,7 +305,8 @@ SELECT
     ,iv.[DATAAREAID]
     ,LTRIM(RTRIM(s.[value]))                                         AS [value]
 FROM stage_TradeAgreement_item_cte iv
-CROSS APPLY STRING_SPLIT(REPLACE(iv.ItemNumber, ';', ','), ',') AS s;
+CROSS APPLY STRING_SPLIT(REPLACE(iv.ItemNumber, ';', ','), ',') AS s
+WHERE LTRIM(RTRIM(s.[value])) <> '';   -- a blank counts as NULL. The D365 link can store a blank as '' instead of NULL.
 
 
 

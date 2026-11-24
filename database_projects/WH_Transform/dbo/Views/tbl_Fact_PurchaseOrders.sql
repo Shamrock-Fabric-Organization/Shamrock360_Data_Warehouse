@@ -1,5 +1,4 @@
 
-
 CREATE  OR ALTER                   VIEW [dbo].[tbl_Fact_PurchaseOrders] AS 		
 SELECT 
 	pl.dataareaid CMPNY
@@ -164,6 +163,7 @@ LEFT JOIN WH_Raw.dbo.hcmworker HCM
 LEFT JOIN WH_Raw.dbo.pricedisctable pdt
 	ON pdt.dataareaid = pl.dataareaid
 		AND pdt.itemrelation = pl.itemid
+		AND pdt.itemrelation <> ''   -- a blank item matches nothing. The D365 link can store a blank as '' instead of NULL.
 		AND pl.createddatetime between pdt.fromdate and pdt.todate
 
 

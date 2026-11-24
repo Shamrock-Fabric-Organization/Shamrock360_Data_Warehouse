@@ -57,19 +57,24 @@ BEGIN
         OR ISNULL(Target.Total_Overhead_Cost_Standard,                0.00)  <> ISNULL(Source.Total_Overhead_Cost_Standard,                0.00)
         OR ISNULL(Target.TotalCost,                                   0.00)  <> ISNULL(Source.TotalCost,                                   0.00)
         OR ISNULL(Target.accountingcurrency,                             '') <> ISNULL(Source.accountingcurrency,                             '')
+        -- 2026-11-20: a row closed in Step 4 section D ends before it starts. If its natural
+        -- key comes back into the source, rewrite it here so it gets the source EndDate again.
+        OR Target.EndDate < Target.ActivationDate
     );
 
     -- =========================================================================
     -- Step 3: Identify deleted records
-    -- Active rows (RecordStatus IN (1,2)) whose natural key is no longer present
-    -- in the source.  Historical rows (RecordStatus = 0) that are already expired
-    -- are not re-expired.
+    -- Rows in any RecordStatus whose natural key is no longer present in the
+    -- source.
+    -- 2026-11-20: was RecordStatus IN (1,2) only. A row expired on an earlier run
+    -- kept its source EndDate (often 2154-12-31) and still matched transactions
+    -- next to the row that replaced it. Every run now sends all such rows to
+    -- Step 4 section D, so rows expired before this change are closed as well.
     -- =========================================================================
     CREATE TABLE stage_tbl_DIM_StandardCost_Deleted AS
     SELECT *
     FROM tbl_DIM_StandardCost AS Target
-    WHERE Target.RecordStatus IN (1, 2)
-      AND NOT EXISTS (
+    WHERE NOT EXISTS (
             SELECT 1
             FROM vw_stage_DIM_StandardCost_incoming AS Source
             WHERE Source.CMPNY          = Target.CMPNY
@@ -83,7 +88,8 @@ BEGIN
     -- Contains: all DIM rows not being Type1-updated or deleted,
     --           Type1 rows with updated cost columns,
     --           brand-new rows,
-    --           deleted active rows (expired to RecordStatus = 0).
+    --           deleted rows (closed, RecordStatus = 0).
+    -- 2026-11-20: deleted rows were active rows only; now rows in any status (Step 3).
     -- RecordStatus / RecordEffectiveEndDate are placeholders for non-deleted rows
     -- and will be recalculated in Step 5.
     -- =========================================================================
@@ -181,13 +187,17 @@ BEGIN
 
     UNION ALL
 
-    -- -- D. Deleted active rows: expire immediately, skip Step 5 recalculation -
+    -- -- D. Deleted rows: close immediately, skip Step 5 recalculation -------
+    -- 2026-11-20: EndDate and RecordEffectiveEndDate are set to the day before
+    -- ActivationDate, so the row matches no transaction date and no GETDATE().
+    -- The row and its StandardCostKey are kept because stored fact and snapshot
+    -- rows point to it. Before this change EndDate kept the source value.
     SELECT [StandardCostKey]
         ,  [CMPNY]
         ,  [Product_ID]
         ,  [SiteID]
         ,  [ActivationDate]
-        ,  [EndDate]
+        ,  CAST(DATEADD(day, -1, [ActivationDate]) AS DATETIME2(6))  AS EndDate   -- 2026-11-20: closed, was [EndDate]
 
         ,  [Costing_Version]
         ,  [CurrentActiveCost]
@@ -207,8 +217,8 @@ BEGIN
         ,  [Total_Overhead_Cost_Standard]
         ,  [TotalCost]
         ,  [accountingcurrency]
-        ,  [RecordEffectiveStartDate]
-        ,  CAST(GETDATE() AS DATETIME2(3))  AS RecordEffectiveEndDate
+        ,  CAST([ActivationDate] AS DATETIME2(3))                    AS RecordEffectiveStartDate  -- 2026-11-20: was [RecordEffectiveStartDate]
+        ,  CAST(DATEADD(day, -1, [ActivationDate]) AS DATETIME2(3))  AS RecordEffectiveEndDate    -- 2026-11-20: closed, was GETDATE()
         ,  0                                AS RecordStatus
         ,  [Source]
     FROM stage_tbl_DIM_StandardCost_Deleted;
@@ -228,6 +238,9 @@ BEGIN
     -- Deleted rows (RecordStatus = 0 set in Step 4 Section D) pass through
     -- unchanged — their natural key is no longer in the source so we do not
     -- recalculate their dates.
+    -- 2026-11-20: this now covers every row whose natural key is not in the
+    -- source (Step 3). Those rows no longer take part in LEAD or in
+    -- MaxPastActivationDate for the rows that remain.
     -- =========================================================================
     CREATE TABLE stage_tbl_DIM_StandardCost_WithDates AS
 

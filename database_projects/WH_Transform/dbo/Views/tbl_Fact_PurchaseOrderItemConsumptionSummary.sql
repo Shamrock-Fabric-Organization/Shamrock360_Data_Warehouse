@@ -1,5 +1,4 @@
 
-
 ----Summary Purchase Order Level consumption
 CREATE OR ALTER    VIEW [dbo].[tbl_Fact_PurchaseOrderItemConsumptionSummary] 
 as
@@ -199,6 +198,7 @@ from
 			on pl.itemid = i.itemid
 			  and pl.dataareaid = i.dataareaid
 			  and id.inventbatchid = iid.inventbatchid
+			  and id.inventbatchid <> ''   -- a blank batch matches nothing. The D365 link can store a blank as '' instead of NULL.
 		LEFT JOIN WH_Raw.dbo.inventtransorigin ito
 			on i.inventtransorigin = ito.recid
 
@@ -323,6 +323,7 @@ from
 		   AND erCostCNY.exchangeratetype = 'Default global rate'
 
 		where pl.itemid is not null
+		  and pl.itemid <> ''   -- a blank item counts as no item, as NULL does. The D365 link can store a blank as '' instead of NULL.
 		) f
 
 GROUP by CMPNY

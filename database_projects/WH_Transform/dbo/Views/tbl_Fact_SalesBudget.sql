@@ -201,6 +201,70 @@ LEFT JOIN WH_Curated.dbo.mtbl_EDW_Dim_StandardCost dsc
 		AND CONVERT(varchar(20), b.CMPNY) = dsc.CMPNY
 		AND dpc.DefaultInventorySiteID = dsc.siteid
 		AND CONVERT(datetime2(3),convert(char(8), b.DateKey),112) between dsc.activationdate and dsc.enddate --dsc.RecordEffectiveStartDate and dsc.RecordEffectiveEndDate
-GO
+
+
+union all
+
+
+
+select 
+b.CMPNY
+, b.Model +' '+ CONVERT(CHAR(4), year(b.[Date])) SalesLine_Status
+, b.[Date]
+, b.DateKey
+, b.Customer_Account CustomerID
+, b.Item_Number ProductID
+, b.CMPNY+'-'+b.Customer_Account+'-'+b.Item_Number CPCID
+, NULL CPCID_Legacy  --ask Kevin if the Legacy value is needed
+, b.Unit Quantity_UoM
+, b.Sales_Quantity Quantity
+, b.Sales_Quantity_LBs Quantity_LBs
+, b.Sales_Quantity_KGs Quantity_KGs
+, b.Sales_Currency Currency
+, b.Amount
+, b.Amount_USD
+, b.Amount_EUR
+, b.Amount_CNY
+, b.Txn_USD_Rate_Missing
+, b.Txn_EUR_Rate_Missing
+, b.Txn_CNY_Rate_Missing
+, 'Yes' [LegalEntityTranslatedToD365]
+, 'Yes' [AccountTranslatedToD365]
+, 'Yes' [ProductTranslatedToD365]
+, 'D365FO' Source
+, b.[CustomerKey]
+, b.[ProductKey]
+, b.[Legal_EntityKey]
+, ISNULL(de.EmployeeKey, -1) [EmployeeKey]
+, ISNULL(dmsc.MarketSegmentationKey, -1) [MarketSegmentationKey]
+, ISNULL(dsc.StandardCostKey, -1) [StandardCostKey]
+from tbl_ForecastSales b 
+
+
+LEFT JOIN dbo.tbl_DIM_Customer dcc
+	ON b.Customer_Account  = dcc.Customer_ID
+		AND b.Cmpny = dcc.CMPNY
+		AND dcc.RecordStatus=1
+
+LEFT JOIN dbo.tbl_DIM_Employee de
+	ON dcc.Salesman_ID = de.Personnel_Number
+
+LEFT JOIN dbo.tbl_DIM_MarketSegmentation dmsc
+	ON b.Customer_Account = dmsc.CustomerID
+		AND b.Item_Number = dmsc.ProductID
+		AND b.Cmpny = dmsc.CMPNY
+		AND dmsc.RecordStatus=1
+
+LEFT JOIN dbo.tbl_DIM_Product dpc
+	ON b.Item_Number = dpc.Product_ID
+		AND b.Cmpny = dpc.CMPNY
+		AND dpc.RecordStatus=1
+		
+LEFT JOIN dbo.tbl_Dim_StandardCost dsc
+	ON b.Item_Number = dsc.Product_ID
+		AND b.CMPNY = dsc.CMPNY
+		AND dpc.DefaultInventorySiteID = dsc.siteid
+		AND b.[Date] between dsc.activationdate and dsc.enddate --dsc.RecordEffectiveStartDate and dsc.RecordEffectiveEndDate
+where model = 'Budget'
 
 

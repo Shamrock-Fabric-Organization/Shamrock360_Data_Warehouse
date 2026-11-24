@@ -61,7 +61,7 @@ GROUP BY Company
       ,CT.ACCOUNTNUM               AS CustomerAccount
       ,DPT.NAME                    AS CustomerName
       ,EA.LOCATOR                  AS ContactValue
-      ,ISNULL(EA.DESCRIPTION,'NONE') AS ContactDescription
+      ,ISNULL(CASE WHEN EA.DESCRIPTION = '' THEN NULL ELSE EA.DESCRIPTION END,'NONE') AS ContactDescription   -- a blank counts as NULL. The D365 link can store a blank as '' instead of NULL.
   FROM WH_Raw.dbo.CUSTTABLE CT
   LEFT JOIN WH_Raw.dbo.DIRPARTYTABLE DPT
       ON DPT.RECID = CT.PARTY
@@ -128,12 +128,12 @@ FROM
 (
 SELECT 	DISTINCT	C.dataareaid	 CMPNY
 	,C.accountnum	 Customer_ID
-	,coalesce(C.invoiceaccount, C.accountnum)	 Invoice_Account
+	,coalesce(case when C.invoiceaccount = '' then null else C.invoiceaccount end, C.accountnum)	 Invoice_Account   -- a blank counts as NULL. The D365 link can store a blank as '' instead of NULL.
 	,NULL Legacy_Customer_ID			--map TBD, might be from legacy table
 	,NULL	 GMAccountNo				--leave null for now
 	,NULL	 GMRecID					--leave null for now
 	,DPT.Name	 CustomerName
-	,case when ISNULL(C.companychainID,'X') = 'X' then DPT.Name +' - not harmonized' else C.companychainID end	 Harmonized_Name
+	,case when ISNULL(case when C.companychainID = '' then null else C.companychainID end,'X') = 'X' then DPT.Name +' - not harmonized' else C.companychainID end	 Harmonized_Name   -- a blank counts as NULL. The D365 link can store a blank as '' instead of NULL.
 	--,COALESCE(AV.StreetAddress, AV2.StreetAddress)	 Address
 	--,COALESCE(AV.city, AV2.city) 	City
 	--,COALESCE(AV.STATE, AV2.STATE) 	State
@@ -358,3 +358,4 @@ SELECT -1 [CustomerKey]
 , NULL [RecordEffectiveStartDate]
 , NULL [RecordEffectiveEndDate]
 , NULL [RecordStatus]
+

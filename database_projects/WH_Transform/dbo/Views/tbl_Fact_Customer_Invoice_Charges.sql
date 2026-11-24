@@ -1,4 +1,3 @@
--- Run in: WH_Transform
 
 CREATE OR ALTER VIEW [dbo].[tbl_Fact_Customer_Invoice_Charges]
 as
@@ -6,7 +5,7 @@ select  mt.dataareaid CMPNY
 , cij.invoiceid Invoice_ID
 , cij.invoicedate InvoiceDate
 , convert(int, convert(char(8), cij.invoicedate,112)) InvoiceDateKey
-, isnull(cij.salesid, 'none') Sales_ID
+, isnull(case when cij.salesid = '' then null else cij.salesid end, 'none') Sales_ID   -- a blank counts as NULL. The D365 link can store a blank as '' instead of NULL.
 , mt.markupcode MarkupCode
 , mt.linenum LineNum
 , mt.transrecid TransRecId
@@ -42,7 +41,7 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_Invoice dinv
 	ON mt.dataareaid = dinv.CMPNY
 		AND cij.invoiceid = dinv.Invoice_ID
 		AND cij.invoicedate = dinv.InvoiceDate
-		AND isnull(cij.salesid, 'none') = dinv.Sales_ID
+		AND isnull(case when cij.salesid = '' then null else cij.salesid end, 'none') = dinv.Sales_ID   -- a blank counts as NULL. The D365 link can store a blank as '' instead of NULL.
 		AND dinv.RecordStatus=1
 
 LEFT JOIN WH_Transform.dbo.tbl_DIM_InvoiceCharge dch

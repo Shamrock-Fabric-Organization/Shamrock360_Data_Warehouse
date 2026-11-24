@@ -1,5 +1,4 @@
 
-
 CREATE OR ALTER       VIEW [dbo].[tbl_Fact_Customer_Invoices]
 as
 select  cit.dataareaid CMPNY  
@@ -149,18 +148,18 @@ select  cit.dataareaid CMPNY
 -- ================================================================================================
 
 from WH_Raw.dbo.custinvoicetrans cit
-join (select dataareaid , invoiceid  , invoicedate , isnull(salesid, 'none') salesid, min(linenum) min_linenumber
+join (select dataareaid , invoiceid  , invoicedate , isnull(case when salesid = '' then null else salesid end, 'none') salesid, min(linenum) min_linenumber   -- a blank counts as NULL. The D365 link can store a blank as '' instead of NULL.
         from WH_Raw.dbo.custinvoicetrans 
-        group by dataareaid , invoiceid  , invoicedate , isnull(salesid, 'none')
+        group by dataareaid , invoiceid  , invoicedate , isnull(case when salesid = '' then null else salesid end, 'none')   -- a blank counts as NULL. The D365 link can store a blank as '' instead of NULL.
         ) min_ln
   on cit.dataareaid = min_ln.dataareaid
     and cit.invoiceid = min_ln.invoiceid
     and cit.invoicedate = min_ln.invoicedate
-    and isnull(cit.salesid,'none') = isnull(min_ln.salesid,'none')
+    and isnull(case when cit.salesid = '' then null else cit.salesid end,'none') = isnull(min_ln.salesid,'none')   -- a blank counts as NULL. The D365 link can store a blank as '' instead of NULL.
 join WH_Raw.dbo.custinvoicejour cij
   on cit.dataareaid = cij.dataareaid
     and cit.invoiceid = cij.invoiceid
-    and isnull(cit.salesid,'none') = isnull(cij.salesid,'none')
+    and isnull(case when cit.salesid = '' then null else cit.salesid end,'none') = isnull(case when cij.salesid = '' then null else cij.salesid end,'none')   -- a blank counts as NULL. The D365 link can store a blank as '' instead of NULL.
     and cit.invoicedate = cij.invoicedate
 
 left JOIN WH_Raw.dbo.InventTable IT
@@ -205,7 +204,7 @@ left join (WH_Raw.dbo.custinvoicejour cij2
             )
   on cit.dataareaid = cij2.dataareaid
     and cit.invoiceid = cij2.invoiceid
-    and isnull(cit.salesid,'none') = isnull(cij2.salesid,'none')
+    and isnull(case when cit.salesid = '' then null else cit.salesid end,'none') = isnull(case when cij2.salesid = '' then null else cij2.salesid end,'none')   -- a blank counts as NULL. The D365 link can store a blank as '' instead of NULL.
     and cit.invoicedate = cij2.invoicedate
     and cit.linenum = min_ln.min_linenumber
 
@@ -338,7 +337,7 @@ LEFT JOIN WH_Transform.dbo.tbl_DIM_Invoice dinv
 	ON cit.dataareaid = dinv.CMPNY
 		AND cit.invoiceid = dinv.Invoice_ID
 		AND cit.invoicedate = dinv.InvoiceDate
-		AND isnull(cit.salesid,'none') = dinv.Sales_ID
+		AND isnull(case when cit.salesid = '' then null else cit.salesid end,'none') = dinv.Sales_ID   -- a blank counts as NULL. The D365 link can store a blank as '' instead of NULL.
 		AND dinv.RecordStatus=1
 
 -- =========================== ADDED: Salestable Customer CustomerAccount EmployeeKey =====================
@@ -397,4 +396,3 @@ LEFT JOIN WH_Raw.dbo.vwExchangeRate erCostCNY
    AND convert(date, convert(char(8), cit.invoicedate, 112)) between erCostCNY.validfrom and erCostCNY.validto
    AND erCostCNY.exchangeratetype = 'Default global rate'
 -- ========================================================================================================
-

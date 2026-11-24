@@ -670,7 +670,7 @@ LEFT JOIN (
                     ) AS rn
               FROM [dbo].[tbl_Fact_QualityOrderLineResults]
               WHERE testid = 'Q Rank'
-              and inventserialid is null
+              and (inventserialid is null or inventserialid = '')   -- a blank counts as NULL. The D365 link can store a blank as '' instead of NULL.
           ) ranked
           WHERE rn = 1
           GROUP BY CMPNY

@@ -21,7 +21,7 @@ SELECT
     codes.dataareaid                                    AS CMPNY,
     codes.markupcode                                    AS MarkupCode,
 
-    ISNULL(mtb.txt, ISNULL(codes.txt, N''))             AS ChargeDescription,
+    ISNULL(CASE WHEN mtb.txt = N'' THEN NULL ELSE mtb.txt END, ISNULL(codes.txt, N'')) AS ChargeDescription, 
     mtb.taxitemgroup                                    AS TaxItemGroup,
     CAST(mtb.maxamount AS decimal(38,6))                AS MaxAmount,
     CAST(mtb.isshipping AS bigint)                      AS IsShipping,
